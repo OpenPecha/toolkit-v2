@@ -1,15 +1,18 @@
+from pathlib import Path
+
+
 class PlainText:
     def __init__(self, source_text: str, target_text: str):
         self.source_text = source_text
-        self.traget_text = target_text
+        self.target_text = target_text
 
     @classmethod
-    def from_files(cls, source_path: str, target_path: str):
-        source_text = open(source_path).read()
-        target_text = open(target_path).read()
+    def from_files(cls, source_path: Path, target_path: Path):
+        source_text = source_path.read_text(encoding="utf-8")
+        target_text = target_path.read_text(encoding="utf-8")
         return cls(source_text, target_text)
 
-    def parse(self, metadata: dict):
+    def parse(self, metadata: dict = None):
         # source_segments = self.source_text.split("\n")
         # target_segments = self.target_text.split("\n")
 
