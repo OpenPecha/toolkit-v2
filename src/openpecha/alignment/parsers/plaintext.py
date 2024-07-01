@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from openpecha.ids import get_initial_pecha_id, get_uuid
-from openpecha.pecha.pecha import Pecha
+from openpecha.pecha import Pecha
 
 
 class PlainText:
