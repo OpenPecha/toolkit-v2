@@ -1,5 +1,8 @@
 from pathlib import Path
 
+from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.pecha.pecha import Pecha
+
 
 class PlainText:
     def __init__(self, source_text: str, target_text: str):
@@ -13,11 +16,22 @@ class PlainText:
         return cls(source_text, target_text)
 
     def parse(self, metadata: dict = None):
-        # source_segments = self.source_text.split("\n")
-        # target_segments = self.target_text.split("\n")
+        source_text_lines = self.source_text.split("\n")
+        target_text_lines = self.target_text.split("\n")
+
+        """ prepare the data for pecha creation"""
+        source_pecha_id, target_pecha_id = (
+            get_initial_pecha_id(),
+            get_initial_pecha_id(),
+        )
+        source_segments = {get_uuid(): segment for segment in source_text_lines}
+        target_segments = {get_uuid(): segment for segment in target_text_lines}
+
+        source_pecha = Pecha(source_pecha_id, source_segments)  # noqa
+        target_pecha = Pecha(target_pecha_id, target_segments)  # noqa
 
         # TODO:
-        # 1. Create pecha with segment layers for source and target text
+
         # 2. create a segment pairs [((source_pecha_id,source_segment_id), (target_pecha_id, target_segment_id)), ...]
         # 3. Create AlignmentMetadata
 
