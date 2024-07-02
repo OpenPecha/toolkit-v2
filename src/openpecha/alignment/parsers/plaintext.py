@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from openpecha.config import PECHAS_PATH
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
 
@@ -16,7 +17,7 @@ class PlainText:
         target_text = target_path.read_text(encoding="utf-8")
         return cls(source_text, target_text, metadata)
 
-    def parse(self):
+    def parse(self, base_path: Path = PECHAS_PATH):
         source_text_lines = self.source_text.split("\n")
         target_text_lines = self.target_text.split("\n")
 
@@ -34,8 +35,8 @@ class PlainText:
         target_pecha = Pecha(  # noqa
             target_pecha_id, target_segments, self.metadata["target"]
         )
-        source_pecha.write_annotations()
-        target_pecha.write_annotations()
+        source_pecha.write_annotations(base_path)
+        target_pecha.write_annotations(base_path)
 
         # TODO:
 
