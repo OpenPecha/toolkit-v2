@@ -75,6 +75,3 @@ def test_pecha_write_annotations():
 
     """ clean up """
     rmtree(Path(export_path / pecha_id))
-
-
-test_pecha_write_annotations()
