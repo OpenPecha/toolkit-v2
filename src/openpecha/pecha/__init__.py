@@ -41,14 +41,14 @@ class Pecha:
     def create_pecha_folder(self, base_path: Path):
         pecha_dir = base_path.joinpath(self.pecha_id)
         opf_dir = pecha_dir.joinpath(f"{self.pecha_id}.opf")
-        metadata_dir = opf_dir.joinpath("metadata.json")
+        metadata_fn = opf_dir.joinpath("metadata.json")
         base_dir = opf_dir.joinpath("base")
         layers_dir = opf_dir.joinpath("layers")
         layer_id_dir = layers_dir.joinpath(self.pecha_id)
 
         pecha_dir.mkdir(exist_ok=True)
         opf_dir.mkdir(exist_ok=True)
-        metadata_dir.write_text(
+        metadata_fn.write_text(
             json.dumps(self.metadata, indent=4, ensure_ascii=False), encoding="utf-8"
         )
 
@@ -59,6 +59,16 @@ class Pecha:
 
         self.annotation_fn = layer_id_dir
         self.base_fn = base_dir.joinpath(f"{self.pecha_id}.txt")
+        self.opf_fn = base_path
+        self.metadata_fn = metadata_fn
+
+    def covert_to_relative_path(self, json_string: str):
+        """convert the absolute path to relative path for base file path in json string"""
+        json_object = json.loads(json_string)
+        for resource in json_object["resources"]:
+            original_path = Path(resource["@include"])
+            resource["@include"] = str(original_path.relative_to(self.opf_fn))
+        return json_object
 
     def write_annotations(self, base_path: Path = PECHAS_PATH):
         if not hasattr(self, "annotations"):
@@ -95,9 +105,10 @@ class Pecha:
                 data=data,
             )
         """ save annotations in stam data model"""
-        self.annotation_store.set_filename(
-            self.annotation_fn.joinpath(
-                f"{self.metadata['annotation_label']}.json"
-            ).as_posix()
-        )
-        self.annotation_store.save()
+        json_string = self.annotation_store.to_json_string()
+        json_object = self.covert_to_relative_path(json_string)
+        with open(
+            self.annotation_fn.joinpath(f"{self.metadata['annotation_label']}.json"),
+            "w",
+        ) as f:
+            f.write(json.dumps(json_object, indent=4, ensure_ascii=False))
