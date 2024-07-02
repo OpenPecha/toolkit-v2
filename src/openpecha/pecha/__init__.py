@@ -3,6 +3,7 @@ from typing import Dict
 from stam import AnnotationStore, Offset, Selector
 
 from openpecha.config import PECHAS_PATH
+from openpecha.ids import get_uuid
 from openpecha.pecha.annotation import Annotation
 
 
@@ -63,6 +64,8 @@ class Pecha:
         )
         self.dataset = self.annotation_store.add_dataset(id="PechaDataSet")
         self.dataset.add_key(self.metadata["annotation_category"])
+
+        unique_annotation_data_id = get_uuid()
         for annotation in self.annotations:
             target = Selector.textselector(
                 self.resource,
@@ -70,7 +73,7 @@ class Pecha:
             )
             data = [
                 {
-                    "id": annotation.id_,
+                    "id": unique_annotation_data_id,
                     "key": self.metadata["annotation_category"],
                     "value": self.metadata["annotation_label"],
                     "set": self.dataset.id(),
