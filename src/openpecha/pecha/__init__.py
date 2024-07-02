@@ -1,3 +1,4 @@
+import json
 from typing import Dict
 
 from stam import AnnotationStore, Offset, Selector
@@ -41,12 +42,17 @@ class Pecha:
     def create_pecha_folder(self):
         pecha_dir = PECHAS_PATH.joinpath(self.pecha_id)
         opf_dir = pecha_dir.joinpath(f"{self.pecha_id}.opf")
+        metadata_dir = opf_dir.joinpath("metadata.json")
         base_dir = opf_dir.joinpath("base")
         layers_dir = opf_dir.joinpath("layers")
         layer_id_dir = layers_dir.joinpath(self.pecha_id)
 
         pecha_dir.mkdir(exist_ok=True)
         opf_dir.mkdir(exist_ok=True)
+        metadata_dir.write_text(
+            json.dumps(self.metadata, indent=4, ensure_ascii=False), encoding="utf-8"
+        )
+
         base_dir.mkdir(exist_ok=True)
         base_dir.joinpath(f"{self.pecha_id}.txt").write_text(self.base_text)
         layers_dir.mkdir(exist_ok=True)
