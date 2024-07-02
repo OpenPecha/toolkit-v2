@@ -61,8 +61,10 @@ class Pecha:
         self.base_fn = base_dir.joinpath(f"{self.pecha_id}.txt")
 
     def write_annotations(self, base_path: Path = PECHAS_PATH):
+        if not hasattr(self, "annotations"):
+            self.annotations = self.set_annotations()
+
         self.base_text = "".join(self.segments.values())
-        self.annotations = self.set_annotations()
 
         self.create_pecha_folder(base_path)
         """write annotations in stam data model"""
