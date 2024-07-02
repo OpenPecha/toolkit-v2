@@ -2,7 +2,7 @@ from typing import Dict
 
 from stam import AnnotationStore, Offset, Selector
 
-from openpecha.ids import get_uuid
+from openpecha.config import PECHAS_PATH
 from openpecha.pecha.annotation import Annotation
 
 
@@ -37,12 +37,30 @@ class Pecha:
             char_count += len(segment)
             yield annotation
 
+    def create_pecha_folder(self):
+        pecha_dir = PECHAS_PATH.joinpath(self.pecha_id)
+        opf_dir = pecha_dir.joinpath(f"{self.pecha_id}.opf")
+        base_dir = opf_dir.joinpath("base")
+        layers_dir = opf_dir.joinpath("layers")
+        layer_id_dir = layers_dir.joinpath(self.pecha_id)
+
+        pecha_dir.mkdir(exist_ok=True)
+        opf_dir.mkdir(exist_ok=True)
+        base_dir.mkdir(exist_ok=True)
+        base_dir.joinpath(f"{self.pecha_id}.txt").write_text(self.base_text)
+        layers_dir.mkdir(exist_ok=True)
+        layer_id_dir.mkdir(exist_ok=True)
+
+        self.annotation_fn = layer_id_dir
+        self.base_fn = base_dir.joinpath(f"{self.pecha_id}.txt")
+
     def write_annotations(self):
+        self.create_pecha_folder()
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id="PechaAnnotationStore")
         self.resource = self.annotation_store.add_resource(
-            id=self.pecha_id, filename="random file path"
-        )  # in case of having layers, resource_id will be pecha_id_layer_id
+            id=self.pecha_id, filename=self.base_fn.as_posix()
+        )
         self.dataset = self.annotation_store.add_dataset(id="PechaDataSet")
         self.dataset.add_key(self.metadata["annotation_category"])
         for annotation in self.annotations:
@@ -58,8 +76,15 @@ class Pecha:
                     "set": self.dataset.id(),
                 }
             ]
-            self.annotation_store.add_annotation(
+            self.annotation_store.annotate(
                 id=annotation.id_,
                 target=target,
                 data=data,
             )
+        """ save annotations in stam data model"""
+        self.annotation_store.set_filename(
+            self.annotation_fn.joinpath(
+                f"{self.metadata['annotation_label']}.json"
+            ).as_posix()
+        )
+        self.annotation_store.save()
