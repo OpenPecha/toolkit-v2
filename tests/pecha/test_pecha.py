@@ -1,5 +1,14 @@
+from pathlib import Path
+from shutil import rmtree
+
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotation import Annotation
+
+
+def get_data_dir():
+    base_path = Path(__file__).parent / "data"
+    base_path.mkdir(parents=True, exist_ok=True)
+    return base_path
 
 
 def get_segments():
@@ -49,3 +58,20 @@ def test_pecha_set_annotations():
     assert (
         annotations == get_expected_annotations()
     ), "Pecha not able to set annotations for the segments"
+
+
+def test_pecha_write_annotations():
+    pecha_id = "IE7D6875F"
+    segments = get_segments()
+    metadata = get_metadata()
+    pecha = Pecha(pecha_id=pecha_id, segments=segments, metadata=metadata)
+    base_path = get_data_dir()
+    pecha.write_annotations(base_path=base_path)
+    assert pecha.base_fn.exists(), "Pecha not able to write base file"
+    assert pecha.metadata_fn.exists(), "Pecha not able to write metadata file"
+    assert pecha.annotation_fn.rglob(
+        "*.json"
+    ), "Pecha not able to write annotation file"
+
+    """ clean up """
+    rmtree(Path(base_path / pecha_id))
