@@ -17,23 +17,27 @@ class PlainText:
         target_text = target_path.read_text(encoding="utf-8")
         return cls(source_text, target_text, metadata)
 
-    def parse(self, base_path: Path = PECHAS_PATH):
+    def parse(self):
         source_text_lines = self.source_text.split("\n")
         target_text_lines = self.target_text.split("\n")
 
-        """ prepare the data for pecha creation"""
+        self.source_segments = {get_uuid(): segment for segment in source_text_lines}
+        self.target_segments = {get_uuid(): segment for segment in target_text_lines}
+
+    def save(self, base_path: Path = PECHAS_PATH):
+        if not self.source_segments or not self.target_segments:
+            self.parse()
+
+        """ save the source and target pecha"""
         source_pecha_id, target_pecha_id = (
             get_initial_pecha_id(),
             get_initial_pecha_id(),
         )
-        source_segments = {get_uuid(): segment for segment in source_text_lines}
-        target_segments = {get_uuid(): segment for segment in target_text_lines}
-
-        source_pecha = Pecha(  # noqa
-            source_pecha_id, source_segments, self.metadata["source"]
+        source_pecha = Pecha(
+            source_pecha_id, self.source_segments, self.metadata["source"]
         )
-        target_pecha = Pecha(  # noqa
-            target_pecha_id, target_segments, self.metadata["target"]
+        target_pecha = Pecha(
+            target_pecha_id, self.target_segments, self.metadata["target"]
         )
         source_pecha.write_annotations(base_path)
         target_pecha.write_annotations(base_path)
