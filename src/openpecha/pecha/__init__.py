@@ -43,12 +43,12 @@ class Pecha:
 
         pecha_dir = _mkdir(export_path.joinpath(self.pecha_id))
         opf_dir = _mkdir(pecha_dir.joinpath(f"{self.pecha_id}.opf"))
-        self.metadata_fn = opf_dir.joinpath("metadata.json")
         base_dir = _mkdir(opf_dir.joinpath("base"))
         layers_dir = _mkdir(opf_dir.joinpath("layers"))
         layer_id_dir = _mkdir(layers_dir.joinpath(self.pecha_id))
 
         """ write metadata and base file"""
+        self.metadata_fn = opf_dir.joinpath("metadata.json")
         self.metadata_fn.write_text(
             json.dumps(self.metadata, indent=4, ensure_ascii=False), encoding="utf-8"
         )
