@@ -5,17 +5,18 @@ from openpecha.pecha import Pecha
 
 
 class PlainText:
-    def __init__(self, source_text: str, target_text: str):
+    def __init__(self, source_text: str, target_text: str, metadata: dict):
         self.source_text = source_text
         self.target_text = target_text
+        self.metadata = metadata
 
     @classmethod
-    def from_files(cls, source_path: Path, target_path: Path):
+    def from_files(cls, source_path: Path, target_path: Path, metadata: dict):
         source_text = source_path.read_text(encoding="utf-8")
         target_text = target_path.read_text(encoding="utf-8")
-        return cls(source_text, target_text)
+        return cls(source_text, target_text, metadata)
 
-    def parse(self, metadata: dict = None):
+    def parse(self):
         source_text_lines = self.source_text.split("\n")
         target_text_lines = self.target_text.split("\n")
 
@@ -27,8 +28,12 @@ class PlainText:
         source_segments = {get_uuid(): segment for segment in source_text_lines}
         target_segments = {get_uuid(): segment for segment in target_text_lines}
 
-        source_pecha = Pecha(source_pecha_id, source_segments)  # noqa
-        target_pecha = Pecha(target_pecha_id, target_segments)  # noqa
+        source_pecha = Pecha(  # noqa
+            source_pecha_id, source_segments, self.metadata["source"]
+        )
+        target_pecha = Pecha(  # noqa
+            target_pecha_id, target_segments, self.metadata["target"]
+        )
 
         # TODO:
 
