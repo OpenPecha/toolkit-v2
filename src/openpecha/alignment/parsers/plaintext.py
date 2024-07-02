@@ -25,7 +25,7 @@ class PlainText:
         self.target_segments = {get_uuid(): segment for segment in target_text_lines}
 
     def save(self, base_path: Path = PECHAS_PATH):
-        if not self.source_segments or not self.target_segments:
+        if not hasattr(self, "source_segments") or not hasattr(self, "target_segments"):
             self.parse()
 
         """ save the source and target pecha"""
@@ -39,8 +39,7 @@ class PlainText:
         target_pecha = Pecha(
             target_pecha_id, self.target_segments, self.metadata["target"]
         )
-        source_pecha.write_annotations(base_path)
-        target_pecha.write_annotations(base_path)
+        return source_pecha, target_pecha
 
         # TODO:
 
