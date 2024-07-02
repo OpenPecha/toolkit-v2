@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from typing import Dict
 
 from stam import AnnotationStore, Offset, Selector
@@ -15,9 +16,6 @@ class Pecha:
         self.pecha_id = pecha_id
         self.segments = segments
         self.metadata = metadata
-        self.base_text = "".join(segments.values())
-        self.annotations = self.set_annotations()
-        self.write_annotations()
 
     @classmethod
     def from_path(cls, path: str):
@@ -28,6 +26,7 @@ class Pecha:
         pass
 
     def set_annotations(self):
+        """set annotations for the segments"""
         char_count = 0
         for segment_id, segment in self.segments.items():
             annotation = Annotation(
@@ -39,8 +38,8 @@ class Pecha:
             char_count += len(segment)
             yield annotation
 
-    def create_pecha_folder(self):
-        pecha_dir = PECHAS_PATH.joinpath(self.pecha_id)
+    def create_pecha_folder(self, base_path: Path):
+        pecha_dir = base_path.joinpath(self.pecha_id)
         opf_dir = pecha_dir.joinpath(f"{self.pecha_id}.opf")
         metadata_dir = opf_dir.joinpath("metadata.json")
         base_dir = opf_dir.joinpath("base")
@@ -61,8 +60,11 @@ class Pecha:
         self.annotation_fn = layer_id_dir
         self.base_fn = base_dir.joinpath(f"{self.pecha_id}.txt")
 
-    def write_annotations(self):
-        self.create_pecha_folder()
+    def write_annotations(self, base_path: Path = PECHAS_PATH):
+        self.base_text = "".join(self.segments.values())
+        self.annotations = self.set_annotations()
+
+        self.create_pecha_folder(base_path)
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id="PechaAnnotationStore")
         self.resource = self.annotation_store.add_resource(

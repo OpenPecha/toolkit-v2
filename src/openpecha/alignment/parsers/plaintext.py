@@ -34,6 +34,8 @@ class PlainText:
         target_pecha = Pecha(  # noqa
             target_pecha_id, target_segments, self.metadata["target"]
         )
+        source_pecha.write_annotations()
+        target_pecha.write_annotations()
 
         # TODO:
 
