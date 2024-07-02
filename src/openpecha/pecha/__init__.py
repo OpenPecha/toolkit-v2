@@ -4,7 +4,7 @@ from typing import Dict
 
 from stam import AnnotationStore, Offset, Selector
 
-from openpecha.config import PECHAS_PATH
+from openpecha.config import PECHAS_PATH, _mkdir
 from openpecha.ids import get_uuid
 from openpecha.pecha.annotation import Annotation
 
@@ -38,45 +38,40 @@ class Pecha:
             char_count += len(segment)
             yield annotation
 
-    def create_pecha_folder(self, base_path: Path):
-        pecha_dir = base_path.joinpath(self.pecha_id)
-        opf_dir = pecha_dir.joinpath(f"{self.pecha_id}.opf")
-        metadata_fn = opf_dir.joinpath("metadata.json")
-        base_dir = opf_dir.joinpath("base")
-        layers_dir = opf_dir.joinpath("layers")
-        layer_id_dir = layers_dir.joinpath(self.pecha_id)
+    def create_pecha_folder(self, export_path: Path):
+        self.export_path = export_path
 
-        pecha_dir.mkdir(exist_ok=True)
-        opf_dir.mkdir(exist_ok=True)
-        metadata_fn.write_text(
+        pecha_dir = _mkdir(export_path.joinpath(self.pecha_id))
+        opf_dir = _mkdir(pecha_dir.joinpath(f"{self.pecha_id}.opf"))
+        self.metadata_fn = opf_dir.joinpath("metadata.json")
+        base_dir = _mkdir(opf_dir.joinpath("base"))
+        layers_dir = _mkdir(opf_dir.joinpath("layers"))
+        layer_id_dir = _mkdir(layers_dir.joinpath(self.pecha_id))
+
+        """ write metadata and base file"""
+        self.metadata_fn.write_text(
             json.dumps(self.metadata, indent=4, ensure_ascii=False), encoding="utf-8"
         )
-
-        base_dir.mkdir(exist_ok=True)
-        base_dir.joinpath(f"{self.pecha_id}.txt").write_text(self.base_text)
-        layers_dir.mkdir(exist_ok=True)
-        layer_id_dir.mkdir(exist_ok=True)
+        self.base_fn = Path(base_dir / f"{self.pecha_id}.txt")
+        self.base_fn.write_text(self.base_text)
 
         self.annotation_fn = layer_id_dir
-        self.base_fn = base_dir.joinpath(f"{self.pecha_id}.txt")
-        self.opf_fn = base_path
-        self.metadata_fn = metadata_fn
 
     def covert_to_relative_path(self, json_string: str):
         """convert the absolute path to relative path for base file path in json string"""
         json_object = json.loads(json_string)
         for resource in json_object["resources"]:
             original_path = Path(resource["@include"])
-            resource["@include"] = str(original_path.relative_to(self.opf_fn))
+            resource["@include"] = str(original_path.relative_to(self.export_path))
         return json_object
 
-    def write_annotations(self, base_path: Path = PECHAS_PATH):
+    def write_annotations(self, export_path: Path = PECHAS_PATH):
         if not hasattr(self, "annotations"):
             self.annotations = self.set_annotations()
 
         self.base_text = "".join(self.segments.values())
 
-        self.create_pecha_folder(base_path)
+        self.create_pecha_folder(export_path)
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id="PechaAnnotationStore")
         self.resource = self.annotation_store.add_resource(

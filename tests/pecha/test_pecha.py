@@ -6,9 +6,9 @@ from openpecha.pecha.annotation import Annotation
 
 
 def get_data_dir():
-    base_path = Path(__file__).parent / "data"
-    base_path.mkdir(parents=True, exist_ok=True)
-    return base_path
+    export_path = Path(__file__).parent / "data"
+    export_path.mkdir(parents=True, exist_ok=True)
+    return export_path
 
 
 def get_segments():
@@ -65,8 +65,8 @@ def test_pecha_write_annotations():
     segments = get_segments()
     metadata = get_metadata()
     pecha = Pecha(pecha_id=pecha_id, segments=segments, metadata=metadata)
-    base_path = get_data_dir()
-    pecha.write_annotations(base_path=base_path)
+    export_path = get_data_dir()
+    pecha.write_annotations(export_path=export_path)
     assert pecha.base_fn.exists(), "Pecha not able to write base file"
     assert pecha.metadata_fn.exists(), "Pecha not able to write metadata file"
     assert pecha.annotation_fn.rglob(
@@ -74,4 +74,7 @@ def test_pecha_write_annotations():
     ), "Pecha not able to write annotation file"
 
     """ clean up """
-    rmtree(Path(base_path / pecha_id))
+    rmtree(Path(export_path / pecha_id))
+
+
+test_pecha_write_annotations()
