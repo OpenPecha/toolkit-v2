@@ -8,7 +8,7 @@ class Pecha:
         self.pecha_id = pecha_id
         self.segments = segments
         self.base_text = "".join(segments.values())
-        self.annotations = self.build_annotations()
+        self.annotations = self.set_annotations()
 
     @classmethod
     def from_path(cls, path: str):
@@ -18,7 +18,7 @@ class Pecha:
     def from_id(cls, pecha_id: str):
         pass
 
-    def build_annotations(self):
+    def set_annotations(self):
         char_count = 0
         for segment_id, segment in self.segments.items():
             annotation = Annotation(
