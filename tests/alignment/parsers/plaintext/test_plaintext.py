@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from openpecha.alignment.parsers.plaintext import PlainText
+from openpecha.alignment.parsers.plaintext import PlainTextLineAlignedParser
 from openpecha.pecha import Pecha
 
 
@@ -27,7 +27,9 @@ def test_plaintext_parse():
     target_path = DATA_DIR / "comments.txt"
 
     metadata = get_metadata()
-    plaintext = PlainText.from_files(source_path, target_path, metadata)
+    plaintext = PlainTextLineAlignedParser.from_files(
+        source_path, target_path, metadata
+    )
     plaintext.parse()
 
     assert (
@@ -44,7 +46,9 @@ def test_plaintext_save():
     target_path = DATA_DIR / "comments.txt"
 
     metadata = get_metadata()
-    plaintext = PlainText.from_files(source_path, target_path, metadata)
+    plaintext = PlainTextLineAlignedParser.from_files(
+        source_path, target_path, metadata
+    )
     source_pecha, target_pecha = plaintext.save()
 
     assert isinstance(

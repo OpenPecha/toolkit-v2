@@ -5,7 +5,7 @@ from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
 
 
-class PlainText:
+class PlainTextLineAlignedParser:
     def __init__(self, source_text: str, target_text: str, metadata: dict):
         self.source_text = source_text
         self.target_text = target_text
