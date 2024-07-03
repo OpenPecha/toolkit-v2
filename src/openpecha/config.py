@@ -1,9 +1,10 @@
 from pathlib import Path
+from shutil import rmtree
 
 
 def _mkdir(path):
-    if path.is_dir():
-        return path
+    if path.exists():
+        rmtree(path)
     path.mkdir(exist_ok=True, parents=True)
     return path
 

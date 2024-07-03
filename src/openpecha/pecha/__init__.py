@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from shutil import rmtree
 from typing import Dict
 
 from stam import AnnotationStore, Offset, Selector
@@ -48,17 +49,19 @@ class Pecha:
 
         pecha_dir = _mkdir(export_path.joinpath(self.pecha_id))
         opf_dir = _mkdir(pecha_dir.joinpath(f"{self.pecha_id}.opf"))
-        base_dir = _mkdir(opf_dir.joinpath("base"))
-        layers_dir = _mkdir(opf_dir.joinpath("layers"))
-        layer_id_dir = _mkdir(layers_dir.joinpath(self.pecha_id))
-
         """ write metadata and base file"""
         self.metadata_fn = opf_dir.joinpath("metadata.json")
         self.metadata_fn.write_text(
             json.dumps(self.metadata, indent=4, ensure_ascii=False), encoding="utf-8"
         )
-        self.base_fn = Path(base_dir / f"{self.pecha_id}.txt")
+
+        base_file_name = get_uuid()
+        base_dir = _mkdir(opf_dir.joinpath("base"))
+        self.base_fn = Path(base_dir / f"{base_file_name}.txt")
         self.base_fn.write_text(self.base_text)
+
+        layers_dir = _mkdir(opf_dir.joinpath("layers"))
+        layer_id_dir = _mkdir(layers_dir.joinpath(base_file_name))
 
         self.annotation_fn = layer_id_dir
 
@@ -80,7 +83,7 @@ class Pecha:
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id=PECHA_ANNOTATION_STORE_ID)
         self.resource = self.annotation_store.add_resource(
-            id=self.pecha_id, filename=self.base_fn.as_posix()
+            id=self.base_fn.name, filename=self.base_fn.as_posix()
         )
         self.dataset = self.annotation_store.add_dataset(id=PECHA_DATASET_ID)
         self.dataset.add_key(self.metadata["annotation_category"])
