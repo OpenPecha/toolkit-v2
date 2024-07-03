@@ -4,7 +4,12 @@ from typing import Dict
 
 from stam import AnnotationStore, Offset, Selector
 
-from openpecha.config import PECHAS_PATH, _mkdir
+from openpecha.config import (
+    PECHA_ANNOTATION_STORE_ID,
+    PECHA_DATASET_ID,
+    PECHAS_PATH,
+    _mkdir,
+)
 from openpecha.ids import get_uuid
 from openpecha.pecha.annotation import Annotation
 
@@ -73,11 +78,11 @@ class Pecha:
 
         self.create_pecha_folder(export_path)
         """write annotations in stam data model"""
-        self.annotation_store = AnnotationStore(id="PechaAnnotationStore")
+        self.annotation_store = AnnotationStore(id=PECHA_ANNOTATION_STORE_ID)
         self.resource = self.annotation_store.add_resource(
             id=self.pecha_id, filename=self.base_fn.as_posix()
         )
-        self.dataset = self.annotation_store.add_dataset(id="PechaDataSet")
+        self.dataset = self.annotation_store.add_dataset(id=PECHA_DATASET_ID)
         self.dataset.add_key(self.metadata["annotation_category"])
 
         unique_annotation_data_id = get_uuid()

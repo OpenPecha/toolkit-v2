@@ -10,3 +10,6 @@ def _mkdir(path):
 
 BASE_PATH = _mkdir(Path.home() / ".pechadata")
 PECHAS_PATH = _mkdir(BASE_PATH / "pechas")
+
+PECHA_ANNOTATION_STORE_ID = "PechaAnnotationStore"
+PECHA_DATASET_ID = "PechaDataSet"
