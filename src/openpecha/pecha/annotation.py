@@ -1,10 +1,7 @@
 from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
-from openpecha.ids import get_uuid
-
 
 class Annotation(BaseModel):
-    id_: str = Field(default_factory=get_uuid)
     segment: str
     start: int = Field(ge=0)
     end: int = Field(ge=0)

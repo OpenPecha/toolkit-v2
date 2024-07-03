@@ -1,9 +1,6 @@
 from enum import Enum
 from typing import Dict
 
-from pydantic import BaseModel, Field
-
-from openpecha.ids import get_uuid
 from openpecha.pecha.annotation import Annotation
 
 
@@ -12,7 +9,7 @@ class LayerEnum(Enum):
     commentaries = "Commentaries"
 
 
-class Layer(BaseModel):
-    id_: str = Field(default_factory=get_uuid)
-    annotation_type: LayerEnum
-    annotations: Dict[str, Annotation] = Field(default_factory=dict)
+class Layer:
+    def __init__(self, annotation_label: LayerEnum, annotations: Dict[str, Annotation]):
+        self.annotation_label = annotation_label
+        self.annotations = annotations
