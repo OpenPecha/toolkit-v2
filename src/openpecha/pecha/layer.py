@@ -12,7 +12,7 @@ from openpecha.pecha.annotation import Annotation
 
 class LayerEnum(Enum):
     segment = "Segment"
-    commentaries = "Commentaries"
+    commentaries = "Comment"
 
 
 def get_annotation_category():
