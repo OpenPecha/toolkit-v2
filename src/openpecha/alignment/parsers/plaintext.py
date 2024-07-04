@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
@@ -18,13 +19,12 @@ class PlainTextLineAlignedParser:
         target_text = target_path.read_text(encoding="utf-8")
         return cls(source_text, target_text, metadata)
 
-    def create_pecha_layer(self, base_text: str, annotation: LayerEnum):
+    def create_pecha_layer(self, segments: List[str], annotation_label: LayerEnum):
         """ """
-        layer = Layer(annotation_label=annotation, annotations={})
+        layer = Layer(annotation_label=annotation_label, annotations={})
         char_count = 0
-        for segment in base_text.split("\n"):
+        for segment in segments:
             annotation = Annotation(
-                id_=get_uuid(),
                 segment=segment,
                 start=char_count,
                 end=char_count + len(segment),
@@ -52,12 +52,12 @@ class PlainTextLineAlignedParser:
         source_pecha.set_layer(
             source_base_fname,
             source_annotation,
-            self.create_pecha_layer(self.source_text, source_annotation),
+            self.create_pecha_layer(self.source_text.split("\n"), source_annotation),
         )
         target_pecha.set_layer(
             target_base_fname,
             target_annotation,
-            self.create_pecha_layer(self.target_text, target_annotation),
+            self.create_pecha_layer(self.target_text.split("\n"), target_annotation),
         )
 
         source_pecha.set_metadata(self.metadata["source"])
