@@ -1,18 +1,8 @@
 import json
 from pathlib import Path
-from shutil import rmtree
 from typing import Dict
 
-from stam import AnnotationStore, Offset, Selector
-
-from openpecha.config import (
-    PECHA_ANNOTATION_STORE_ID,
-    PECHA_DATASET_ID,
-    PECHAS_PATH,
-    _mkdir,
-)
-from openpecha.ids import get_uuid
-from openpecha.pecha.annotation import Annotation
+from openpecha.config import PECHAS_PATH, _mkdir
 from openpecha.pecha.layer import Layer, LayerEnum
 
 
