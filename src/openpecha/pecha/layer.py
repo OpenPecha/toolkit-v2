@@ -34,7 +34,7 @@ class Layer:
             resource["@include"] = str(original_path.relative_to(export_path))
         return json_object
 
-    def write_layer(self, base_file_path: Path, export_path: Path):
+    def write(self, base_file_path: Path, export_path: Path):
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id=PECHA_ANNOTATION_STORE_ID)
         self.resource = self.annotation_store.add_resource(
@@ -67,8 +67,10 @@ class Layer:
         """ save annotations in json"""
         json_string = self.annotation_store.to_json_string()
         json_object = self.covert_to_relative_path(json_string, export_path)
+        """ add four uuid digits to the layer file name for uniqueness"""
+        layer_fname = f"{self.annotation_label.value}-{get_uuid()[:4]}.json"
         with open(
-            export_path / f"{self.annotation_label.value}.json",
+            export_path / layer_fname,
             "w",
         ) as f:
             f.write(json.dumps(json_object, indent=4, ensure_ascii=False))
