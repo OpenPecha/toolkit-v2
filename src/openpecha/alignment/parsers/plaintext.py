@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Dict
 
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
@@ -21,18 +20,19 @@ class PlainTextLineAlignedParser:
 
     def create_pecha_layer(self, base_text: str, annotation: LayerEnum):
         """ """
-        layer_annotations: Dict[str, Annotation] = {}
+        layer = Layer(annotation_label=annotation, annotations={})
         char_count = 0
         for segment in base_text.split("\n"):
-            layer_annotations[get_uuid()] = Annotation(
+            annotation = Annotation(
                 id_=get_uuid(),
                 segment=segment,
                 start=char_count,
                 end=char_count + len(segment),
             )
+            layer.set_annotation(annotation)
             char_count += len(segment)
 
-        return Layer(annotation_label=annotation, annotations=layer_annotations)
+        return layer
 
     def parse(self):
         source_pecha_id, target_pecha_id = (
