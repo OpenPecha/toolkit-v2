@@ -51,12 +51,12 @@ class PlainTextLineAlignedParser:
 
         source_pecha.set_layer(
             source_base_fname,
-            source_annotation,
+            (source_annotation, None),
             self.create_pecha_layer(self.source_text.split("\n"), source_annotation),
         )
         target_pecha.set_layer(
             target_base_fname,
-            target_annotation,
+            (target_annotation, None),
             self.create_pecha_layer(self.target_text.split("\n"), target_annotation),
         )
 
