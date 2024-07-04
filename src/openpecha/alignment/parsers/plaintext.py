@@ -40,21 +40,22 @@ class PlainTextLineAlignedParser:
             get_initial_pecha_id(),
         )
 
-        source_base_files = {get_uuid(): self.source_text}
-        target_base_files = {get_uuid(): self.target_text}
+        source_base_fname, target_base_fname = get_uuid(), get_uuid()
+        source_base_files = {source_base_fname: self.source_text}
+        target_base_files = {target_base_fname: self.target_text}
 
         source_annotation = LayerEnum(self.metadata["source"]["annotation_label"])
         target_annotation = LayerEnum(self.metadata["target"]["annotation_label"])
 
         source_layers = {
-            get_uuid(): {
+            source_base_fname: {
                 source_annotation: self.create_pecha_layer(
                     self.source_text, source_annotation
                 )
             }
         }
         target_layers = {
-            get_uuid(): {
+            target_base_fname: {
                 target_annotation: self.create_pecha_layer(
                     self.target_text, target_annotation
                 ),
