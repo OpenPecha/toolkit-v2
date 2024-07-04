@@ -59,6 +59,6 @@ class Pecha:
             for _, layer in layer_data.items():
                 _mkdir(layer_dir / layer_fname)
                 layer.write(
-                    base_file_path=base_dir / layer_fname,
-                    export_path=layer_dir / layer_fname,
+                    base_file_path=base_dir / f"{layer_fname}.txt",
+                    export_path=export_path,
                 )

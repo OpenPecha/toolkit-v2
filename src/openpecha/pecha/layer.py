@@ -68,9 +68,12 @@ class Layer:
         json_string = self.annotation_store.to_json_string()
         json_object = self.covert_to_relative_path(json_string, export_path)
         """ add four uuid digits to the layer file name for uniqueness"""
-        layer_fname = f"{self.annotation_label.value}-{get_uuid()[:4]}.json"
+        layer_dir = base_file_path.parent.parent / "layers" / base_file_path.stem
+        layer_file_path = (
+            layer_dir / f"{self.annotation_label.value}-{get_uuid()[:4]}.json"
+        )
         with open(
-            export_path / layer_fname,
+            layer_file_path,
             "w",
         ) as f:
             f.write(json.dumps(json_object, indent=4, ensure_ascii=False))
