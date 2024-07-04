@@ -39,35 +39,30 @@ class PlainTextLineAlignedParser:
             get_initial_pecha_id(),
             get_initial_pecha_id(),
         )
+        source_pecha = Pecha(source_pecha_id)
+        target_pecha = Pecha(target_pecha_id)
 
         source_base_fname, target_base_fname = get_uuid(), get_uuid()
-        source_base_files = {source_base_fname: self.source_text}
-        target_base_files = {target_base_fname: self.target_text}
+        source_pecha.set_base_file(source_base_fname, self.source_text)
+        target_pecha.set_base_file(target_base_fname, self.target_text)
 
         source_annotation = LayerEnum(self.metadata["source"]["annotation_label"])
         target_annotation = LayerEnum(self.metadata["target"]["annotation_label"])
 
-        source_layers = {
-            source_base_fname: {
-                source_annotation: self.create_pecha_layer(
-                    self.source_text, source_annotation
-                )
-            }
-        }
-        target_layers = {
-            target_base_fname: {
-                target_annotation: self.create_pecha_layer(
-                    self.target_text, target_annotation
-                ),
-            }
-        }
+        source_pecha.set_layer(
+            source_base_fname,
+            source_annotation,
+            self.create_pecha_layer(self.source_text, source_annotation),
+        )
+        target_pecha.set_layer(
+            target_base_fname,
+            target_annotation,
+            self.create_pecha_layer(self.target_text, target_annotation),
+        )
 
-        source_pecha = Pecha(  # noqa
-            source_pecha_id, source_base_files, source_layers, self.metadata["source"]
-        )
-        target_pecha = Pecha(  # noqa
-            target_pecha_id, target_base_files, target_layers, self.metadata["target"]
-        )
+        source_pecha.set_metadata(self.metadata["source"])
+        target_pecha.set_metadata(self.metadata["target"])
+
         return source_pecha, target_pecha
 
         # TODO:
