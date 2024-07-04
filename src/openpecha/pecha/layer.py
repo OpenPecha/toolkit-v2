@@ -24,22 +24,53 @@ def get_annotation_category(layer_label: LayerEnum) -> LayerGroupEnum:
     return LayerGroupEnum.structure_type
 
 
+def convert_relative_to_absolute_path(json_data, absolute_base_path: Path):
+    """call after loading the stam from json"""
+    for resource in json_data["resources"]:
+        original_path = Path(resource["@include"])
+        resource["@include"] = str(absolute_base_path / original_path)
+    return json_data
+
+
 class Layer:
     def __init__(self, annotation_label: LayerEnum, annotations: Dict[str, Annotation]):
         self.annotation_label = annotation_label
         self.annotations = annotations
+
+    @classmethod
+    def from_path(cls, layer_file_path: Path):
+        """get annotation label"""
+        annotation_label = LayerEnum(layer_file_path.stem.split("-")[0])
+        """ load annotations from json"""
+        with open(layer_file_path) as f:
+            json_data = json.load(f)
+        absolute_base_path = layer_file_path.parents[4]
+        json_data = convert_relative_to_absolute_path(json_data, absolute_base_path)
+        annotation_store = AnnotationStore(string=json.dumps(json_data))
+
+        layer_annotations: Dict[str, Annotation] = {}
+        for annotation in annotation_store.annotations():
+            annotation_id, segment = annotation.id(), str(annotation)
+            start = annotation.offset().begin().value()
+            end = annotation.offset().end().value()
+            layer_annotations[annotation_id] = Annotation(
+                segment=segment, start=start, end=end
+            )
+
+        return cls(annotation_label, layer_annotations)
 
     def set_annotation(self, annotation: Annotation, annotation_id=None):
         if not annotation_id:
             annotation_id = get_uuid()
         self.annotations[annotation_id] = annotation
 
-    def covert_to_relative_path(self, json_string: str, export_path: Path):
-        """convert the absolute path to relative path for base file path in json string"""
+    def convert_absolute_to_relative_path(self, absolute_base_path: Path):
+        """call before saving the stam in json"""
+        json_string = self.annotation_store.to_json()
         json_object = json.loads(json_string)
         for resource in json_object["resources"]:
             original_path = Path(resource["@include"])
-            resource["@include"] = str(original_path.relative_to(export_path))
+            resource["@include"] = str(original_path.relative_to(absolute_base_path))
         return json_object
 
     def write(self, base_file_path: Path, export_path: Path):
@@ -80,8 +111,7 @@ class Layer:
                 data=data,
             )
         """ save annotations in json"""
-        json_string = self.annotation_store.to_json_string()
-        json_object = self.covert_to_relative_path(json_string, export_path)
+        pecha_json = self.convert_absolute_to_relative_path(export_path)
         """ add four uuid digits to the layer file name for uniqueness"""
         layer_dir = base_file_path.parent.parent / "layers" / base_file_path.stem
         layer_file_path = (
@@ -91,4 +121,4 @@ class Layer:
             layer_file_path,
             "w",
         ) as f:
-            f.write(json.dumps(json_object, indent=4, ensure_ascii=False))
+            f.write(json.dumps(pecha_json, indent=4, ensure_ascii=False))
