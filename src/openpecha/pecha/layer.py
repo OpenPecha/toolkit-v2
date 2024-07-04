@@ -15,10 +15,13 @@ class LayerEnum(Enum):
     commentaries = "Comment"
 
 
-def get_annotation_category():
-    # TODO
-    # Return annotation category based on the annotation label
-    return "Structure Type"
+class LayerGroupEnum(Enum):
+    structure_type = "Structure Type"
+
+
+def get_annotation_category(layer_label: LayerEnum) -> LayerGroupEnum:
+    """return the annotation category for the layer label"""
+    return LayerGroupEnum.structure_type
 
 
 class Layer:
@@ -47,7 +50,7 @@ class Layer:
             id=base_file_path.name, filename=base_file_path.as_posix()
         )
         self.dataset = self.annotation_store.add_dataset(id=PECHA_DATASET_ID)
-        annotation_category = get_annotation_category()
+        annotation_category = get_annotation_category(self.annotation_label).value
         self.dataset.add_key(annotation_category)
         unique_annotation_data_id = get_uuid()
         base_text = self.base_file_path.read_text(encoding="utf-8")
