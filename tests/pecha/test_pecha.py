@@ -3,75 +3,66 @@ from shutil import rmtree
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotation import Annotation
+from openpecha.pecha.layer import Layer, LayerEnum
 
 
 def get_data_dir():
-    export_path = Path(__file__).parent / "data"
+    export_path = Path(__file__).parent / "output"
     export_path.mkdir(parents=True, exist_ok=True)
     return export_path
 
 
-def get_segments():
-    return {
-        "f2b056668a0c4ad3a085bdcd8e2d7adb": "རྒྱ་གར་སྐད་དུ། བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།",
-        "b696df2dbe314e8a87881a2bc391d0d5": "བོད་སྐད་དུ། བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པའི་ལེགས་པར་སྦྱར་བ།",
-    }
-
-
 def get_metadata():
     return {
-        "annotation_category": "Structure Type",
         "annotation_label": "Segment",
     }
 
 
-def get_expected_annotations():
-    expected_annotations = [
-        Annotation(
-            id_="f2b056668a0c4ad3a085bdcd8e2d7adb",
+def get_base():
+    return {
+        "f2b056668a0c4ad3a085bdcd8e2d7adb": "རྒྱ་གར་སྐད་དུ། བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།བོད་སྐད་དུ། བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པའི་ལེགས་པར་སྦྱར་བ།"  # noqa
+    }
+
+
+def get_layer():
+    return {
+        "f2b056668a0c4ad3a085bdcd8e2d7adb": {
+            LayerEnum("Segment"): Layer(LayerEnum("Segment"), get_annotations())
+        }
+    }
+
+
+def get_annotations():
+    return {
+        "f2b056668a0c4ad3a085bdcd8e2d7adb": Annotation(
             segment="རྒྱ་གར་སྐད་དུ། བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།",
             start=0,
             end=39,
             metadata={},
         ),
-        Annotation(
-            id_="b696df2dbe314e8a87881a2bc391d0d5",
+        "b696df2dbe314e8a87881a2bc391d0d5": Annotation(
             segment="བོད་སྐད་དུ། བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པའི་ལེགས་པར་སྦྱར་བ།",
             start=39,
             end=103,
             metadata={},
         ),
-    ]
-    return expected_annotations
+    }
 
 
-def test_pecha_set_annotations():
+def test_pecha_write():
     pecha_id = "IE7D6875F"
-    segments = get_segments()
-    metadata = get_metadata()
-    pecha = Pecha(pecha_id=pecha_id, segments=segments, metadata=metadata)
-    assert isinstance(
-        pecha, Pecha
-    ), "Not able to create Pecha object with id, segments and metadata"
-
-    annotations = list(pecha.set_annotations())
-    assert (
-        annotations == get_expected_annotations()
-    ), "Pecha not able to set annotations for the segments"
-
-
-def test_pecha_write_annotations():
-    pecha_id = "IE7D6875F"
-    segments = get_segments()
-    metadata = get_metadata()
-    pecha = Pecha(pecha_id=pecha_id, segments=segments, metadata=metadata)
+    base = get_base()
+    layer = get_layer()
     export_path = get_data_dir()
-    pecha.write_annotations(export_path=export_path)
-    assert pecha.base_fn.exists(), "Pecha not able to write base file"
-    assert pecha.metadata_fn.exists(), "Pecha not able to write metadata file"
-    assert pecha.annotation_fn.rglob(
-        "*.json"
-    ), "Pecha not able to write annotation file"
+    expected_output_path = Path(__file__).parent / "expected_output"
+
+    pecha = Pecha(pecha_id=pecha_id, bases=base, layers=layer, metadata=get_metadata())
+    pecha.write(export_path=export_path)
+
+    output_file_names = [file.name for file in export_path.rglob("*")].sort()
+    expected_file_names = [file.name for file in expected_output_path.rglob("*")].sort()
+
+    assert output_file_names == expected_file_names
 
     """ clean up """
-    rmtree(Path(export_path / pecha_id))
+    rmtree(export_path)

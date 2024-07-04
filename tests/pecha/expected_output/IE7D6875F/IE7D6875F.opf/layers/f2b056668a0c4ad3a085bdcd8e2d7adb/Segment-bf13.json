@@ -1,0 +1,88 @@
+{
+    "@type": "AnnotationStore",
+    "@id": "PechaAnnotationStore",
+    "resources": [
+        {
+            "@type": "TextResource",
+            "@id": "f2b056668a0c4ad3a085bdcd8e2d7adb.txt",
+            "@include": "IE7D6875F/IE7D6875F.opf/base/f2b056668a0c4ad3a085bdcd8e2d7adb.txt"
+        }
+    ],
+    "annotationsets": [
+        {
+            "@type": "AnnotationDataSet",
+            "@id": "PechaDataSet",
+            "keys": [
+                {
+                    "@type": "DataKey",
+                    "@id": "Structure Type"
+                }
+            ],
+            "data": [
+                {
+                    "@type": "AnnotationData",
+                    "@id": "0c2c4165fb58464eabf9db0d6a3a1080",
+                    "key": "Structure Type",
+                    "value": {
+                        "@type": "String",
+                        "value": "Segment"
+                    }
+                }
+            ]
+        }
+    ],
+    "annotations": [
+        {
+            "@type": "Annotation",
+            "@id": "f2b056668a0c4ad3a085bdcd8e2d7adb",
+            "target": {
+                "@type": "TextSelector",
+                "resource": "f2b056668a0c4ad3a085bdcd8e2d7adb.txt",
+                "offset": {
+                    "@type": "Offset",
+                    "begin": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 0
+                    },
+                    "end": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 39
+                    }
+                }
+            },
+            "data": [
+                {
+                    "@type": "AnnotationData",
+                    "@id": "0c2c4165fb58464eabf9db0d6a3a1080",
+                    "set": "PechaDataSet"
+                }
+            ]
+        },
+        {
+            "@type": "Annotation",
+            "@id": "b696df2dbe314e8a87881a2bc391d0d5",
+            "target": {
+                "@type": "TextSelector",
+                "resource": "f2b056668a0c4ad3a085bdcd8e2d7adb.txt",
+                "offset": {
+                    "@type": "Offset",
+                    "begin": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 39
+                    },
+                    "end": {
+                        "@type": "BeginAlignedCursor",
+                        "value": 103
+                    }
+                }
+            },
+            "data": [
+                {
+                    "@type": "AnnotationData",
+                    "@id": "0c2c4165fb58464eabf9db0d6a3a1080",
+                    "set": "PechaDataSet"
+                }
+            ]
+        }
+    ]
+}
