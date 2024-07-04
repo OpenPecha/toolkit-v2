@@ -11,17 +11,15 @@ def get_data_dir():
 def get_metadata():
     return {
         "source": {
-            "annotation_category": "Structure Type",
             "annotation_label": "Segment",
         },
         "target": {
-            "annotation_category": "Structure Type",
             "annotation_label": "Comment",
         },
     }
 
 
-def test_plaintext_parse():
+def test_PlainTextLineAlignedParser_parse():
     DATA_DIR = get_data_dir()
     source_path = DATA_DIR / "segments.txt"
     target_path = DATA_DIR / "comments.txt"
@@ -30,26 +28,7 @@ def test_plaintext_parse():
     plaintext = PlainTextLineAlignedParser.from_files(
         source_path, target_path, metadata
     )
-    plaintext.parse()
-
-    assert (
-        len(plaintext.source_segments) == 5
-    ), "plaintext parser is not parsing source_segments correctly"
-    assert (
-        len(plaintext.target_segments) == 5
-    ), "plaintext parser is not parsing target_segments correctly"
-
-
-def test_plaintext_save():
-    DATA_DIR = get_data_dir()
-    source_path = DATA_DIR / "segments.txt"
-    target_path = DATA_DIR / "comments.txt"
-
-    metadata = get_metadata()
-    plaintext = PlainTextLineAlignedParser.from_files(
-        source_path, target_path, metadata
-    )
-    source_pecha, target_pecha = plaintext.save()
+    source_pecha, target_pecha = plaintext.parse()
 
     assert isinstance(
         source_pecha, Pecha
