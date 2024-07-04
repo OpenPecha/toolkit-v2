@@ -21,8 +21,25 @@ class Pecha:
         self.metadata = metadata
 
     @classmethod
-    def from_path(cls, path: str):
-        pass
+    def from_path(cls, base_path: Path):
+        pecha_id = base_path.stem
+        pecha = Pecha(pecha_id=pecha_id)
+
+        with open(base_path / "metadata.json", encoding="utf-8") as f:
+            metadata = json.load(f)
+            pecha.set_metadata(metadata)
+
+        for base_file in (base_path / "base").rglob("*.txt"):
+            base_text = base_file.read_text(encoding="utf-8")
+            pecha.set_base_file(base_file.stem, base_text)
+
+        for layer_dir in (base_path / "layers").iterdir():
+            for layer_file in layer_dir.glob("*.json"):
+                layer = Layer.from_path(layer_file)
+                layer_key = (layer.annotation_label, layer_file.stem)
+                pecha.set_layer(layer_dir.stem, layer_key, layer)
+
+        return pecha
 
     @classmethod
     def from_id(cls, pecha_id: str):
