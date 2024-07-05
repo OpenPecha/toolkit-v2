@@ -36,10 +36,8 @@ class Layer:
         self.annotation_type = annotation_type
         self.annotations = annotations
 
-    def set_annotation(self, annotation: Annotation, annotation_id=None):
-        if not annotation_id:
-            annotation_id = get_uuid()
-        self.annotations[annotation_id] = annotation
+    def set_annotation(self, annotation: Annotation):
+        self.annotations[annotation.id_] = annotation
 
     def covert_to_relative_path(self, json_string: str, output_path: Path):
         """convert the absolute path to relative path for base file path in json string"""
