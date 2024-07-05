@@ -68,16 +68,16 @@ class Pecha:
         """ write base file"""
         if self.bases:
             base_dir = _mkdir(self.base_path / "base")
-            for base_fname, base_text in self.bases.items():
-                base_fn = base_dir / f"{base_fname}.txt"
+            for base_name, base_text in self.bases.items():
+                base_fn = base_dir / f"{base_name}.txt"
                 base_fn.write_text(base_text, encoding="utf-8")
         if self.layers:
             layer_dir = _mkdir(self.base_path / "layers")
             """ write annotation layers"""
-            for layer_fname, layer_data in self.layers.items():
+            for layer_name, layer_data in self.layers.items():
                 for _, layer in layer_data.items():
-                    _mkdir(layer_dir / layer_fname)
+                    _mkdir(layer_dir / layer_name)
                     layer.write(
-                        base_file_path=base_dir / f"{layer_fname}.txt",
+                        base_file_path=base_dir / f"{layer_name}.txt",
                         output_path=output_path,
                     )
