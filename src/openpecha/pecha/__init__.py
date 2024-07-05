@@ -42,9 +42,9 @@ class Pecha:
 
         """layer key is a tuple of layer label and layer id"""
         """ A particular volume can have multiple layers with same label but different id"""
-        layer_id = get_uuid()[:4]
-        self.layers[base_name][(annotation_type, layer_id)] = layer
-        return layer_id
+        layer_subtype_id = get_uuid()[:4]
+        self.layers[base_name][(annotation_type, layer_subtype_id)] = layer
+        return layer_subtype_id
 
     def set_metadata(self, metadata: Dict[str, str]):
         if not self.metadata:
