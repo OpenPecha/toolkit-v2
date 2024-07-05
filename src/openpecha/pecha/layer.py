@@ -20,8 +20,10 @@ class LayerGroupEnum(Enum):
     structure_type = "Structure Type"
 
 
-def get_annotation_category(layer_label: LayerEnum) -> LayerGroupEnum:
+def get_annotation_category(layer_type: LayerEnum) -> LayerGroupEnum:
     """return the annotation category for the layer label"""
+    if layer_type == LayerEnum.segment:
+        return LayerGroupEnum.structure_type
     return LayerGroupEnum.structure_type
 
 
