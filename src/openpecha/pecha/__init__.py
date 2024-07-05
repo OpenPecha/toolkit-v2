@@ -13,7 +13,9 @@ class Pecha:
         self,
         pecha_id: str,
         bases: Dict[str, str] = defaultdict(),
-        layers: Dict[str, Dict[Tuple[LayerEnum, str], Layer]] = None,
+        layers: Dict[str, Dict[Tuple[LayerEnum, str], Layer]] = defaultdict(
+            lambda: defaultdict()
+        ),
         metadata: Dict[str, str] = None,
     ) -> None:
         self.pecha_id = pecha_id
@@ -35,19 +37,14 @@ class Pecha:
         return base_file_name
 
     def set_layer(
-        self, layer_dir: str, layer_key: Tuple[LayerEnum, Optional[str]], layer: Layer
-    ):
-        """Note layer dir should be same as its corresponding base file name"""
-        if not self.layers:
-            self.layers = {}
-        if layer_dir not in self.layers:
-            self.layers[layer_dir] = {}
+        self, layer_dir: str, annotation_type: LayerEnum, layer: Layer
+    ) -> str:
 
-        """ layer key is a tuple of layer label and layer id"""
+        """layer key is a tuple of layer label and layer id"""
         """ A particular volume can have multiple layers with same label but different id"""
-        layer_label, layer_id = layer_key
-        layer_id = layer_id if layer_id else get_uuid()
-        self.layers[layer_dir][(layer_label, layer_id)] = layer
+        layer_id = get_uuid()[:4]
+        self.layers[layer_dir][(annotation_type, layer_id)] = layer
+        return layer_id
 
     def set_metadata(self, metadata: Dict[str, str]):
         if not self.metadata:

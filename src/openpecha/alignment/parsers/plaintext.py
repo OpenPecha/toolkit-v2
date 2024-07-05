@@ -44,18 +44,15 @@ class PlainTextLineAlignedParser:
         source_base_name = source_pecha.set_base_file(self.source_text)
         target_base_name = target_pecha.set_base_file(self.target_text)
 
-        source_annotation = LayerEnum(self.metadata["source"]["annotation_type"])
-        target_annotation = LayerEnum(self.metadata["target"]["annotation_type"])
-
         source_pecha.set_layer(
             source_base_name,
-            (source_annotation, None),
-            self.create_pecha_layer(self.source_text.split("\n"), source_annotation),
+            LayerEnum.segment,
+            self.create_pecha_layer(self.source_text.split("\n"), LayerEnum.segment),
         )
         target_pecha.set_layer(
             target_base_name,
-            (target_annotation, None),
-            self.create_pecha_layer(self.target_text.split("\n"), target_annotation),
+            LayerEnum.segment,
+            self.create_pecha_layer(self.target_text.split("\n"), LayerEnum.segment),
         )
 
         source_pecha.set_metadata(self.metadata["source"])

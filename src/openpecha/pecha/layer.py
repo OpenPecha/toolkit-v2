@@ -2,12 +2,13 @@ import json
 from collections import defaultdict
 from enum import Enum
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
-from stam import AnnotationStore, Offset, Selector
+from pydantic import BaseModel, ConfigDict, Field
+from stam import AnnotationDataSet, AnnotationStore, Offset, Selector
 
 from openpecha.config import PECHA_ANNOTATION_STORE_ID, PECHA_DATASET_ID
-from openpecha.ids import get_uuid
+from openpecha.ids import get_fourchar_uuid, get_uuid
 from openpecha.pecha.annotation import Annotation
 
 
@@ -27,14 +28,15 @@ def get_annotation_category(layer_type: LayerEnum) -> LayerGroupEnum:
     return LayerGroupEnum.structure_type
 
 
-class Layer:
-    def __init__(
-        self,
-        annotation_type: LayerEnum,
-        annotations: Dict[str, Annotation] = defaultdict(),
-    ):
-        self.annotation_type = annotation_type
-        self.annotations = annotations
+class Layer(BaseModel):
+    id_: str = Field(default_factory=get_fourchar_uuid)
+    annotation_type: LayerEnum
+    annotations: Dict[str, Annotation] = defaultdict()
+
+    annotation_store: Optional[AnnotationStore] = None
+    dataset: Optional[AnnotationDataSet] = None
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def set_annotation(self, annotation: Annotation):
         self.annotations[annotation.id_] = annotation
@@ -48,10 +50,10 @@ class Layer:
         return json_object
 
     def write(self, base_file_path: Path, output_path: Path):
-        self.base_file_path = base_file_path
+        base_file_path = base_file_path
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id=PECHA_ANNOTATION_STORE_ID)
-        self.resource = self.annotation_store.add_resource(
+        resource = self.annotation_store.add_resource(
             id=base_file_path.name, filename=base_file_path.as_posix()
         )
         self.dataset = self.annotation_store.add_dataset(id=PECHA_DATASET_ID)
@@ -60,7 +62,7 @@ class Layer:
         unique_annotation_data_id = get_uuid()
         for annotation_id, annotation in self.annotations.items():
             target = Selector.textselector(
-                self.resource,
+                resource,
                 Offset.simple(annotation.start, annotation.end),
             )
             data = [
@@ -81,9 +83,7 @@ class Layer:
         json_object = self.covert_to_relative_path(json_string, output_path)
         """ add four uuid digits to the layer file name for uniqueness"""
         layer_dir = base_file_path.parent.parent / "layers" / base_file_path.stem
-        layer_file_path = (
-            layer_dir / f"{self.annotation_type.value}-{get_uuid()[:4]}.json"
-        )
+        layer_file_path = layer_dir / f"{self.annotation_type.value}-{self.id_}.json"
         with open(
             layer_file_path,
             "w",
