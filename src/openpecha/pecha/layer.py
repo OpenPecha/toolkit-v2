@@ -25,8 +25,8 @@ def get_annotation_category(layer_label: LayerEnum) -> LayerGroupEnum:
 
 
 class Layer:
-    def __init__(self, annotation_label: LayerEnum, annotations: Dict[str, Annotation]):
-        self.annotation_label = annotation_label
+    def __init__(self, annotation_type: LayerEnum, annotations: Dict[str, Annotation]):
+        self.annotation_type = annotation_type
         self.annotations = annotations
 
     def set_annotation(self, annotation: Annotation, annotation_id=None):
@@ -50,7 +50,7 @@ class Layer:
             id=base_file_path.name, filename=base_file_path.as_posix()
         )
         self.dataset = self.annotation_store.add_dataset(id=PECHA_DATASET_ID)
-        annotation_category = get_annotation_category(self.annotation_label).value
+        annotation_category = get_annotation_category(self.annotation_type).value
         self.dataset.add_key(annotation_category)
         unique_annotation_data_id = get_uuid()
         base_text = self.base_file_path.read_text(encoding="utf-8")
@@ -70,7 +70,7 @@ class Layer:
                 {
                     "id": unique_annotation_data_id,
                     "key": annotation_category,
-                    "value": self.annotation_label.value,
+                    "value": self.annotation_type.value,
                     "set": self.dataset.id(),
                 }
             ]
@@ -85,7 +85,7 @@ class Layer:
         """ add four uuid digits to the layer file name for uniqueness"""
         layer_dir = base_file_path.parent.parent / "layers" / base_file_path.stem
         layer_file_path = (
-            layer_dir / f"{self.annotation_label.value}-{get_uuid()[:4]}.json"
+            layer_dir / f"{self.annotation_type.value}-{get_uuid()[:4]}.json"
         )
         with open(
             layer_file_path,

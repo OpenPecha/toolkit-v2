@@ -19,9 +19,9 @@ class PlainTextLineAlignedParser:
         target_text = target_path.read_text(encoding="utf-8")
         return cls(source_text, target_text, metadata)
 
-    def create_pecha_layer(self, segments: List[str], annotation_label: LayerEnum):
+    def create_pecha_layer(self, segments: List[str], annotation_type: LayerEnum):
         """ """
-        layer = Layer(annotation_label=annotation_label, annotations={})
+        layer = Layer(annotation_type=annotation_type, annotations={})
         char_count = 0
         for segment in segments:
             annotation = Annotation(
@@ -46,8 +46,8 @@ class PlainTextLineAlignedParser:
         source_pecha.set_base_file(source_base_fname, self.source_text)
         target_pecha.set_base_file(target_base_fname, self.target_text)
 
-        source_annotation = LayerEnum(self.metadata["source"]["annotation_label"])
-        target_annotation = LayerEnum(self.metadata["target"]["annotation_label"])
+        source_annotation = LayerEnum(self.metadata["source"]["annotation_type"])
+        target_annotation = LayerEnum(self.metadata["target"]["annotation_type"])
 
         source_pecha.set_layer(
             source_base_fname,

@@ -14,7 +14,7 @@ def get_data_dir():
 
 def get_metadata():
     return {
-        "annotation_label": "Segment",
+        "annotation_type": "Segment",
     }
 
 
