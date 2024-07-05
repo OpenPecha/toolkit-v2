@@ -37,13 +37,13 @@ class Pecha:
         return base_file_name
 
     def set_layer(
-        self, layer_dir: str, annotation_type: LayerEnum, layer: Layer
+        self, base_name: str, annotation_type: LayerEnum, layer: Layer
     ) -> str:
 
         """layer key is a tuple of layer label and layer id"""
         """ A particular volume can have multiple layers with same label but different id"""
         layer_id = get_uuid()[:4]
-        self.layers[layer_dir][(annotation_type, layer_id)] = layer
+        self.layers[base_name][(annotation_type, layer_id)] = layer
         return layer_id
 
     def set_metadata(self, metadata: Dict[str, str]):
