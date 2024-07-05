@@ -21,7 +21,7 @@ class PlainTextLineAlignedParser:
 
     def create_pecha_layer(self, segments: List[str], annotation_type: LayerEnum):
         """ """
-        layer = Layer(annotation_type=annotation_type, annotations={})
+        layer = Layer(annotation_type=annotation_type)
         char_count = 0
         for segment in segments:
             annotation = Annotation(

@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 from enum import Enum
 from pathlib import Path
 from typing import Dict
@@ -25,7 +26,11 @@ def get_annotation_category(layer_label: LayerEnum) -> LayerGroupEnum:
 
 
 class Layer:
-    def __init__(self, annotation_type: LayerEnum, annotations: Dict[str, Annotation]):
+    def __init__(
+        self,
+        annotation_type: LayerEnum,
+        annotations: Dict[str, Annotation] = defaultdict(),
+    ):
         self.annotation_type = annotation_type
         self.annotations = annotations
 
