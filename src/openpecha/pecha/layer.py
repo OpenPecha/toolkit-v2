@@ -66,7 +66,7 @@ class Layer:
 
     def convert_absolute_to_relative_path(self, absolute_base_path: Path):
         """call before saving the stam in json"""
-        json_string = self.annotation_store.to_json()
+        json_string = self.annotation_store.to_json_string()
         json_object = json.loads(json_string)
         for resource in json_object["resources"]:
             original_path = Path(resource["@include"])
