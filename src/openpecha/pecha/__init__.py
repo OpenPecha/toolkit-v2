@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -11,7 +12,7 @@ class Pecha:
     def __init__(
         self,
         pecha_id: str,
-        bases: Dict[str, str] = None,
+        bases: Dict[str, str] = defaultdict(),
         layers: Dict[str, Dict[Tuple[LayerEnum, str], Layer]] = None,
         metadata: Dict[str, str] = None,
     ) -> None:
@@ -28,10 +29,10 @@ class Pecha:
     def from_id(cls, pecha_id: str):
         pass
 
-    def set_base_file(self, base_file_name: str, base_text: str):
-        if not self.bases:
-            self.bases = {}
+    def set_base_file(self, base_text: str) -> str:
+        base_file_name = get_uuid()
         self.bases[base_file_name] = base_text
+        return base_file_name
 
     def set_layer(
         self, layer_dir: str, layer_key: Tuple[LayerEnum, Optional[str]], layer: Layer

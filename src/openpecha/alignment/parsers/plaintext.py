@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List
 
-from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.ids import get_initial_pecha_id
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotation import Annotation
 from openpecha.pecha.layer import Layer, LayerEnum
@@ -41,20 +41,19 @@ class PlainTextLineAlignedParser:
         source_pecha = Pecha(source_pecha_id)
         target_pecha = Pecha(target_pecha_id)
 
-        source_base_fname, target_base_fname = get_uuid(), get_uuid()
-        source_pecha.set_base_file(source_base_fname, self.source_text)
-        target_pecha.set_base_file(target_base_fname, self.target_text)
+        source_base_name = source_pecha.set_base_file(self.source_text)
+        target_base_name = target_pecha.set_base_file(self.target_text)
 
         source_annotation = LayerEnum(self.metadata["source"]["annotation_type"])
         target_annotation = LayerEnum(self.metadata["target"]["annotation_type"])
 
         source_pecha.set_layer(
-            source_base_fname,
+            source_base_name,
             (source_annotation, None),
             self.create_pecha_layer(self.source_text.split("\n"), source_annotation),
         )
         target_pecha.set_layer(
-            target_base_fname,
+            target_base_name,
             (target_annotation, None),
             self.create_pecha_layer(self.target_text.split("\n"), target_annotation),
         )
