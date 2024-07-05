@@ -41,15 +41,15 @@ class Layer:
             annotation_id = get_uuid()
         self.annotations[annotation_id] = annotation
 
-    def covert_to_relative_path(self, json_string: str, export_path: Path):
+    def covert_to_relative_path(self, json_string: str, output_path: Path):
         """convert the absolute path to relative path for base file path in json string"""
         json_object = json.loads(json_string)
         for resource in json_object["resources"]:
             original_path = Path(resource["@include"])
-            resource["@include"] = str(original_path.relative_to(export_path))
+            resource["@include"] = str(original_path.relative_to(output_path))
         return json_object
 
-    def write(self, base_file_path: Path, export_path: Path):
+    def write(self, base_file_path: Path, output_path: Path):
         self.base_file_path = base_file_path
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id=PECHA_ANNOTATION_STORE_ID)
@@ -80,7 +80,7 @@ class Layer:
             )
         """ save annotations in json"""
         json_string = self.annotation_store.to_json_string()
-        json_object = self.covert_to_relative_path(json_string, export_path)
+        json_object = self.covert_to_relative_path(json_string, output_path)
         """ add four uuid digits to the layer file name for uniqueness"""
         layer_dir = base_file_path.parent.parent / "layers" / base_file_path.stem
         layer_file_path = (

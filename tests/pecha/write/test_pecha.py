@@ -7,9 +7,9 @@ from openpecha.pecha.layer import Layer, LayerEnum
 
 
 def get_data_dir():
-    export_path = Path(__file__).parent / "output"
-    export_path.mkdir(parents=True, exist_ok=True)
-    return export_path
+    output_path = Path(__file__).parent / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
+    return output_path
 
 
 def get_metadata():
@@ -51,19 +51,16 @@ def test_pecha_write():
     pecha_id = "IE7D6875F"
     base = get_base()
     layer = get_layer()
-    export_path = get_data_dir()
+    output_path = get_data_dir()
     expected_output_path = Path(__file__).parent / "expected_output"
 
     pecha = Pecha(pecha_id=pecha_id, bases=base, layers=layer, metadata=get_metadata())
-    pecha.write(export_path=export_path)
+    pecha.write(output_path=output_path)
 
-    output_file_names = [file.name for file in export_path.rglob("*")].sort()
+    output_file_names = [file.name for file in output_path.rglob("*")].sort()
     expected_file_names = [file.name for file in expected_output_path.rglob("*")].sort()
 
     assert output_file_names == expected_file_names
 
     """ clean up """
-    rmtree(export_path)
-
-
-test_pecha_write()
+    rmtree(output_path)

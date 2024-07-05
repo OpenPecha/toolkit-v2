@@ -55,9 +55,9 @@ class Pecha:
         for key, value in metadata.items():
             self.metadata[key] = value
 
-    def write(self, export_path: Path = PECHAS_PATH):
+    def write(self, output_path: Path = PECHAS_PATH):
 
-        pecha_dir = _mkdir(export_path / self.pecha_id)
+        pecha_dir = _mkdir(output_path / self.pecha_id)
         self.base_path = _mkdir(pecha_dir / f"{self.pecha_id}.opf")
         """ write metadata """
         self.metadata_fn = self.base_path / "metadata.json"
@@ -79,5 +79,5 @@ class Pecha:
                     _mkdir(layer_dir / layer_fname)
                     layer.write(
                         base_file_path=base_dir / f"{layer_fname}.txt",
-                        export_path=export_path,
+                        output_path=output_path,
                     )
