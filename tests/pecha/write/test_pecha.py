@@ -35,13 +35,11 @@ def get_layer():
 def get_annotations():
     return {
         "f2b056668a0c4ad3a085bdcd8e2d7adb": Annotation(
-            segment="རྒྱ་གར་སྐད་དུ། བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།",
             start=0,
             end=39,
             metadata={},
         ),
         "b696df2dbe314e8a87881a2bc391d0d5": Annotation(
-            segment="བོད་སྐད་དུ། བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པའི་ལེགས་པར་སྦྱར་བ།",
             start=39,
             end=103,
             metadata={},
@@ -66,3 +64,6 @@ def test_pecha_write():
 
     """ clean up """
     rmtree(export_path)
+
+
+test_pecha_write()

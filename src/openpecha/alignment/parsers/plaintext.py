@@ -25,7 +25,6 @@ class PlainTextLineAlignedParser:
         char_count = 0
         for segment in segments:
             annotation = Annotation(
-                segment=segment,
                 start=char_count,
                 end=char_count + len(segment),
             )

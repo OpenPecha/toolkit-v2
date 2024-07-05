@@ -58,15 +58,7 @@ class Layer:
         annotation_category = get_annotation_category(self.annotation_type).value
         self.dataset.add_key(annotation_category)
         unique_annotation_data_id = get_uuid()
-        base_text = self.base_file_path.read_text(encoding="utf-8")
         for annotation_id, annotation in self.annotations.items():
-            if (
-                annotation.segment
-                != base_text[annotation.start : annotation.end]  # noqa
-            ):
-                raise ValueError(
-                    f"Annotation segment does not match the base text at {annotation_id}"
-                )
             target = Selector.textselector(
                 self.resource,
                 Offset.simple(annotation.start, annotation.end),

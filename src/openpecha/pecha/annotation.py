@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 class Annotation(BaseModel):
-    segment: str
     start: int = Field(ge=0)
     end: int = Field(ge=0)
     metadata: dict = Field(default_factory=dict)
