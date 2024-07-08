@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
+from stam import Annotation as StamAnnotation
 from stam import AnnotationDataSet, AnnotationStore, Offset, Selector
 
 from openpecha.config import PECHA_ANNOTATION_STORE_ID, PECHA_DATASET_ID
@@ -63,7 +64,27 @@ class Layer(BaseModel):
             id_=layer_id,
             annotation_type=annotation_label,
             annotations=layer_annotations,
+            annotation_store=annotation_store,
         )
+
+    def get_annotations(self):
+        if not self.annotation_store:
+            return None
+        for ann in self.annotation_store:
+            yield self.parse_annotation(ann)
+
+    def get_annotation(self, ann_id: str):
+        if not self.annotation_store:
+            return None
+        ann = self.annotation_store.annotation(id=ann_id)
+        return self.parse_annotation(ann)
+
+    def parse_annotation(self, ann: StamAnnotation):
+        ann_id = ann.id()
+        ann_segment = str(ann)
+        start = ann.offset().begin().value()
+        end = ann.offset().end().value()
+        return {"id": ann_id, "segment": ann_segment, "start": start, "end": end}
 
     def set_annotation(self, annotation: Annotation):
         self.annotations[annotation.id_] = annotation

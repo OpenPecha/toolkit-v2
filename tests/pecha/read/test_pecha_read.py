@@ -20,5 +20,25 @@ def test_pecha_read():
         assert isinstance(layer_id, str)
         assert isinstance(layer, Layer)
 
+    first_layer = pecha.layers["f2b056668a0c4ad3a085bdcd8e2d7adb"][
+        (LayerEnum.segment, "bf13")
+    ]
+
+    annotations = list(first_layer.get_annotations())
+    assert annotations == [
+        {
+            "id": "f2b056668a0c4ad3a085bdcd8e2d7adb",
+            "segment": "རྒྱ་གར་སྐད་དུ། བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།",
+            "start": 0,
+            "end": 39,
+        },
+        {
+            "id": "b696df2dbe314e8a87881a2bc391d0d5",
+            "segment": "བོད་སྐད་དུ། བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པའི་ལེགས་པར་སྦྱར་བ།",
+            "start": 39,
+            "end": 103,
+        },
+    ]
+
 
 test_pecha_read()
