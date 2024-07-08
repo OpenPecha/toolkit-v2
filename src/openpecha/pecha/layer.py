@@ -28,14 +28,6 @@ def get_annotation_category(layer_type: LayerEnum) -> LayerGroupEnum:
     return LayerGroupEnum.structure_type
 
 
-def convert_relative_to_absolute_path(json_data, absolute_base_path: Path):
-    """call after loading the stam from json"""
-    for resource in json_data["resources"]:
-        original_path = Path(resource["@include"])
-        resource["@include"] = str(absolute_base_path / original_path)
-    return json_data
-
-
 class Layer(BaseModel):
     id_: str = Field(default_factory=get_fourchar_uuid)
     annotation_type: LayerEnum
@@ -76,14 +68,6 @@ class Layer(BaseModel):
     def set_annotation(self, annotation: Annotation):
         self.annotations[annotation.id_] = annotation
 
-    def covert_to_relative_path(self, json_string: str, output_path: Path):
-        """convert the absolute path to relative path for base file path in json string"""
-        json_object = json.loads(json_string)
-        for resource in json_object["resources"]:
-            original_path = Path(resource["@include"])
-            resource["@include"] = str(original_path.relative_to(output_path))
-        return json_object
-
     def write(self, base_file_path: Path, output_path: Path):
         base_file_path = base_file_path
         """write annotations in stam data model"""
@@ -115,7 +99,7 @@ class Layer(BaseModel):
             )
         """ save annotations in json"""
         json_string = self.annotation_store.to_json_string()
-        json_object = self.covert_to_relative_path(json_string, output_path)
+        json_object = convert_to_relative_path(json_string, output_path)
         """ add four uuid digits to the layer file name for uniqueness"""
         layer_dir = base_file_path.parent.parent / "layers" / base_file_path.stem
         layer_file_path = layer_dir / f"{self.annotation_type.value}-{self.id_}.json"
@@ -124,3 +108,20 @@ class Layer(BaseModel):
             "w",
         ) as f:
             f.write(json.dumps(json_object, indent=4, ensure_ascii=False))
+
+
+def convert_relative_to_absolute_path(json_data, absolute_base_path: Path):
+    """call after loading the stam from json"""
+    for resource in json_data["resources"]:
+        original_path = Path(resource["@include"])
+        resource["@include"] = str(absolute_base_path / original_path)
+    return json_data
+
+
+def convert_to_relative_path(json_string: str, output_path: Path):
+    """convert the absolute path to relative path for base file path in json string"""
+    json_object = json.loads(json_string)
+    for resource in json_object["resources"]:
+        original_path = Path(resource["@include"])
+        resource["@include"] = str(original_path.relative_to(output_path))
+    return json_object
