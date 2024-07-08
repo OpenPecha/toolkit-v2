@@ -6,7 +6,11 @@ from typing import Dict, Optional, Tuple
 from openpecha.config import PECHAS_PATH, _mkdir
 from openpecha.ids import get_uuid
 from openpecha.pecha.layer import Layer, LayerEnum
-from openpecha.pecha.metadata import PechaMetadata, to_json_serializable
+from openpecha.pecha.metadata import (
+    InitialCreationType,
+    PechaMetadata,
+    to_json_serializable,
+)
 
 
 class Pecha:
@@ -26,12 +30,14 @@ class Pecha:
 
     @classmethod
     def from_path(cls, base_path: Path):
-        pecha_id = base_path.stem
-        pecha = Pecha(pecha_id=pecha_id)
 
-        # with open(base_path / "metadata.json", encoding="utf-8") as f:
-        #     metadata = json.load(f)
-        # pecha.set_metadata(metadata)
+        with open(base_path / "metadata.json", encoding="utf-8") as f:
+            metadata = json.load(f)
+            metadata = json.loads(metadata)
+
+        preprocessed_meta = preprocess_metadata(metadata)
+        pecha_metadata = PechaMetadata(**preprocessed_meta)
+        pecha = Pecha(metadata=pecha_metadata)
 
         for base_file in (base_path / "base").rglob("*"):
             base_text = base_file.read_text(encoding="utf-8")
@@ -98,3 +104,28 @@ class Pecha:
                         base_file_path=base_dir / f"{layer_name}.txt",
                         output_path=output_path,
                     )
+
+
+def preprocess_metadata(metadata: Dict) -> Dict:
+    # Replace null values with default values
+    processed_metadata = {
+        "id_": metadata.get("id_", ""),
+        "title": metadata.get("title", []) if metadata.get("title") is not None else [],
+        "author": metadata.get("author", [])
+        if metadata.get("author") is not None
+        else [],
+        "source": metadata.get("source", "")
+        if metadata.get("source") is not None
+        else "",
+        "language": metadata.get("language", "")
+        if metadata.get("language") is not None
+        else "",
+        "initial_creation_type": InitialCreationType(metadata["initial_creation_type"])
+        if "initial_creation_type" in metadata
+        else None,
+        "created_at": metadata.get("created_at"),
+        "source_metadata": metadata.get("source_metadata", {})
+        if metadata.get("source_metadata") is not None
+        else {},
+    }
+    return processed_metadata

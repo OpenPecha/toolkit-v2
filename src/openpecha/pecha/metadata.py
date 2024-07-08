@@ -18,16 +18,16 @@ class InitialCreationType(Enum):
 
 class PechaMetadata(BaseModel):
     id_: str = Field(default=None, alias="id_")
-    title: List[str] = Field(default=None, alias="title")
-    author: List[str] = Field(default=None, alias="author")
+    title: List[str] = Field(default=list, alias="title")
+    author: List[str] = Field(default=list, alias="author")
     source: str = Field(default=None, alias="source")
     language: str = Field(default=None, alias="language")
     initial_creation_type: InitialCreationType = Field(
         None, alias="initial_creation_type"
     )
-    created_at: datetime = Field(default=None, alias="created_at")
+    created_at: Optional[datetime] = Field(default=None, alias="created_at")
     source_metadata: Optional[Dict] = Field(
-        default={}
+        default=dict
     )  # place to dump any metadata from the source
 
     @field_validator("created_at", mode="before")
@@ -48,10 +48,15 @@ def to_json_serializable(pecha_metadata: Optional[PechaMetadata]) -> str:
     # Convert the model to a dictionary
     dict_data = pecha_metadata.model_dump()
     # Convert the defaultdict to a regular dictionary
-    dict_data["source_metadata"] = dict(dict_data["source_metadata"])
     # Convert the initial_creation_type enum to its value
     if dict_data["initial_creation_type"] is not None:
         dict_data["initial_creation_type"] = dict_data["initial_creation_type"].value
+    for k, v in dict_data.items():
+        if v is list:
+            dict_data[k] = []
+            continue
+        if v is dict:
+            dict_data[k] = {}
     return json.dumps(dict_data, indent=4, ensure_ascii=False)
 
 
