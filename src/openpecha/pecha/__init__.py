@@ -13,7 +13,7 @@ class Pecha:
     def __init__(
         self,
         pecha_id: str = None,
-        bases: Dict[str, str] = defaultdict(),
+        bases: Dict[str, str] = defaultdict(str),
         layers: Dict[str, Dict[Tuple[LayerEnum, str], Layer]] = defaultdict(
             lambda: defaultdict()
         ),
@@ -33,15 +33,14 @@ class Pecha:
         #     metadata = json.load(f)
         # pecha.set_metadata(metadata)
 
-        # for base_file in (base_path / "base").rglob("*.txt"):
-        #     base_text = base_file.read_text(encoding="utf-8")
-        # pecha.set_base_file(base_file.stem, base_text)
+        for base_file in (base_path / "base").rglob("*"):
+            base_text = base_file.read_text(encoding="utf-8")
+            pecha.set_base_file(base_text, base_file.stem)
 
-        # for layer_dir in (base_path / "layers").iterdir():
-        #     for layer_file in layer_dir.glob("*.json"):
-        #         layer = Layer.from_path(layer_file)
-        #         layer_key = (layer.annotation_label, layer_file.stem)
-        # pecha.set_layer(layer_dir.stem, layer_key, layer)
+        for layer_dir in (base_path / "layers").iterdir():
+            for layer_file in layer_dir.glob("*.json"):
+                layer = Layer.from_path(layer_file)
+                pecha.set_layer(layer_dir.stem, layer.annotation_type, layer, layer.id_)
 
         return pecha
 
@@ -49,18 +48,22 @@ class Pecha:
     def from_id(cls, pecha_id: str):
         pass
 
-    def set_base_file(self, base_text: str) -> str:
-        base_file_name = get_uuid()
+    def set_base_file(self, base_text: str, base_file_name: str = None) -> str:
+        base_file_name = base_file_name if base_file_name else get_uuid()[:4]
         self.bases[base_file_name] = base_text
         return base_file_name
 
     def set_layer(
-        self, base_name: str, annotation_type: LayerEnum, layer: Layer
+        self,
+        base_name: str,
+        annotation_type: LayerEnum,
+        layer: Layer,
+        layer_subtype_id: str = None,
     ) -> str:
 
         """layer key is a tuple of layer label and layer id"""
         """ A particular volume can have multiple layers with same label but different id"""
-        layer_subtype_id = get_uuid()[:4]
+        layer_subtype_id = get_uuid()[:4] if not layer_subtype_id else layer_subtype_id
         self.layers[base_name][(annotation_type, layer_subtype_id)] = layer
         return layer_subtype_id
 

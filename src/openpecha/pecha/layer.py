@@ -28,6 +28,14 @@ def get_annotation_category(layer_type: LayerEnum) -> LayerGroupEnum:
     return LayerGroupEnum.structure_type
 
 
+def convert_relative_to_absolute_path(json_data, absolute_base_path: Path):
+    """call after loading the stam from json"""
+    for resource in json_data["resources"]:
+        original_path = Path(resource["@include"])
+        resource["@include"] = str(absolute_base_path / original_path)
+    return json_data
+
+
 class Layer(BaseModel):
     id_: str = Field(default_factory=get_fourchar_uuid)
     annotation_type: LayerEnum
@@ -37,6 +45,33 @@ class Layer(BaseModel):
     dataset: Optional[AnnotationDataSet] = None
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @classmethod
+    def from_path(cls, layer_file_path: Path):
+        """get annotation label"""
+        annotation_label = LayerEnum(layer_file_path.stem.split("-")[0])
+        layer_id = layer_file_path.stem.split("-")[1]
+        """ load annotations from json"""
+        with open(layer_file_path) as f:
+            json_data = json.load(f)
+        absolute_base_path = layer_file_path.parents[4]
+        json_data = convert_relative_to_absolute_path(json_data, absolute_base_path)
+        annotation_store = AnnotationStore(string=json.dumps(json_data))
+
+        layer_annotations: Dict[str, Annotation] = {}
+        for annotation in annotation_store.annotations():
+            annotation_id, segment = annotation.id(), str(annotation)
+            start = annotation.offset().begin().value()
+            end = annotation.offset().end().value()
+            layer_annotations[annotation_id] = Annotation(
+                segment=segment, start=start, end=end
+            )
+
+        return Layer(
+            id_=layer_id,
+            annotation_type=annotation_label,
+            annotations=layer_annotations,
+        )
 
     def set_annotation(self, annotation: Annotation):
         self.annotations[annotation.id_] = annotation
