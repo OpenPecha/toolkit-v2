@@ -3,9 +3,9 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-from openpecha.ids import get_diplomatic_id, get_initial_pecha_id, get_open_pecha_id
+from openpecha.ids import get_initial_pecha_id
 
 
 class InitialCreationType(Enum):
@@ -35,18 +35,27 @@ class PechaMetadata(BaseModel):
 
 
 class InitialPechaMetadata(PechaMetadata):
-    @field_validator("id_", mode="before")
-    def set_id(cls, v):
-        return v or get_initial_pecha_id()
+    @model_validator(mode="before")
+    @classmethod
+    def set_id(cls, values):
+        if "id_" not in values or values["id_"] is None:
+            values["id_"] = get_initial_pecha_id()
+        return values
 
 
 class OpenPechaMetadata(PechaMetadata):
-    @field_validator("id_", mode="before")
-    def set_id(cls, v):
-        return v or get_open_pecha_id()
+    @model_validator(mode="before")
+    @classmethod
+    def set_id(cls, values):
+        if "id_" not in values or values["id_"] is None:
+            values["id_"] = get_initial_pecha_id()
+        return values
 
 
 class DiplomaticPechaMetadata(PechaMetadata):
-    @field_validator("id_", mode="before")
-    def set_id(cls, v):
-        return v or get_diplomatic_id()
+    @model_validator(mode="before")
+    @classmethod
+    def set_id(cls, values):
+        if "id_" not in values or values["id_"] is None:
+            values["id_"] = get_initial_pecha_id()
+        return values
