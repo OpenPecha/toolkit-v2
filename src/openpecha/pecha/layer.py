@@ -56,7 +56,7 @@ class Layer(BaseModel):
             start = annotation.offset().begin().value()
             end = annotation.offset().end().value()
             layer_annotations[annotation_id] = Annotation(
-                segment=segment, start=start, end=end
+                id_=annotation_id, segment=segment, start=start, end=end
             )
 
         return Layer(
