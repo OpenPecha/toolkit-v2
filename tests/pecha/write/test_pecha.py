@@ -1,9 +1,11 @@
 from pathlib import Path
 from shutil import rmtree
+from unittest import mock
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotation import Annotation
 from openpecha.pecha.layer import Layer, LayerEnum
+from openpecha.pecha.metadata import InitialCreationType, InitialPechaMetadata
 
 
 def get_data_dir():
@@ -52,26 +54,35 @@ def get_annotations():
 
 
 def test_pecha_write():
-    pecha_id = "IE7D6875F"
-    base = get_base()
-    layer = get_layer()
-    output_path = get_data_dir()
-    expected_output_path = Path(__file__).parent / "expected_output"
+    with mock.patch(
+        "openpecha.pecha.metadata.get_initial_pecha_id"
+    ) as mock_get_initial_pecha_id:
+        mock_get_initial_pecha_id.return_value = "IE7D6875F"
+        base = get_base()
+        layer = get_layer()
+        output_path = get_data_dir()
+        expected_output_path = Path(__file__).parent / "expected_output"
 
-    pecha = Pecha(pecha_id=pecha_id, bases=base, layers=layer, metadata=get_metadata())
-    pecha.write(output_path=output_path)
+        metadata = InitialPechaMetadata(initial_creation_type=InitialCreationType.input)
+        pecha = Pecha(metadata=metadata)
+        pecha.bases = base
+        pecha.layers = layer
 
-    output_file_names = [file.name for file in list(output_path.rglob("*"))]
-    expected_file_names = [file.name for file in list(expected_output_path.rglob("*"))]
+        pecha.write(output_path=output_path)
 
-    """ sort the list """
-    output_file_names.sort()
-    expected_file_names.sort()
+        output_file_names = [file.name for file in list(output_path.rglob("*"))]
+        expected_file_names = [
+            file.name for file in list(expected_output_path.rglob("*"))
+        ]
 
-    assert output_file_names == expected_file_names
+        """ sort the list """
+        output_file_names.sort()
+        expected_file_names.sort()
 
-    """ clean up """
-    rmtree(output_path)
+        assert output_file_names == expected_file_names
+
+        """ clean up """
+        rmtree(output_path)
 
 
 test_pecha_write()
