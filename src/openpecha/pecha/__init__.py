@@ -6,7 +6,7 @@ from typing import Dict, Optional, Tuple
 from openpecha.config import PECHAS_PATH, _mkdir
 from openpecha.ids import get_uuid
 from openpecha.pecha.layer import Layer, LayerEnum
-from openpecha.pecha.metadata import PechaMetadata
+from openpecha.pecha.metadata import PechaMetadata, to_json_serializable
 
 
 class Pecha:
@@ -56,7 +56,10 @@ class Pecha:
         """ write metadata """
         self.metadata_fn = self.base_path / "metadata.json"
         self.metadata_fn.write_text(
-            json.dumps(self.metadata, indent=4, ensure_ascii=False), encoding="utf-8"
+            json.dumps(
+                to_json_serializable(self.metadata), indent=4, ensure_ascii=False
+            ),
+            encoding="utf-8",
         )
 
         """ write base file"""
