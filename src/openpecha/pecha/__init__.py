@@ -19,7 +19,7 @@ class Pecha:
         ),
         metadata: PechaMetadata = None,
     ) -> None:
-        self.pecha_id = metadata.pecha_id if metadata else pecha_id
+        self.pecha_id = metadata.id_ if metadata else pecha_id
         self.bases = bases
         self.layers = layers
         self.metadata = metadata
@@ -48,6 +48,8 @@ class Pecha:
         return layer_subtype_id
 
     def write(self, output_path: Path = PECHAS_PATH):
+        if not self.pecha_id:
+            raise ValueError("pecha_id must be set before writing.")
 
         pecha_dir = _mkdir(output_path / self.pecha_id)
         self.base_path = _mkdir(pecha_dir / f"{self.pecha_id}.opf")
