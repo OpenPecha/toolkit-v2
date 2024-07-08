@@ -29,24 +29,24 @@ class PechaMetadata(BaseModel):
         default=defaultdict
     )  # place to dump any metadata from the source
 
-    @field_validator("created_at", pre=True, always=True)
+    @field_validator("created_at", mode="before")
     def set_imported_date(cls, v):
         return v or datetime.now()
 
 
 class InitialPechaMetadata(PechaMetadata):
-    @field_validator("id_", pre=True, always=True)
+    @field_validator("id_", mode="before")
     def set_id(cls, v):
         return v or get_initial_pecha_id()
 
 
 class OpenPechaMetadata(PechaMetadata):
-    @field_validator("id_", pre=True, always=True)
+    @field_validator("id_", mode="before")
     def set_id(cls, v):
         return v or get_open_pecha_id()
 
 
 class DiplomaticPechaMetadata(PechaMetadata):
-    @field_validator("id_", pre=True, always=True)
+    @field_validator("id_", mode="before")
     def set_id(cls, v):
         return v or get_diplomatic_id()
