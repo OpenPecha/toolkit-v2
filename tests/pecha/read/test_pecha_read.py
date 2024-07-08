@@ -31,12 +31,16 @@ def test_pecha_read():
             "segment": "རྒྱ་གར་སྐད་དུ། བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།",
             "start": 0,
             "end": 39,
+            "annotation_category": "Structure Type",
+            "annotation_type": "Segment",
         },
         {
             "id": "b696df2dbe314e8a87881a2bc391d0d5",
             "segment": "བོད་སྐད་དུ། བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པའི་ལེགས་པར་སྦྱར་བ།",
             "start": 39,
             "end": 103,
+            "annotation_category": "Structure Type",
+            "annotation_type": "Segment",
         },
     ]
 

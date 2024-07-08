@@ -84,7 +84,19 @@ class Layer(BaseModel):
         ann_segment = str(ann)
         start = ann.offset().begin().value()
         end = ann.offset().end().value()
-        return {"id": ann_id, "segment": ann_segment, "start": start, "end": end}
+
+        parsed_ann = {"id": ann_id, "segment": ann_segment, "start": start, "end": end}
+
+        for ann_data in ann:
+            key, value = ann_data.key().id(), str(ann_data.value())
+            if key in LayerGroupEnum._value2member_map_:
+                parsed_ann["annotation_category"] = key
+                parsed_ann["annotation_type"] = value
+            else:
+                parsed_ann["payloads"] = defaultdict(str)
+                parsed_ann["payloads"][key] = value
+
+        return parsed_ann
 
     def set_annotation(self, annotation: Annotation):
         self.annotations[annotation.id_] = annotation
