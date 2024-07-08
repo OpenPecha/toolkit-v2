@@ -1,12 +1,14 @@
 import json
+from collections import defaultdict
 from enum import Enum
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
-from stam import AnnotationStore, Offset, Selector
+from pydantic import BaseModel, ConfigDict, Field
+from stam import AnnotationDataSet, AnnotationStore, Offset, Selector
 
 from openpecha.config import PECHA_ANNOTATION_STORE_ID, PECHA_DATASET_ID
-from openpecha.ids import get_uuid
+from openpecha.ids import get_fourchar_uuid, get_uuid
 from openpecha.pecha.annotation import Annotation
 
 
@@ -19,89 +21,55 @@ class LayerGroupEnum(Enum):
     structure_type = "Structure Type"
 
 
-def get_annotation_category(layer_label: LayerEnum) -> LayerGroupEnum:
+def get_annotation_category(layer_type: LayerEnum) -> LayerGroupEnum:
     """return the annotation category for the layer label"""
+    if layer_type == LayerEnum.segment:
+        return LayerGroupEnum.structure_type
     return LayerGroupEnum.structure_type
 
 
-def convert_relative_to_absolute_path(json_data, absolute_base_path: Path):
-    """call after loading the stam from json"""
-    for resource in json_data["resources"]:
-        original_path = Path(resource["@include"])
-        resource["@include"] = str(absolute_base_path / original_path)
-    return json_data
+class Layer(BaseModel):
+    id_: str = Field(default_factory=get_fourchar_uuid)
+    annotation_type: LayerEnum
+    annotations: Dict[str, Annotation] = defaultdict()
 
+    annotation_store: Optional[AnnotationStore] = None
+    dataset: Optional[AnnotationDataSet] = None
 
-class Layer:
-    def __init__(self, annotation_label: LayerEnum, annotations: Dict[str, Annotation]):
-        self.annotation_label = annotation_label
-        self.annotations = annotations
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    @classmethod
-    def from_path(cls, layer_file_path: Path):
-        """get annotation label"""
-        annotation_label = LayerEnum(layer_file_path.stem.split("-")[0])
-        """ load annotations from json"""
-        with open(layer_file_path) as f:
-            json_data = json.load(f)
-        absolute_base_path = layer_file_path.parents[4]
-        json_data = convert_relative_to_absolute_path(json_data, absolute_base_path)
-        annotation_store = AnnotationStore(string=json.dumps(json_data))
+    def set_annotation(self, annotation: Annotation):
+        self.annotations[annotation.id_] = annotation
 
-        layer_annotations: Dict[str, Annotation] = {}
-        for annotation in annotation_store.annotations():
-            annotation_id, segment = annotation.id(), str(annotation)
-            start = annotation.offset().begin().value()
-            end = annotation.offset().end().value()
-            layer_annotations[annotation_id] = Annotation(
-                segment=segment, start=start, end=end
-            )
-
-        return cls(annotation_label, layer_annotations)
-
-    def set_annotation(self, annotation: Annotation, annotation_id=None):
-        if not annotation_id:
-            annotation_id = get_uuid()
-        self.annotations[annotation_id] = annotation
-
-    def convert_absolute_to_relative_path(self, absolute_base_path: Path):
-        """call before saving the stam in json"""
-        json_string = self.annotation_store.to_json_string()
+    def covert_to_relative_path(self, json_string: str, output_path: Path):
+        """convert the absolute path to relative path for base file path in json string"""
         json_object = json.loads(json_string)
         for resource in json_object["resources"]:
             original_path = Path(resource["@include"])
-            resource["@include"] = str(original_path.relative_to(absolute_base_path))
+            resource["@include"] = str(original_path.relative_to(output_path))
         return json_object
 
-    def write(self, base_file_path: Path, export_path: Path):
-        self.base_file_path = base_file_path
+    def write(self, base_file_path: Path, output_path: Path):
+        base_file_path = base_file_path
         """write annotations in stam data model"""
         self.annotation_store = AnnotationStore(id=PECHA_ANNOTATION_STORE_ID)
-        self.resource = self.annotation_store.add_resource(
+        resource = self.annotation_store.add_resource(
             id=base_file_path.name, filename=base_file_path.as_posix()
         )
         self.dataset = self.annotation_store.add_dataset(id=PECHA_DATASET_ID)
-        annotation_category = get_annotation_category(self.annotation_label).value
+        annotation_category = get_annotation_category(self.annotation_type).value
         self.dataset.add_key(annotation_category)
         unique_annotation_data_id = get_uuid()
-        base_text = self.base_file_path.read_text(encoding="utf-8")
         for annotation_id, annotation in self.annotations.items():
-            if (
-                annotation.segment
-                != base_text[annotation.start : annotation.end]  # noqa
-            ):
-                raise ValueError(
-                    f"Annotation segment does not match the base text at {annotation_id}"
-                )
             target = Selector.textselector(
-                self.resource,
+                resource,
                 Offset.simple(annotation.start, annotation.end),
             )
             data = [
                 {
                     "id": unique_annotation_data_id,
                     "key": annotation_category,
-                    "value": self.annotation_label.value,
+                    "value": self.annotation_type.value,
                     "set": self.dataset.id(),
                 }
             ]
@@ -111,14 +79,13 @@ class Layer:
                 data=data,
             )
         """ save annotations in json"""
-        pecha_json = self.convert_absolute_to_relative_path(export_path)
+        json_string = self.annotation_store.to_json_string()
+        json_object = self.covert_to_relative_path(json_string, output_path)
         """ add four uuid digits to the layer file name for uniqueness"""
         layer_dir = base_file_path.parent.parent / "layers" / base_file_path.stem
-        layer_file_path = (
-            layer_dir / f"{self.annotation_label.value}-{get_uuid()[:4]}.json"
-        )
+        layer_file_path = layer_dir / f"{self.annotation_type.value}-{self.id_}.json"
         with open(
             layer_file_path,
             "w",
         ) as f:
-            f.write(json.dumps(pecha_json, indent=4, ensure_ascii=False))
+            f.write(json.dumps(json_object, indent=4, ensure_ascii=False))

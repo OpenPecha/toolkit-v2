@@ -11,10 +11,10 @@ def get_data_dir():
 def get_metadata():
     return {
         "source": {
-            "annotation_label": "Segment",
+            "annotation_type": "Segment",
         },
         "target": {
-            "annotation_label": "Comment",
+            "annotation_type": "Comment",
         },
     }
 
