@@ -12,14 +12,14 @@ from openpecha.pecha.metadata import PechaMetadata
 class Pecha:
     def __init__(
         self,
-        pecha_id: str,
+        pecha_id: str = None,
         bases: Dict[str, str] = defaultdict(),
         layers: Dict[str, Dict[Tuple[LayerEnum, str], Layer]] = defaultdict(
             lambda: defaultdict()
         ),
         metadata: PechaMetadata = None,
     ) -> None:
-        self.pecha_id = pecha_id
+        self.pecha_id = metadata.pecha_id if metadata else pecha_id
         self.bases = bases
         self.layers = layers
         self.metadata = metadata
