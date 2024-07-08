@@ -2,7 +2,7 @@ import json
 from collections import defaultdict
 from enum import Enum
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from pydantic import BaseModel, ConfigDict, Field
 from stam import Annotation as StamAnnotation
@@ -111,20 +111,45 @@ class Layer(BaseModel):
         self.dataset = self.annotation_store.add_dataset(id=PECHA_DATASET_ID)
         annotation_category = get_annotation_category(self.annotation_type).value
         self.dataset.add_key(annotation_category)
-        unique_annotation_data_id = get_uuid()
+
+        unique_ann_data_id = get_uuid()
+        ann_data_ids: Dict[Tuple[str, str], str] = {}
+
         for annotation_id, annotation in self.annotations.items():
             target = Selector.textselector(
                 resource,
                 Offset.simple(annotation.start, annotation.end),
             )
+
             data = [
                 {
-                    "id": unique_annotation_data_id,
+                    "id": unique_ann_data_id,
                     "key": annotation_category,
                     "value": self.annotation_type.value,
                     "set": self.dataset.id(),
                 }
             ]
+            """
+                add metadata to the annotation if exists
+                if the metadata is already added, get the id from the dictionary,
+                else create a new id and add to the dictionary
+            """
+            if annotation.metadata:
+                for key, value in annotation.metadata.items():
+                    if (key, value) in ann_data_ids:
+                        ann_data_id = ann_data_ids[(key, value)]
+                    else:
+                        ann_data_id = get_uuid()
+                        ann_data_ids[(key, value)] = ann_data_id
+                    data.append(
+                        {
+                            "id": ann_data_id,
+                            "key": key,
+                            "value": value,
+                            "set": self.dataset.id(),
+                        }
+                    )
+
             self.annotation_store.annotate(
                 id=annotation_id,
                 target=target,
