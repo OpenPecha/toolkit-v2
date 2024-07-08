@@ -6,6 +6,7 @@ from typing import Dict, Optional, Tuple
 from openpecha.config import PECHAS_PATH, _mkdir
 from openpecha.ids import get_uuid
 from openpecha.pecha.layer import Layer, LayerEnum
+from openpecha.pecha.metadata import PechaMetadata
 
 
 class Pecha:
@@ -16,7 +17,7 @@ class Pecha:
         layers: Dict[str, Dict[Tuple[LayerEnum, str], Layer]] = defaultdict(
             lambda: defaultdict()
         ),
-        metadata: Dict[str, str] = None,
+        metadata: PechaMetadata = None,
     ) -> None:
         self.pecha_id = pecha_id
         self.bases = bases
@@ -45,12 +46,6 @@ class Pecha:
         layer_subtype_id = get_uuid()[:4]
         self.layers[base_name][(annotation_type, layer_subtype_id)] = layer
         return layer_subtype_id
-
-    def set_metadata(self, metadata: Dict[str, str]):
-        if not self.metadata:
-            self.metadata = {}
-        for key, value in metadata.items():
-            self.metadata[key] = value
 
     def write(self, output_path: Path = PECHAS_PATH):
 
