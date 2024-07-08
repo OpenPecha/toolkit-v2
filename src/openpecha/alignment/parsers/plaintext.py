@@ -35,8 +35,14 @@ class PlainTextLineAlignedParser:
 
     def parse(self):
         source_pecha_metadata, target_pecha_metadata = (
-            InitialPechaMetadata(initial_creation_type=InitialCreationType.input),
-            InitialPechaMetadata(initial_creation_type=InitialCreationType.input),
+            InitialPechaMetadata(
+                initial_creation_type=InitialCreationType.input,
+                source_metadata=self.metadata["source"],
+            ),
+            InitialPechaMetadata(
+                initial_creation_type=InitialCreationType.input,
+                source_metadata=self.metadata["target"],
+            ),
         )
         source_pecha = Pecha(metadata=source_pecha_metadata)
         target_pecha = Pecha(metadata=target_pecha_metadata)
