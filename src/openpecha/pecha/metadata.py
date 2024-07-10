@@ -45,10 +45,7 @@ def to_json_serializable(pecha_metadata: Optional[PechaMetadata]) -> str:
     if pecha_metadata is None:
         return json.dumps({}, indent=4, ensure_ascii=False)
 
-    # Convert the model to a dictionary
     dict_data = pecha_metadata.model_dump()
-    # Convert the defaultdict to a regular dictionary
-    # Convert the initial_creation_type enum to its value
     if dict_data["initial_creation_type"] is not None:
         dict_data["initial_creation_type"] = dict_data["initial_creation_type"].value
     for k, v in dict_data.items():
