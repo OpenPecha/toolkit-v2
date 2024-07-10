@@ -28,13 +28,12 @@ jobs:
         pip install .
         pip install .[dev]
 
-    - name: Set up GITHUB_TOKEN
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: echo "GITHUB_TOKEN is set up"
-
     - name: Test with pytest
       run: PYTHONPATH=src pytest
+      env:
+        GITHUB_TOKEN: ""
 
     - name: Test Coverage
-      run: PYTHONPATH=src pytest --cov project_name
+      run: PYTHONPATH=src pytest --cov openpecha
+      env:
+        GITHUB_TOKEN: ""
