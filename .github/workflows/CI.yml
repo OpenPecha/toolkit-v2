@@ -31,9 +31,9 @@ jobs:
     - name: Test with pytest
       run: PYTHONPATH=src pytest
       env:
-        GITHUB_TOKEN: ""
+        GITHUB_TOKEN: " "
 
     - name: Test Coverage
       run: PYTHONPATH=src pytest --cov openpecha
       env:
-        GITHUB_TOKEN: ""
+        GITHUB_TOKEN: " "
