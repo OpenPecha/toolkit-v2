@@ -6,7 +6,7 @@ from openpecha.pecha.layer import Layer, LayerEnum
 
 def test_pecha_read():
     DATA = Path(__file__).parent / "data"
-    pecha = Pecha.from_path(DATA / "IE7D6875F" / "IE7D6875F.opf")
+    pecha = Pecha.from_path(DATA / "IE7D6875F")
     assert pecha.pecha_id == "IE7D6875F"
     assert "f2b056668a0c4ad3a085bdcd8e2d7adb" in pecha.bases
     assert (

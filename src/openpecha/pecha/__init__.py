@@ -29,8 +29,9 @@ class Pecha:
         self.metadata = metadata
 
     @classmethod
-    def from_path(cls, base_path: Path):
-
+    def from_path(cls, pecha_path: Path):
+        pecha_id = pecha_path.stem
+        base_path = pecha_path / f"{pecha_id}.opf"
         with open(base_path / "metadata.json", encoding="utf-8") as f:
             metadata = json.load(f)
             metadata = json.loads(metadata)
@@ -38,6 +39,7 @@ class Pecha:
         preprocessed_meta = preprocess_metadata(metadata)
         pecha_metadata = PechaMetadata(**preprocessed_meta)
         pecha = Pecha(metadata=pecha_metadata)
+        pecha.pecha_path = pecha_path
 
         for base_file in (base_path / "base").rglob("*"):
             base_text = base_file.read_text(encoding="utf-8")
@@ -77,8 +79,9 @@ class Pecha:
         if not self.pecha_id:
             raise ValueError("pecha_id must be set before writing.")
 
-        pecha_dir = _mkdir(output_path / self.pecha_id)
-        self.base_path = _mkdir(pecha_dir / f"{self.pecha_id}.opf")
+        self.pecha_path = _mkdir(output_path / self.pecha_id)
+
+        self.base_path = _mkdir(self.pecha_path / f"{self.pecha_id}.opf")
         """ write metadata """
         self.metadata_fn = self.base_path / "metadata.json"
         self.metadata_fn.write_text(

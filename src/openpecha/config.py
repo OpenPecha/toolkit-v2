@@ -9,6 +9,8 @@ def _mkdir(path):
     return path
 
 
+ORG_NAME = "PechaData"
+
 BASE_PATH = _mkdir(Path.home() / ".pechadata")
 PECHAS_PATH = _mkdir(BASE_PATH / "pechas")
 
