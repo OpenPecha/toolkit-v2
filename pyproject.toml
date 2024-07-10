@@ -21,7 +21,7 @@ dependencies = [
   "pydantic >= 2.7.4",
   "stam == 0.8.2",
   "collection >= 0.1.6",
-
+  "PyGithub >= 2.3.0",
 ]
 
 [project.optional-dependencies]
