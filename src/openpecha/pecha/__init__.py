@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict, Optional, Tuple
 
 from openpecha.config import PECHAS_PATH, _mkdir
+from openpecha.github_utils import clone_github_repo
 from openpecha.ids import get_uuid
 from openpecha.pecha.layer import Layer, LayerEnum
 from openpecha.pecha.metadata import (
@@ -54,7 +55,8 @@ class Pecha:
 
     @classmethod
     def from_id(cls, pecha_id: str):
-        pass
+        repo_path = clone_github_repo(pecha_id, PECHAS_PATH)
+        return cls.from_path(repo_path)
 
     def set_base_file(self, base_text: str, base_file_name: str = None) -> str:
         base_file_name = base_file_name if base_file_name else get_uuid()[:4]
