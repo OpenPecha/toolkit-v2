@@ -132,7 +132,8 @@ def annotate_in_stam_model(
 
     """ add data set to main annotation store"""
     ann_store.add_dataset(
-        id=ann_metadata.dataset_id, filename=new_ann_store_path.as_posix()
+        id=ann_metadata.dataset_id,
+        filename=new_ann_store_path.relative_to(output_path).as_posix(),
     )
     save_annotation_store(ann_store, output_path, pecha_path / "annotation_store.json")
 
