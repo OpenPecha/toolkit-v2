@@ -70,10 +70,10 @@ class PlainTextLineAlignedParser:
             annotation_type=LayerEnum.comment,
         )
 
-        source_ann_store = annotate_in_stam_model(
+        _, source_ann_store = annotate_in_stam_model(
             source_ann_store, source_ann_metadata, output_path
         )
-        target_ann_store = annotate_in_stam_model(
+        _, target_ann_store = annotate_in_stam_model(
             target_ann_store, target_ann_metadata, output_path
         )
 
@@ -82,7 +82,7 @@ class PlainTextLineAlignedParser:
 
 def annotate_in_stam_model(
     ann_store: AnnotationStore, ann_metadata: AnnotationMetadata, output_path: Path
-) -> AnnotationStore:
+) -> Tuple[AnnotationStore, AnnotationStore]:
 
     """create new annotation store for the given annotation layer"""
     pecha_path = _mkdir(output_path / ann_store.id())
@@ -137,7 +137,7 @@ def annotate_in_stam_model(
     )
     save_annotation_store(ann_store, output_path, pecha_path / "annotation_store.json")
 
-    return new_ann_store
+    return (ann_store, new_ann_store)
 
 
 def split_text_into_lines(text: str) -> List[str]:
