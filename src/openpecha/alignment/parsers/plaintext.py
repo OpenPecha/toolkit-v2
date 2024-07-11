@@ -1,8 +1,9 @@
 from pathlib import Path
 from typing import List
 
-from stam import AnnotationStore, Offset, Selector
+from stam import AnnotationStore, Offset, Selector, TextResource
 
+from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
 
 
@@ -17,32 +18,55 @@ class PlainTextLineAlignedParser:
         target_text = target_path.read_text(encoding="utf-8")
         return cls(source_text, target_text)
 
-    def parse(
-        self,
-    ):
+    def parse(self, output_path: Path):
         source_lines = split_text_into_lines(self.source_text)
         target_lines = split_text_into_lines(self.target_text)
 
         dataset_id = f"root_commentary_{get_uuid()[:3]}"
 
-        source_ann_store = create_stam_segment_annotation(source_lines, dataset_id)
-        target_ann_store = create_stam_segment_annotation(target_lines, dataset_id)
+        source_ann_store, source_base_resource = set_up_stam_ann_store(
+            output_path, self.source_text, dataset_id
+        )
+        target_ann_store, target_base_resource = set_up_stam_ann_store(
+            output_path, self.target_text, dataset_id
+        )
 
-        source_ann_store.save("source_ann.json")
-        target_ann_store.save("target_ann.json")
+        source_ann_store = annotate_in_stam_model(
+            source_ann_store, source_lines, dataset_id, source_base_resource
+        )
+        target_ann_store = annotate_in_stam_model(
+            target_ann_store, target_lines, dataset_id, target_base_resource
+        )
+
+        source_ann_store.to_file(
+            Path(output_path / f"{source_ann_store.id()}" / "source.json").as_posix()
+        )
+        target_ann_store.to_file(
+            Path(output_path / f"{target_ann_store.id()}" / "target.json").as_posix()
+        )
+
+        return source_ann_store, target_ann_store
 
 
-def create_stam_segment_annotation(
-    lines: List[str], dataset_id: str
-) -> AnnotationStore:
-    ann_store = AnnotationStore(id=get_initial_pecha_id())
+def set_up_stam_ann_store(output_path: Path, base_text: str, dataset_id: str):
+    pecha_id = get_initial_pecha_id()
+    pecha_path = _mkdir(output_path / pecha_id)
+    ann_store = AnnotationStore(id=pecha_id)
+
+    base_path = _mkdir(pecha_path / "base")
     base_file_name = get_uuid()
+    Path(base_path / f"{base_file_name}.txt").write_text(base_text, encoding="utf-8")
     resource = ann_store.add_resource(
-        id=base_file_name, filename=f"{base_file_name}.txt"
+        id=base_file_name, filename=Path(base_path / f"{base_file_name}.txt").as_posix()
     )
-    ann_dataset = ann_store.add_dataset(id=dataset_id)
+    ann_store.add_dataset(id=dataset_id)
+    return ann_store, resource
 
-    """ Create annotation for each line in the text"""
+
+def annotate_in_stam_model(
+    ann_store, lines: List[str], dataset_id: str, resource: TextResource
+) -> AnnotationStore:
+    """Create annotation for each line in the text"""
     unique_ann_data_id = get_uuid()
     char_count = 0
     for line in lines:
@@ -54,7 +78,7 @@ def create_stam_segment_annotation(
         data = [
             {
                 "id": unique_ann_data_id,
-                "set": ann_dataset.id,
+                "set": dataset_id,
                 "key": "structure type",
                 "value": "root",
             }
