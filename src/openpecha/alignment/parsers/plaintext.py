@@ -130,7 +130,7 @@ def annotate_in_stam_model(
         new_ann_store, output_path, new_ann_store_path
     )
 
-    """ add data set to main annotation store"""
+    """ add dataset to main annotation store"""
     ann_store.add_dataset(
         id=ann_metadata.dataset_id,
         filename=new_ann_store_path.relative_to(output_path).as_posix(),
@@ -149,19 +149,19 @@ def split_text_into_lines(text: str) -> List[str]:
 
 
 def save_annotation_store(
-    ann_store: AnnotationStore, base_path: Path, ann_store_fn: Path
+    ann_store: AnnotationStore, base_path: Path, ann_store_path: Path
 ) -> Path:
     """
     Save the annotation store to a file.
     """
-    ann_store_fn.parent.mkdir(parents=True, exist_ok=True)
+    ann_store_path.parent.mkdir(parents=True, exist_ok=True)
 
     ann_json_str = ann_store.to_json_string()
     ann_json_dict = convert_absolute_to_relative_path(ann_json_str, base_path)
-    with open(ann_store_fn, "w", encoding="utf-8") as f:
+    with open(ann_store_path, "w", encoding="utf-8") as f:
         f.write(json.dumps(ann_json_dict, indent=4, ensure_ascii=False))
 
-    return ann_store_fn
+    return ann_store_path
 
 
 def convert_absolute_to_relative_path(json_string: str, output_path: Path):
