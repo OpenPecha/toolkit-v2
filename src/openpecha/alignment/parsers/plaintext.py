@@ -8,6 +8,10 @@ from openpecha.ids import get_initial_pecha_id, get_uuid
 
 
 class AnnotationMetadata:
+    """
+    Class to store metadata for annotations.
+    """
+
     def __init__(
         self,
         dataset_id: str,
@@ -22,10 +26,11 @@ class AnnotationMetadata:
 
 
 class PlainTextLineAlignedParser:
+    """
+    Class to parse plain text lines and create aligned annotations.
+    """
+
     def __init__(self, source_text: str, target_text: str):
-        """
-        Initialize the parser with source and target texts.
-        """
         self.source_text = source_text
         self.target_text = target_text
 
@@ -68,6 +73,7 @@ class PlainTextLineAlignedParser:
             annotation_category="structure type",
             annotation_type="comment",
         )
+
         source_ann_store = annotate_in_stam_model(
             source_ann_store, source_lines, source_ann_metadata
         )
@@ -144,10 +150,11 @@ def split_text_into_lines(text: str) -> List[str]:
 
 def save_annotation_store(
     ann_store: AnnotationStore, output_path: Path, filename: str
-) -> None:
+) -> Path:
     """
     Save the annotation store to a file.
     """
     file_path = output_path / ann_store.id() / filename
     file_path.parent.mkdir(parents=True, exist_ok=True)
     ann_store.to_file(file_path.as_posix())
+    return file_path
