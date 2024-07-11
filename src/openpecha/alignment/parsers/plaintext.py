@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import List, Tuple
 
@@ -161,7 +162,23 @@ def save_annotation_store(
     """
     Save the annotation store to a file.
     """
-    file_path = output_path / ann_store.id() / "layers" / filename
-    file_path.parent.mkdir(parents=True, exist_ok=True)
-    ann_store.to_file(file_path.as_posix())
-    return file_path
+    output_file_path = output_path / ann_store.id() / "layers" / filename
+    output_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+    ann_json_str = ann_store.to_json_string()
+    ann_json_dict = convert_absolute_to_relative_path(ann_json_str, output_path)
+    with open(output_file_path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(ann_json_dict, indent=4, ensure_ascii=False))
+
+    return output_file_path
+
+
+def convert_absolute_to_relative_path(json_string: str, output_path: Path):
+    """
+    convert the absolute to relative path for base file in json string of annotation store
+    """
+    json_object = json.loads(json_string)
+    for resource in json_object["resources"]:
+        original_path = Path(resource["@include"])
+        resource["@include"] = str(original_path.relative_to(output_path))
+    return json_object
