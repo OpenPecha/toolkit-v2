@@ -82,8 +82,14 @@ class PlainTextLineAlignedParser:
             target_ann_store, target_lines, target_ann_metadata
         )
 
-        save_annotation_store(source_ann_store, output_path, "source.json")
-        save_annotation_store(target_ann_store, output_path, "target.json")
+        source_ann_file_name = (
+            f"{source_ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
+        )
+        target_ann_file_name = (
+            f"{target_ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
+        )
+        save_annotation_store(source_ann_store, output_path, source_ann_file_name)
+        save_annotation_store(target_ann_store, output_path, target_ann_file_name)
 
         return source_ann_store, target_ann_store
 
@@ -155,7 +161,7 @@ def save_annotation_store(
     """
     Save the annotation store to a file.
     """
-    file_path = output_path / ann_store.id() / filename
+    file_path = output_path / ann_store.id() / "layers" / filename
     file_path.parent.mkdir(parents=True, exist_ok=True)
     ann_store.to_file(file_path.as_posix())
     return file_path
