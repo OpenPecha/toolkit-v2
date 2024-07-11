@@ -5,6 +5,7 @@ from stam import AnnotationStore, Offset, Selector, TextResource
 
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
 
 class AnnotationMetadata:
@@ -16,8 +17,8 @@ class AnnotationMetadata:
         self,
         dataset_id: str,
         resource: TextResource,
-        annotation_category: str,
-        annotation_type: str,
+        annotation_category: LayerGroupEnum,
+        annotation_type: LayerEnum,
     ):
         self.dataset_id = dataset_id
         self.resource = resource
@@ -64,14 +65,14 @@ class PlainTextLineAlignedParser:
         source_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             resource=source_base_resource,
-            annotation_category="structure type",
-            annotation_type="root",
+            annotation_category=LayerGroupEnum.structure_type,
+            annotation_type=LayerEnum.root_segment,
         )
         target_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             resource=target_base_resource,
-            annotation_category="structure type",
-            annotation_type="comment",
+            annotation_category=LayerGroupEnum.structure_type,
+            annotation_type=LayerEnum.comment,
         )
 
         source_ann_store = annotate_in_stam_model(
@@ -131,8 +132,8 @@ def annotate_in_stam_model(
                 {
                     "id": get_uuid(),
                     "set": ann_metadata.dataset_id,
-                    "key": ann_metadata.annotation_category,
-                    "value": ann_metadata.annotation_type,
+                    "key": ann_metadata.annotation_category.value,
+                    "value": ann_metadata.annotation_type.value,
                 }
             ],
         )
