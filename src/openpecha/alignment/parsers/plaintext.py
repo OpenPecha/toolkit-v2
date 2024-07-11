@@ -7,6 +7,20 @@ from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
 
 
+class AnnotationMetadata:
+    def __init__(
+        self,
+        dataset_id: str,
+        resource: TextResource,
+        annotation_category: str,
+        annotation_type: str,
+    ):
+        self.dataset_id = dataset_id
+        self.resource = resource
+        self.annotation_category = annotation_category
+        self.annotation_type = annotation_type
+
+
 class PlainTextLineAlignedParser:
     def __init__(self, source_text: str, target_text: str):
         """
@@ -42,11 +56,23 @@ class PlainTextLineAlignedParser:
             output_path, self.target_text, dataset_id
         )
 
+        source_ann_metadata = AnnotationMetadata(
+            dataset_id=dataset_id,
+            resource=source_base_resource,
+            annotation_category="structure type",
+            annotation_type="root",
+        )
+        target_ann_metadata = AnnotationMetadata(
+            dataset_id=dataset_id,
+            resource=target_base_resource,
+            annotation_category="structure type",
+            annotation_type="comment",
+        )
         source_ann_store = annotate_in_stam_model(
-            source_ann_store, source_lines, dataset_id, source_base_resource
+            source_ann_store, source_lines, source_ann_metadata
         )
         target_ann_store = annotate_in_stam_model(
-            target_ann_store, target_lines, dataset_id, target_base_resource
+            target_ann_store, target_lines, target_ann_metadata
         )
 
         save_annotation_store(source_ann_store, output_path, "source.json")
@@ -79,10 +105,7 @@ def set_up_stam_ann_store(
 
 
 def annotate_in_stam_model(
-    ann_store: AnnotationStore,
-    lines: List[str],
-    dataset_id: str,
-    resource: TextResource,
+    ann_store: AnnotationStore, lines: List[str], ann_metadata: AnnotationMetadata
 ) -> AnnotationStore:
     """
     Create annotations for each line in the text.
@@ -90,7 +113,7 @@ def annotate_in_stam_model(
     char_count = 0
     for line in lines:
         target = Selector.textselector(
-            resource,
+            ann_metadata.resource,
             Offset.simple(char_count, char_count + len(line)),
         )
         char_count += len(line)
@@ -101,9 +124,9 @@ def annotate_in_stam_model(
             data=[
                 {
                     "id": get_uuid(),
-                    "set": dataset_id,
-                    "key": "structure type",
-                    "value": "root",
+                    "set": ann_metadata.dataset_id,
+                    "key": ann_metadata.annotation_category,
+                    "value": ann_metadata.annotation_type,
                 }
             ],
         )
