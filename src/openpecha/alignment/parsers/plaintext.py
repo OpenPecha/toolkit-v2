@@ -54,8 +54,12 @@ class PlainTextLineAlignedParser:
 
         dataset_id = f"root_commentary_{get_uuid()[:3]}"
 
-        source_ann_store = AnnotationStore(id=get_initial_pecha_id())
-        target_ann_store = AnnotationStore(id=get_initial_pecha_id())
+        source_ann_store = AnnotationStore(
+            id=get_initial_pecha_id(), config={"use_include": True}
+        )
+        target_ann_store = AnnotationStore(
+            id=get_initial_pecha_id(), config={"use_include": True}
+        )
 
         source_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
@@ -97,8 +101,10 @@ def annotate_in_stam_model(
         id=base_file_name, filename=base_file_path.as_posix()
     )
 
+    ann_dataset = new_ann_store.add_dataset(id=ann_metadata.dataset_id)
     """ create annotation for each line in new annotation store"""
     lines = split_text_into_lines(ann_metadata.base_text)
+    unque_ann_data_id = get_uuid()
     char_count = 0
     for line in lines:
         target = Selector.textselector(
@@ -112,8 +118,8 @@ def annotate_in_stam_model(
             target=target,
             data=[
                 {
-                    "id": get_uuid(),
-                    "set": ann_metadata.dataset_id,
+                    "id": unque_ann_data_id,
+                    "set": ann_dataset.id(),
                     "key": ann_metadata.annotation_category.value,
                     "value": ann_metadata.annotation_type.value,
                 }
@@ -159,7 +165,7 @@ def save_annotation_store(
     ann_json_str = ann_store.to_json_string()
     ann_json_dict = convert_absolute_to_relative_path(ann_json_str, base_path)
     with open(ann_store_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(ann_json_dict, indent=4, ensure_ascii=False))
+        f.write(json.dumps(ann_json_dict, indent=2, ensure_ascii=False))
 
     return ann_store_path
 
