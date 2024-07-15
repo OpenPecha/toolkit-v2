@@ -2,6 +2,8 @@ from pathlib import Path
 
 from stam import AnnotationStore
 
+from openpecha.pecha.layer import LayerEnum
+
 
 class Pecha:
     def __init__(self, pecha_id: str, annotation_path: Path) -> None:
@@ -14,9 +16,9 @@ class Pecha:
         annotation_path = pecha_path / "layers"
         return cls(pecha_id, annotation_path)
 
-    def get_annotation_store(self, annotation_type: str):
+    def get_annotation_store(self, annotation_type: LayerEnum):
         annotation_type_file_paths = list(
-            self.ann_path.glob(f"{annotation_type}*.json")
+            self.ann_path.glob(f"{annotation_type.value}*.json")
         )
         annotation_stores = [
             AnnotationStore(file=annotation_file)
