@@ -54,13 +54,6 @@ class PlainTextLineAlignedParser:
 
         dataset_id = f"root_commentary_{get_uuid()[:3]}"
 
-        source_ann_store = AnnotationStore(
-            id=get_initial_pecha_id(), config={"use_include": True}
-        )
-        target_ann_store = AnnotationStore(
-            id=get_initial_pecha_id(), config={"use_include": True}
-        )
-
         source_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.source_text,
@@ -74,34 +67,31 @@ class PlainTextLineAlignedParser:
             annotation_type=LayerEnum.comment,
         )
 
-        _, source_ann_store = annotate_in_stam_model(
-            source_ann_store, source_ann_metadata, output_path
-        )
-        _, target_ann_store = annotate_in_stam_model(
-            target_ann_store, target_ann_metadata, output_path
-        )
+        source_ann_store = annotate_in_stam_model(source_ann_metadata, output_path)
+        target_ann_store = annotate_in_stam_model(target_ann_metadata, output_path)
 
         return source_ann_store, target_ann_store
 
 
 def annotate_in_stam_model(
-    ann_store: AnnotationStore, ann_metadata: AnnotationMetadata, output_path: Path
-) -> Tuple[AnnotationStore, AnnotationStore]:
+    ann_metadata: AnnotationMetadata, output_path: Path
+) -> AnnotationStore:
 
     """create new annotation store for the given annotation layer"""
-    pecha_path = _mkdir(output_path / ann_store.id())
-    new_ann_store = AnnotationStore(id=ann_store.id())
+    ann_store_id = get_initial_pecha_id()
+    pecha_path = _mkdir(output_path / ann_store_id)
+    ann_store = AnnotationStore(id=ann_store_id)
 
     """ create base file for new annotation store"""
     base_dir = _mkdir(pecha_path / "base")
     base_file_name = get_uuid()[:3]
     base_file_path = base_dir / f"{base_file_name}.txt"
     base_file_path.write_text(ann_metadata.base_text, encoding="utf-8")
-    ann_resource = new_ann_store.add_resource(
+    ann_resource = ann_store.add_resource(
         id=base_file_name, filename=base_file_path.as_posix()
     )
 
-    ann_dataset = new_ann_store.add_dataset(id=ann_metadata.dataset_id)
+    ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
     """ create annotation for each line in new annotation store"""
     lines = split_text_into_lines(ann_metadata.base_text)
     unque_ann_data_id = get_uuid()
@@ -113,7 +103,7 @@ def annotate_in_stam_model(
         )
         char_count += len(line)
 
-        new_ann_store.annotate(
+        ann_store.annotate(
             id=get_uuid(),
             target=target,
             data=[
@@ -128,22 +118,11 @@ def annotate_in_stam_model(
 
     """save the new annotation store"""
     ann_output_dir = _mkdir(pecha_path / "layers")
-    new_ann_store_filename = (
-        f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
-    )
-    new_ann_store_path = ann_output_dir / new_ann_store_filename
-    new_ann_store_path = save_annotation_store(
-        new_ann_store, output_path, new_ann_store_path
-    )
+    ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
+    ann_store_path = ann_output_dir / ann_store_filename
+    ann_store_path = save_annotation_store(ann_store, output_path, ann_store_path)
 
-    """ add dataset to main annotation store"""
-    ann_store.add_dataset(
-        id=ann_metadata.dataset_id,
-        filename=new_ann_store_path.relative_to(output_path).as_posix(),
-    )
-    save_annotation_store(ann_store, output_path, pecha_path / "annotation_store.json")
-
-    return (ann_store, new_ann_store)
+    return ann_store
 
 
 def split_text_into_lines(text: str) -> List[str]:
