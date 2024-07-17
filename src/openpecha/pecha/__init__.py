@@ -21,7 +21,7 @@ class Pecha:
             self.ann_path.glob(f"{annotation_type.value}*.json")
         )
         annotation_stores = [
-            AnnotationStore(file=annotation_file)
+            AnnotationStore(file=str(annotation_file))
             for annotation_file in annotation_type_file_paths
         ]
 
