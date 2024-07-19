@@ -4,6 +4,7 @@ from typing import Generator, Union
 from stam import AnnotationStore
 
 from openpecha import utils
+from openpecha.pecha.blupdate import update_layer
 
 
 class Pecha:
@@ -67,11 +68,12 @@ class Pecha:
                 store = AnnotationStore(file=str(rel_layer_fn))
             yield store
 
-    def update_base(self, base_name, content):
+    def update_base(self, base_name, new_base):
         """
         This function updates the base layer of the pecha to a new text. It will recompute the existing layers into the new base layer.
         """
         for layer in self.get_layers(base_name):
             old_base = layer.resource(base_name).text()
+            update_layer(old_base, new_base, layer)
             print(old_base)
         # self.set_base(base_name, content)

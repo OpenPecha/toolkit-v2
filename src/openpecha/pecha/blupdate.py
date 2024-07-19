@@ -1,6 +1,7 @@
 import math
 
 import diff_match_patch as dmp_module
+from stam import AnnotationStore
 
 
 class Blupdate:
@@ -180,3 +181,23 @@ class Blupdate:
             return srcblcoord + cctvforcoord[0]
         else:
             return self.get_updated_with_dmp(srcblcoord, cctvforcoord[0])
+
+
+def update_layer(old_base, new_base: str, layer: AnnotationStore):
+    blupdate = Blupdate(old_base, new_base)
+    for ann in layer.annotations():
+        old_begin = ann.offset().begin().value()
+        old_end = ann.offset().end().value()
+
+        new_begin = blupdate.get_updated_coord(old_begin)
+        new_end = blupdate.get_updated_coord(old_end)
+
+        if new_begin == -1 or new_end == -1:
+            continue
+
+        begin_shift = new_begin - old_begin
+        end_shift = new_end - old_end
+        ann.offset().begin().shift(begin_shift)
+        ann.offset().end().shift(end_shift)
+
+        print(str(ann.offset()))
