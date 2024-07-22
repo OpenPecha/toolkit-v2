@@ -7,6 +7,7 @@ from openpecha.alignment.parsers.plaintext import (
     PlainTextLineAlignedParser,
     split_text_into_lines,
 )
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
 
 def test_plaintext_line_aligned_parser():
@@ -26,10 +27,20 @@ def test_plaintext_line_aligned_parser():
     source_lines = split_text_into_lines(source_path.read_text(encoding="utf-8"))
     target_lines = split_text_into_lines(target_path.read_text(encoding="utf-8"))
 
-    for annotation, source_line in zip(source_ann_store.annotations(), source_lines):
+    dataset = list(source_ann_store.datasets())[0]
+    source_key = dataset.key(LayerGroupEnum.structure_type.value)
+    source_anns = list(
+        dataset.data(source_key, value=LayerEnum.root_segment.value).annotations()
+    )
+    for annotation, source_line in zip(source_anns, source_lines):
         assert str(annotation) == source_line
 
-    for annotation, target_line in zip(target_ann_store.annotations(), target_lines):
+    dataset = list(target_ann_store.datasets())[0]
+    target_key = dataset.key(LayerGroupEnum.structure_type.value)
+    target_anns = list(
+        dataset.data(target_key, value=LayerEnum.comment.value).annotations()
+    )
+    for annotation, target_line in zip(target_anns, target_lines):
         assert str(annotation) == target_line
 
     """ clean up """

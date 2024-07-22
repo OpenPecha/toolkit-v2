@@ -94,9 +94,9 @@ def annotate_in_stam_model(
     ann_store = AnnotationStore(id=ann_store_id)
 
     """ write metadata"""
-    metadata_path = Path(pecha_path / "metadata.json")
+    metadata_path = Path(pecha_path / "metadata.txt")
     with open(metadata_path, "w") as f:
-        json.dump(metadata.to_serializable_dict(), f, indent=4)
+        json.dump(metadata.to_formatted_text(), f, indent=4)
 
     """ create base file for new annotation store"""
     base_dir = _mkdir(pecha_path / "base")
@@ -121,7 +121,7 @@ def annotate_in_stam_model(
         }
     ]
     ann_store.annotate(
-        id_="metadata",
+        id="metadata",
         target=Selector.resourceselector(resource=metadata_resource),
         data=data,
     )

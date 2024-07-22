@@ -21,8 +21,13 @@ class MetaData(BaseModel):
             values["created_at"] = datetime.now()
         return values
 
-    def to_serializable_dict(self):
-        data = self.model_dump()
-        if isinstance(data["created_at"], datetime):
-            data["created_at"] = data["created_at"].isoformat()
-        return data
+    def to_formatted_text(self):
+        formatted_text = (
+            f"ID: {self.id_}\n"
+            f"Title: {', '.join(self.title)}\n"
+            f"Author: {', '.join(self.author)}\n"
+            f"Created At: {self.created_at.isoformat()}\n"
+            f"Source: {self.source}\n"
+            # f"Source Metadata: {json.dumps(self.source_metadata, indent=4)}"
+        )
+        return formatted_text
