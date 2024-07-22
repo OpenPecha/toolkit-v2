@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Dict, List
 
@@ -28,6 +29,6 @@ class MetaData(BaseModel):
             f"Author: {', '.join(self.author)}\n"
             f"Created At: {self.created_at.isoformat()}\n"
             f"Source: {self.source}\n"
-            # f"Source Metadata: {json.dumps(self.source_metadata, indent=4)}"
+            f"Source Metadata: {json.dumps(self.source_metadata, indent=4)}"
         )
         return formatted_text
