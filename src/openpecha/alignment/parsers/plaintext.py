@@ -108,6 +108,24 @@ def annotate_in_stam_model(
     )
 
     ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
+    """ point to metadata """
+    metadata_resource = ann_store.add_resource(
+        id="metadata", filename=metadata_path.as_posix()
+    )
+    data = [
+        {
+            "id": get_uuid(),
+            "set": ann_dataset.id(),
+            "key": LayerGroupEnum.resource_type.value,
+            "value": LayerEnum.metadata.value,
+        }
+    ]
+    ann_store.annotate(
+        id_="metadata",
+        target=Selector.resourceselector(resource=metadata_resource),
+        data=data,
+    )
+
     """ create annotation for each line in new annotation store"""
     lines = split_text_into_lines(ann_metadata.base_text)
     unque_ann_data_id = get_uuid()
