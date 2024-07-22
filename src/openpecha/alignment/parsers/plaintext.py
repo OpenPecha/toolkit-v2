@@ -7,6 +7,7 @@ from stam import AnnotationStore, Offset, Selector
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
+from openpecha.pecha.metadata import MetaData
 
 
 class AnnotationMetadata:
@@ -32,20 +33,23 @@ class PlainTextLineAlignedParser:
     Class to parse plain text lines and create aligned annotations.
     """
 
-    def __init__(self, source_text: str, target_text: str):
+    def __init__(self, source_text: str, target_text: str, metadata: dict):
         self.source_text = source_text
         self.target_text = target_text
+        self.metadata = metadata
 
     @classmethod
     def from_files(
-        cls, source_path: Path, target_path: Path
+        cls, source_path: Path, target_path: Path, metadata_path: Path
     ) -> "PlainTextLineAlignedParser":
         """
         Create a parser instance from file paths.
         """
         source_text = source_path.read_text(encoding="utf-8")
         target_text = target_path.read_text(encoding="utf-8")
-        return cls(source_text, target_text)
+        with open(metadata_path) as f:
+            metadata = json.load(f)
+        return cls(source_text, target_text, metadata)
 
     def parse(self, output_path: Path) -> Tuple[AnnotationStore, AnnotationStore]:
         """
@@ -67,20 +71,32 @@ class PlainTextLineAlignedParser:
             annotation_type=LayerEnum.comment,
         )
 
-        source_ann_store = annotate_in_stam_model(source_ann_metadata, output_path)
-        target_ann_store = annotate_in_stam_model(target_ann_metadata, output_path)
+        source_metadata = MetaData(**self.metadata["source"])
+        target_metadata = MetaData(**self.metadata["target"])
+
+        source_ann_store = annotate_in_stam_model(
+            source_ann_metadata, source_metadata, output_path
+        )
+        target_ann_store = annotate_in_stam_model(
+            target_ann_metadata, target_metadata, output_path
+        )
 
         return source_ann_store, target_ann_store
 
 
 def annotate_in_stam_model(
-    ann_metadata: AnnotationMetadata, output_path: Path
+    ann_metadata: AnnotationMetadata, metadata: MetaData, output_path: Path
 ) -> AnnotationStore:
 
     """create new annotation store for the given annotation layer"""
     ann_store_id = get_initial_pecha_id()
     pecha_path = _mkdir(output_path / ann_store_id)
     ann_store = AnnotationStore(id=ann_store_id)
+
+    """ write metadata"""
+    metadata_path = Path(pecha_path / "metadata.json")
+    with open(metadata_path, "w") as f:
+        json.dump(metadata.to_serializable_dict(), f, indent=4)
 
     """ create base file for new annotation store"""
     base_dir = _mkdir(pecha_path / "base")

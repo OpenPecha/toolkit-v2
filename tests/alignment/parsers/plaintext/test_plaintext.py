@@ -13,8 +13,11 @@ def test_plaintext_line_aligned_parser():
     DATA = Path(__file__).parent / "data"
     source_path = DATA / "root_segment.txt"
     target_path = DATA / "commentary.txt"
+    metadata_path = DATA / "metadata.json"
 
-    parser = PlainTextLineAlignedParser.from_files(source_path, target_path)
+    parser = PlainTextLineAlignedParser.from_files(
+        source_path, target_path, metadata_path
+    )
     source_ann_store, target_ann_store = parser.parse(output_path=DATA)
 
     assert isinstance(source_ann_store, AnnotationStore)
