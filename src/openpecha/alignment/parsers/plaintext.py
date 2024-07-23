@@ -57,7 +57,10 @@ class PlainTextLineAlignedParser:
         """
 
         dataset_id = f"root_commentary_{get_uuid()[:3]}"
+        source_ann_store, target_ann_store = self.parse_pechas(dataset_id, output_path)
+        return source_ann_store, target_ann_store
 
+    def parse_pechas(self, dataset_id: str, output_path: Path):
         source_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.source_text,
