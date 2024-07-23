@@ -95,8 +95,7 @@ def annotate_in_stam_model(
 
     """ write metadata"""
     metadata_path = Path(pecha_path / "metadata.txt")
-    with open(metadata_path, "w") as f:
-        json.dump(metadata.to_formatted_text(), f, indent=4)
+    metadata_path.write_text(metadata.to_formatted_text(), encoding="utf-8")
 
     """ create base file for new annotation store"""
     base_dir = _mkdir(pecha_path / "base")
