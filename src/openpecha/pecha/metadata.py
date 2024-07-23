@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Extra, root_validator
 
 
-class MetaData(BaseModel):
+class PechaMetaData(BaseModel):
     id_: str
     title: List[str]
     author: List[str]
@@ -35,7 +35,7 @@ class MetaData(BaseModel):
         return formatted_text
 
     @classmethod
-    def from_text(cls, text: str) -> Optional["MetaData"]:
+    def from_text(cls, text: str) -> Optional["PechaMetaData"]:
         """
         Parse metadata from a given formatted text string and create a MetaData instance.
 

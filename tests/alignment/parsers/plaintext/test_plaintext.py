@@ -9,7 +9,7 @@ from openpecha.alignment.parsers.plaintext import (
 )
 from openpecha.ids import get_uuid
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
-from openpecha.pecha.metadata import MetaData
+from openpecha.pecha.metadata import PechaMetaData
 
 
 def test_plaintext_line_aligned_parser():
@@ -42,8 +42,8 @@ def test_plaintext_line_aligned_parser():
 
     text_resource = metadata_ann.target().resource(source_ann_store)
     assert isinstance(text_resource, TextResource)
-    metadata_obj = MetaData.from_text(text_resource.text())
-    assert isinstance(metadata_obj, MetaData)
+    metadata_obj = PechaMetaData.from_text(text_resource.text())
+    assert isinstance(metadata_obj, PechaMetaData)
 
     """ comparing source lines"""
     source_key = dataset.key(LayerGroupEnum.structure_type.value)
@@ -62,8 +62,8 @@ def test_plaintext_line_aligned_parser():
 
     text_resource = metadata_ann.target().resource(target_ann_store)
     assert isinstance(text_resource, TextResource)
-    metadata_obj = MetaData.from_text(text_resource.text())
-    assert isinstance(metadata_obj, MetaData)
+    metadata_obj = PechaMetaData.from_text(text_resource.text())
+    assert isinstance(metadata_obj, PechaMetaData)
 
     """ comparing target text lines"""
 

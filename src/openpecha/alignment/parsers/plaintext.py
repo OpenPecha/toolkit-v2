@@ -7,7 +7,7 @@ from stam import AnnotationStore, Offset, Selector
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
-from openpecha.pecha.metadata import MetaData
+from openpecha.pecha.metadata import PechaMetaData
 
 
 class AnnotationMetadata:
@@ -74,8 +74,8 @@ class PlainTextLineAlignedParser:
             annotation_type=LayerEnum.comment,
         )
 
-        source_metadata = MetaData(**self.metadata["source"])
-        target_metadata = MetaData(**self.metadata["target"])
+        source_metadata = PechaMetaData(**self.metadata["source"])
+        target_metadata = PechaMetaData(**self.metadata["target"])
 
         source_ann_store = create_pecha_stam(
             source_ann_metadata, source_metadata, output_path
@@ -88,7 +88,7 @@ class PlainTextLineAlignedParser:
 
 
 def create_pecha_stam(
-    ann_metadata: AnnotationMetadata, metadata: MetaData, output_path: Path
+    ann_metadata: AnnotationMetadata, metadata: PechaMetaData, output_path: Path
 ) -> AnnotationStore:
 
     """create new annotation store for the given annotation layer"""
