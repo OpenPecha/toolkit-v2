@@ -34,49 +34,48 @@ class MetaData(BaseModel):
         )
         return formatted_text
 
+    @classmethod
+    def from_text(cls, text: str) -> Optional["MetaData"]:
+        """
+        Parse metadata from a given formatted text string and create a MetaData instance.
 
-def parse_metadata_from_text(text: str) -> Optional[MetaData]:
-    """
-    Parse metadata from a given formatted text string and create a MetaData instance.
+        Parameters:
+        text (str): The formatted text string containing metadata.
 
-    Parameters:
-    text (str): The formatted text string containing metadata.
+        Returns:
+        Optional[MetaData]: An instance of the MetaData class or None if parsing fails.
+        """
+        id_match = re.search(r"ID: (.+)", text)
+        title_match = re.search(r"Title: ([^/\n]+)", text)
+        author_match = re.search(r"Author: (.+)", text)
+        created_at_match = re.search(r"Created At: ([^\n]+)\n", text)
+        source_match = re.search(r"Source: (.+)", text)
+        source_metadata_match = re.search(r"Source Metadata: (.+)", text)
 
-    Returns:
-    Optional[MetaData]: An instance of the MetaData class or None if parsing fails.
-    """
-    id_match = re.search(r"ID: (.+)", text)
-    title_match = re.search(r"Title: ([^/\n]+)", text)
-    author_match = re.search(r"Author: (.+)", text)
-    created_at_match = re.search(r"Created At: ([^\n]+)\n", text)
-    source_match = re.search(r"Source: (.+)", text)
-    source_metadata_match = re.search(r"Source Metadata: (.+)", text)
+        if not (
+            id_match
+            and title_match
+            and author_match
+            and created_at_match
+            and source_match
+            and source_metadata_match
+        ):
+            return None
 
-    if not (
-        id_match
-        and title_match
-        and author_match
-        and created_at_match
-        and source_match
-        and source_metadata_match
-    ):
-        return None
+        id_ = id_match.group(1)
+        title = title_match.group(1).split(", ")
+        author = author_match.group(1).split(", ")
+        created_at_str = created_at_match.group(1)
+        created_at = datetime.fromisoformat(created_at_str)
+        source = source_match.group(1)
+        source_metadata_str = source_metadata_match.group(1)
+        source_metadata = json.loads(source_metadata_str)
 
-    id_ = id_match.group(1)
-    title = title_match.group(1).split(", ")
-    author = author_match.group(1).split(", ")
-    created_at_str = created_at_match.group(1)
-    created_at = datetime.fromisoformat(created_at_str)
-    source = source_match.group(1)
-    source_metadata_str = source_metadata_match.group(1)
-    source_metadata = json.loads(source_metadata_str)
-
-    metadata = MetaData(
-        id_=id_,
-        title=title,
-        author=author,
-        created_at=created_at,
-        source=source,
-        source_metadata=source_metadata,
-    )
-    return metadata
+        return cls(
+            id_=id_,
+            title=title,
+            author=author,
+            created_at=created_at,
+            source=source,
+            source_metadata=source_metadata,
+        )

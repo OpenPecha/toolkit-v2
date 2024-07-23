@@ -4,7 +4,7 @@ from stam import AnnotationStore, TextResource
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
-from openpecha.pecha.metadata import MetaData, parse_metadata_from_text
+from openpecha.pecha.metadata import MetaData
 
 
 def test_pecha_read():
@@ -38,7 +38,7 @@ def test_pecha_read():
     )[0]
     text_resource = metadata_ann.target().resource(ann_store)
     assert isinstance(text_resource, TextResource)
-    metadata_obj = parse_metadata_from_text(text_resource.text())
+    metadata_obj = MetaData.from_text(text_resource.text())
     assert isinstance(metadata_obj, MetaData)
 
 

@@ -8,7 +8,7 @@ from openpecha.alignment.parsers.plaintext import (
     split_text_into_lines,
 )
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
-from openpecha.pecha.metadata import MetaData, parse_metadata_from_text
+from openpecha.pecha.metadata import MetaData
 
 
 def test_plaintext_line_aligned_parser():
@@ -38,7 +38,7 @@ def test_plaintext_line_aligned_parser():
 
     text_resource = metadata_ann.target().resource(source_ann_store)
     assert isinstance(text_resource, TextResource)
-    metadata_obj = parse_metadata_from_text(text_resource.text())
+    metadata_obj = MetaData.from_text(text_resource.text())
     assert isinstance(metadata_obj, MetaData)
 
     """ comparing source lines"""
@@ -58,7 +58,7 @@ def test_plaintext_line_aligned_parser():
 
     text_resource = metadata_ann.target().resource(target_ann_store)
     assert isinstance(text_resource, TextResource)
-    metadata_obj = parse_metadata_from_text(text_resource.text())
+    metadata_obj = MetaData.from_text(text_resource.text())
     assert isinstance(metadata_obj, MetaData)
 
     """ comparing target text lines"""
