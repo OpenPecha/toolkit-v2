@@ -74,17 +74,17 @@ class PlainTextLineAlignedParser:
         source_metadata = MetaData(**self.metadata["source"])
         target_metadata = MetaData(**self.metadata["target"])
 
-        source_ann_store = annotate_in_stam_model(
+        source_ann_store = create_pecha_stam(
             source_ann_metadata, source_metadata, output_path
         )
-        target_ann_store = annotate_in_stam_model(
+        target_ann_store = create_pecha_stam(
             target_ann_metadata, target_metadata, output_path
         )
 
         return source_ann_store, target_ann_store
 
 
-def annotate_in_stam_model(
+def create_pecha_stam(
     ann_metadata: AnnotationMetadata, metadata: MetaData, output_path: Path
 ) -> AnnotationStore:
 
@@ -153,7 +153,7 @@ def annotate_in_stam_model(
     ann_output_dir = _mkdir(pecha_path / "layers")
     ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
     ann_store_path = ann_output_dir / ann_store_filename
-    ann_store_path = save_annotation_store(ann_store, output_path, ann_store_path)
+    ann_store_path = save_stam(ann_store, output_path, ann_store_path)
 
     return ann_store
 
@@ -166,7 +166,7 @@ def split_text_into_lines(text: str) -> List[str]:
     return [line + "\n" if i < len(lines) - 1 else line for i, line in enumerate(lines)]
 
 
-def save_annotation_store(
+def save_stam(
     ann_store: AnnotationStore, base_path: Path, ann_store_path: Path
 ) -> Path:
     """
