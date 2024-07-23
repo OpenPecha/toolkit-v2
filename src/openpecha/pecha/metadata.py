@@ -60,7 +60,7 @@ def parse_metadata_from_text(text: str) -> Optional[MetaData]:
         and source_match
         and source_metadata_match
     ):
-        return None  # Return None if any of the required metadata is missing
+        return None
 
     id_ = id_match.group(1)
     title = title_match.group(1).split(", ")
