@@ -189,5 +189,8 @@ def convert_absolute_to_relative_path(json_string: str, output_path: Path):
     json_object = json.loads(json_string)
     for resource in json_object["resources"]:
         original_path = Path(resource["@include"])
-        resource["@include"] = f"../base/{original_path.name}"
+        if original_path.name == "metadata.txt":
+            resource["@include"] = f"../{original_path.name}"
+        else:
+            resource["@include"] = f"../base/{original_path.name}"
     return json_object
