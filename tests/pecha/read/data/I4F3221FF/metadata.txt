@@ -1,0 +1,6 @@
+ID: 12345
+Title: Chojuk Source Title 1, Chojuk Source Title 1
+Author: Chojuk Source Author 1, Chojuk Source Author 1
+Created At: 2024-07-23T11:35:02.021099
+Source: Chojuk Source
+Source Metadata: {}
