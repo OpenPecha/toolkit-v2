@@ -8,7 +8,7 @@ from openpecha.alignment import Alignment, AlignmentMetaData
 from openpecha.alignment.metadata import AlignmentRelationEnum
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
-from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_annotation_category
 from openpecha.pecha.metadata import PechaMetaData
 
 
@@ -119,13 +119,17 @@ class PlainTextLineAlignedParser:
         source_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.source_text,
-            annotation_category=LayerGroupEnum.structure_type,
+            annotation_category=get_annotation_category(
+                LayerEnum(source_metadata.type)
+            ),
             annotation_type=LayerEnum(source_metadata.type),
         )
         target_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.target_text,
-            annotation_category=LayerGroupEnum.structure_type,
+            annotation_category=get_annotation_category(
+                LayerEnum(target_metadata.type)
+            ),
             annotation_type=LayerEnum(target_metadata.type),
         )
 
