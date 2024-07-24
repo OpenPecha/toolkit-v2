@@ -30,6 +30,18 @@ class SegmentMetaData(BaseModel):
     lang: LanguageEnum
     base: str
 
+    def to_dict(self) -> Dict:
+        """
+        Convert the SegmentMetaData instance to a dictionary,
+        converting enum attributes to their values.
+        """
+        return {
+            "type": self.type.value,
+            "relation": self.relation.value,
+            "lang": self.lang.value,
+            "base": self.base,
+        }
+
 
 class AlignmentMetaData(BaseModel):
     id_: str
@@ -56,3 +68,16 @@ class AlignmentMetaData(BaseModel):
         if "id_" not in values or values["id_"] is None:
             values["id_"] = get_alignment_id()
         return values
+
+    def to_dict(self) -> Dict:
+        """
+        Convert the AlignmentMetaData instance to a dictionary,
+        converting enum attributes to their values.
+        """
+        return {
+            "id_": self.id_,
+            "segments_metadata": {
+                segment_id: segment.to_dict()
+                for segment_id, segment in self.segments_metadata.items()
+            },
+        }

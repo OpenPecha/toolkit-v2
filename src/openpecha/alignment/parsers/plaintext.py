@@ -64,7 +64,8 @@ class PlainTextLineAlignedParser:
         self.target_ann_store = target_ann_store
 
         alignment = self.create_alignment()
-
+        if alignment:
+            alignment.save(output_path)
         return alignment
 
     def create_alignment(self) -> Optional[Alignment]:

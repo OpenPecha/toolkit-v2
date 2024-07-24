@@ -1,6 +1,9 @@
+import json
+from pathlib import Path
 from typing import Dict, List, Tuple
 
 from openpecha.alignment.metadata import AlignmentMetaData
+from openpecha.config import _mkdir
 from openpecha.ids import get_uuid
 
 
@@ -10,7 +13,7 @@ class Alignment:
         metadata: AlignmentMetaData,
         segment_pairs: Dict[str, Dict[str, str]] = None,
     ):
-        self.id = metadata.id_
+        self.id_ = metadata.id_
         self.metadata = metadata
         self.segment_pairs = segment_pairs
 
@@ -37,5 +40,16 @@ class Alignment:
             }
         return cls(metadata=metadata, segment_pairs=transformed_segment_pairs)
 
-    def save(self, path: str):
-        pass
+    def save(self, output_path: Path):
+        alignment_id = self.id_
+        alignment_path = _mkdir(output_path / alignment_id)
+
+        """ write metadata"""
+        metadata_path = alignment_path / "metadata.json"
+        with open(metadata_path, "w", encoding="utf-8") as f:
+            json.dump(self.metadata.to_dict(), f, indent=2)
+
+        """ write alingment annotations"""
+        ann_path = alignment_path / "alignment.json"
+        with open(ann_path, "w", encoding="utf-8") as fp:
+            json.dump(self.segment_pairs, fp, indent=2)

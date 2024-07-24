@@ -80,11 +80,14 @@ def test_plaintext_line_aligned_parser():
     parser.target_ann_store = target_ann_store
 
     alignment = parser.create_alignment()
+    if alignment:
+        alignment.save(output_path=DATA)
     assert isinstance(alignment, Alignment)
 
     """ clean up """
     rmtree(Path(DATA / source_ann_store.id()))
     rmtree(Path(DATA / target_ann_store.id()))
+    rmtree(Path(DATA / alignment.id_))
 
 
 test_plaintext_line_aligned_parser()
