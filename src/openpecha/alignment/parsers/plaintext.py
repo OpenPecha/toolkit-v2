@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Optional
 
 from stam import AnnotationStore, Offset, Selector
 
@@ -53,21 +53,31 @@ class PlainTextLineAlignedParser:
             metadata = json.load(f)
         return cls(source_text, target_text, metadata)
 
-    def parse(self, output_path: Path) -> Tuple[AnnotationStore, AnnotationStore]:
+    def parse(self, output_path: Path) -> Optional[Alignment]:
         """
         Parse the source and target texts, create annotations, and save to files.
         """
 
         dataset_id = f"root_commentary_{get_uuid()[:3]}"
         source_ann_store, target_ann_store = self.parse_pechas(dataset_id, output_path)
+        self.source_ann_store = source_ann_store
+        self.target_ann_store = target_ann_store
+
+        alignment = self.create_alignment()
+
+        return alignment
+
+    def create_alignment(self) -> Optional[Alignment]:
+        if not self.source_ann_store or not self.target_ann_store:
+            return None
 
         """ building alignment metadata """
         metadata = {}
 
-        source_id = source_ann_store.id()
+        source_id = self.source_ann_store.id()
         resource = [
             resource
-            for resource in source_ann_store.resources()
+            for resource in self.source_ann_store.resources()
             if resource.id() != "metadata"
         ][0]
         metadata[source_id] = {
@@ -77,10 +87,10 @@ class PlainTextLineAlignedParser:
             "base": resource.id(),
         }
 
-        target_id = target_ann_store.id()
+        target_id = self.target_ann_store.id()
         resource = [
             resource
-            for resource in target_ann_store.resources()
+            for resource in self.target_ann_store.resources()
             if resource.id() != "metadata"
         ][0]
         metadata[target_id] = {
@@ -94,7 +104,7 @@ class PlainTextLineAlignedParser:
         segment_pairs = [
             ((source_id, source_ann.id()), (target_id, target_ann.id()))
             for source_ann, target_ann in zip(
-                source_ann_store.annotations(), target_ann_store.annotations()
+                self.source_ann_store.annotations(), self.target_ann_store.annotations()
             )
         ]
 
