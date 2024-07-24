@@ -75,7 +75,7 @@ def test_plaintext_line_aligned_parser():
     for annotation, target_line in zip(target_anns, target_lines):
         assert str(annotation) == target_line
 
-    """ alignmet """
+    """ alignment """
     parser.source_ann_store = source_ann_store
     parser.target_ann_store = target_ann_store
 

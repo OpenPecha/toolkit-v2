@@ -18,8 +18,19 @@ class Alignment:
         self.segment_pairs = segment_pairs
 
     @classmethod
-    def from_path(cls, path: str):
-        pass
+    def from_path(cls, path: Path):
+        metadata_path = path / "metadata.json"
+        with open(metadata_path, encoding="utf-8") as f:
+            metadata = json.load(f)
+        metadata = AlignmentMetaData.from_dict(
+            metadata=metadata["segments_metadata"], alignment_id=metadata["id_"]
+        )
+
+        anns_path = path / "alignment.json"
+        with open(anns_path, encoding="utf-8") as fp:
+            segment_pairs = json.load(fp)
+
+        return cls(metadata=metadata, segment_pairs=segment_pairs)
 
     @classmethod
     def from_id(cls, alignment_id: str):

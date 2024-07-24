@@ -48,7 +48,7 @@ class AlignmentMetaData(BaseModel):
     segments_metadata: Dict[str, SegmentMetaData]
 
     @classmethod
-    def from_dict(cls, metadata: Dict) -> "AlignmentMetaData":
+    def from_dict(cls, metadata: Dict, alignment_id: str = None) -> "AlignmentMetaData":
         segments_metadata: Dict[str, SegmentMetaData] = {}
         for segment_source_id, segment_metadata in metadata.items():
             type = LayerEnum(segment_metadata["type"])
@@ -60,7 +60,7 @@ class AlignmentMetaData(BaseModel):
                 type=type, relation=relation, lang=lang, base=base
             )
 
-        return cls(segments_metadata=segments_metadata)
+        return cls(id_=alignment_id, segments_metadata=segments_metadata)
 
     @model_validator(mode="before")
     @classmethod

@@ -1,0 +1,17 @@
+{
+  "id_": "A9BB545D5",
+  "segments_metadata": {
+    "I79BC1124": {
+      "type": "Root_Segment",
+      "relation": "Source",
+      "lang": "Tibetan",
+      "base": "28d"
+    },
+    "I5E1DC1D2": {
+      "type": "Comment",
+      "relation": "Target",
+      "lang": "Tibetan",
+      "base": "ef4"
+    }
+  }
+}
