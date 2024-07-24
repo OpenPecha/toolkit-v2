@@ -3,6 +3,7 @@ from shutil import rmtree
 
 from stam import AnnotationStore, TextResource
 
+from openpecha.alignment import Alignment
 from openpecha.alignment.parsers.plaintext import (
     PlainTextLineAlignedParser,
     split_text_into_lines,
@@ -73,6 +74,13 @@ def test_plaintext_line_aligned_parser():
     )
     for annotation, target_line in zip(target_anns, target_lines):
         assert str(annotation) == target_line
+
+    """ alignmet """
+    parser.source_ann_store = source_ann_store
+    parser.target_ann_store = target_ann_store
+
+    alignment = parser.create_alignment()
+    assert isinstance(alignment, Alignment)
 
     """ clean up """
     rmtree(Path(DATA / source_ann_store.id()))

@@ -4,6 +4,7 @@ from typing import Dict
 from pydantic import BaseModel, model_validator
 
 from openpecha.ids import get_alignment_id
+from openpecha.pecha.layer import LayerEnum
 
 
 class AlignmentRelationEnum(Enum):
@@ -24,7 +25,7 @@ class LanguageEnum(Enum):
 
 
 class SegmentMetaData(BaseModel):
-    type: AlignmentTypeEnum
+    type: LayerEnum
     relation: AlignmentRelationEnum
     lang: LanguageEnum
     base: str
@@ -38,7 +39,7 @@ class AlignmentMetaData(BaseModel):
     def from_dict(cls, metadata: Dict) -> "AlignmentMetaData":
         segments_metadata: Dict[str, SegmentMetaData] = {}
         for segment_source_id, segment_metadata in metadata.items():
-            type = AlignmentTypeEnum(segment_metadata["type"])
+            type = LayerEnum(segment_metadata["type"])
             relation = AlignmentRelationEnum(segment_metadata["relation"])
             lang = LanguageEnum(segment_metadata["lang"])
             base = segment_metadata["base"]
