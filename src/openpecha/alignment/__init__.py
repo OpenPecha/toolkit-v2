@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 from openpecha.alignment.metadata import AlignmentMetaData
 from openpecha.config import _mkdir
 from openpecha.ids import get_uuid
+from openpecha.pecha import Pecha
 
 
 class Alignment:
@@ -12,13 +13,15 @@ class Alignment:
         self,
         metadata: AlignmentMetaData,
         segment_pairs: Dict[str, Dict[str, str]] = None,
+        pechas: Dict[str, Pecha] = None,
     ):
         self.id_ = metadata.id_
         self.metadata = metadata
         self.segment_pairs = segment_pairs
+        self.pechas = pechas
 
     @classmethod
-    def from_path(cls, path: Path):
+    def from_path(cls, path: Path, pechas: Dict[str, Pecha] = None):
         metadata_path = path / "metadata.json"
         with open(metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
@@ -30,7 +33,7 @@ class Alignment:
         with open(anns_path, encoding="utf-8") as fp:
             segment_pairs = json.load(fp)
 
-        return cls(metadata=metadata, segment_pairs=segment_pairs)
+        return cls(metadata=metadata, segment_pairs=segment_pairs, pechas=pechas)
 
     @classmethod
     def from_id(cls, alignment_id: str):
