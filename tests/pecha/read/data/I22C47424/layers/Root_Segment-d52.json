@@ -1,11 +1,11 @@
 {
   "@type": "AnnotationStore",
-  "@id": "I4F3221FF",
+  "@id": "I22C47424",
   "resources": [
     {
       "@type": "TextResource",
-      "@id": "4fc",
-      "@include": "../base/4fc.txt"
+      "@id": "933",
+      "@include": "../base/933.txt"
     },
     {
       "@type": "TextResource",
@@ -16,7 +16,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "root_commentary_0e3",
+      "@id": "root_commentary_813",
       "keys": [
         {
           "@type": "DataKey",
@@ -30,7 +30,7 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "eac97d793ae446e9b7b6d3e9844862cd",
+          "@id": "ea4db490113b42e9abbac0dc75dd63ab",
           "key": "Resource Type",
           "value": {
             "@type": "String",
@@ -39,7 +39,7 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "e97f26482c4e4807ade202ab8c0c8667",
+          "@id": "06eb5501a105478bb7b795e5964420a8",
           "key": "Structure Type",
           "value": {
             "@type": "String",
@@ -60,17 +60,17 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "eac97d793ae446e9b7b6d3e9844862cd",
-          "set": "root_commentary_0e3"
+          "@id": "ea4db490113b42e9abbac0dc75dd63ab",
+          "set": "root_commentary_813"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "9a9649a3be084dc0a265bdb06d902ee8",
+      "@id": "c568ee57925a401396bc5ec5b8211277",
       "target": {
         "@type": "TextSelector",
-        "resource": "4fc",
+        "resource": "933",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -86,17 +86,17 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e97f26482c4e4807ade202ab8c0c8667",
-          "set": "root_commentary_0e3"
+          "@id": "06eb5501a105478bb7b795e5964420a8",
+          "set": "root_commentary_813"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "c9defc7877014ade840413c804293ca8",
+      "@id": "15736797f194477b9271e27b6e8f4d8f",
       "target": {
         "@type": "TextSelector",
-        "resource": "4fc",
+        "resource": "933",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -112,17 +112,17 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e97f26482c4e4807ade202ab8c0c8667",
-          "set": "root_commentary_0e3"
+          "@id": "06eb5501a105478bb7b795e5964420a8",
+          "set": "root_commentary_813"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "817ff03bd44d4e668e27117b253f0460",
+      "@id": "6793420da02342919d559db114012533",
       "target": {
         "@type": "TextSelector",
-        "resource": "4fc",
+        "resource": "933",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -138,17 +138,17 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e97f26482c4e4807ade202ab8c0c8667",
-          "set": "root_commentary_0e3"
+          "@id": "06eb5501a105478bb7b795e5964420a8",
+          "set": "root_commentary_813"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "7957f3d9c96243f280b2a575e26498de",
+      "@id": "4d338711925e45b8b98ca63dfb534c5c",
       "target": {
         "@type": "TextSelector",
-        "resource": "4fc",
+        "resource": "933",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -164,17 +164,17 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e97f26482c4e4807ade202ab8c0c8667",
-          "set": "root_commentary_0e3"
+          "@id": "06eb5501a105478bb7b795e5964420a8",
+          "set": "root_commentary_813"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "63b6883964774e5d9aeafb457212b645",
+      "@id": "d863d83b59b84871bd61c3bb4b7c85cf",
       "target": {
         "@type": "TextSelector",
-        "resource": "4fc",
+        "resource": "933",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -190,8 +190,8 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e97f26482c4e4807ade202ab8c0c8667",
-          "set": "root_commentary_0e3"
+          "@id": "06eb5501a105478bb7b795e5964420a8",
+          "set": "root_commentary_813"
         }
       ]
     }

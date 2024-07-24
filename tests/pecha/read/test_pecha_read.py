@@ -9,9 +9,9 @@ from openpecha.pecha.metadata import PechaMetaData
 
 def test_pecha_read():
     DATA = Path(__file__).parent / "data"
-    pecha_path = DATA / "I4F3221FF"
+    pecha_path = DATA / "I22C47424"
     pecha = Pecha.from_path(pecha_path)
-    assert pecha.id_ == "I4F3221FF"
+    assert pecha.id_ == "I22C47424"
 
     ann_store = pecha.get_annotation_store(LayerEnum.root_segment)
     assert isinstance(ann_store, AnnotationStore)
