@@ -10,7 +10,7 @@ class Alignment:
         segment_pairs=None,
     ):
         self.metadata = metadata
-        self.alignment_segment_pairs = segment_pairs
+        self.segment_pairs = segment_pairs
 
     @classmethod
     def from_path(cls, path: str):

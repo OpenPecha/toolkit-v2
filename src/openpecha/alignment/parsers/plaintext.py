@@ -4,6 +4,8 @@ from typing import List, Tuple
 
 from stam import AnnotationStore, Offset, Selector
 
+from openpecha.alignment import Alignment, AlignmentMetaData
+from openpecha.alignment.metadata import AlignmentRelationEnum, LanguageEnum
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
@@ -58,7 +60,46 @@ class PlainTextLineAlignedParser:
 
         dataset_id = f"root_commentary_{get_uuid()[:3]}"
         source_ann_store, target_ann_store = self.parse_pechas(dataset_id, output_path)
-        return source_ann_store, target_ann_store
+
+        """ building alignment metadata """
+        metadata = {}
+
+        source_id = source_ann_store.id()
+        resource = [
+            resource
+            for resource in source_ann_store.resources()
+            if resource.id() != "metadata"
+        ][0]
+        metadata[source_id] = {
+            "type": LayerEnum.root_segment.value,
+            "relation": AlignmentRelationEnum.source.value,
+            "lang": LanguageEnum.tibetan.value,
+            "base": resource.id(),
+        }
+
+        target_id = target_ann_store.id()
+        resource = [
+            resource
+            for resource in target_ann_store.resources()
+            if resource.id() != "metadata"
+        ][0]
+        metadata[target_id] = {
+            "type": LayerEnum.comment.value,
+            "relation": AlignmentRelationEnum.target.value,
+            "lang": LanguageEnum.tibetan.value,
+            "base": resource.id(),
+        }
+
+        alignment_metadata = AlignmentMetaData.from_dict(metadata)
+        segment_pairs = [
+            ((source_id, source_ann.id()), (target_id, target_ann.id()))
+            for source_ann, target_ann in zip(
+                source_ann_store.annotations(), target_ann_store.annotations()
+            )
+        ]
+
+        alignment = Alignment.from_segment_pairs(segment_pairs, alignment_metadata)
+        return alignment
 
     def parse_pechas(self, dataset_id: str, output_path: Path):
         source_ann_metadata = AnnotationMetadata(
@@ -83,7 +124,6 @@ class PlainTextLineAlignedParser:
         target_ann_store = create_pecha_stam(
             target_ann_metadata, target_metadata, output_path
         )
-
         return source_ann_store, target_ann_store
 
 
