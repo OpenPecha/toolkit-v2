@@ -5,7 +5,7 @@ from typing import List, Optional
 from stam import AnnotationStore, Offset, Selector
 
 from openpecha.alignment import Alignment, AlignmentMetaData
-from openpecha.alignment.metadata import AlignmentRelationEnum, LanguageEnum
+from openpecha.alignment.metadata import AlignmentRelationEnum
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
@@ -81,9 +81,9 @@ class PlainTextLineAlignedParser:
             if resource.id() != "metadata"
         ][0]
         metadata[source_id] = {
-            "type": LayerEnum.root_segment.value,
+            "type": self.metadata["source"]["type"],
             "relation": AlignmentRelationEnum.source.value,
-            "lang": LanguageEnum.tibetan.value,
+            "lang": self.metadata["source"]["language"],
             "base": resource.id(),
         }
 
@@ -94,9 +94,9 @@ class PlainTextLineAlignedParser:
             if resource.id() != "metadata"
         ][0]
         metadata[target_id] = {
-            "type": LayerEnum.comment.value,
+            "type": self.metadata["target"]["type"],
             "relation": AlignmentRelationEnum.target.value,
-            "lang": LanguageEnum.tibetan.value,
+            "lang": self.metadata["target"]["language"],
             "base": resource.id(),
         }
 
@@ -112,21 +112,22 @@ class PlainTextLineAlignedParser:
         return alignment
 
     def parse_pechas(self, dataset_id: str, output_path: Path):
+
+        source_metadata = PechaMetaData(**self.metadata["source"])
+        target_metadata = PechaMetaData(**self.metadata["target"])
+
         source_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.source_text,
             annotation_category=LayerGroupEnum.structure_type,
-            annotation_type=LayerEnum.root_segment,
+            annotation_type=LayerEnum(source_metadata.type),
         )
         target_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.target_text,
             annotation_category=LayerGroupEnum.structure_type,
-            annotation_type=LayerEnum.comment,
+            annotation_type=LayerEnum(target_metadata.type),
         )
-
-        source_metadata = PechaMetaData(**self.metadata["source"])
-        target_metadata = PechaMetaData(**self.metadata["target"])
 
         source_ann_store = create_pecha_stam(
             source_ann_metadata, source_metadata, output_path

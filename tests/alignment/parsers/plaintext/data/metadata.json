@@ -4,7 +4,9 @@
                 "title":["Chojuk Source Title 1","Chojuk Source Title 1"],
                 "author":["Chojuk Source Author 1", "Chojuk Source Author 1"],
                 "source": "Chojuk Source",
-                "source_metadata": {}
+                "source_metadata": {},
+                "type":"Root_Segment",
+                "language": "Tibetan"
             },
 
     "target":{
@@ -12,6 +14,8 @@
             "title":["Chojuk Target Title 1","Chojuk Target Title 1"],
             "author":["Chojuk Target Author 1", "Chojuk Target Author 1"],
             "source": "Chojuk Target",
-            "source_metadata": {}
+            "source_metadata": {},
+            "type":"Comment",
+            "language": "Tibetan"
     }
 }

@@ -18,10 +18,10 @@ class AlignmentTypeEnum(Enum):
 
 
 class LanguageEnum(Enum):
-    tibetan = "tibetan"
-    english = "english"
-    chinese = "chinese"
-    sanskrit = "sanskrit"
+    tibetan = "Tibetan"
+    english = "English"
+    chinese = "Chinese"
+    sanskrit = "Sanskrit"
 
 
 class SegmentMetaData(BaseModel):

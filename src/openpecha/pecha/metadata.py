@@ -13,6 +13,8 @@ class PechaMetaData(BaseModel):
     created_at: datetime
     source: str
     source_metadata: Dict[str, str]
+    type: str
+    language: str
 
     class Config:
         extra = Extra.allow
@@ -30,20 +32,22 @@ class PechaMetaData(BaseModel):
             f"Author: {', '.join(self.author)}\n"
             f"Created At: {self.created_at.isoformat()}\n"
             f"Source: {self.source}\n"
-            f"Source Metadata: {json.dumps(self.source_metadata, indent=4)}"
+            f"Source Metadata: {json.dumps(self.source_metadata, indent=4)}\n"
+            f"Type: {self.type}\n"
+            f"Language: {self.language}"
         )
         return formatted_text
 
     @classmethod
     def from_text(cls, text: str) -> Optional["PechaMetaData"]:
         """
-        Parse metadata from a given formatted text string and create a MetaData instance.
+        Parse metadata from a given formatted text string and create a PechaMetaData instance.
 
         Parameters:
         text (str): The formatted text string containing metadata.
 
         Returns:
-        Optional[MetaData]: An instance of the MetaData class or None if parsing fails.
+        Optional[PechaMetaData]: An instance of the PechaMetaData class or None if parsing fails.
         """
         id_match = re.search(r"ID: (.+)", text)
         title_match = re.search(r"Title: ([^/\n]+)", text)
@@ -51,6 +55,8 @@ class PechaMetaData(BaseModel):
         created_at_match = re.search(r"Created At: ([^\n]+)\n", text)
         source_match = re.search(r"Source: (.+)", text)
         source_metadata_match = re.search(r"Source Metadata: (.+)", text)
+        type_match = re.search(r"Type: (.+)", text)
+        language_match = re.search(r"Language: (.+)", text)
 
         if not (
             id_match
@@ -59,6 +65,8 @@ class PechaMetaData(BaseModel):
             and created_at_match
             and source_match
             and source_metadata_match
+            and type_match
+            and language_match
         ):
             return None
 
@@ -70,6 +78,8 @@ class PechaMetaData(BaseModel):
         source = source_match.group(1)
         source_metadata_str = source_metadata_match.group(1)
         source_metadata = json.loads(source_metadata_str)
+        type_ = type_match.group(1)
+        language = language_match.group(1)
 
         return cls(
             id_=id_,
@@ -78,4 +88,6 @@ class PechaMetaData(BaseModel):
             created_at=created_at,
             source=source,
             source_metadata=source_metadata,
+            type=type_,
+            language=language,
         )
