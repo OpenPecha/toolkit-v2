@@ -3,7 +3,8 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from openpecha.alignment.metadata import AlignmentMetaData
-from openpecha.config import _mkdir
+from openpecha.config import ALIGNMENT_PATH, _mkdir
+from openpecha.github_utils import create_github_repo, upload_folder_to_github
 from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
 
@@ -12,10 +13,12 @@ class Alignment:
     def __init__(
         self,
         metadata: AlignmentMetaData,
+        base_path: Path = ALIGNMENT_PATH,
         segment_pairs: Dict[str, Dict[str, str]] = None,
         pechas: Dict[str, Pecha] = None,
     ):
         self.id_ = metadata.id_
+        self.base_path = base_path
         self.metadata = metadata
         self.segment_pairs = segment_pairs
         self.pechas = pechas
@@ -33,7 +36,12 @@ class Alignment:
         with open(anns_path, encoding="utf-8") as fp:
             segment_pairs = json.load(fp)
 
-        return cls(metadata=metadata, segment_pairs=segment_pairs, pechas=pechas)
+        return cls(
+            base_path=path,
+            metadata=metadata,
+            segment_pairs=segment_pairs,
+            pechas=pechas,
+        )
 
     @classmethod
     def from_id(cls, alignment_id: str):
@@ -54,7 +62,8 @@ class Alignment:
             }
         return cls(metadata=metadata, segment_pairs=transformed_segment_pairs)
 
-    def save(self, output_path: Path):
+    def write(self, output_path: Path):
+        """ """
         alignment_id = self.id_
         alignment_path = _mkdir(output_path / alignment_id)
 

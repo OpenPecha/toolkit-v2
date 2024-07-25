@@ -9,7 +9,14 @@ def _mkdir(path):
     return path
 
 
-BASE_PATH = _mkdir(Path.home() / ".openpecha")
-PECHAS_PATH = _mkdir(BASE_PATH / "pechas")
+def _mkdir_if_not(path: Path):
+    if not path.exists():
+        path.mkdir(exist_ok=True, parents=True)
+    return path
+
+
+BASE_PATH = _mkdir_if_not(Path.home() / ".openpecha")
+PECHAS_PATH = _mkdir_if_not(BASE_PATH / "pechas")
+ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignment")
 
 PECHA_DATA_ORG = "PechaData"

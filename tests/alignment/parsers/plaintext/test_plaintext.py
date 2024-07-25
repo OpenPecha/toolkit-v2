@@ -81,7 +81,7 @@ def test_plaintext_line_aligned_parser():
 
     alignment = parser.create_alignment()
     if alignment:
-        alignment.save(output_path=DATA)
+        alignment.write(output_path=DATA)
     assert isinstance(alignment, Alignment)
 
     """ clean up """
