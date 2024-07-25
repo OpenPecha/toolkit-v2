@@ -13,12 +13,14 @@ class Alignment:
     def __init__(
         self,
         metadata: AlignmentMetaData,
-        base_path: Path = ALIGNMENT_PATH,
+        base_path: Path = None,
         segment_pairs: Dict[str, Dict[str, str]] = None,
         pechas: Dict[str, Pecha] = None,
     ):
         self.id_ = metadata.id_
-        self.base_path = _mkdir(base_path / self.id_)
+        self.base_path = (
+            _mkdir(ALIGNMENT_PATH / self.id_) if not base_path else base_path
+        )
         self.metadata = metadata
         self.segment_pairs = segment_pairs
         self.pechas = pechas
