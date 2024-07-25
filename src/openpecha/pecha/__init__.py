@@ -6,15 +6,18 @@ from openpecha.pecha.layer import LayerEnum
 
 
 class Pecha:
-    def __init__(self, pecha_id: str, annotation_path: Path) -> None:
+    def __init__(self, pecha_id: str, base_path: Path) -> None:
         self.id_ = pecha_id
-        self.ann_path = annotation_path
+        self.base_path = base_path
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
         pecha_id = pecha_path.stem
-        annotation_path = pecha_path / "layers"
-        return cls(pecha_id, annotation_path)
+        return cls(pecha_id, pecha_path)
+
+    @property
+    def ann_path(self):
+        return self.base_path / "layers"
 
     def get_annotation_store(self, annotation_type: LayerEnum):
         annotation_type_file_paths = list(
