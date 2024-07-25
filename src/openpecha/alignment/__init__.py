@@ -4,7 +4,11 @@ from typing import Dict, List, Tuple
 
 from openpecha.alignment.metadata import AlignmentMetaData
 from openpecha.config import ALIGNMENT_PATH, _mkdir
-from openpecha.github_utils import create_github_repo, upload_folder_to_github
+from openpecha.github_utils import (
+    create_github_repo,
+    git_clone,
+    upload_folder_to_github,
+)
 from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
 
@@ -46,8 +50,9 @@ class Alignment:
         )
 
     @classmethod
-    def from_id(cls, alignment_id: str):
-        pass
+    def from_id(cls, alignment_id: str, output_path: Path = ALIGNMENT_PATH):
+        alignment_path = git_clone(alignment_id, output_path)
+        return Alignment.from_path(alignment_path)
 
     @classmethod
     def from_segment_pairs(

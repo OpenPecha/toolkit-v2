@@ -104,7 +104,9 @@ def upload_folder_to_github(
         raise GithubRepoError(f"[ERROR]: An unexpected error occurred. Error: {e}")
 
 
-def git_clone(repo_name: str, output_path: Path, org_name: str = PECHA_DATA_ORG):
+def git_clone(
+    repo_name: str, output_path: Path, org_name: str = PECHA_DATA_ORG
+) -> Path:
     if not output_path.is_dir():
         raise NotADirectoryError("Given path should be directory !!!")
 
@@ -121,7 +123,7 @@ def git_clone(repo_name: str, output_path: Path, org_name: str = PECHA_DATA_ORG)
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        return True
+        return target_path
     except subprocess.CalledProcessError as e:
         raise GithubCloneError(f"Failed to clone {repo_name}. Error: {e}")
 
