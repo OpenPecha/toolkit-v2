@@ -26,3 +26,9 @@ class FileUploadError(GithubRepoError):
     """Raised when there is an error uploading files to the repository."""
 
     pass
+
+
+class GithubCloneError(GithubRepoError):
+    """Raised when there is an error cloning github repo"""
+
+    pass

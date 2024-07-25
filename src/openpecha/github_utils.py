@@ -1,4 +1,5 @@
 import os
+import subprocess
 from pathlib import Path
 
 from github import Github
@@ -8,9 +9,10 @@ from github.GithubException import (
     UnknownObjectException,
 )
 
-from openpecha.config import PECHA_DATA_ORG
+from openpecha.config import PECHA_DATA_ORG, _mkdir
 from openpecha.exceptions import (
     FileUploadError,
+    GithubCloneError,
     GithubRepoError,
     InvalidTokenError,
     OrganizationNotFoundError,
@@ -100,3 +102,30 @@ def upload_folder_to_github(
         )
     except Exception as e:
         raise GithubRepoError(f"[ERROR]: An unexpected error occurred. Error: {e}")
+
+
+def git_clone(repo_name: str, output_path: Path, org_name: str = PECHA_DATA_ORG):
+    if not output_path.is_dir():
+        raise NotADirectoryError("Given path should be directory !!!")
+
+    target_path = output_path / repo_name
+
+    if (target_path).exists():
+        _mkdir(target_path)
+
+    repo_url = f"https://github.com/{org_name}/{repo_name}.git"
+    try:
+        subprocess.run(
+            ["git", "clone", repo_url, str(target_path)],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return True
+    except subprocess.CalledProcessError as e:
+        raise GithubCloneError(f"Failed to clone {repo_name}. Error: {e}")
+
+
+if __name__ == "__main__":
+    output_path = Path("/home/tenzin3/Monlam/toolkit-v2/")
+    git_clone("A0FAF24AC", output_path)
