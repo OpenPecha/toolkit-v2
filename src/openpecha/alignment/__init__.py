@@ -27,7 +27,7 @@ class Alignment:
         )
         self.metadata = metadata
         self.segment_pairs = segment_pairs
-        self.pechas = pechas if pechas else self.load_pechas()
+        self.pechas = pechas
 
     @classmethod
     def from_path(cls, path: Path, pechas: Dict[str, Pecha] = None):
@@ -74,7 +74,9 @@ class Alignment:
         pechas: Dict[str, Pecha] = {
             pecha_id: Pecha.from_id(pecha_id) for pecha_id in pecha_ids
         }
-        return pechas
+        if self.pechas is None:
+            self.pechas = pechas
+        return self.pechas
 
     def write(self, output_path: Path):
         """ """
