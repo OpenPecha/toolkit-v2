@@ -67,3 +67,23 @@ class Alignment:
         ann_path = alignment_path / "alignment.json"
         with open(ann_path, "w", encoding="utf-8") as fp:
             json.dump(self.segment_pairs, fp, indent=2)
+
+    def get_segment_pairs(self):
+        if not self.segment_pairs:
+            return None
+
+        for id_ in self.segment_pairs:
+            yield {id_: self.get_segment_pair(id_)}
+
+    def get_segment_pair(self, id_: str):
+        if not self.segment_pairs or not self.pechas:
+            return None
+
+        segment_pair = {}
+        for pecha_id, ann_id in self.segment_pairs[id_].items():
+            """get annotation store"""
+            ann_type = self.metadata.segments_metadata[pecha_id].type
+            pecha_ann_store = self.pechas[pecha_id].get_annotation_store(ann_type)
+            ann = pecha_ann_store.annotation(ann_id)
+            segment_pair[pecha_id] = str(ann)
+        return segment_pair
