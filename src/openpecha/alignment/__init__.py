@@ -18,7 +18,7 @@ class Alignment:
         pechas: Dict[str, Pecha] = None,
     ):
         self.id_ = metadata.id_
-        self.base_path = base_path
+        self.base_path = _mkdir(base_path / self.id_)
         self.metadata = metadata
         self.segment_pairs = segment_pairs
         self.pechas = pechas
@@ -96,3 +96,10 @@ class Alignment:
             ann = pecha_ann_store.annotation(ann_id)
             segment_pair[pecha_id] = str(ann)
         return segment_pair
+
+    def upload_update_with_github(self):
+        """upload files if first time"""
+        """ update files if already exist"""
+        repo_created = create_github_repo(self.id_)
+        if repo_created:
+            upload_folder_to_github(self.id_, self.base_path)
