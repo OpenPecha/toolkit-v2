@@ -3,7 +3,7 @@ from pathlib import Path
 from stam import AnnotationStore
 
 from openpecha.config import PECHAS_PATH
-from openpecha.github_utils import git_clone
+from openpecha.github_utils import clone_repo
 from openpecha.pecha.layer import LayerEnum
 
 
@@ -14,7 +14,7 @@ class Pecha:
 
     @classmethod
     def from_id(cls, pecha_id: str):
-        pecha_path = git_clone(pecha_id, PECHAS_PATH)
+        pecha_path = clone_repo(pecha_id, PECHAS_PATH)
         return Pecha.from_path(pecha_path)
 
     @classmethod

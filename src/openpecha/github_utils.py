@@ -104,7 +104,7 @@ def upload_folder_to_github(
         raise GithubRepoError(f"[ERROR]: An unexpected error occurred. Error: {e}")
 
 
-def git_clone(
+def clone_repo(
     repo_name: str, output_path: Path, org_name: str = PECHA_DATA_ORG
 ) -> Path:
     if not output_path.is_dir():
@@ -126,8 +126,3 @@ def git_clone(
         return target_path
     except subprocess.CalledProcessError as e:
         raise GithubCloneError(f"Failed to clone {repo_name}. Error: {e}")
-
-
-if __name__ == "__main__":
-    output_path = Path("/home/tenzin3/Monlam/toolkit-v2/")
-    git_clone("A0FAF24AC", output_path)
