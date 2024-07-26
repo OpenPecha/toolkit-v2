@@ -199,5 +199,6 @@ def update_layer(old_base, new_base: str, layer: AnnotationStore):
         end_shift = new_end - old_end
         ann.offset().begin().shift(begin_shift)
         ann.offset().end().shift(end_shift)
-
         print(str(ann.offset()))
+
+    return layer

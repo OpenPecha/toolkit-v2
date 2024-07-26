@@ -75,5 +75,6 @@ class Pecha:
         for layer in self.get_layers(base_name):
             old_base = layer.resource(base_name).text()
             update_layer(old_base, new_base, layer)
-            print(old_base)
-        # self.set_base(base_name, content)
+            with utils.cwd(self.parent):
+                layer.save()
+        self.set_base(base_name, new_base)
