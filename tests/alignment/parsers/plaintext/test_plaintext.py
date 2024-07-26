@@ -26,9 +26,10 @@ def test_plaintext_line_aligned_parser():
     with open(metadata_path, encoding="utf-8") as f:
         metadata = json.load(f)
     alignment_type = LayerCollectionEnum(metadata["alignment"]["type"])
-    source_ann_store, target_ann_store = parser.parse_pechas(
-        dataset_id=alignment_type.value, output_path=DATA
-    )
+    (source_ann_store, source_ann_store_name), (
+        target_ann_store,
+        target_ann_store_name,
+    ) = parser.parse_pechas(dataset_id=alignment_type.value, output_path=DATA)
 
     assert isinstance(source_ann_store, AnnotationStore)
     assert isinstance(target_ann_store, AnnotationStore)
@@ -82,7 +83,7 @@ def test_plaintext_line_aligned_parser():
     parser.source_ann_store = source_ann_store
     parser.target_ann_store = target_ann_store
 
-    alignment = parser.create_alignment()
+    alignment = parser.create_alignment(source_ann_store_name, target_ann_store_name)
     if alignment:
         alignment.write(output_path=DATA)
     assert isinstance(alignment, Alignment)

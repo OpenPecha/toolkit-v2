@@ -65,18 +65,21 @@ class PlainTextLineAlignedParser:
         """
 
         alignment_type = LayerCollectionEnum(self.metadata["alignment"]["type"])
-        source_ann_store, target_ann_store = self.parse_pechas(
-            alignment_type.value, output_path
-        )
+        (source_ann_store, source_ann_store_name), (
+            target_ann_store,
+            target_ann_store_name,
+        ) = self.parse_pechas(alignment_type.value, output_path)
         self.source_ann_store = source_ann_store
         self.target_ann_store = target_ann_store
 
-        alignment = self.create_alignment()
+        alignment = self.create_alignment(source_ann_store_name, target_ann_store_name)
         if alignment:
             alignment.write(output_path)
         return alignment
 
-    def create_alignment(self) -> Optional[Alignment]:
+    def create_alignment(
+        self, source_ann_store_name: str, target_ann_store_name: str
+    ) -> Optional[Alignment]:
         if not self.source_ann_store or not self.target_ann_store:
             return None
 
@@ -94,6 +97,7 @@ class PlainTextLineAlignedParser:
             "relation": AlignmentRelationEnum.source.value,
             "lang": self.metadata["source"]["language"],
             "base": resource.id(),
+            "layer": source_ann_store_name,
         }
 
         target_id = self.target_ann_store.id()
@@ -107,6 +111,7 @@ class PlainTextLineAlignedParser:
             "relation": AlignmentRelationEnum.target.value,
             "lang": self.metadata["target"]["language"],
             "base": resource.id(),
+            "layer": target_ann_store_name,
         }
 
         alignment_metadata = AlignmentMetaData.from_dict(metadata)
@@ -147,13 +152,16 @@ class PlainTextLineAlignedParser:
             annotation_type=LayerEnum(target_metadata.type),
         )
 
-        source_ann_store = create_pecha_stam(
+        (source_ann_store, source_ann_store_name) = create_pecha_stam(
             source_ann_metadata, source_metadata, output_path
         )
-        target_ann_store = create_pecha_stam(
+        (target_ann_store, target_ann_store_name) = create_pecha_stam(
             target_ann_metadata, target_metadata, output_path
         )
-        return source_ann_store, target_ann_store
+        return (source_ann_store, source_ann_store_name), (
+            target_ann_store,
+            target_ann_store_name,
+        )
 
 
 def create_pecha_stam(
@@ -227,7 +235,7 @@ def create_pecha_stam(
     ann_store_path = ann_output_dir / ann_store_filename
     ann_store_path = save_stam(ann_store, output_path, ann_store_path)
 
-    return ann_store
+    return (ann_store, ann_store_path.name)
 
 
 def split_text_into_lines(text: str) -> List[str]:

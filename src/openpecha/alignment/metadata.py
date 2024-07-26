@@ -24,6 +24,7 @@ class SegmentMetaData(BaseModel):
     relation: AlignmentRelationEnum
     lang: LanguageEnum
     base: str
+    layer: str
 
     def to_dict(self) -> Dict:
         """
@@ -35,6 +36,7 @@ class SegmentMetaData(BaseModel):
             "relation": self.relation.value,
             "lang": self.lang.value,
             "base": self.base,
+            "layer": self.layer,
         }
 
 
@@ -50,9 +52,10 @@ class AlignmentMetaData(BaseModel):
             relation = AlignmentRelationEnum(segment_metadata["relation"])
             lang = LanguageEnum(segment_metadata["lang"])
             base = segment_metadata["base"]
+            layer = segment_metadata["layer"]
 
             segments_metadata[segment_source_id] = SegmentMetaData(
-                type=type, relation=relation, lang=lang, base=base
+                type=type, relation=relation, lang=lang, base=base, layer=layer
             )
 
         return cls(id_=alignment_id, segments_metadata=segments_metadata)
