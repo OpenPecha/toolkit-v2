@@ -3,7 +3,7 @@ import re
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Extra, root_validator
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class PechaMetaData(BaseModel):
@@ -16,10 +16,9 @@ class PechaMetaData(BaseModel):
     type: str
     language: str
 
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
     def set_created_at(cls, values):
         if "created_at" not in values or values["created_at"] is None:
             values["created_at"] = datetime.now()
