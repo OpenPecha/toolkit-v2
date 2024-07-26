@@ -1,6 +1,13 @@
 from enum import Enum
 
 
+class LayerCollectionEnum(Enum):
+    """In STAM, this is used for setting DataSet id"""
+
+    translation = "Translation"
+    root_commentory = "Root_Commentary"
+
+
 class LayerEnum(Enum):
     root_segment = "Root_Segment"
     commentary = "Commentary"

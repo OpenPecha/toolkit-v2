@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from shutil import rmtree
 
@@ -8,8 +9,7 @@ from openpecha.alignment.parsers.plaintext import (
     PlainTextLineAlignedParser,
     split_text_into_lines,
 )
-from openpecha.ids import get_uuid
-from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
 from openpecha.pecha.metadata import PechaMetaData
 
 
@@ -22,9 +22,12 @@ def test_plaintext_line_aligned_parser():
     parser = PlainTextLineAlignedParser.from_files(
         source_path, target_path, metadata_path
     )
-    dataset_id = f"root_commentary_{get_uuid()[:3]}"
+
+    with open(metadata_path, encoding="utf-8") as f:
+        metadata = json.load(f)
+    alignment_type = LayerCollectionEnum(metadata["alignment"]["type"])
     source_ann_store, target_ann_store = parser.parse_pechas(
-        dataset_id=dataset_id, output_path=DATA
+        dataset_id=alignment_type.value, output_path=DATA
     )
 
     assert isinstance(source_ann_store, AnnotationStore)

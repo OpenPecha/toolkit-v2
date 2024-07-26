@@ -9,7 +9,12 @@ from openpecha.alignment import Alignment, AlignmentMetaData
 from openpecha.alignment.metadata import AlignmentRelationEnum
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
-from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_annotation_category
+from openpecha.pecha.layer import (
+    LayerCollectionEnum,
+    LayerEnum,
+    LayerGroupEnum,
+    get_annotation_category,
+)
 from openpecha.pecha.metadata import PechaMetaData
 
 
@@ -59,8 +64,10 @@ class PlainTextLineAlignedParser:
         Parse the source and target texts, create annotations, and save to files.
         """
 
-        dataset_id = f"root_commentary_{get_uuid()[:3]}"
-        source_ann_store, target_ann_store = self.parse_pechas(dataset_id, output_path)
+        alignment_type = LayerCollectionEnum(self.metadata["alignment"]["type"])
+        source_ann_store, target_ann_store = self.parse_pechas(
+            alignment_type.value, output_path
+        )
         self.source_ann_store = source_ann_store
         self.target_ann_store = target_ann_store
 

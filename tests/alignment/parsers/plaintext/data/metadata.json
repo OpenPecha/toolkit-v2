@@ -1,4 +1,7 @@
 {
+    "alignment":{
+        "type":"Root_Commentary"
+    },
     "source":{
                 "id_":"12345",
                 "title":["Chojuk Source Title 1","Chojuk Source Title 1"],

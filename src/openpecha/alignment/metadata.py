@@ -12,11 +12,6 @@ class AlignmentRelationEnum(Enum):
     target = "Target"
 
 
-class AlignmentTypeEnum(Enum):
-    translation = "Translation"
-    root_commentory = "Root_Commentary"
-
-
 class LanguageEnum(Enum):
     tibetan = "Tibetan"
     english = "English"
