@@ -70,7 +70,7 @@ def test_plaintext_line_aligned_parser():
 
     target_key = dataset.key(LayerGroupEnum.structure_type.value)
     target_anns = list(
-        dataset.data(target_key, value=LayerEnum.comment.value).annotations()
+        dataset.data(target_key, value=LayerEnum.commentary.value).annotations()
     )
     for annotation, target_line in zip(target_anns, target_lines):
         assert str(annotation) == target_line

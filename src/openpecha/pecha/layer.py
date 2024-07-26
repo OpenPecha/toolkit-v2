@@ -3,7 +3,7 @@ from enum import Enum
 
 class LayerEnum(Enum):
     root_segment = "Root_Segment"
-    comment = "Comment"
+    commentary = "Commentary"
     metadata = "Meta_data"
 
 
