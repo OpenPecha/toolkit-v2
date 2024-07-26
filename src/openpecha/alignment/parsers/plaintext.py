@@ -158,7 +158,7 @@ def create_pecha_stam(
 
     """ create base file for new annotation store"""
     base_dir = _mkdir(pecha_path / "base")
-    base_file_name = get_uuid()[:3]
+    base_file_name = get_uuid()[:4]
     base_file_path = base_dir / f"{base_file_name}.txt"
     base_file_path.write_text(ann_metadata.base_text, encoding="utf-8")
     ann_resource = ann_store.add_resource(

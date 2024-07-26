@@ -1,17 +1,17 @@
 {
-  "id_": "A0FAF24AC",
+  "id_": "A4008DA12",
   "segments_metadata": {
-    "I72772C62": {
+    "I0F8FC40B": {
       "type": "Root_Segment",
       "relation": "Source",
       "lang": "Tibetan",
-      "base": "1a5"
+      "base": "0d24"
     },
-    "I01F61FAA": {
+    "I1CCBF4CA": {
       "type": "Comment",
       "relation": "Target",
       "lang": "Tibetan",
-      "base": "0b4"
+      "base": "f007"
     }
   }
 }
