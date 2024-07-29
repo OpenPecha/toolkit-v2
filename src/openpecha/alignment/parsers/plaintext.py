@@ -1,4 +1,3 @@
-import itertools
 import json
 from datetime import datetime
 from pathlib import Path
@@ -119,12 +118,7 @@ class PlainTextLineAlignedParser:
         segment_pairs = [
             ((source_id, source_ann.id()), (target_id, target_ann.id()))
             for source_ann, target_ann in zip(
-                itertools.islice(
-                    self.source_ann_store.annotations(), 1, None
-                ),  # exclude the metadata annotation(first annotation)
-                itertools.islice(
-                    self.target_ann_store.annotations(), 1, None
-                ),  # exclude the metadata annotation(first annotation)
+                self.source_ann_store.annotations(), self.target_ann_store.annotations()
             )
         ]
 
