@@ -1,19 +1,19 @@
 {
-  "id_": "AF4785F79",
+  "id_": "A3D08A211",
   "segments_metadata": {
-    "I6BC9DB79": {
+    "I8C8343BD": {
       "type": "Root_Segment",
       "relation": "Source",
       "lang": "Tibetan",
-      "base": "a293",
-      "layer": "Root_Segment-717.json"
+      "base": "dddb",
+      "layer": "Root_Segment-c1c.json"
     },
-    "IA62EA8F5": {
+    "IA500190D": {
       "type": "Commentary",
       "relation": "Target",
       "lang": "Tibetan",
-      "base": "5062",
-      "layer": "Commentary-813.json"
+      "base": "86ab",
+      "layer": "Commentary-500.json"
     }
   }
 }
