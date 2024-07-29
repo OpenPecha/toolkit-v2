@@ -1,5 +1,6 @@
 import itertools
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
@@ -173,10 +174,6 @@ def create_pecha_stam(
     pecha_path = _mkdir(output_path / ann_store_id)
     ann_store = AnnotationStore(id=ann_store_id)
 
-    """ write metadata"""
-    metadata_path = Path(pecha_path / "metadata.txt")
-    metadata_path.write_text(metadata.to_formatted_text(), encoding="utf-8")
-
     """ create base file for new annotation store"""
     base_dir = _mkdir(pecha_path / "base")
     base_file_name = get_uuid()[:4]
@@ -186,24 +183,59 @@ def create_pecha_stam(
         id=base_file_name, filename=base_file_path.as_posix()
     )
 
-    ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
-    """ point to metadata """
-    metadata_resource = ann_store.add_resource(
-        id="metadata", filename=metadata_path.as_posix()
+    """ write metadata"""
+    metadata_ann_store = AnnotationStore(id=ann_store_id)
+    metadata_dataset = metadata_ann_store.add_dataset(
+        id=LayerCollectionEnum.metadata.value
     )
-    data = [
-        {
-            "id": get_uuid(),
-            "set": ann_dataset.id(),
-            "key": LayerGroupEnum.resource_type.value,
-            "value": LayerEnum.metadata.value,
-        }
-    ]
-    ann_store.annotate(
-        id="metadata",
-        target=Selector.resourceselector(resource=metadata_resource),
+    metadata_ann_resource = metadata_ann_store.add_resource(
+        id=base_file_name, filename=base_file_path.as_posix()
+    )
+
+    data = []
+    for key, value in metadata.model_dump().items():
+        if isinstance(value, datetime):
+            value = value.strftime("%Y-%m-%d %H:%M:%S.%f")
+        if isinstance(value, List):
+            for v in value:
+                data.append(
+                    {
+                        "id": get_uuid(),
+                        "set": metadata_dataset.id(),
+                        "key": key,
+                        "value": v,
+                    }
+                )
+            continue
+        if isinstance(value, dict):
+            for k, v in value.items():
+                data.append(
+                    {
+                        "id": get_uuid(),
+                        "set": metadata_dataset.id(),
+                        "key": k,
+                        "value": v,
+                    }
+                )
+            continue
+        data.append(
+            {
+                "id": get_uuid(),
+                "set": metadata_dataset.id(),
+                "key": key,
+                "value": value,
+            }
+        )
+
+    metadata_ann_store.annotate(
+        id=get_uuid(),
+        target=Selector.resourceselector(resource=metadata_ann_resource),
         data=data,
     )
+
+    save_stam(metadata_ann_store, output_path, pecha_path / "metadata.json")
+
+    ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
 
     """ create annotation for each line in new annotation store"""
     lines = split_text_into_lines(ann_metadata.base_text)

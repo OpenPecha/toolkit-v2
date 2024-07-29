@@ -1,10 +1,9 @@
 from pathlib import Path
 
-from stam import AnnotationStore, TextResource
+from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
-from openpecha.pecha.metadata import PechaMetaData
 
 
 def test_pecha_read():
@@ -30,16 +29,6 @@ def test_pecha_read():
     anns = list(dataset.data(key, value=LayerEnum.root_segment.value).annotations())
     for ann, expected_ann in zip(anns, expected_anns):
         assert str(ann) == expected_ann
-
-    """ getting metadata """
-    key = dataset.key(LayerGroupEnum.resource_type.value)
-    metadata_ann = list(
-        dataset.data(key, value=LayerEnum.metadata.value).annotations()
-    )[0]
-    text_resource = metadata_ann.target().resource(ann_store)
-    assert isinstance(text_resource, TextResource)
-    metadata_obj = PechaMetaData.from_text(text_resource.text())
-    assert isinstance(metadata_obj, PechaMetaData)
 
 
 test_pecha_read()

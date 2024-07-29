@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from shutil import rmtree
 
-from stam import AnnotationStore, TextResource
+from stam import AnnotationStore
 
 from openpecha.alignment import Alignment
 from openpecha.alignment.parsers.plaintext import (
@@ -10,7 +10,6 @@ from openpecha.alignment.parsers.plaintext import (
     split_text_into_lines,
 )
 from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
-from openpecha.pecha.metadata import PechaMetaData
 
 
 def test_plaintext_line_aligned_parser():
@@ -37,20 +36,9 @@ def test_plaintext_line_aligned_parser():
     source_lines = split_text_into_lines(source_path.read_text(encoding="utf-8"))
     target_lines = split_text_into_lines(target_path.read_text(encoding="utf-8"))
 
-    """ get source metadata"""
+    """ comparing source lines"""
     dataset = list(source_ann_store.datasets())[0]
 
-    metadata_key = dataset.key(LayerGroupEnum.resource_type.value)
-    metadata_ann = list(
-        dataset.data(metadata_key, value=LayerEnum.metadata.value).annotations()
-    )[0]
-
-    text_resource = metadata_ann.target().resource(source_ann_store)
-    assert isinstance(text_resource, TextResource)
-    metadata_obj = PechaMetaData.from_text(text_resource.text())
-    assert isinstance(metadata_obj, PechaMetaData)
-
-    """ comparing source lines"""
     source_key = dataset.key(LayerGroupEnum.structure_type.value)
     source_anns = list(
         dataset.data(source_key, value=LayerEnum.root_segment.value).annotations()
@@ -58,19 +46,8 @@ def test_plaintext_line_aligned_parser():
     for annotation, source_line in zip(source_anns, source_lines):
         assert str(annotation) == source_line
 
-    """ get source metadata"""
-    dataset = list(target_ann_store.datasets())[0]
-    metadata_key = dataset.key(LayerGroupEnum.resource_type.value)
-    metadata_ann = list(
-        dataset.data(metadata_key, value=LayerEnum.metadata.value).annotations()
-    )[0]
-
-    text_resource = metadata_ann.target().resource(target_ann_store)
-    assert isinstance(text_resource, TextResource)
-    metadata_obj = PechaMetaData.from_text(text_resource.text())
-    assert isinstance(metadata_obj, PechaMetaData)
-
     """ comparing target text lines"""
+    dataset = list(target_ann_store.datasets())[0]
 
     target_key = dataset.key(LayerGroupEnum.structure_type.value)
     target_anns = list(
