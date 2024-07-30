@@ -1,59 +1,74 @@
+import json
 from pathlib import Path
+from shutil import rmtree
 
-from openpecha.alignment.parsers.plaintext import PlainTextLineAlignedParser
-from openpecha.pecha import Pecha
+from stam import AnnotationStore
 
-
-def get_data_dir():
-    return Path(__file__).parent / "data"
-
-
-def get_metadata():
-    return {
-        "source": {
-            "annotation_category": "Structure Type",
-            "annotation_label": "Segment",
-        },
-        "target": {
-            "annotation_category": "Structure Type",
-            "annotation_label": "Comment",
-        },
-    }
+from openpecha.alignment import Alignment
+from openpecha.alignment.parsers.plaintext import (
+    PlainTextLineAlignedParser,
+    split_text_into_lines,
+)
+from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
 
 
-def test_plaintext_parse():
-    DATA_DIR = get_data_dir()
-    source_path = DATA_DIR / "segments.txt"
-    target_path = DATA_DIR / "comments.txt"
+def test_plaintext_line_aligned_parser():
+    DATA = Path(__file__).parent / "data"
+    source_path = DATA / "root_segment.txt"
+    target_path = DATA / "commentary.txt"
+    metadata_path = DATA / "metadata.json"
 
-    metadata = get_metadata()
-    plaintext = PlainTextLineAlignedParser.from_files(
-        source_path, target_path, metadata
+    parser = PlainTextLineAlignedParser.from_files(
+        source_path, target_path, metadata_path
     )
-    plaintext.parse()
 
-    assert (
-        len(plaintext.source_segments) == 5
-    ), "plaintext parser is not parsing source_segments correctly"
-    assert (
-        len(plaintext.target_segments) == 5
-    ), "plaintext parser is not parsing target_segments correctly"
+    with open(metadata_path, encoding="utf-8") as f:
+        metadata = json.load(f)
+    alignment_type = LayerCollectionEnum(metadata["alignment"]["type"])
+    (source_ann_store, source_ann_store_name), (
+        target_ann_store,
+        target_ann_store_name,
+    ) = parser.parse_pechas(dataset_id=alignment_type.value, output_path=DATA)
 
+    assert isinstance(source_ann_store, AnnotationStore)
+    assert isinstance(target_ann_store, AnnotationStore)
 
-def test_plaintext_save():
-    DATA_DIR = get_data_dir()
-    source_path = DATA_DIR / "segments.txt"
-    target_path = DATA_DIR / "comments.txt"
+    source_lines = split_text_into_lines(source_path.read_text(encoding="utf-8"))
+    target_lines = split_text_into_lines(target_path.read_text(encoding="utf-8"))
 
-    metadata = get_metadata()
-    plaintext = PlainTextLineAlignedParser.from_files(
-        source_path, target_path, metadata
+    """ comparing source lines"""
+    dataset = list(source_ann_store.datasets())[0]
+
+    source_key = dataset.key(LayerGroupEnum.structure_type.value)
+    source_anns = list(
+        dataset.data(source_key, value=LayerEnum.root_segment.value).annotations()
     )
-    source_pecha, target_pecha = plaintext.save()
+    for annotation, source_line in zip(source_anns, source_lines):
+        assert str(annotation) == source_line
 
-    assert isinstance(
-        source_pecha, Pecha
-    ), f"source_pecha is not an instance of Pecha, but {type(source_pecha)}"
-    assert isinstance(
-        target_pecha, Pecha
-    ), f"target_pecha is not an instance of Pecha, but {type(target_pecha)}"
+    """ comparing target text lines"""
+    dataset = list(target_ann_store.datasets())[0]
+
+    target_key = dataset.key(LayerGroupEnum.structure_type.value)
+    target_anns = list(
+        dataset.data(target_key, value=LayerEnum.commentary.value).annotations()
+    )
+    for annotation, target_line in zip(target_anns, target_lines):
+        assert str(annotation) == target_line
+
+    """ alignment """
+    parser.source_ann_store = source_ann_store
+    parser.target_ann_store = target_ann_store
+
+    alignment = parser.create_alignment(source_ann_store_name, target_ann_store_name)
+    if alignment:
+        alignment.write(output_path=DATA)
+    assert isinstance(alignment, Alignment)
+
+    """ clean up """
+    rmtree(Path(DATA / source_ann_store.id()))
+    rmtree(Path(DATA / target_ann_store.id()))
+    rmtree(Path(DATA / alignment.id_))
+
+
+test_plaintext_line_aligned_parser()
