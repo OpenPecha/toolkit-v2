@@ -65,7 +65,7 @@ class PlainTextLineAlignedParser:
         Parse the source and target texts, create annotations, and save to files.
         """
 
-        alignment_type = LayerCollectionEnum(self.metadata["alignment"]["type"])
+        alignment_type = LayerCollectionEnum(self.metadata["source_metadata"]["type"])
         (source_ann_store, source_ann_store_name), (
             target_ann_store,
             target_ann_store_name,
@@ -87,7 +87,7 @@ class PlainTextLineAlignedParser:
         """ building alignment metadata """
         metadata: Dict = defaultdict(lambda: defaultdict(dict))
 
-        metadata["alignment"] = self.metadata["alignment"]
+        metadata["source_metadata"] = self.metadata["source_metadata"]
         source_id = self.source_ann_store.id()
         resource = [
             resource
@@ -95,7 +95,7 @@ class PlainTextLineAlignedParser:
             if resource.id() != "metadata"
         ][0]
 
-        metadata["pechas"][source_id] = {
+        metadata["segments_metadata"][source_id] = {
             "type": self.metadata["source"]["type"],
             "relation": AlignmentRelationEnum.source.value,
             "lang": self.metadata["source"]["language"],
@@ -109,7 +109,7 @@ class PlainTextLineAlignedParser:
             for resource in self.target_ann_store.resources()
             if resource.id() != "metadata"
         ][0]
-        metadata["pechas"][target_id] = {
+        metadata["segments_metadata"][target_id] = {
             "type": self.metadata["target"]["type"],
             "relation": AlignmentRelationEnum.target.value,
             "lang": self.metadata["target"]["language"],
@@ -303,3 +303,14 @@ def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
         else:
             resource["@include"] = f"../base/{original_path.name}"
     return json_object
+
+
+if __name__ == "__main__":
+    source_path = Path("TM2380-bo.txt")
+    target_path = Path("TM2380-en.txt")
+    metadata_path = Path("metadata.json")
+
+    parser = PlainTextLineAlignedParser.from_files(
+        source_path, target_path, metadata_path
+    )
+    parser.parse(Path("output"))
