@@ -1,7 +1,8 @@
 import json
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from stam import AnnotationStore, Offset, Selector
 
@@ -84,15 +85,17 @@ class PlainTextLineAlignedParser:
             return None
 
         """ building alignment metadata """
-        metadata = {}
+        metadata: Dict = defaultdict(lambda: defaultdict(dict))
 
+        metadata["alignment"] = self.metadata["alignment"]
         source_id = self.source_ann_store.id()
         resource = [
             resource
             for resource in self.source_ann_store.resources()
             if resource.id() != "metadata"
         ][0]
-        metadata[source_id] = {
+
+        metadata["pechas"][source_id] = {
             "type": self.metadata["source"]["type"],
             "relation": AlignmentRelationEnum.source.value,
             "lang": self.metadata["source"]["language"],
@@ -106,7 +109,7 @@ class PlainTextLineAlignedParser:
             for resource in self.target_ann_store.resources()
             if resource.id() != "metadata"
         ][0]
-        metadata[target_id] = {
+        metadata["pechas"][target_id] = {
             "type": self.metadata["target"]["type"],
             "relation": AlignmentRelationEnum.target.value,
             "lang": self.metadata["target"]["language"],
