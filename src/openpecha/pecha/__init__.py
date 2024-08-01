@@ -78,3 +78,32 @@ class Pecha:
             with utils.cwd(self.parent):
                 layer.save()
         self.set_base(base_name, new_base)
+
+    def merge_pecha(
+        self,
+        source_pecha_path: Union[Path, str],
+        source_base_name: str,
+        target_base_name: str,
+    ):
+        """
+        This function merges the layers of the source pecha into the current pecha.
+
+        Args:
+            source_pecha_path (Union[Path, str]): The path of the source pecha.
+            source_base_name (str): The base name of the source pecha.
+            target_base_name (str): The base name of the target (current) pecha.
+        """
+
+        source_pecha = Pecha(source_pecha_path)
+        target_base = self.get_base(target_base_name)
+
+        source_pecha.update_base(source_base_name, target_base)
+
+        for layer in source_pecha.get_layers(source_base_name):
+            with utils.cwd(self.parent):
+                target_base_fn = (
+                    self.base_path.relative_to(self.parent) / f"{target_base_name}.txt"
+                )
+                layer.add_resource(filename=str(target_base_fn))
+                layer.set_filename(self.layers_path / target_base_name / layer.file)
+                layer.save()

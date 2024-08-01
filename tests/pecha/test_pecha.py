@@ -7,15 +7,15 @@ from openpecha.pecha import Pecha
 
 
 @pytest.fixture
-def setup_temp_pecha(tmp_path):
-    source = Path("tests/pecha/data/P0001")
-    destination = tmp_path / "P0001"
+def temp_data(tmp_path):
+    source = Path("tests/pecha/data")
+    destination = tmp_path / "data"
     shutil.copytree(source, destination)
     return destination
 
 
-def test_pecha_base_update(setup_temp_pecha):
-    pecha = Pecha(path=setup_temp_pecha)
+def test_pecha_base_update(temp_data):
+    pecha = Pecha(path=temp_data / "P0001")
     base_name = "0001"
     new_base = "00123456789"
     old_layers = list(pecha.get_layers(base_name))
@@ -37,3 +37,25 @@ def test_pecha_base_update(setup_temp_pecha):
 
             assert new_ann_begin == old_ann_begin + 1
             assert new_ann_end == old_ann_end + 1
+
+
+def test_pecha_merge(temp_data):
+    source_pecha_path = Path(temp_data / "P0002")
+    target_pecha_path = Path(temp_data / "P0001")
+    source_base_name = "0002"
+    target_base_name = "0001"
+
+    source_pecha = Pecha(source_pecha_path)
+    target_pecha = Pecha(target_pecha_path)
+
+    source_base = source_pecha.get_base(source_base_name)
+    target_base = target_pecha.get_base(target_base_name)
+
+    assert source_base != target_base
+
+    target_pecha.merge_pecha(source_pecha_path, source_base_name, target_base_name)
+
+    source_base = source_pecha.get_base(source_base_name)
+    target_base = target_pecha.get_base(target_base_name)
+
+    assert source_base == target_base
