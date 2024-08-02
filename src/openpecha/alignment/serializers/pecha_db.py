@@ -49,7 +49,7 @@ class PechaDbSerializer:
                 pecha_db_json["source"]["books"] = {
                     "title": ann_metadata["title"] if "title" in ann_metadata else "",
                     "language": "en",
-                    "version_source": f"wwww.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
+                    "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
                     "direction": "ltr",
                     "content": [],
                 }
