@@ -21,7 +21,7 @@ def test_pecha_db_serializer():
     assert isinstance(alignment, Alignment)
 
     segment_pairs = list(alignment.get_segment_pairs())
-    pecha_db = PechaDbSerializer(segment_pairs, alignment.metadata)
+    pecha_db = PechaDbSerializer(segment_pairs, alignment)
     output_file = pecha_db.serialize(DATA)
     expected_output_file = DATA / "expected_output.json"
 

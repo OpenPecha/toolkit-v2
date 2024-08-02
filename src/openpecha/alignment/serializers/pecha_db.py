@@ -4,20 +4,20 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List
 
-from openpecha.alignment.metadata import AlignmentMetaData, LanguageEnum
+from openpecha.alignment import Alignment
+from openpecha.alignment.metadata import LanguageEnum
 
 
 class PechaDbSerializer:
-    def __init__(
-        self, segment_pairs: List[Dict], alignment_metadata: AlignmentMetaData
-    ):
+    def __init__(self, segment_pairs: List[Dict], alignment: Alignment):
         self.segment_pairs = segment_pairs
-        self.alignment_metadata = alignment_metadata
+        self.alignment = alignment
 
     def serialize(self, output_path: Path = Path(".")) -> Path:
         pecha_db_json: Dict = defaultdict(lambda: defaultdict(dict))
         pecha_lang = {}
-        for pecha_id, pecha in self.alignment_metadata.segments_metadata.items():
+        for pecha_id, pecha in self.alignment.metadata.segments_metadata.items():
+
             if pecha.lang == LanguageEnum.tibetan:
                 pecha_db_json["target"]["books"] = {
                     "title": "pecha title",  # Work need here
@@ -63,7 +63,7 @@ class PechaDbSerializer:
             elif pecha_lang[pecha_id] == LanguageEnum.english:
                 pecha_db_json["source"]["books"]["content"].append(segment)
 
-        output_file = output_path / f"{self.alignment_metadata.id_}.json"
+        output_file = output_path / f"{self.alignment.id_}.json"
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(pecha_db_json, f, ensure_ascii=False, indent=2)
 
