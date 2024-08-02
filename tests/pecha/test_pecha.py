@@ -28,7 +28,7 @@ def test_pecha_base_update(temp_data):
 
     new_layers = list(pecha.get_layers(base_name))
 
-    for old_layer, new_layer in zip(old_layers, new_layers):
+    for (_, old_layer), (_, new_layer) in zip(old_layers, new_layers):
         for old_ann, new_ann in zip(old_layer.annotations(), new_layer.annotations()):
             old_ann_begin = old_ann.offset().begin().value()
             old_ann_end = old_ann.offset().end().value()
@@ -52,10 +52,11 @@ def test_pecha_merge(temp_data):
     target_base = target_pecha.get_base(target_base_name)
 
     assert source_base != target_base
+    target_pre_merge_n_layers = len(list(target_pecha.get_layers(target_base_name)))
+    source_n_layers = len(list(source_pecha.get_layers(source_base_name)))
 
     target_pecha.merge_pecha(source_pecha_path, source_base_name, target_base_name)
 
-    source_base = source_pecha.get_base(source_base_name)
-    target_base = target_pecha.get_base(target_base_name)
+    target_post_merge_n_layers = len(list(target_pecha.get_layers(target_base_name)))
 
-    assert source_base == target_base
+    assert target_post_merge_n_layers == target_pre_merge_n_layers + source_n_layers

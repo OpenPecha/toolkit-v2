@@ -1,19 +1,26 @@
+from collections import defaultdict
 from pathlib import Path
-from typing import Generator, Union
+from typing import Dict, Generator, Tuple, Union
 
 from stam import AnnotationStore
 
 from openpecha import utils
 from openpecha.pecha.blupdate import update_layer
 
+BASE_NAME = str
+LAYER_NAME = str
+
 
 class Pecha:
     def __init__(self, path: Union[Path, str]):
         path = Path(path)
         self.run_checks(path)
-        self.path = path.resolve()
-        self.parent = self.path.parent
-        self.pecha_id = self.path.name
+        self.path: Path = path.resolve()
+        self.parent: Path = self.path.parent
+        self.pecha_id: str = self.path.name
+        self.layers: Dict[BASE_NAME, Dict[LAYER_NAME, AnnotationStore]] = defaultdict(
+            dict
+        )
 
     @staticmethod
     def run_checks(path: Path):
@@ -51,7 +58,9 @@ class Pecha:
         """
         (self.base_path / f"{base_name}.txt").write_text(content)
 
-    def get_layers(self, base_name) -> Generator[AnnotationStore, None, None]:
+    def get_layers(
+        self, base_name, from_cache=False
+    ) -> Generator[Tuple[str, AnnotationStore], None, None]:
         """
         This function returns the layers of the pecha.
 
@@ -64,20 +73,31 @@ class Pecha:
 
         for layer_fn in (self.layers_path / base_name).iterdir():
             rel_layer_fn = layer_fn.relative_to(self.parent)
-            with utils.cwd(self.parent):
-                store = AnnotationStore(file=str(rel_layer_fn))
-            yield store
+            if from_cache:
+                store = self.layers[base_name].get(rel_layer_fn.name)
+            else:
+                store = None
 
-    def update_base(self, base_name, new_base):
+            if store:
+                yield layer_fn.name, store
+            else:
+                with utils.cwd(self.parent):
+                    store = AnnotationStore(file=str(rel_layer_fn))
+                self.layers[base_name][rel_layer_fn.name] = store
+                yield layer_fn.name, store
+
+    def update_base(self, base_name, new_base, save=True):
         """
         This function updates the base layer of the pecha to a new text. It will recompute the existing layers into the new base layer.
         """
-        for layer in self.get_layers(base_name):
+        for _, layer in self.get_layers(base_name):
             old_base = layer.resource(base_name).text()
             update_layer(old_base, new_base, layer)
-            with utils.cwd(self.parent):
-                layer.save()
-        self.set_base(base_name, new_base)
+            if save:
+                with utils.cwd(self.parent):
+                    layer.save()
+        if save:
+            self.set_base(base_name, new_base)
 
     def merge_pecha(
         self,
@@ -97,13 +117,16 @@ class Pecha:
         source_pecha = Pecha(source_pecha_path)
         target_base = self.get_base(target_base_name)
 
-        source_pecha.update_base(source_base_name, target_base)
+        source_pecha.update_base(source_base_name, target_base, save=False)
 
-        for layer in source_pecha.get_layers(source_base_name):
+        for layer_fn, layer in source_pecha.get_layers(
+            source_base_name, from_cache=True
+        ):
             with utils.cwd(self.parent):
                 target_base_fn = (
                     self.base_path.relative_to(self.parent) / f"{target_base_name}.txt"
                 )
+                target_layer_fn = self.layers_path / target_base_name / layer_fn
                 layer.add_resource(filename=str(target_base_fn))
-                layer.set_filename(self.layers_path / target_base_name / layer.file)
+                layer.set_filename(str(target_layer_fn))
                 layer.save()
