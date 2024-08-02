@@ -1,5 +1,4 @@
 import json
-import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List
@@ -23,6 +22,7 @@ class PechaDbSerializer:
             pecha_id,
             pecha_metadata,
         ) in self.alignment.metadata.segments_metadata.items():
+            """get annotation metadata"""
             metadata_ann_store = self.alignment.pechas[pecha_id].metadata
             ann_metadata: Dict = {}
             for ann in metadata_ann_store.annotations():
@@ -61,32 +61,21 @@ class PechaDbSerializer:
                 }
             pecha_lang[pecha_id] = pecha_metadata.lang
 
-        curr_chapter: Dict = {}
+        pecha_segments: Dict = {}
         for pecha_id in pecha_lang.keys():
-            curr_chapter[pecha_id] = []
-
+            pecha_segments[pecha_id] = []
+        """ get segments of each pecha"""
         for segment_pair in self.segment_pairs:
             segment_pair_data = next(iter(segment_pair.values()))
             for pecha_id, segment in segment_pair_data.items():
-                if re.match(r"^Ch \d+ ", segment):  # Start of a new chapter
-                    if pecha_lang[pecha_id] == LanguageEnum.tibetan:
-                        pecha_db_json["target"]["books"]["content"].append(
-                            curr_chapter[pecha_id]
-                        )
-                    elif pecha_lang[pecha_id] == LanguageEnum.english:
-                        pecha_db_json["source"]["books"]["content"].append(
-                            curr_chapter[pecha_id]
-                        )
-                    curr_chapter[pecha_id] = []
-                    continue
-                curr_chapter[pecha_id].append(segment)
+                pecha_segments[pecha_id].append(segment)
 
-        """ Adding the rest of the segments """
-        for pecha_id, segment in curr_chapter.items():
+        """ add segments to json output(for pecha.org)"""
+        for pecha_id, segments in pecha_segments.items():
             if pecha_lang[pecha_id] == LanguageEnum.tibetan:
-                pecha_db_json["target"]["books"]["content"].append(segment)
+                pecha_db_json["target"]["books"]["content"].append(segments)
             elif pecha_lang[pecha_id] == LanguageEnum.english:
-                pecha_db_json["source"]["books"]["content"].append(segment)
+                pecha_db_json["source"]["books"]["content"].append(segments)
 
         output_file = output_path / f"{self.alignment.id_}.json"
         with open(output_file, "w", encoding="utf-8") as f:
