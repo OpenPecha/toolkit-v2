@@ -39,27 +39,35 @@ class PechaDbSerializer:
                             ann_metadata[key] = value
 
             if pecha_metadata.lang == LanguageEnum.tibetan:
-                pecha_db_json["target"]["books"] = {
-                    "title": ann_metadata["title"] if "title" in ann_metadata else "",
-                    "author": ann_metadata["author"]
-                    if "author" in ann_metadata
-                    else "",
-                    "language": "bo",
-                    "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
-                    "direction": "ltr",
-                    "content": [],
-                }
+                pecha_db_json["target"]["books"] = [
+                    {
+                        "title": ann_metadata["title"]
+                        if "title" in ann_metadata
+                        else "",
+                        "author": ann_metadata["author"]
+                        if "author" in ann_metadata
+                        else "",
+                        "language": "bo",
+                        "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
+                        "direction": "ltr",
+                        "content": [],
+                    }
+                ]
             elif pecha_metadata.lang == LanguageEnum.english:
-                pecha_db_json["source"]["books"] = {
-                    "title": ann_metadata["title"] if "title" in ann_metadata else "",
-                    "author": ann_metadata["author"]
-                    if "author" in ann_metadata
-                    else "",
-                    "language": "en",
-                    "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
-                    "direction": "ltr",
-                    "content": [],
-                }
+                pecha_db_json["source"]["books"] = [
+                    {
+                        "title": ann_metadata["title"]
+                        if "title" in ann_metadata
+                        else "",
+                        "author": ann_metadata["author"]
+                        if "author" in ann_metadata
+                        else "",
+                        "language": "en",
+                        "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
+                        "direction": "ltr",
+                        "content": [],
+                    }
+                ]
             pecha_lang[pecha_id] = pecha_metadata.lang
 
         pecha_segments: Dict = {}
@@ -80,9 +88,9 @@ class PechaDbSerializer:
         """ add segments to json output(for pecha.org)"""
         for pecha_id, segments in pecha_segments.items():
             if pecha_lang[pecha_id] == LanguageEnum.tibetan:
-                pecha_db_json["target"]["books"]["content"].append(segments)
+                pecha_db_json["target"]["books"][0]["content"].append(segments)
             elif pecha_lang[pecha_id] == LanguageEnum.english:
-                pecha_db_json["source"]["books"]["content"].append(segments)
+                pecha_db_json["source"]["books"][0]["content"].append(segments)
 
         output_file = output_path / f"{self.alignment.id_}.json"
         with open(output_file, "w", encoding="utf-8") as f:
