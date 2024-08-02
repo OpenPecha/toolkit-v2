@@ -16,25 +16,27 @@ class PechaDbSerializer:
     def serialize(self, output_path: Path = Path(".")) -> Path:
         pecha_db_json: Dict = defaultdict(lambda: defaultdict(dict))
         pecha_lang = {}
-        for pecha_id, pecha in self.alignment.metadata.segments_metadata.items():
-
-            if pecha.lang == LanguageEnum.tibetan:
+        for (
+            pecha_id,
+            pecha_metadata,
+        ) in self.alignment.metadata.segments_metadata.items():
+            if pecha_metadata.lang == LanguageEnum.tibetan:
                 pecha_db_json["target"]["books"] = {
                     "title": "pecha title",  # Work need here
                     "language": "bo",
-                    "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha.base}.txt",
+                    "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
                     "direction": "ltr",
                     "content": [],
                 }
-            elif pecha.lang == LanguageEnum.english:
+            elif pecha_metadata.lang == LanguageEnum.english:
                 pecha_db_json["source"]["books"] = {
-                    "title": "pecha title",
+                    "title": "pecha  title",
                     "language": "en",
-                    "version_source": f"wwww.github.com/PechaData/{pecha_id}/base/{pecha.base}.txt",
+                    "version_source": f"wwww.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
                     "direction": "ltr",
                     "content": [],
                 }
-            pecha_lang[pecha_id] = pecha.lang
+            pecha_lang[pecha_id] = pecha_metadata.lang
 
         curr_chapter: Dict = {}
         for pecha_id in pecha_lang.keys():
