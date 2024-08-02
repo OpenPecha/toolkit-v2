@@ -40,6 +40,9 @@ class PechaDbSerializer:
             if pecha_metadata.lang == LanguageEnum.tibetan:
                 pecha_db_json["target"]["books"] = {
                     "title": ann_metadata["title"] if "title" in ann_metadata else "",
+                    "author": ann_metadata["author"]
+                    if "author" in ann_metadata
+                    else "",
                     "language": "bo",
                     "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
                     "direction": "ltr",
@@ -48,6 +51,9 @@ class PechaDbSerializer:
             elif pecha_metadata.lang == LanguageEnum.english:
                 pecha_db_json["source"]["books"] = {
                     "title": ann_metadata["title"] if "title" in ann_metadata else "",
+                    "author": ann_metadata["author"]
+                    if "author" in ann_metadata
+                    else "",
                     "language": "en",
                     "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
                     "direction": "ltr",

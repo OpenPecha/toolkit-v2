@@ -2,6 +2,7 @@
   "target": {
     "books": {
       "title": " Source Title 1  Source Title 1",
+      "author": " Source Author 1  Source Author 1",
       "language": "bo",
       "version_source": "www.github.com/PechaData/IDBEEDAAE/base/389e.txt",
       "direction": "ltr",
@@ -19,6 +20,7 @@
   "source": {
     "books": {
       "title": " Target Title 1  Target Title 1",
+      "author": " Target Author 1  Target Author 1",
       "language": "en",
       "version_source": "www.github.com/PechaData/IA4C08511/base/0d78.txt",
       "direction": "ltr",
