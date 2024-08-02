@@ -5,6 +5,7 @@ from typing import Dict, List
 
 from openpecha.alignment import Alignment
 from openpecha.alignment.metadata import LanguageEnum
+from openpecha.config import LINE_BREAKERS
 
 
 class PechaDbSerializer:
@@ -68,6 +69,12 @@ class PechaDbSerializer:
         for segment_pair in self.segment_pairs:
             segment_pair_data = next(iter(segment_pair.values()))
             for pecha_id, segment in segment_pair_data.items():
+                """replace newline with <br>"""
+                """ place <br> after predifined line breakers"""
+                segment = segment.replace("\n", "<br>")
+                for line_breaker in LINE_BREAKERS:
+                    segment = segment.replace(line_breaker, f"{line_breaker}<br>")
+
                 pecha_segments[pecha_id].append(segment)
 
         """ add segments to json output(for pecha.org)"""
