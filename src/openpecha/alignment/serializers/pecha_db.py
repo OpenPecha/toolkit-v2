@@ -14,15 +14,32 @@ class PechaDbSerializer:
         self.alignment = alignment
 
     def serialize(self, output_path: Path = Path(".")) -> Path:
+        if self.alignment.pechas is None:
+            raise ValueError("Alignment pechas data is missing.")
+
         pecha_db_json: Dict = defaultdict(lambda: defaultdict(dict))
         pecha_lang = {}
         for (
             pecha_id,
             pecha_metadata,
         ) in self.alignment.metadata.segments_metadata.items():
+            metadata_ann_store = self.alignment.pechas[pecha_id].metadata
+            ann_metadata: Dict = {}
+            for ann in metadata_ann_store.annotations():
+                ann_base = (
+                    ann.target().resource(metadata_ann_store).filename().split("/")[-1]
+                )
+                if ann_base == f"{pecha_metadata.base}.txt":
+                    for ann_data in ann:
+                        key, value = ann_data.key().id(), str(ann_data.value())
+                        if key in ann_metadata:
+                            ann_metadata[key] = ann_metadata[key] + " " + value
+                        else:
+                            ann_metadata[key] = value
+
             if pecha_metadata.lang == LanguageEnum.tibetan:
                 pecha_db_json["target"]["books"] = {
-                    "title": "pecha title",  # Work need here
+                    "title": ann_metadata["title"] if "title" in ann_metadata else "",
                     "language": "bo",
                     "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
                     "direction": "ltr",
@@ -30,7 +47,7 @@ class PechaDbSerializer:
                 }
             elif pecha_metadata.lang == LanguageEnum.english:
                 pecha_db_json["source"]["books"] = {
-                    "title": "pecha  title",
+                    "title": ann_metadata["title"] if "title" in ann_metadata else "",
                     "language": "en",
                     "version_source": f"wwww.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
                     "direction": "ltr",
