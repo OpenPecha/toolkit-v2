@@ -24,7 +24,7 @@ class PlainTextChapterAnnotationParser:
 
     def extract_chapters(self):
         chapter_details = []
-        pattern = re.compile(r"ch(\d+)-(\"[\u0F00-\u0FFF]+\")")
+        pattern = re.compile(r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"")
         matches = pattern.finditer(self.plain_text)
 
         for match in matches:
@@ -91,8 +91,17 @@ class PlainTextChapterAnnotationParser:
                 {
                     "id": get_uuid(),
                     "set": ann_dataset.id(),
-                    "key": "Chapter number",
+                    "key": "Chapter Number",
                     "value": int(chapter_detail["chapter"]),
+                }
+            )
+
+            data.append(
+                {
+                    "id": get_uuid(),
+                    "set": ann_dataset.id(),
+                    "key": "Chapter Name",
+                    "value": chapter_detail["tibetan_text"],
                 }
             )
 
