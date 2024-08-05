@@ -1,7 +1,7 @@
 import math
 
 import diff_match_patch as dmp_module
-from stam import AnnotationStore
+from stam import AnnotationStore, Offset, Selector
 
 
 class Blupdate:
@@ -183,7 +183,8 @@ class Blupdate:
             return self.get_updated_with_dmp(srcblcoord, cctvforcoord[0])
 
 
-def update_layer(old_base, new_base: str, layer: AnnotationStore):
+def update_layer(base_name, old_base, new_base: str, layer: AnnotationStore):
+    resource = layer.resource(base_name)
     blupdate = Blupdate(old_base, new_base)
     for ann in layer.annotations():
         old_begin = ann.offset().begin().value()
@@ -197,8 +198,19 @@ def update_layer(old_base, new_base: str, layer: AnnotationStore):
 
         begin_shift = new_begin - old_begin
         end_shift = new_end - old_end
-        ann.offset().begin().shift(begin_shift)
-        ann.offset().end().shift(end_shift)
-        print(str(ann.offset()))
+
+        ann_id = ann.id()
+        new_begin_cursor = ann.offset().begin().shift(begin_shift)
+        new_end_cursor = ann.offset().end().shift(end_shift)
+        new_offset = Offset(new_begin_cursor, new_end_cursor)
+        ann_data = list(ann.data())
+
+        layer.remove(ann)
+
+        layer.annotate(
+            id=ann_id,
+            target=Selector.textselector(resource, new_offset),
+            data=ann_data,
+        )
 
     return layer

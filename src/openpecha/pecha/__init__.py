@@ -92,7 +92,7 @@ class Pecha:
         """
         for _, layer in self.get_layers(base_name):
             old_base = layer.resource(base_name).text()
-            update_layer(old_base, new_base, layer)
+            update_layer(base_name, old_base, new_base, layer)
             if save:
                 with utils.cwd(self.parent):
                     layer.save()
