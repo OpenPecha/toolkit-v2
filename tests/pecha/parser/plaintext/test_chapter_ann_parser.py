@@ -1,4 +1,5 @@
 from pathlib import Path
+from shutil import rmtree
 
 from openpecha.pecha.parsers.plaintext.chapter_parser import (
     PlainTextChapterAnnotationParser,
@@ -14,6 +15,10 @@ def test_plain_text_chapter_ann_parser():
         file_path, metadata_path
     )
     assert isinstance(chapter_ann_parser, PlainTextChapterAnnotationParser)
+    pecha_path = chapter_ann_parser.parse(DATA)
+
+    """ clean up """
+    rmtree(pecha_path)
 
 
 test_plain_text_chapter_ann_parser()
