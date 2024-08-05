@@ -1,1 +1,7 @@
-{}
+{
+    "id_":"12345",
+    "title":["Chojuk Source Title 1"],
+    "author":["Chojuk Source Author 1"],
+    "source": "Chojuk Source",
+    "source_metadata": {}
+}
