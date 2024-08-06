@@ -2,7 +2,8 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Generator, Tuple, Union
 
-from stam import AnnotationStore
+import stam
+from stam import AnnotationStore, Selector
 
 from openpecha import utils
 from openpecha.pecha.blupdate import update_layer
@@ -86,6 +87,14 @@ class Pecha:
                 self.layers[base_name][rel_layer_fn.name] = store
                 yield layer_fn.name, store
 
+    def get_layer(self, base_name, layer_name):
+        """
+        This function returns a specific layer of the pecha.
+        """
+        if not self.layers[base_name]:
+            self.get_layers(base_name)
+        return self.layers[base_name][layer_name]
+
     def update_base(self, base_name, new_base, save=True):
         """
         This function updates the base layer of the pecha to a new text. It will recompute the existing layers into the new base layer.
@@ -98,6 +107,40 @@ class Pecha:
                     layer.save()
         if save:
             self.set_base(base_name, new_base)
+
+    @staticmethod
+    def change_resource(
+        source_resource: stam.TextResource,
+        target_resource: stam.TextResource,
+        layer: stam.AnnotationStore,
+    ) -> stam.AnnotationStore:
+        """
+        Update all annotations referencing to `source` to `target` resource.
+
+        Args:
+            source_resource(stam.Resource): source resource
+            target_resource(stam.Resource): target resource
+            layer(stam.AnnotationStore): layer to be edited
+
+        Retuns:
+            layer(stam.AnnotationStore): edited layer
+        """
+        for ann in layer.annotations():
+            ann_id = ann.id()
+            offset = ann.offset()
+            data = list(ann.data())
+
+            layer.remove(ann, strict=True)
+
+            layer.annotate(
+                id=ann_id,
+                target=Selector.textselector(target_resource, offset),
+                data=data,
+            )
+
+        layer.remove(source_resource, strict=True)
+
+        return layer
 
     def merge_pecha(
         self,
@@ -122,11 +165,16 @@ class Pecha:
         for layer_fn, layer in source_pecha.get_layers(
             source_base_name, from_cache=True
         ):
+
             with utils.cwd(self.parent):
                 target_base_fn = (
                     self.base_path.relative_to(self.parent) / f"{target_base_name}.txt"
                 )
                 target_layer_fn = self.layers_path / target_base_name / layer_fn
-                layer.add_resource(filename=str(target_base_fn))
-                layer.set_filename(str(target_layer_fn))
-                layer.save()
+                layer.add_resource(id=target_base_name, filename=str(target_base_fn))
+                source_resouce = layer.resource(source_base_name)
+                target_resource = layer.resource(target_base_name)
+                layer = self.change_resource(source_resouce, target_resource, layer)
+                layer_json_string = layer.to_json_string()
+                layer_json_string = layer_json_string.replace("null,", "")
+                target_layer_fn.write_text(layer_json_string)
