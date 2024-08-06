@@ -1,0 +1,62 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "test",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "0001",
+      "@include": "P0001/base/0001.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "testdataset",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "pos"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "D1",
+          "key": "pos",
+          "value": {
+            "@type": "String",
+            "value": "noun"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "A1",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "0001",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 3
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 5
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "D1",
+          "set": "testdataset"
+        }
+      ]
+    }
+  ]
+}
