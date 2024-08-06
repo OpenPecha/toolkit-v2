@@ -1,0 +1,19 @@
+{
+  "id_": "A3D08A211",
+  "segments_metadata": {
+    "I8C8343BD": {
+      "type": "Root_Segment",
+      "relation": "Source",
+      "lang": "Tibetan",
+      "base": "dddb",
+      "layer": "Root_Segment-c1c.json"
+    },
+    "IA500190D": {
+      "type": "Commentary",
+      "relation": "Target",
+      "lang": "Tibetan",
+      "base": "86ab",
+      "layer": "Commentary-500.json"
+    }
+  }
+}

@@ -6,13 +6,16 @@ import stam
 from stam import AnnotationStore, Selector
 
 from openpecha import utils
+from openpecha.config import PECHAS_PATH
+from openpecha.github_utils import clone_repo
 from openpecha.pecha.blupdate import update_layer
+from openpecha.pecha.layer import LayerEnum
 
 BASE_NAME = str
 LAYER_NAME = str
 
 
-class Pecha:
+class StamPecha:
     def __init__(self, path: Union[Path, str]):
         path = Path(path)
         self.run_checks(path)
@@ -144,7 +147,7 @@ class Pecha:
 
     def merge_pecha(
         self,
-        source_pecha_path: Union[Path, str],
+        source_pecha: "StamPecha",
         source_base_name: str,
         target_base_name: str,
     ):
@@ -157,7 +160,6 @@ class Pecha:
             target_base_name (str): The base name of the target (current) pecha.
         """
 
-        source_pecha = Pecha(source_pecha_path)
         target_base = self.get_base(target_base_name)
 
         source_pecha.update_base(source_base_name, target_base, save=False)
@@ -178,3 +180,37 @@ class Pecha:
                 layer_json_string = layer.to_json_string()
                 layer_json_string = layer_json_string.replace("null,", "")
                 target_layer_fn.write_text(layer_json_string)
+
+
+class Pecha:
+    def __init__(self, pecha_id: str, base_path: Path) -> None:
+        self.id_ = pecha_id
+        self.base_path = base_path
+
+    @classmethod
+    def from_id(cls, pecha_id: str):
+        pecha_path = clone_repo(pecha_id, PECHAS_PATH)
+        return Pecha.from_path(pecha_path)
+
+    @classmethod
+    def from_path(cls, pecha_path: Path) -> "Pecha":
+        pecha_id = pecha_path.stem
+        return cls(pecha_id, pecha_path)
+
+    @property
+    def ann_path(self):
+        return self.base_path / "layers"
+
+    def get_annotation_store(self, annotation_type: LayerEnum):
+        annotation_type_file_paths = list(
+            self.ann_path.glob(f"{annotation_type.value}*.json")
+        )
+        annotation_stores = [
+            AnnotationStore(file=str(annotation_file))
+            for annotation_file in annotation_type_file_paths
+        ]
+
+        if len(annotation_stores) == 1:
+            return annotation_stores[0]
+
+        return annotation_stores
