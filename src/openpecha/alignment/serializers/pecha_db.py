@@ -34,7 +34,10 @@ class PechaDbSerializer:
                     for ann_data in ann:
                         key, value = ann_data.key().id(), str(ann_data.value())
                         if key in ann_metadata:
-                            ann_metadata[key] = ann_metadata[key] + " " + value
+                            if isinstance(ann_metadata[key], list):
+                                ann_metadata[key].append(value)
+                            if isinstance(ann_metadata[key], str):
+                                ann_metadata[key] = [ann_metadata[key], value]
                         else:
                             ann_metadata[key] = value
 
