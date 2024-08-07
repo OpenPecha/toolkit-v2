@@ -1,0 +1,32 @@
+{
+  "target": {
+    "books": {
+      "title": "pecha title",
+      "language": "bo",
+      "version_source": "github.com/PechaData/type=<LayerEnum.tibetan_segment: 'Tibetan_Segment'> relation=<AlignmentRelationEnum.source: 'Source'> lang=<LanguageEnum.tibetan: 'Tibetan'> base='389e' layer='Tibetan_Segment-c9e.json'/base/389e.txt",
+      "direction": "ltr",
+      "content": [
+        "སངས་རྒྱས་དང་བྱང་ཆུབ་སེམས་དཔའ་ཐམས་ཅད་ལ་ཕྱག་འཚལ་ལོ།། བདེ་གཤེགས་ཆོས་ཀྱི་སྐུ་མངའ་སྲས་བཅས་དང་།། ཕྱག་འོས་ཀུན་ལའང་གུས་པར་ཕྱག་འཚལ་ཏེ།།\n",
+        "བདེ་གཤེགས་སྲས་ཀྱི་སྡོམ་ལ་འཇུག་པ་ནི།། ལུང་བཞིན་མདོར་བསྡུས་ནས་ནི་བརྗོད་པར་བྱ།།\n",
+        "སྔོན་ཆད་མ་བྱུང་བ་ཡང་འདིར་བརྗོད་མེད།། སྡེབ་སྦྱོར་མཁས་པའང་བདག་ལ་ཡོད་མིན་ཏེ།། དེ་ཕྱིར་གཞན་དོན་བསམ་པའང་བདག་ལ་མེད།། རང་གི་ཡིད་ལ་བསྒོམ་ཕྱིར་ངས་འདི་བརྩམས།།\n",
+        "དགེ་བ་བསྒོམ་ཕྱིར་བདག་གི་དད་པའི་ཤུགས།། འདི་དག་གིས་ཀྱང་རེ་ཞིག་འཕེལ་འགྱུར་ལ།།\n",
+        "བདག་དང་སྐལ་བ་མཉམ་པ་གཞན་གྱིས་ཀྱང་།། ཅི་སྟེ་འདི་དག་མཐོང་ན་དོན་ཡོད་འགྱུར།།"
+      ]
+    }
+  },
+  "source": {
+    "books": {
+      "title": "pecha title",
+      "language": "en",
+      "version_source": "github.com/PechaData/type=<LayerEnum.english_segment: 'English_Segment'> relation=<AlignmentRelationEnum.target: 'Target'> lang=<LanguageEnum.english: 'English'> base='0d78' layer='English_Segment-1ba.json'/base/0d78.txt",
+      "direction": "ltr",
+      "content": [
+        "A Guide To The Bodhisattava's Way of Life Homage to all Buddha's and Bodhisattvas Respectfully I prostrate myself to the Sugatas Who are endowed with the Dharmakaya, As well as to their Noble Children And to all who are worthy of veneration.\n",
+        "Here I shall explain how to engage in the vows of the Buddha's Children, The meaning of which I have condensed in accordance with the scriptures.\n",
+        "Thete is nothing hete that has not been explained before And I have no skill in the art of thetotic; Therefore, lacking any intention to benefit others, I write this in order to acquaint it to my mind.\n",
+        "For due to acquaintance with what is wholesome, The force of my faith may for a short while increase because of these.\n",
+        "If, however, these are seen by others Equal in fortune to myself, it may be meaningful."
+      ]
+    }
+  }
+}
