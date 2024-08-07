@@ -35,7 +35,7 @@ class Alignment:
         with open(metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
         metadata = AlignmentMetaData.from_dict(
-            metadata=metadata["segments_metadata"], alignment_id=metadata["id_"]
+            metadata=metadata, alignment_id=metadata["id_"]
         )
 
         anns_path = path / "alignment.json"
