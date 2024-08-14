@@ -5,12 +5,12 @@
     {
       "@type": "TextResource",
       "@id": "0d24",
-      "@include": "../base/0d24.txt"
+      "@include": "../../base/0d24.txt"
     },
     {
       "@type": "TextResource",
       "@id": "metadata",
-      "@include": "../metadata.txt"
+      "@include": "../../metadata.txt"
     }
   ],
   "annotationsets": [
