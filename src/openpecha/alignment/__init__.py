@@ -107,8 +107,11 @@ class Alignment:
         segment_pair = {}
         for pecha_id, ann_id in self.segment_pairs[id_].items():
             """get annotation store"""
+            base_file = self.metadata.segments_metadata[pecha_id].base
             ann_type = self.metadata.segments_metadata[pecha_id].type
-            pecha_ann_store = self.pechas[pecha_id].get_annotation_store(ann_type)
+            pecha_ann_store = self.pechas[pecha_id].get_annotation_store(
+                base_file, ann_type
+            )
             ann = pecha_ann_store.annotation(ann_id)
             segment_pair[pecha_id] = str(ann)
         return segment_pair

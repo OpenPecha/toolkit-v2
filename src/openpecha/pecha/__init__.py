@@ -205,9 +205,9 @@ class Pecha:
     def metadata(self):
         return AnnotationStore(file=str(self.base_path / "metadata.json"))
 
-    def get_annotation_store(self, annotation_type: LayerEnum):
+    def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
         annotation_type_file_paths = list(
-            self.ann_path.glob(f"{annotation_type.value}*.json")
+            Path(self.ann_path / basefile_name).glob(f"{annotation_type.value}*.json")
         )
         annotation_stores = [
             AnnotationStore(file=str(annotation_file))

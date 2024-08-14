@@ -259,7 +259,7 @@ def create_pecha_stam(
         )
 
     """save the new annotation store"""
-    ann_output_dir = _mkdir(pecha_path / "layers")
+    ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
     ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
     ann_store_path = ann_output_dir / ann_store_filename
     ann_store_path = save_stam(ann_store, output_path, ann_store_path)
