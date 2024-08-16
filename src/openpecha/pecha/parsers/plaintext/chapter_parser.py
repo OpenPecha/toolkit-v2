@@ -54,22 +54,31 @@ class PlainTextChapterAnnotationParser:
         return chapter_details
 
     def remove_chapter_titles(self, chapter_details: List[Dict]):
+        """find spacing after Chapter Number and Chapter Name"""
+        pattern = r'ch\d+-"[\u0F00-\u0FFF]+"(\s*)'
+        matches = re.findall(pattern, self.plain_text)
+        spaces_after_title = [len(spaces) for spaces in matches]
+
+        assert len(spaces_after_title) == len(chapter_details), ""
         """remove chapter number and chapter titles"""
-        self.plain_text = re.sub('ch\\d+-"[\u0F00-\u0FFF]+"', "", self.plain_text)
+        self.plain_text = re.sub('ch\\d+-"[\u0F00-\u0FFF]+"\\s*', "", self.plain_text)
 
         """ update chapter co ordinate"""
         updated_chapter_details = []
-        chapter_titles_len = 0
-        for chapter_detail in chapter_details:
-            chapter_titles_len += (
+        total_titles_len = 0  # Chapter Length
+        for chapter_detail, space_count in zip(chapter_details, spaces_after_title):
+            total_titles_len += (
                 chapter_detail["title_end"] - chapter_detail["title_start"]
             )
+            start = chapter_detail["chapter_start"] - (total_titles_len + space_count)
+            end = chapter_detail["chapter_end"] - total_titles_len - space_count
+            end = end if end < len(self.plain_text) else len(self.plain_text) - 1
             updated_chapter_details.append(
                 {
                     "chapter number": chapter_detail["chapter number"],
                     "title": chapter_detail["title"],
-                    "start": chapter_detail["chapter_start"] - chapter_titles_len,
-                    "end": chapter_detail["chapter_end"] - chapter_titles_len,
+                    "start": start,
+                    "end": end,
                 }
             )
         return updated_chapter_details
