@@ -52,7 +52,8 @@ class PlainTextChapterAnnotationParser:
 
         """ base file """
         base_dir = _mkdir(pecha_path / "base")
-        base_file_path = base_dir / f"{get_base_id()}.txt"
+        base_file_name = get_base_id()
+        base_file_path = base_dir / f"{base_file_name}.txt"
         base_file_path.write_text(self.plain_text, encoding="utf-8")
 
         """ chapter annotations """
@@ -109,6 +110,8 @@ class PlainTextChapterAnnotationParser:
 
         ann_store_filename = f"{LayerEnum.chapter.value}-{get_uuid()[:3]}.json"
 
-        save_stam(ann_store, output_path, layer_dir / ann_store_filename)
+        save_stam(
+            ann_store, output_path, layer_dir / base_file_name / ann_store_filename
+        )
 
         return pecha_path
