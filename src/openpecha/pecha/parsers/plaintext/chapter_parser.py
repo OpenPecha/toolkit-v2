@@ -1,6 +1,7 @@
 import json
 import re
 from pathlib import Path
+from typing import Dict, List
 
 from stam import AnnotationStore, Offset, Selector
 
@@ -27,20 +28,51 @@ class PlainTextChapterAnnotationParser:
         pattern = re.compile(r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"")
         matches = pattern.finditer(self.plain_text)
 
+        """ get chapter titles"""
         for match in matches:
-            chapter = match.group(1)
-            tibetan_text = match.group(2)
+            chapter_number = match.group(1)
+            title = match.group(2)
             start_index = match.start()
             end_index = match.end()
             chapter_details.append(
                 {
-                    "chapter": chapter,
-                    "tibetan_text": tibetan_text,
-                    "start_index": start_index,
-                    "end_index": end_index,
+                    "chapter number": chapter_number,
+                    "title": title,
+                    "title_start": start_index,
+                    "title_end": end_index,
                 }
             )
+
+        """ get chapter details"""
+        for idx, chapter_detail in enumerate(chapter_details):
+            chapter_detail["chapter_start"] = chapter_detail["title_end"]
+            if idx + 1 < len(chapter_details):
+                chapter_detail["chapter_end"] = chapter_details[idx + 1]["title_start"]
+            else:
+                chapter_detail["chapter_end"] = len(self.plain_text)
+
         return chapter_details
+
+    def remove_chapter_titles(self, chapter_details: List[Dict]):
+        """remove chapter number and chapter titles"""
+        self.plain_text = re.sub('ch\\d+-"[\u0F00-\u0FFF]+"', "", self.plain_text)
+
+        """ update chapter co ordinate"""
+        updated_chapter_details = []
+        chapter_titles_len = 0
+        for chapter_detail in chapter_details:
+            chapter_titles_len += (
+                chapter_detail["title_end"] - chapter_detail["title_start"]
+            )
+            updated_chapter_details.append(
+                {
+                    "chapter number": chapter_detail["chapter number"],
+                    "title": chapter_detail["title"],
+                    "start": chapter_detail["chapter_start"] - chapter_titles_len,
+                    "end": chapter_detail["chapter_end"] - chapter_titles_len,
+                }
+            )
+        return updated_chapter_details
 
     def parse(self, output_path: Path):
         pecha_id = get_initial_pecha_id()
@@ -49,6 +81,11 @@ class PlainTextChapterAnnotationParser:
         """ metadata """
         with open(pecha_path / "metadata.json", "w") as f:
             json.dump(self.meta_data, f, ensure_ascii=False, indent=2)
+
+        """ cleaning up base file """
+        """ remove chapter number and chapter details """
+        chapter_details = self.extract_chapters()
+        chapter_details = self.remove_chapter_titles(chapter_details)
 
         """ base file """
         base_dir = _mkdir(pecha_path / "base")
@@ -67,13 +104,9 @@ class PlainTextChapterAnnotationParser:
         )
 
         unique_ann_data_id = get_uuid()
-        chapter_details = self.extract_chapters()
-        for idx, chapter_detail in enumerate(chapter_details):
-            start_index = chapter_detail["start_index"]
-            if idx == len(chapter_details) - 1:
-                end_index = len(self.plain_text)
-            else:
-                end_index = chapter_details[idx + 1]["start_index"]
+        for chapter_detail in chapter_details:
+            start_index = chapter_detail["start"]
+            end_index = chapter_detail["end"]
 
             target = Selector.textselector(
                 ann_resource,
@@ -93,7 +126,7 @@ class PlainTextChapterAnnotationParser:
                     "id": get_uuid(),
                     "set": ann_dataset.id(),
                     "key": "Chapter Number",
-                    "value": int(chapter_detail["chapter"]),
+                    "value": int(chapter_detail["chapter number"]),
                 }
             )
 
@@ -102,7 +135,7 @@ class PlainTextChapterAnnotationParser:
                     "id": get_uuid(),
                     "set": ann_dataset.id(),
                     "key": "Chapter Name",
-                    "value": chapter_detail["tibetan_text"],
+                    "value": chapter_detail["title"],
                 }
             )
 
