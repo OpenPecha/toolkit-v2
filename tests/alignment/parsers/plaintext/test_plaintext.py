@@ -24,7 +24,7 @@ def test_plaintext_line_aligned_parser():
 
     with open(metadata_path, encoding="utf-8") as f:
         metadata = json.load(f)
-    alignment_type = LayerCollectionEnum(metadata["source_metadata"]["type"])
+    alignment_type = LayerCollectionEnum(metadata["metadata"]["type"])
     (source_ann_store, source_ann_store_name), (
         target_ann_store,
         target_ann_store_name,

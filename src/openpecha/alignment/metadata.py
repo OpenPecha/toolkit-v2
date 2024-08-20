@@ -67,7 +67,7 @@ class AlignmentMetaData(BaseModel):
         return cls(
             id_=alignment_id,
             segments_metadata=segments_metadata,
-            source_metadata=metadata["source_metadata"],
+            source_metadata=metadata["metadata"],
         )
 
     @model_validator(mode="before")
