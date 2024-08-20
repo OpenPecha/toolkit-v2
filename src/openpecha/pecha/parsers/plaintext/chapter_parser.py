@@ -66,12 +66,20 @@ class PlainTextChapterAnnotationParser:
         """ update chapter co ordinate"""
         updated_chapter_details = []
         total_titles_len = 0  # Chapter Length
+        total_space_count = 0
         for chapter_detail, space_count in zip(chapter_details, spaces_after_title):
             total_titles_len += (
                 chapter_detail["title_end"] - chapter_detail["title_start"]
             )
-            start = chapter_detail["chapter_start"] - (total_titles_len + space_count)
-            end = chapter_detail["chapter_end"] - total_titles_len - space_count
+
+            total_space_count += space_count
+            start = (
+                chapter_detail["chapter_start"]
+                - total_titles_len
+                - total_space_count
+                + 1
+            )
+            end = chapter_detail["chapter_end"] - total_titles_len - total_space_count
             end = end if end < len(self.plain_text) else len(self.plain_text) - 1
             updated_chapter_details.append(
                 {
