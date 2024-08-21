@@ -140,7 +140,7 @@
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 1
+            "value": 0
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -288,7 +288,7 @@
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 441
+            "value": 442
           }
         }
       },
