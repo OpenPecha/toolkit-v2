@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from openpecha.alignment.metadata import AlignmentMetaData
 from openpecha.config import ALIGNMENT_PATH, _mkdir
@@ -11,6 +11,7 @@ from openpecha.github_utils import (
 )
 from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
 
 
 class Alignment:
@@ -106,14 +107,38 @@ class Alignment:
 
         segment_pair = {}
         for pecha_id, ann_id in self.segment_pairs[id_].items():
-            """get annotation store"""
+            """get root segment annotation"""
             base_file = self.metadata.segments_metadata[pecha_id].base
             ann_type = self.metadata.segments_metadata[pecha_id].type
             pecha_ann_store = self.pechas[pecha_id].get_annotation_store(
                 base_file, ann_type
             )
+
+            """ get chapter annotation"""
+            chapter_ann_type = LayerEnum.chapter
+            chapter_file_path = next(
+                Path(self.pechas[pecha_id].ann_path / f"{base_file}").glob(
+                    f"{chapter_ann_type.value}*.json"
+                ),
+                None,
+            )
+
+            if chapter_file_path:
+                pecha_ann_store.from_file(chapter_file_path.as_posix())
+
+            """ get segment string and its chapter metadata"""
             ann = pecha_ann_store.annotation(ann_id)
-            segment_pair[pecha_id] = str(ann)
+            text_selection = next(ann.textselections())
+            ann_data: Dict[str, Any] = {}
+            ann_data["string"] = str(ann)
+            for related_ann in text_selection.annotations():
+                ann_metadata: Dict[str, str] = {}
+                for metadata in related_ann:
+                    ann_metadata[str(metadata.key().id())] = str(metadata.value())
+                if ann_metadata["Structure Type"] == LayerEnum.chapter.value:
+                    ann_data["metadata"] = ann_metadata
+
+            segment_pair[pecha_id] = ann_data
         return segment_pair
 
     def upload_update_with_github(self):
