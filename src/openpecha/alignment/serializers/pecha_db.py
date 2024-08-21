@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Dict, List
 
 from openpecha.alignment import Alignment
-from openpecha.alignment.metadata import LanguageEnum
 from openpecha.config import LINE_BREAKERS
+from openpecha.pecha.layer import LayerEnum
 
 
 class PechaDbSerializer:
@@ -18,7 +18,7 @@ class PechaDbSerializer:
             raise ValueError("Alignment pechas data is missing.")
 
         pecha_db_json: Dict = defaultdict(lambda: defaultdict(dict))
-        pecha_lang = {}
+        pecha_type = {}
         for (
             pecha_id,
             pecha_metadata,
@@ -41,7 +41,22 @@ class PechaDbSerializer:
                         else:
                             ann_metadata[key] = value
 
-            if pecha_metadata.lang == LanguageEnum.tibetan:
+            if pecha_metadata.type == LayerEnum.root_segment:
+                pecha_db_json["source"]["books"] = [
+                    {
+                        "title": ann_metadata["title"]
+                        if "title" in ann_metadata
+                        else "",
+                        "author": ann_metadata["author"]
+                        if "author" in ann_metadata
+                        else "",
+                        "language": "bo",
+                        "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
+                        "direction": "ltr",
+                        "content": [],
+                    }
+                ]
+            elif pecha_metadata.type == LayerEnum.commentary:
                 pecha_db_json["target"]["books"] = [
                     {
                         "title": ann_metadata["title"]
@@ -56,25 +71,10 @@ class PechaDbSerializer:
                         "content": [],
                     }
                 ]
-            elif pecha_metadata.lang == LanguageEnum.english:
-                pecha_db_json["source"]["books"] = [
-                    {
-                        "title": ann_metadata["title"]
-                        if "title" in ann_metadata
-                        else "",
-                        "author": ann_metadata["author"]
-                        if "author" in ann_metadata
-                        else "",
-                        "language": "en",
-                        "version_source": f"www.github.com/PechaData/{pecha_id}/base/{pecha_metadata.base}.txt",
-                        "direction": "ltr",
-                        "content": [],
-                    }
-                ]
-            pecha_lang[pecha_id] = pecha_metadata.lang
+            pecha_type[pecha_id] = pecha_metadata.type
 
         pecha_segments: Dict = {}
-        for pecha_id in pecha_lang.keys():
+        for pecha_id in pecha_type.keys():
             pecha_segments[pecha_id] = []
         """ get segments of each pecha"""
         for segment_pair in self.segment_pairs:
@@ -90,10 +90,10 @@ class PechaDbSerializer:
 
         """ add segments to json output(for pecha.org)"""
         for pecha_id, segments in pecha_segments.items():
-            if pecha_lang[pecha_id] == LanguageEnum.tibetan:
-                pecha_db_json["target"]["books"][0]["content"].append(segments)
-            elif pecha_lang[pecha_id] == LanguageEnum.english:
+            if pecha_type[pecha_id] == LayerEnum.root_segment:
                 pecha_db_json["source"]["books"][0]["content"].append(segments)
+            elif pecha_type[pecha_id] == LayerEnum.commentary:
+                pecha_db_json["target"]["books"][0]["content"].append(segments)
 
         output_file = output_path / f"{self.alignment.id_}.json"
         with open(output_file, "w", encoding="utf-8") as f:

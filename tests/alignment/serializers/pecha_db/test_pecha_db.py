@@ -8,10 +8,10 @@ from openpecha.pecha import Pecha
 
 def test_pecha_db_serializer():
     DATA = Path(__file__).parent / "data"
-    alignment_path = DATA / "ABA8AD5BB"
+    alignment_path = DATA / "AFB6778F8"
     source_id, target_id = (
-        "IA4C08511",
-        "IDBEEDAAE",
+        "I8A2A44D2",
+        "IA8419656",
     )
     pechas: Dict[str, Pecha] = {
         source_id: Pecha.from_path(DATA / source_id),
