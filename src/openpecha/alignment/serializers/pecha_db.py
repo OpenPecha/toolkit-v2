@@ -1,7 +1,7 @@
 import json
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List
+from typing import DefaultDict, Dict, List
 
 from openpecha.alignment import Alignment
 from openpecha.config import LINE_BREAKERS
@@ -73,27 +73,50 @@ class PechaDbSerializer:
                 ]
             pecha_type[pecha_id] = pecha_metadata.type
 
-        pecha_segments: Dict = {}
+        curr_chapter_number = 1
+        pecha_segments: DefaultDict[str, DefaultDict[int, List[str]]] = defaultdict(
+            lambda: defaultdict(list)
+        )
+
         for pecha_id in pecha_type.keys():
-            pecha_segments[pecha_id] = []
+            pecha_segments[pecha_id] = defaultdict(list)
+
         """ get segments of each pecha"""
         for segment_pair in self.segment_pairs:
+
             segment_pair_data = next(iter(segment_pair.values()))
-            for pecha_id, segment in segment_pair_data.items():
+            for pecha_id, segment_data in segment_pair_data.items():
+                segment_data = defaultdict(lambda: "", segment_data)
                 """replace newline with <br>"""
                 """ place <br> after predifined line breakers"""
+                segment = segment_data["string"]
                 segment = segment.replace("\n", "<br>")
                 for line_breaker in LINE_BREAKERS:
                     segment = segment.replace(line_breaker, f"{line_breaker}<br>")
 
-                pecha_segments[pecha_id].append(segment)
+                """ check chapter number"""
+                chapter_number = (
+                    int(segment_data["metadata"]["Chapter Number"])
+                    if "metadata" in segment_data
+                    else None
+                )
+                if chapter_number and chapter_number != curr_chapter_number:
+                    curr_chapter_number = chapter_number
+
+                pecha_segments[pecha_id][curr_chapter_number].append(segment)
 
         """ add segments to json output(for pecha.org)"""
         for pecha_id, segments in pecha_segments.items():
-            if pecha_type[pecha_id] == LayerEnum.root_segment:
-                pecha_db_json["source"]["books"][0]["content"].append(segments)
-            elif pecha_type[pecha_id] == LayerEnum.commentary:
-                pecha_db_json["target"]["books"][0]["content"].append(segments)
+
+            for chapter_segments in segments.values():
+                if pecha_type[pecha_id] == LayerEnum.root_segment:
+                    pecha_db_json["source"]["books"][0]["content"].append(
+                        ["".join(chapter_segments)]
+                    )
+                elif pecha_type[pecha_id] == LayerEnum.commentary:
+                    pecha_db_json["target"]["books"][0]["content"].append(
+                        ["".join(chapter_segments)]
+                    )
 
         output_file = output_path / f"{self.alignment.id_}.json"
         with open(output_file, "w", encoding="utf-8") as f:
