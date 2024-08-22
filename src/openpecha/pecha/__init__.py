@@ -180,7 +180,13 @@ class StamPecha:
                 layer = self.change_resource(source_resouce, target_resource, layer)
                 layer_json_string = layer.to_json_string()
                 layer_json_string = layer_json_string.replace("null,", "")
-                target_layer_fn.write_text(layer_json_string)
+                updated_layer_json_dict = convert_absolute_to_relative_path(
+                    layer_json_string, target_layer_fn
+                )
+                updated_layer_json_string = json.dumps(
+                    updated_layer_json_dict, indent=2, ensure_ascii=False
+                )
+                target_layer_fn.write_text(updated_layer_json_string)
 
 
 class Pecha:
@@ -241,5 +247,5 @@ def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
         if ann_store_path.name == "metadata.json":
             resource["@include"] = f"base/{original_path.name}"
         else:
-            resource["@include"] = f"../base/{original_path.name}"
+            resource["@include"] = f"../../base/{original_path.name}"
     return json_object
