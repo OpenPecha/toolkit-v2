@@ -11,7 +11,7 @@ from openpecha.github_utils import (
 )
 from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
 
 
 class Alignment:
@@ -128,16 +128,34 @@ class Alignment:
 
             """ get segment string and its chapter metadata"""
             ann = pecha_ann_store.annotation(ann_id)
-            text_selection = next(ann.textselections())
+            ann_text_selection = next(ann.textselections())
+            ann_text_begin, ann_text_end = (
+                ann_text_selection.begin(),
+                ann_text_selection.end(),
+            )
+
+            data_set = pecha_ann_store.dataset(
+                LayerCollectionEnum.root_commentory.value
+            )
+            key = data_set.key(LayerGroupEnum.structure_type.value)
+
             ann_data: Dict[str, Any] = {}
             ann_data["string"] = str(ann)
-            for related_ann in text_selection.annotations():
-                ann_metadata: Dict[str, str] = {}
-                for metadata in related_ann:
-                    ann_metadata[str(metadata.key().id())] = str(metadata.value())
-                if ann_metadata["Structure Type"] == LayerEnum.chapter.value:
-                    ann_data["metadata"] = ann_metadata
+            for chapter_ann in key.data(value=LayerEnum.chapter.value).annotations():
+                chapter_ann_text_begin = next(chapter_ann.textselections()).begin()
+                chapter_ann_text_end = next(chapter_ann.textselections()).end()
+                if (
+                    ann_text_begin >= chapter_ann_text_begin
+                    and ann_text_end <= chapter_ann_text_end
+                ):
+                    metadata: Dict[str, str] = {}
+                    for ann_metadata in chapter_ann:
+                        metadata[str(ann_metadata.key().id())] = str(
+                            ann_metadata.value()
+                        )
 
+                    ann_data["metadata"] = metadata
+                    break
             segment_pair[pecha_id] = ann_data
         return segment_pair
 
