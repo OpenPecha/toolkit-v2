@@ -227,7 +227,7 @@ def create_pecha_stam(
         data=data,
     )
 
-    save_stam(metadata_ann_store, output_path, pecha_path / "metadata.json")
+    save_stam(metadata_ann_store, pecha_path / "metadata.json")
 
     ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
 
@@ -259,7 +259,7 @@ def create_pecha_stam(
     ann_output_dir = _mkdir(pecha_path / "layers")
     ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
     ann_store_path = ann_output_dir / ann_store_filename
-    ann_store_path = save_stam(ann_store, output_path, ann_store_path)
+    ann_store_path = save_stam(ann_store, ann_store_path)
 
     return (ann_store, ann_store_path.name)
 
@@ -272,9 +272,7 @@ def split_text_into_lines(text: str) -> List[str]:
     return [line + "\n" if i < len(lines) - 1 else line for i, line in enumerate(lines)]
 
 
-def save_stam(
-    ann_store: AnnotationStore, base_path: Path, ann_store_path: Path
-) -> Path:
+def save_stam(ann_store: AnnotationStore, ann_store_path: Path) -> Path:
     """
     Save the annotation store to a file.
     """
