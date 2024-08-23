@@ -79,29 +79,22 @@ def test_parse_to_segments():
     assert parser.target_segments == expected_target_segments
 
     assert hasattr(parser, "mapping_ann_indicies")
-    assert parser.mapping_ann_indicies["root_indicies"] == [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-    ]
-    assert parser.mapping_ann_indicies["root_sapche_indicies"] == []
-    assert parser.mapping_ann_indicies["comment_indicies"] == [
-        (2, [1, 2, 3]),
-        (4, [1, 2, 3, 5]),
-        (1, [4]),
-        (5, [6]),
-    ]
-    assert parser.mapping_ann_indicies["comment_sapche_indicies"] == [
-        (0, 8, 38),
-        (3, 8, 38),
-    ]
+    assert (
+        parser.mapping_ann_indicies["root_indicies"]
+        == expected_mapping_ann_indicies["root_indicies"]
+    )
+    assert (
+        parser.mapping_ann_indicies["root_sapche_indicies"]
+        == expected_mapping_ann_indicies["root_sapche_indicies"]
+    )
+    assert (
+        parser.mapping_ann_indicies["comment_indicies"]
+        == expected_mapping_ann_indicies["comment_indicies"]
+    )
+    assert (
+        parser.mapping_ann_indicies["comment_sapche_indicies"]
+        == expected_mapping_ann_indicies["comment_sapche_indicies"]
+    )
 
 
 def test_parse_pecha():
