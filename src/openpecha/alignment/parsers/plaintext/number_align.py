@@ -219,16 +219,8 @@ class PlainTextNumberAlignedParser:
                 Offset.simple(char_count, char_count + len(segment)),
             )
             char_count += len(segment) + 2  # 2 being length for two newline characters
-            data = [
-                {
-                    "id": meaning_ann_data_id,
-                    "set": ann_dataset.id(),
-                    "key": LayerGroupEnum.structure_type.value,
-                    "value": LayerEnum.meaning_segment.value,
-                }
-            ]
             meaning_segment_ann = pecha.annotate_text_selection(
-                ann_store, text_selector, data
+                ann_store, text_selector, LayerEnum.meaning_segment, meaning_ann_data_id
             )
 
             if idx in ann_indicies:

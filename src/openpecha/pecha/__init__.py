@@ -1,6 +1,6 @@
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Generator, List, Tuple, Union
+from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
 from stam import AnnotationStore, Selector
@@ -10,7 +10,7 @@ from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo
 from openpecha.ids import get_uuid
 from openpecha.pecha.blupdate import update_layer
-from openpecha.pecha.layer import LayerEnum, get_layer_collection
+from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 
 BASE_NAME = str
 LAYER_NAME = str
@@ -235,9 +235,27 @@ class Pecha:
         self,
         ann_store: AnnotationStore,
         text_selector: stam.Selector,
-        data: List[Dict[str, str]],
+        ann_type: LayerEnum,
+        ann_data_id: str,
+        data: Optional[List] = None,
     ):
         ann_id = get_uuid()
+        ann_dataset = next(ann_store.datasets())
+        ann_group = get_layer_group(ann_type)
+
+        ann_type_data = [
+            {
+                "id": ann_data_id,
+                "set": ann_dataset.id(),
+                "key": ann_group.value,
+                "value": ann_type.value,
+            }
+        ]
+        if not data:
+            data = ann_type_data
+        else:
+            data.extend(ann_type_data)
+
         ann = ann_store.annotate(id=ann_id, target=text_selector, data=data)
         return ann
 
