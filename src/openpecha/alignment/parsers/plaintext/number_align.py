@@ -179,7 +179,9 @@ class PlainTextNumberAlignedParser:
             "commentary_sapche_indicies": commentary_sapche_indices,
         }
 
-    def parse_to_root_pecha(self, output_path: Path) -> pecha_path:
+    def create_pecha(
+        self, segments: List[str], ann_type: LayerEnum, output_path: Path
+    ) -> pecha_path:
         """create new annotation store for the given annotation layer"""
         ann_store_id = get_initial_pecha_id()
         pecha_path = _mkdir(output_path / ann_store_id)
@@ -189,7 +191,7 @@ class PlainTextNumberAlignedParser:
         base_dir = _mkdir(pecha_path / "base")
         base_file_name = get_uuid()[:4]
         base_file_path = base_dir / f"{base_file_name}.txt"
-        base_content = "\n\n".join(self.source_segments)
+        base_content = "\n\n".join(segments)
         base_file_path.write_text(base_content, encoding="utf-8")
         ann_resource = ann_store.add_resource(
             id=base_file_name, filename=base_file_path.as_posix()
@@ -202,7 +204,7 @@ class PlainTextNumberAlignedParser:
         """ create annotation layer in STAM """
         char_count = 0
         meaning_ann_data_id = get_uuid()
-        root_ann_data_id = get_uuid()
+        ann_type_data_id = get_uuid()
         alignment_data_id = get_uuid()
         for idx, segment in enumerate(self.source_segments):
             """annotate meaning segments"""
@@ -228,8 +230,16 @@ class PlainTextNumberAlignedParser:
                 ],
             )
 
-            """ annotate root segment if it is root segment """
-            if idx in self.mapping_ann_indicies["root_indicies"]:
+            """ annotate if its root segment or commentary segments """
+            if ann_type == LayerEnum.root_segment:
+                ann_indicies = self.mapping_ann_indicies["root_indicies"]
+            else:
+                ann_indicies = [
+                    element[0]
+                    for element in self.mapping_ann_indicies["commentary_indicies"]
+                ]
+
+            if idx in ann_indicies:
                 ann_selector = Selector.annotationselector(meaning_segment_ann)
 
                 ann_store.annotate(
@@ -237,10 +247,10 @@ class PlainTextNumberAlignedParser:
                     target=ann_selector,
                     data=[
                         {
-                            "id": root_ann_data_id,
+                            "id": ann_type_data_id,
                             "set": ann_dataset.id(),
                             "key": LayerGroupEnum.structure_type.value,
-                            "value": LayerEnum.root_segment.value,
+                            "value": ann_type.value,
                         },
                         {
                             "id": alignment_data_id,
@@ -273,4 +283,9 @@ class PlainTextNumberAlignedParser:
                 break
 
         self.alignment_id = get_alignment_id()
-        self.parse_to_root_pecha(output_path)
+
+        source_pecha_path = self.create_pecha(
+            self.source_segments, LayerEnum.root_segment, output_path
+        )
+
+        return source_pecha_path
