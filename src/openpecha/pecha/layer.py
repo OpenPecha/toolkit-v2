@@ -18,7 +18,7 @@ class LayerEnum(Enum):
 
 
 class LayerGroupEnum(Enum):
-    structure_type = "Structure Type"
+    structure_type = "Structure_Type"
     translation_segment = "Translation Segment"
 
 

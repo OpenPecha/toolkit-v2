@@ -25,7 +25,7 @@ def test_read_alignment():
                 "I8A2A44D2": {
                     "string": "\ufeffརྒྱ་གར་སྐད་དུ། བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།\n",
                     "metadata": {
-                        "Structure Type": "Chapter",
+                        "Structure_Type": "Chapter",
                         "Chapter Number": "1",
                         "Chapter Name": "ལེའུ་དང་པོ།",
                     },
@@ -40,7 +40,7 @@ def test_read_alignment():
                 "I8A2A44D2": {
                     "string": "བོད་སྐད་དུ། བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པ།\n",
                     "metadata": {
-                        "Structure Type": "Chapter",
+                        "Structure_Type": "Chapter",
                         "Chapter Number": "2",
                         "Chapter Name": "ལེའུ་གཉིས་པ།",
                     },
@@ -55,7 +55,7 @@ def test_read_alignment():
                 "I8A2A44D2": {
                     "string": "སངས་རྒྱས་དང་བྱང་ཆུབ་སེམས་དཔའ་ཐམས་ཅད་ལ་ཕྱག་འཚལ་ལོ། །\n",
                     "metadata": {
-                        "Structure Type": "Chapter",
+                        "Structure_Type": "Chapter",
                         "Chapter Number": "3",
                         "Chapter Name": "ལེའུ་གསུམ་པ།",
                     },
@@ -70,7 +70,7 @@ def test_read_alignment():
                 "I8A2A44D2": {
                     "string": "བདེ་གཤེགས་ཆོས་ཀྱི་སྐུ་མངའ་སྲས་བཅས་དང་། །ཕྱག་འོས་ཀུན་ལའང་གུས་པར་ཕྱག་འཚལ་ཏེ། །བདེ་གཤེགས་སྲས་ཀྱི་སྡོམ་ལ་འཇུག་པ་ནི། །ལུང་བཞིན་མདོར་བསྡུས་ནས་ནི་བརྗོད་པར་བྱ། །\n",
                     "metadata": {
-                        "Structure Type": "Chapter",
+                        "Structure_Type": "Chapter",
                         "Chapter Number": "4",
                         "Chapter Name": "ལེའུ་བཞི་པ།",
                     },
@@ -85,7 +85,7 @@ def test_read_alignment():
                 "I8A2A44D2": {
                     "string": "སྔོན་ཆད་མ་བྱུང་བ་ཡང་འདིར་བརྗོད་མེད། །སྡེབ་སྦྱོར་མཁས་པའང་བདག་ལ་ཡོད་མིན་ཏེ། །དེ་ཕྱིར་གཞན་དོན་བསམ་པ་བདག་ལ་མེད། །རང་གི་ཡིད་ལ་བསྒོམ་ཕྱིར་ངས་འདི་བརྩམས། །",
                     "metadata": {
-                        "Structure Type": "Chapter",
+                        "Structure_Type": "Chapter",
                         "Chapter Number": "5",
                         "Chapter Name": "ལེའུ་ལྔ་པ།",
                     },
