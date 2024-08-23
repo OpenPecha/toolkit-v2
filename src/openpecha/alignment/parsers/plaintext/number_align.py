@@ -201,33 +201,53 @@ class PlainTextNumberAlignedParser:
 
         """ create annotation layer in STAM """
         char_count = 0
-        ann_data_id = get_uuid()
+        meaning_ann_data_id = get_uuid()
+        root_ann_data_id = get_uuid()
         alignment_data_id = get_uuid()
-        for segment in self.source_segments:
-            target = Selector.textselector(
+        for idx, segment in enumerate(self.source_segments):
+            """annotate meaning segments"""
+            text_selector = Selector.textselector(
                 ann_resource,
                 Offset.simple(char_count, char_count + len(segment)),
             )
             char_count += len(segment)
 
-            ann_store.annotate(
-                id=get_uuid(),
-                target=target,
+            ann_id = get_uuid()
+            meaning_segment_ann = ann_store.annotate(
+                id=ann_id,
+                target=text_selector,
                 data=[
                     {
-                        "id": ann_data_id,
+                        "id": meaning_ann_data_id,
                         "set": ann_dataset.id(),
                         "key": LayerGroupEnum.structure_type.value,
                         "value": LayerEnum.meaning_segment.value,
-                    },
-                    {
-                        "id": alignment_data_id,
-                        "set": ann_dataset.id(),
-                        "key": LayerGroupEnum.associated_alignment.value,
-                        "value": self.alignment_id,
-                    },
+                    }
                 ],
             )
+
+            """ annotate root segment if it is root segment """
+            if idx in self.mapping_ann_indicies["root_indicies"]:
+                ann_selector = Selector.annotationselector(meaning_segment_ann)
+
+                ann_store.annotate(
+                    id=get_uuid(),
+                    target=ann_selector,
+                    data=[
+                        {
+                            "id": root_ann_data_id,
+                            "set": ann_dataset.id(),
+                            "key": LayerGroupEnum.structure_type.value,
+                            "value": LayerEnum.root_segment.value,
+                        },
+                        {
+                            "id": alignment_data_id,
+                            "set": ann_dataset.id(),
+                            "key": LayerGroupEnum.associated_alignment.value,
+                            "value": self.alignment_id,
+                        },
+                    ],
+                )
 
         """save the new annotation store"""
         ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
@@ -236,9 +256,8 @@ class PlainTextNumberAlignedParser:
         ann_store_path = save_stam(ann_store, output_path, ann_store_path)
 
     def parse(self, output_path: Path):
-        _mkdir(output_path)
 
-        """ Check if the source and target segments are already parsed """
+        """Check if the source and target segments are already parsed"""
         neccessary_attrs = [
             "source_segments",
             "target_segments",
