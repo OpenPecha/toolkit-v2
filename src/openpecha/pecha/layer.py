@@ -24,11 +24,17 @@ class LayerGroupEnum(Enum):
     associated_alignment = "Associated_Alignment"
 
 
-def get_annotation_category(layer_type: LayerEnum) -> LayerGroupEnum:
+def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
     """return the annotation category where annotation type falls in"""
-    if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
-        return LayerGroupEnum.structure_type
     if layer_type in [LayerEnum.tibetan_segment, LayerEnum.english_segment]:
         return LayerGroupEnum.translation_segment
 
     return LayerGroupEnum.structure_type
+
+
+def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
+    """return the annotation category where annotation type falls in"""
+    if layer_type in [LayerEnum.tibetan_segment, LayerEnum.english_segment]:
+        return LayerCollectionEnum.translation
+
+    return LayerCollectionEnum.root_commentory

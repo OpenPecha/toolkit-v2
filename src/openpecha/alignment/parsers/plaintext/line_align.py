@@ -14,7 +14,7 @@ from openpecha.pecha.layer import (
     LayerCollectionEnum,
     LayerEnum,
     LayerGroupEnum,
-    get_annotation_category,
+    get_layer_group,
 )
 from openpecha.pecha.metadata import PechaMetaData
 
@@ -136,17 +136,13 @@ class PlainTextLineAlignedParser:
         source_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.source_text,
-            annotation_category=get_annotation_category(
-                LayerEnum(source_metadata.type)
-            ),
+            annotation_category=get_layer_group(LayerEnum(source_metadata.type)),
             annotation_type=LayerEnum(source_metadata.type),
         )
         target_ann_metadata = AnnotationMetadata(
             dataset_id=dataset_id,
             base_text=self.target_text,
-            annotation_category=get_annotation_category(
-                LayerEnum(target_metadata.type)
-            ),
+            annotation_category=get_layer_group(LayerEnum(target_metadata.type)),
             annotation_type=LayerEnum(target_metadata.type),
         )
 

@@ -3,13 +3,13 @@ import re
 from pathlib import Path
 from typing import List, Tuple
 
-from stam import AnnotationStore, Offset, Selector
+from stam import Offset, Selector
 
 from openpecha.alignment.parsers.plaintext.line_align import save_stam
 from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
 pecha_path = str
 
@@ -193,15 +193,10 @@ class PlainTextNumberAlignedParser:
         base_content = "\n\n".join(segments)
         pecha.set_base(base_file_name, base_content)
 
-        ann_store = AnnotationStore(id=pecha_id)
-        ann_resource = ann_store.add_resource(
-            id=base_file_name,
-            filename=(pecha.base_path / f"{base_file_name}.txt").as_posix(),
-        )
+        ann_store = pecha.create_ann_store(base_file_name, ann_type)
 
-        ann_dataset = ann_store.add_dataset(
-            id=LayerCollectionEnum.root_commentory.value
-        )
+        ann_resource = next(ann_store.resources())
+        ann_dataset = next(ann_store.datasets())
 
         """ annotate if its root segment or commentary segments """
         if ann_type == LayerEnum.root_segment:

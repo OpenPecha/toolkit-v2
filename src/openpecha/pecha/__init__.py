@@ -9,7 +9,7 @@ from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo
 from openpecha.pecha.blupdate import update_layer
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import LayerEnum, get_layer_collection
 
 BASE_NAME = str
 LAYER_NAME = str
@@ -217,6 +217,18 @@ class Pecha:
         This function sets the base layer of the pecha to a new text.
         """
         (self.base_path / f"{base_name}.txt").write_text(content)
+
+    def create_ann_store(self, basefile_name: str, annotation_type: LayerEnum):
+        ann_store = AnnotationStore(id=self.id_)
+        ann_store.add_resource(
+            id=basefile_name,
+            filename=(self.base_path / f"{basefile_name}.txt").as_posix(),
+        )
+
+        dataset_id = get_layer_collection(annotation_type).value
+        ann_store.add_dataset(id=dataset_id)
+
+        return ann_store
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
         annotation_type_file_paths = list(
