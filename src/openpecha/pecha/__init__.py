@@ -231,10 +231,10 @@ class Pecha:
 
         return ann_store
 
-    def annotate_text_selection(
+    def annotate(
         self,
         ann_store: AnnotationStore,
-        text_selector: stam.Selector,
+        selector: Selector,
         ann_type: LayerEnum,
         ann_data_id: str,
         data: Optional[List] = None,
@@ -259,39 +259,7 @@ class Pecha:
         else:
             data.extend(ann_type_data)
 
-        ann = ann_store.annotate(id=ann_id, target=text_selector, data=data)
-        return ann
-
-    def annotate_annotation(
-        self,
-        ann_store: AnnotationStore,
-        ann_selector: Selector,
-        ann_type: LayerEnum,
-        ann_data_id: str = None,
-        data: Optional[List] = None,
-    ):
-
-        ann_id = get_uuid()
-        ann_dataset = next(ann_store.datasets())
-        ann_group = get_layer_group(ann_type)
-
-        if not ann_data_id:
-            ann_data_id = get_uuid()
-
-        ann_type_data = [
-            {
-                "id": ann_data_id,
-                "set": ann_dataset.id(),
-                "key": ann_group.value,
-                "value": ann_type.value,
-            }
-        ]
-        if not data:
-            data = ann_type_data
-        else:
-            data.extend(ann_type_data)
-
-        ann = ann_store.annotate(id=ann_id, target=ann_selector, data=data)
+        ann = ann_store.annotate(id=ann_id, target=selector, data=data)
         return ann
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):

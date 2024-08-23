@@ -219,7 +219,7 @@ class PlainTextNumberAlignedParser:
                 Offset.simple(char_count, char_count + len(segment)),
             )
             char_count += len(segment) + 2  # 2 being length for two newline characters
-            meaning_segment_ann = pecha.annotate_text_selection(
+            meaning_segment_ann = pecha.annotate(
                 ann_store, text_selector, LayerEnum.meaning_segment, meaning_ann_data_id
             )
 
@@ -233,7 +233,7 @@ class PlainTextNumberAlignedParser:
                         "value": self.alignment_id,
                     },
                 ]
-                pecha.annotate_annotation(
+                pecha.annotate(
                     ann_store, ann_selector, ann_type, ann_type_data_id, data
                 )
         """save the new annotation store"""
