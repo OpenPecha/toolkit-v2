@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple, Union
@@ -207,7 +208,10 @@ class Pecha:
 
     @property
     def ann_path(self):
-        return self.pecha_path / "layers"
+        ann_path = self.pecha_path / "layers"
+        if not ann_path.exists():
+            ann_path.mkdir(parents=True, exist_ok=True)
+        return ann_path
 
     @property
     def metadata(self):
@@ -275,3 +279,35 @@ class Pecha:
             return annotation_stores[0]
 
         return annotation_stores
+
+    def save_ann_store(
+        self, ann_store: AnnotationStore, ann_type: LayerEnum, basefile_name: str
+    ):
+        new_ann_file_name = f"{ann_type.value}-{get_uuid()[:3]}.json"
+        ann_store_path = self.ann_path / basefile_name
+        ann_store_path.mkdir(parents=True, exist_ok=True)
+        ann_store_json_dict = self.convert_absolute_to_relative_path(
+            ann_store, ann_store_path
+        )
+
+        with open(ann_store_path / new_ann_file_name, "w", encoding="utf-8") as f:
+            f.write(json.dumps(ann_store_json_dict, indent=2, ensure_ascii=False))
+
+        return ann_store_path
+
+    @staticmethod
+    def convert_absolute_to_relative_path(
+        ann_store: AnnotationStore, ann_store_path: Path
+    ):
+        """
+        convert the absolute to relative path for base file in json string of annotation store
+        """
+        ann_store_json_string = ann_store.to_json_string()
+        json_object = json.loads(ann_store_json_string)
+        for resource in json_object["resources"]:
+            original_path = Path(resource["@include"])
+            if ann_store_path.name == "metadata.json":
+                resource["@include"] = f"base/{original_path.name}"
+            else:
+                resource["@include"] = f"../../base/{original_path.name}"
+        return json_object

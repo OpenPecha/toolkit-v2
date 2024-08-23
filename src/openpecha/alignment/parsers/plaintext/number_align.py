@@ -5,7 +5,6 @@ from typing import List, Tuple
 
 from stam import Offset, Selector
 
-from openpecha.alignment.parsers.plaintext.line_align import save_stam
 from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
@@ -189,11 +188,11 @@ class PlainTextNumberAlignedParser:
         pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
 
         """ create base file for new annotation store"""
-        base_file_name = get_uuid()[:4]
+        basefile_name = get_uuid()[:4]
         base_content = "\n\n".join(segments)
-        pecha.set_base(base_file_name, base_content)
+        pecha.set_base(basefile_name, base_content)
 
-        ann_store = pecha.create_ann_store(base_file_name, ann_type)
+        ann_store = pecha.create_ann_store(basefile_name, ann_type)
 
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
@@ -237,10 +236,7 @@ class PlainTextNumberAlignedParser:
                     ann_store, ann_selector, ann_type, ann_type_data_id, data
                 )
         """save the new annotation store"""
-        ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
-        ann_store_filename = f"{ann_type.value}-{get_uuid()[:3]}.json"
-        ann_store_path = ann_output_dir / ann_store_filename
-        ann_store_path = save_stam(ann_store, output_path, ann_store_path)
+        pecha.save_ann_store(ann_store, ann_type, basefile_name)
 
         return pecha_path
 
