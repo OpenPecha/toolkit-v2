@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from shutil import rmtree
 
 from openpecha.alignment.parsers.plaintext.number_align import (
     PlainTextNumberAlignedParser,
@@ -111,7 +112,12 @@ def test_parse_pecha():
     parser.target_segments = expected_target_segments
     parser.mapping_ann_indicies = expected_mapping_ann_indicies
 
-    parser.parse(DATA)
+    OUTPUT = Path(__file__).parent / "output"
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    parser.parse(OUTPUT)
+
+    """ clean up """
+    rmtree(OUTPUT)
 
 
 test_parse_pecha()

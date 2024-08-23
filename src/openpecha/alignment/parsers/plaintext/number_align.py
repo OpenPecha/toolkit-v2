@@ -43,8 +43,7 @@ class PlainTextNumberAlignedParser:
         text = re.sub(pattern, "\n\n", text)
         return text
 
-    @staticmethod
-    def identify_root_segments(source_segments: List[str]):
+    def identify_root_segments(self):
         """
         1.All the source segments are meaning segments
         2.Root segments are the segments that start with a number followed by a dot.
@@ -56,7 +55,7 @@ class PlainTextNumberAlignedParser:
         root_segment_indices = []
         sapche_ann_indices: List[Tuple[int, int, int]] = []
 
-        for idx, segment in enumerate(source_segments):
+        for idx, segment in enumerate(self.source_segments):
             if re.match(r"^\d+\.", segment):
                 root_segment_indices.append(idx)
 
@@ -89,7 +88,7 @@ class PlainTextNumberAlignedParser:
         root_mapped_numbers.sort()
         return root_mapped_numbers
 
-    def identify_comment_segments(self, target_segments: List[str]):
+    def identify_comment_segments(self):
         """
         1.All target segments are meaning segments.
         2.Comment segments are the segment that starts with a number followed by a dot.
@@ -106,7 +105,7 @@ class PlainTextNumberAlignedParser:
 
         comment_segment_indices = []
         sapche_ann_indices: List[Tuple[int, int, int]] = []
-        for idx, segment in enumerate(target_segments):
+        for idx, segment in enumerate(self.target_segments):
             match = re.search(r"^([\d,-]+)\.", segment)
             if match:
                 root_mapped_expression = match.group(1)
@@ -164,14 +163,12 @@ class PlainTextNumberAlignedParser:
             target_segment.strip() for target_segment in target_segments
         ]
 
-        root_segment_indices, root_sapche_indices = self.identify_root_segments(
-            source_segments
-        )
+        root_segment_indices, root_sapche_indices = self.identify_root_segments()
 
         (
             comment_segment_indices,
             comment_sapche_indices,
-        ) = self.identify_comment_segments(target_segments)
+        ) = self.identify_comment_segments()
 
         self.mapping_ann_indicies = {
             "root_indicies": root_segment_indices,
