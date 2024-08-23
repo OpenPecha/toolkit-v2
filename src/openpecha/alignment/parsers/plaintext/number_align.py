@@ -192,12 +192,12 @@ class PlainTextNumberAlignedParser:
         base_content = "\n\n".join(segments)
         pecha.set_base(basefile_name, base_content)
 
+        """ annotate root segments / commentary segments """
         ann_store = pecha.create_ann_store(basefile_name, ann_type)
 
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
 
-        """ annotate if its root segment or commentary segments """
         if ann_type == LayerEnum.root_segment:
             ann_indicies = self.mapping_ann_indicies["root_indicies"]
         else:
@@ -206,7 +206,6 @@ class PlainTextNumberAlignedParser:
                 for element in self.mapping_ann_indicies["commentary_indicies"]
             ]
 
-        """ create annotation layer in STAM """
         char_count = 0
         meaning_ann_data_id = get_uuid()
         ann_type_data_id = get_uuid()
@@ -235,8 +234,39 @@ class PlainTextNumberAlignedParser:
                 pecha.annotate(
                     ann_store, ann_selector, ann_type, ann_type_data_id, data
                 )
-        """save the new annotation store"""
+        """save root segments / commentary segments annotations"""
         pecha.save_ann_store(ann_store, ann_type, basefile_name)
+
+        """ annotate sapche annotations """
+        del ann_store  # In STAM, there is an warning on not to load multiple ann_store
+        del ann_resource
+        del ann_dataset
+
+        if ann_type == LayerEnum.root_segment:
+            sapche_indicies = self.mapping_ann_indicies["root_sapche_indicies"]
+        else:
+            sapche_indicies = self.mapping_ann_indicies["commentary_sapche_indicies"]
+
+        ann_store = pecha.create_ann_store(basefile_name, LayerEnum.sapche)
+        ann_resource = next(ann_store.resources())
+
+        char_count = 0
+        sapche_ann_data_id = get_uuid()
+        for idx, segment in enumerate(self.source_segments):
+            for index, start, end in sapche_indicies:
+                if idx == index:
+                    text_selector = Selector.textselector(
+                        ann_resource,
+                        Offset.simple(char_count + start, char_count + end),
+                    )
+                    pecha.annotate(
+                        ann_store, text_selector, LayerEnum.sapche, sapche_ann_data_id
+                    )
+            char_count += len(segment) + 2  # 2 being length for two newline characters
+
+        """save root segments / commentary segments annotations"""
+        if ann_store.annotations_len() > 0:
+            pecha.save_ann_store(ann_store, LayerEnum.sapche, basefile_name)
 
         return pecha_path
 

@@ -16,6 +16,7 @@ class LayerEnum(Enum):
     tibetan_segment = "Tibetan_Segment"
     english_segment = "English_Segment"
     chapter = "Chapter"
+    sapche = "Sapche"
 
 
 class LayerGroupEnum(Enum):
