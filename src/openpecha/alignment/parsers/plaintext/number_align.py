@@ -252,7 +252,7 @@ class PlainTextNumberAlignedParser:
 
         char_count = 0
         sapche_ann_data_id = get_uuid()
-        for idx, segment in enumerate(self.source_segments):
+        for idx, segment in enumerate(segments):
             for index, start, end in sapche_indicies:
                 if idx == index:
                     text_selector = Selector.textselector(
@@ -262,6 +262,7 @@ class PlainTextNumberAlignedParser:
                     pecha.annotate(
                         ann_store, text_selector, LayerEnum.sapche, sapche_ann_data_id
                     )
+                    break
             char_count += len(segment) + 2  # 2 being length for two newline characters
 
         """save root segments / commentary segments annotations"""
