@@ -21,6 +21,7 @@ class LayerEnum(Enum):
 class LayerGroupEnum(Enum):
     structure_type = "Structure_Type"
     translation_segment = "Translation_Segment"
+    associated_alignment = "Associated_Alignment"
 
 
 def get_annotation_category(layer_type: LayerEnum) -> LayerGroupEnum:

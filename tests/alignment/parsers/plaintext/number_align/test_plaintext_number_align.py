@@ -109,6 +109,9 @@ def test_parse_pecha():
     parser = PlainTextNumberAlignedParser(source_text, target_text, metadata)
     parser.source_segments = expected_source_segments
     parser.target_segments = expected_target_segments
+    parser.mapping_ann_indicies = expected_mapping_ann_indicies
+
+    parser.parse(DATA)
 
 
 test_parse_pecha()

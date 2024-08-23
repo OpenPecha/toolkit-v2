@@ -3,6 +3,13 @@ import re
 from pathlib import Path
 from typing import List, Tuple
 
+from stam import AnnotationStore, Offset, Selector
+
+from openpecha.alignment.parsers.plaintext.line_align import save_stam
+from openpecha.config import _mkdir
+from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
+from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
+
 
 class PlainTextNumberAlignedParser:
     """
@@ -172,3 +179,75 @@ class PlainTextNumberAlignedParser:
             "comment_indicies": comment_segment_indices,
             "comment_sapche_indicies": comment_sapche_indices,
         }
+
+    def parse_to_root_pecha(self, output_path: Path):
+        """create new annotation store for the given annotation layer"""
+        ann_store_id = get_initial_pecha_id()
+        pecha_path = _mkdir(output_path / ann_store_id)
+        ann_store = AnnotationStore(id=ann_store_id)
+
+        """ create base file for new annotation store"""
+        base_dir = _mkdir(pecha_path / "base")
+        base_file_name = get_uuid()[:4]
+        base_file_path = base_dir / f"{base_file_name}.txt"
+        base_file_path.write_text(self.source_text, encoding="utf-8")
+        ann_resource = ann_store.add_resource(
+            id=base_file_name, filename=base_file_path.as_posix()
+        )
+
+        ann_dataset = ann_store.add_dataset(
+            id=LayerCollectionEnum.root_commentory.value
+        )
+
+        """ create annotation layer in STAM """
+        char_count = 0
+        ann_data_id = get_uuid()
+        alignment_data_id = get_uuid()
+        for segment in self.source_segments:
+            target = Selector.textselector(
+                ann_resource,
+                Offset.simple(char_count, char_count + len(segment)),
+            )
+            char_count += len(segment)
+
+            ann_store.annotate(
+                id=get_uuid(),
+                target=target,
+                data=[
+                    {
+                        "id": ann_data_id,
+                        "set": ann_dataset.id(),
+                        "key": LayerGroupEnum.structure_type.value,
+                        "value": LayerEnum.meaning_segment.value,
+                    },
+                    {
+                        "id": alignment_data_id,
+                        "set": ann_dataset.id(),
+                        "key": LayerGroupEnum.associated_alignment.value,
+                        "value": self.alignment_id,
+                    },
+                ],
+            )
+
+        """save the new annotation store"""
+        ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
+        ann_store_filename = f"{LayerEnum.root_segment.value}-{get_uuid()[:3]}.json"
+        ann_store_path = ann_output_dir / ann_store_filename
+        ann_store_path = save_stam(ann_store, output_path, ann_store_path)
+
+    def parse(self, output_path: Path):
+        _mkdir(output_path)
+
+        """ Check if the source and target segments are already parsed """
+        neccessary_attrs = [
+            "source_segments",
+            "target_segments",
+            "mapping_ann_indicies",
+        ]
+        for neccessary_attr in neccessary_attrs:
+            if not hasattr(self, neccessary_attr):
+                self.parse_text_into_segments()
+                break
+
+        self.alignment_id = get_alignment_id()
+        self.parse_to_root_pecha(output_path)
