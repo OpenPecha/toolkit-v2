@@ -265,7 +265,7 @@ class Pecha:
     def annotate_annotation(
         self,
         ann_store: AnnotationStore,
-        target_ann: Annotation,
+        ann_selector: Selector,
         ann_type: LayerEnum,
         ann_data_id: str = None,
         data: Optional[List] = None,
@@ -291,9 +291,7 @@ class Pecha:
         else:
             data.extend(ann_type_data)
 
-        ann = ann_store.annotate(
-            id=ann_id, target=Selector.annotationselector(target_ann), data=data
-        )
+        ann = ann_store.annotate(id=ann_id, target=ann_selector, data=data)
         return ann
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):

@@ -224,6 +224,7 @@ class PlainTextNumberAlignedParser:
             )
 
             if idx in ann_indicies:
+                ann_selector = Selector.annotationselector(meaning_segment_ann)
                 data = [
                     {
                         "id": alignment_data_id,
@@ -233,7 +234,7 @@ class PlainTextNumberAlignedParser:
                     },
                 ]
                 pecha.annotate_annotation(
-                    ann_store, meaning_segment_ann, ann_type, ann_type_data_id, data
+                    ann_store, ann_selector, ann_type, ann_type_data_id, data
                 )
         """save the new annotation store"""
         ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
