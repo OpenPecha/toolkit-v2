@@ -183,9 +183,9 @@ class StamPecha:
 
 
 class Pecha:
-    def __init__(self, pecha_id: str, base_path: Path) -> None:
+    def __init__(self, pecha_id: str, pecha_path: Path) -> None:
         self.id_ = pecha_id
-        self.base_path = base_path
+        self.pecha_path = pecha_path
 
     @classmethod
     def from_id(cls, pecha_id: str):
@@ -199,11 +199,11 @@ class Pecha:
 
     @property
     def ann_path(self):
-        return self.base_path / "layers"
+        return self.pecha_path / "layers"
 
     @property
     def metadata(self):
-        return AnnotationStore(file=str(self.base_path / "metadata.json"))
+        return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
         annotation_type_file_paths = list(
