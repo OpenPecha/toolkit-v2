@@ -187,7 +187,8 @@ class PlainTextNumberAlignedParser:
         base_dir = _mkdir(pecha_path / "base")
         base_file_name = get_uuid()[:4]
         base_file_path = base_dir / f"{base_file_name}.txt"
-        base_file_path.write_text(self.source_text, encoding="utf-8")
+        base_content = "\n\n".join(self.source_segments)
+        base_file_path.write_text(base_content, encoding="utf-8")
         ann_resource = ann_store.add_resource(
             id=base_file_name, filename=base_file_path.as_posix()
         )
@@ -207,7 +208,9 @@ class PlainTextNumberAlignedParser:
                 ann_resource,
                 Offset.simple(char_count, char_count + len(segment)),
             )
-            char_count += len(segment)
+
+            two_new_lines = "\n\n"
+            char_count += len(segment) + len(two_new_lines)
 
             ann_id = get_uuid()
             meaning_segment_ann = ann_store.annotate(
