@@ -10,6 +10,7 @@ class LayerCollectionEnum(Enum):
 
 
 class LayerEnum(Enum):
+    meaning_segment = "Meaning_Segment"
     root_segment = "Root_Segment"
     commentary_segment = "Commentary_Segment"
     tibetan_segment = "Tibetan_Segment"

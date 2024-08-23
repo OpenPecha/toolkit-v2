@@ -10,6 +10,7 @@ def _mkdir(path):
 
 
 def _mkdir_if_not(path: Path):
+    """Create a directory if it does not exist"""
     if not path.exists():
         path.mkdir(exist_ok=True, parents=True)
     return path
