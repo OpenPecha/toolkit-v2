@@ -5,7 +5,7 @@ from shutil import rmtree
 from stam import AnnotationStore
 
 from openpecha.alignment import Alignment
-from openpecha.alignment.parsers.plaintext.plaintext import (
+from openpecha.alignment.parsers.plaintext.line_align import (
     PlainTextLineAlignedParser,
     split_text_into_lines,
 )
