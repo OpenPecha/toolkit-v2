@@ -11,7 +11,7 @@ class LayerCollectionEnum(Enum):
 
 class LayerEnum(Enum):
     root_segment = "Root_Segment"
-    commentary_segment = "Commentary"
+    commentary_segment = "Commentary_Segment"
     tibetan_segment = "Tibetan_Segment"
     english_segment = "English_Segment"
     chapter = "Chapter"

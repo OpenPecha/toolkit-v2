@@ -18,7 +18,7 @@
             "author":["Chojuk Target Author 1", "Chojuk Target Author 1"],
             "source": "Chojuk Target",
             "source_metadata": {},
-            "type":"Commentary",
+            "type":"Commentary_Segment",
             "language": "Tibetan"
     }
 }

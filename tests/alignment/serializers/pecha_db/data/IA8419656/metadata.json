@@ -94,7 +94,7 @@
           "key": "type",
           "value": {
             "@type": "String",
-            "value": "Commentary"
+            "value": "Commentary_Segment"
           }
         },
         {
