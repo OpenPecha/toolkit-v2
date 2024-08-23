@@ -10,6 +10,8 @@ from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
 
+pecha_path = str
+
 
 class PlainTextNumberAlignedParser:
     """
@@ -103,7 +105,7 @@ class PlainTextNumberAlignedParser:
         https://github.com/orgs/OpenPecha/projects/74/views/1?pane=issue&itemId=76094908
         """
 
-        comment_segment_indices = []
+        commentary_segment_indices = []
         sapche_ann_indices: List[Tuple[int, int, int]] = []
         for idx, segment in enumerate(self.target_segments):
             match = re.search(r"^([\d,-]+)\.", segment)
@@ -112,7 +114,7 @@ class PlainTextNumberAlignedParser:
                 root_mapped_numbers = self.extract_root_mapped_numbers(
                     root_mapped_expression
                 )
-                comment_segment_indices.append((idx, root_mapped_numbers))
+                commentary_segment_indices.append((idx, root_mapped_numbers))
 
             match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
             if match:
@@ -121,10 +123,10 @@ class PlainTextNumberAlignedParser:
                 sapche_ann_indices.append((idx, start, end))
 
         """ sort the comment segment indices """
-        comment_segment_indices.sort(key=lambda x: x[1][0])
+        commentary_segment_indices.sort(key=lambda x: x[1][0])
         sapche_ann_indices.sort(key=lambda x: x[0])
 
-        return comment_segment_indices, sapche_ann_indices
+        return commentary_segment_indices, sapche_ann_indices
 
     def parse_text_into_segments(self):
         """
@@ -166,18 +168,18 @@ class PlainTextNumberAlignedParser:
         root_segment_indices, root_sapche_indices = self.identify_root_segments()
 
         (
-            comment_segment_indices,
-            comment_sapche_indices,
+            commentary_segment_indices,
+            commentary_sapche_indices,
         ) = self.identify_comment_segments()
 
         self.mapping_ann_indicies = {
             "root_indicies": root_segment_indices,
             "root_sapche_indicies": root_sapche_indices,
-            "comment_indicies": comment_segment_indices,
-            "comment_sapche_indicies": comment_sapche_indices,
+            "commentary_indicies": commentary_segment_indices,
+            "commentary_sapche_indicies": commentary_sapche_indices,
         }
 
-    def parse_to_root_pecha(self, output_path: Path):
+    def parse_to_root_pecha(self, output_path: Path) -> pecha_path:
         """create new annotation store for the given annotation layer"""
         ann_store_id = get_initial_pecha_id()
         pecha_path = _mkdir(output_path / ann_store_id)
@@ -254,6 +256,8 @@ class PlainTextNumberAlignedParser:
         ann_store_filename = f"{LayerEnum.root_segment.value}-{get_uuid()[:3]}.json"
         ann_store_path = ann_output_dir / ann_store_filename
         ann_store_path = save_stam(ann_store, output_path, ann_store_path)
+
+        return pecha_path
 
     def parse(self, output_path: Path):
 

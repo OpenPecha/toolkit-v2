@@ -42,13 +42,13 @@ expected_mapping_ann_indicies = {
         9,
     ],
     "root_sapche_indicies": [],
-    "comment_indicies": [
+    "commentary_indicies": [
         (2, [1, 2, 3]),
         (4, [1, 2, 3, 5]),
         (1, [4]),
         (5, [6]),
     ],
-    "comment_sapche_indicies": [
+    "commentary_sapche_indicies": [
         (0, 8, 38),
         (3, 8, 38),
     ],
@@ -89,12 +89,12 @@ def test_parse_to_segments():
         == expected_mapping_ann_indicies["root_sapche_indicies"]
     )
     assert (
-        parser.mapping_ann_indicies["comment_indicies"]
-        == expected_mapping_ann_indicies["comment_indicies"]
+        parser.mapping_ann_indicies["commentary_indicies"]
+        == expected_mapping_ann_indicies["commentary_indicies"]
     )
     assert (
-        parser.mapping_ann_indicies["comment_sapche_indicies"]
-        == expected_mapping_ann_indicies["comment_sapche_indicies"]
+        parser.mapping_ann_indicies["commentary_sapche_indicies"]
+        == expected_mapping_ann_indicies["commentary_sapche_indicies"]
     )
 
 
