@@ -224,27 +224,17 @@ class PlainTextNumberAlignedParser:
             )
 
             if idx in ann_indicies:
-                ann_selector = Selector.annotationselector(meaning_segment_ann)
-
-                ann_store.annotate(
-                    id=get_uuid(),
-                    target=ann_selector,
-                    data=[
-                        {
-                            "id": ann_type_data_id,
-                            "set": ann_dataset.id(),
-                            "key": LayerGroupEnum.structure_type.value,
-                            "value": ann_type.value,
-                        },
-                        {
-                            "id": alignment_data_id,
-                            "set": ann_dataset.id(),
-                            "key": LayerGroupEnum.associated_alignment.value,
-                            "value": self.alignment_id,
-                        },
-                    ],
+                data = [
+                    {
+                        "id": alignment_data_id,
+                        "set": ann_dataset.id(),
+                        "key": LayerGroupEnum.associated_alignment.value,
+                        "value": self.alignment_id,
+                    },
+                ]
+                pecha.annotate_annotation(
+                    ann_store, meaning_segment_ann, ann_type, ann_type_data_id, data
                 )
-
         """save the new annotation store"""
         ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
         ann_store_filename = f"{ann_type.value}-{get_uuid()[:3]}.json"

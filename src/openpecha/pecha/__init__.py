@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
-from stam import AnnotationStore, Selector
+from stam import Annotation, AnnotationStore, Selector
 
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
@@ -243,6 +243,9 @@ class Pecha:
         ann_dataset = next(ann_store.datasets())
         ann_group = get_layer_group(ann_type)
 
+        if not ann_data_id:
+            ann_data_id = get_uuid()
+
         ann_type_data = [
             {
                 "id": ann_data_id,
@@ -257,6 +260,40 @@ class Pecha:
             data.extend(ann_type_data)
 
         ann = ann_store.annotate(id=ann_id, target=text_selector, data=data)
+        return ann
+
+    def annotate_annotation(
+        self,
+        ann_store: AnnotationStore,
+        target_ann: Annotation,
+        ann_type: LayerEnum,
+        ann_data_id: str = None,
+        data: Optional[List] = None,
+    ):
+
+        ann_id = get_uuid()
+        ann_dataset = next(ann_store.datasets())
+        ann_group = get_layer_group(ann_type)
+
+        if not ann_data_id:
+            ann_data_id = get_uuid()
+
+        ann_type_data = [
+            {
+                "id": ann_data_id,
+                "set": ann_dataset.id(),
+                "key": ann_group.value,
+                "value": ann_type.value,
+            }
+        ]
+        if not data:
+            data = ann_type_data
+        else:
+            data.extend(ann_type_data)
+
+        ann = ann_store.annotate(
+            id=ann_id, target=Selector.annotationselector(target_ann), data=data
+        )
         return ann
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
