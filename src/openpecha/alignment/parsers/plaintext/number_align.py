@@ -59,6 +59,10 @@ class PlainTextNumberAlignedParser:
                 end = match.end(1)
                 sapche_ann_indices.append((idx, start, end))
 
+        """ sort the root segment indices """
+        root_segment_indices.sort()
+        sapche_ann_indices.sort(key=lambda x: x[0])
+
         return root_segment_indices, sapche_ann_indices
 
     @staticmethod
@@ -66,14 +70,17 @@ class PlainTextNumberAlignedParser:
         """
         Extract the root mapped numbers from the root mapped expression.
         """
-        root_segment_indices: List[int] = []
+        root_mapped_numbers: List[int] = []
         for expression in root_mapped_expression.strip().split(","):
             if "-" in expression:
                 start, end = expression.split("-")
-                root_segment_indices.extend(range(int(start), int(end) + 1))
+                root_mapped_numbers.extend(range(int(start), int(end) + 1))
             else:
-                root_segment_indices.append(int(expression))
-        return root_segment_indices
+                root_mapped_numbers.append(int(expression))
+
+        """ sort the root mapped numbers """
+        root_mapped_numbers.sort()
+        return root_mapped_numbers
 
     def identify_comment_segments(self, target_segments: List[str]):
         """
@@ -106,6 +113,10 @@ class PlainTextNumberAlignedParser:
                 start = match.start(1)
                 end = match.end(1)
                 sapche_ann_indices.append((idx, start, end))
+
+        """ sort the comment segment indices """
+        comment_segment_indices.sort(key=lambda x: x[1][0])
+        sapche_ann_indices.sort(key=lambda x: x[0])
 
         return comment_segment_indices, sapche_ann_indices
 
