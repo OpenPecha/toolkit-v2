@@ -198,12 +198,25 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @property
+    def base_path(self) -> Path:
+        base_path = self.pecha_path / "base"
+        if not base_path.exists():
+            base_path.mkdir(parents=True, exist_ok=True)
+        return base_path
+
+    @property
     def ann_path(self):
         return self.pecha_path / "layers"
 
     @property
     def metadata(self):
         return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
+
+    def set_base(self, base_name, content) -> None:
+        """
+        This function sets the base layer of the pecha to a new text.
+        """
+        (self.base_path / f"{base_name}.txt").write_text(content)
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
         annotation_type_file_paths = list(

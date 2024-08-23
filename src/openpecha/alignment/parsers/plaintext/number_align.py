@@ -8,6 +8,7 @@ from stam import AnnotationStore, Offset, Selector
 from openpecha.alignment.parsers.plaintext.line_align import save_stam
 from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
+from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
 
 pecha_path = str
@@ -182,24 +183,34 @@ class PlainTextNumberAlignedParser:
     def create_pecha(
         self, segments: List[str], ann_type: LayerEnum, output_path: Path
     ) -> pecha_path:
-        """create new annotation store for the given annotation layer"""
-        ann_store_id = get_initial_pecha_id()
-        pecha_path = _mkdir(output_path / ann_store_id)
-        ann_store = AnnotationStore(id=ann_store_id)
+        """create pecha file"""
+        pecha_id = get_initial_pecha_id()
+        pecha_path = _mkdir(output_path / pecha_id)
+        pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
 
         """ create base file for new annotation store"""
-        base_dir = _mkdir(pecha_path / "base")
         base_file_name = get_uuid()[:4]
-        base_file_path = base_dir / f"{base_file_name}.txt"
         base_content = "\n\n".join(segments)
-        base_file_path.write_text(base_content, encoding="utf-8")
+        pecha.set_base(base_file_name, base_content)
+
+        ann_store = AnnotationStore(id=pecha_id)
         ann_resource = ann_store.add_resource(
-            id=base_file_name, filename=base_file_path.as_posix()
+            id=base_file_name,
+            filename=(pecha.base_path / f"{base_file_name}.txt").as_posix(),
         )
 
         ann_dataset = ann_store.add_dataset(
             id=LayerCollectionEnum.root_commentory.value
         )
+
+        """ annotate if its root segment or commentary segments """
+        if ann_type == LayerEnum.root_segment:
+            ann_indicies = self.mapping_ann_indicies["root_indicies"]
+        else:
+            ann_indicies = [
+                element[0]
+                for element in self.mapping_ann_indicies["commentary_indicies"]
+            ]
 
         """ create annotation layer in STAM """
         char_count = 0
@@ -229,15 +240,6 @@ class PlainTextNumberAlignedParser:
                     }
                 ],
             )
-
-            """ annotate if its root segment or commentary segments """
-            if ann_type == LayerEnum.root_segment:
-                ann_indicies = self.mapping_ann_indicies["root_indicies"]
-            else:
-                ann_indicies = [
-                    element[0]
-                    for element in self.mapping_ann_indicies["commentary_indicies"]
-                ]
 
             if idx in ann_indicies:
                 ann_selector = Selector.annotationselector(meaning_segment_ann)
