@@ -1,6 +1,6 @@
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Generator, Tuple, Union
+from typing import Dict, Generator, List, Tuple, Union
 
 import stam
 from stam import AnnotationStore, Selector
@@ -8,6 +8,7 @@ from stam import AnnotationStore, Selector
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo
+from openpecha.ids import get_uuid
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection
 
@@ -229,6 +230,16 @@ class Pecha:
         ann_store.add_dataset(id=dataset_id)
 
         return ann_store
+
+    def annotate_text_selection(
+        self,
+        ann_store: AnnotationStore,
+        text_selector: stam.Selector,
+        data: List[Dict[str, str]],
+    ):
+        ann_id = get_uuid()
+        ann = ann_store.annotate(id=ann_id, target=text_selector, data=data)
+        return ann
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
         annotation_type_file_paths = list(
