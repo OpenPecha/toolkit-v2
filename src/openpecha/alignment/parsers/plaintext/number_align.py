@@ -1,7 +1,7 @@
 import json
 import re
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 
 class PlainTextNumberAlignedParser:
@@ -37,7 +37,7 @@ class PlainTextNumberAlignedParser:
         return text
 
     @staticmethod
-    def identify_root_segments(source_segments: List[str]) -> List:
+    def identify_root_segments(source_segments: List[str]):
         """
         Identify the root segments from the source text.
 
@@ -49,11 +49,19 @@ class PlainTextNumberAlignedParser:
         """
 
         root_segment_indices = []
+        sapche_ann_indices: List[Tuple[int, int, int]] = []
+
         for i, segment in enumerate(source_segments):
             if re.match(r"^\d+\.", segment):
                 root_segment_indices.append(i)
 
-        return root_segment_indices
+            match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
+            if match:
+                start = match.start(1)
+                end = match.end(1)
+                sapche_ann_indices.append((i, start, end))
+
+        return root_segment_indices, sapche_ann_indices
 
     def parse_text_into_segment_pairs(self):
         """
@@ -69,6 +77,8 @@ class PlainTextNumberAlignedParser:
         source_segments = [source_segment.strip() for source_segment in source_segments]
         target_segments = [target_segment.strip() for target_segment in target_segments]
 
-        root_segment_indices = self.identify_root_segments(source_segments)
+        root_segment_indices, root_sapche_indices = self.identify_root_segments(
+            source_segments
+        )
 
         return root_segment_indices
