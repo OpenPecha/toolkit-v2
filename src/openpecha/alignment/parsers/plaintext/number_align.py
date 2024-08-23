@@ -120,9 +120,28 @@ class PlainTextNumberAlignedParser:
 
         return comment_segment_indices, sapche_ann_indices
 
-    def parse_text_into_segment_pairs(self):
+    def parse_text_into_segments(self):
         """
         Parse the source and target texts into segment pairs.
+
+        source segments is a list containing segments from source file.
+        target segments is a list containing segments from target file.
+
+        a.root indicies is a list of integers containing the indices of source segments
+        which are root segments.
+
+        b.sapche indicies in both root and comment segments are the indices of sapche annotations
+        in the segments. List of tuple containing (segment_index, start_index, end_index)
+         i)segment index is index of source of target segments
+         ii)start index is the start index of sapche annotation in the particular segment
+         iii)end index is the end index of sapche annotation in the particular segment
+
+        c.comment indicies is a list of tuple containing (segment_index, root_mapped_numbers)
+            i)segment index is index of target segments
+            ii)root_mapped_numbers is a list of integers containing the root segments indices.It means
+            which root segments are related to this comment segment.
+
+
         """
 
         cleaned_source_text = self.source_text.lstrip("\ufeff")
@@ -131,16 +150,25 @@ class PlainTextNumberAlignedParser:
         source_segments = self.normalize_newlines(cleaned_source_text).split("\n\n")
         target_segments = self.normalize_newlines(cleaned_target_text).split("\n\n")
 
-        source_segments = [source_segment.strip() for source_segment in source_segments]
-        target_segments = [target_segment.strip() for target_segment in target_segments]
+        self.source_segments = [
+            source_segment.strip() for source_segment in source_segments
+        ]
+        self.target_segments = [
+            target_segment.strip() for target_segment in target_segments
+        ]
 
         root_segment_indices, root_sapche_indices = self.identify_root_segments(
             source_segments
         )
 
         (
-            comment_segment_indcies,
+            comment_segment_indices,
             comment_sapche_indices,
         ) = self.identify_comment_segments(target_segments)
 
-        return root_segment_indices
+        self.mapping_ann_indicies = {
+            "root_indicies": root_segment_indices,
+            "root_sapche_indicies": root_sapche_indices,
+            "comment_indicies": comment_segment_indices,
+            "comment_sapche_indicies": comment_sapche_indices,
+        }
