@@ -1,6 +1,7 @@
 import json
 import re
 from pathlib import Path
+from typing import List
 
 
 class PlainTextNumberAlignedParser:
@@ -35,14 +36,39 @@ class PlainTextNumberAlignedParser:
         text = re.sub(pattern, "\n\n", text)
         return text
 
+    @staticmethod
+    def identify_root_segments(source_segments: List[str]) -> List:
+        """
+        Identify the root segments from the source text.
+
+        1.All the source segments are meaning segments
+        2.Root segments are the segments that start with a number followed by a dot.
+
+        Input: source_segments: List of source segments
+        Output: root_segment_indices: List of indices of root segments
+        """
+
+        root_segment_indices = []
+        for i, segment in enumerate(source_segments):
+            if re.match(r"^\d+\.", segment):
+                root_segment_indices.append(i)
+
+        return root_segment_indices
+
     def parse_text_into_segment_pairs(self):
         """
         Parse the source and target texts into segment pairs.
         """
-        source_segments = self.normalize_newlines(self.source_text).split("\n\n")
-        target_segments = self.normalize_newlines(self.target_text).split("\n\n")
+
+        cleaned_source_text = self.source_text.lstrip("\ufeff")
+        cleaned_target_text = self.target_text.lstrip("\ufeff")
+
+        source_segments = self.normalize_newlines(cleaned_source_text).split("\n\n")
+        target_segments = self.normalize_newlines(cleaned_target_text).split("\n\n")
 
         source_segments = [source_segment.strip() for source_segment in source_segments]
         target_segments = [target_segment.strip() for target_segment in target_segments]
 
-        return list(zip(source_segments, target_segments))
+        root_segment_indices = self.identify_root_segments(source_segments)
+
+        return root_segment_indices
