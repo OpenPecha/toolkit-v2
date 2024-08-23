@@ -56,7 +56,7 @@ class PechaDbSerializer:
                         "content": [],
                     }
                 ]
-            elif pecha_metadata.type == LayerEnum.commentary:
+            elif pecha_metadata.type == LayerEnum.commentary_segment:
                 pecha_db_json["target"]["books"] = [
                     {
                         "title": ann_metadata["title"]
@@ -113,7 +113,7 @@ class PechaDbSerializer:
                     pecha_db_json["source"]["books"][0]["content"].append(
                         ["".join(chapter_segments)]
                     )
-                elif pecha_type[pecha_id] == LayerEnum.commentary:
+                elif pecha_type[pecha_id] == LayerEnum.commentary_segment:
                     pecha_db_json["target"]["books"][0]["content"].append(
                         ["".join(chapter_segments)]
                     )
