@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
+from typing import Dict
 
-from stam import AnnotationStore
+from stam import Annotation, AnnotationStore
 
 from openpecha.alignment.alignment import Alignment
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
 
 class JSONSerializer:
@@ -46,32 +47,78 @@ class JSONSerializer:
             ]
         }
 
+    @staticmethod
+    def is_meaning_segment(ann: Annotation):
+        metadata: Dict[str, str] = {}
+        for ann_data in ann:
+            metadata[ann_data.key().id()] = str(ann_data.value())
+
+        if LayerGroupEnum.structure_type.value not in metadata:
+            raise ValueError(
+                f"ann id {ann.id()} does not have {LayerGroupEnum.structure_type.value} value"
+            )
+
+        return (
+            metadata[LayerGroupEnum.structure_type.value]
+            == LayerEnum.meaning_segment.value
+        )
+
     def serialize(self, output_path: Path):
         root_segments = []
         commentary_segments = []
 
         for _, segment_pair in self.alignment.segment_pairs.items():
+            """get the root segment"""
             if self.source_pecha.id_ in segment_pair:
                 root_ann = self.source_ann_store.annotation(
                     segment_pair[self.source_pecha.id_]
                 )
-                root_segments.append(str(root_ann))
+                if self.is_meaning_segment(root_ann):
+                    root_string_segment = str(root_ann)
+                else:
+                    root_string_segment = str(
+                        root_ann.target().annotation(self.source_ann_store)
+                    )
+
+                root_segments.append(root_string_segment)
                 del root_ann
+            """ get the commentary segment"""
             if self.target_pecha.id_ in segment_pair:
                 if isinstance(segment_pair[self.target_pecha.id_], str):
                     commentary_ann = self.target_ann_store.annotation(
                         segment_pair[self.target_pecha.id_]
                     )
-                    commentary_segments.append(str(commentary_ann))
+
+                    if self.is_meaning_segment(commentary_ann):
+                        commentary_segment_string = str(commentary_ann)
+                    else:
+                        commentary_segment_string = str(
+                            commentary_ann.target().annotation(self.target_ann_store)
+                        )
+
+                    commentary_segments.append(commentary_segment_string)
                     del commentary_ann
+
                 if isinstance(segment_pair[self.target_pecha.id_], list):
                     commentary_anns = [
                         self.target_ann_store.annotation(segment_id)
                         for segment_id in segment_pair[self.target_pecha.id_]
                     ]
-                    commentary_segments.extend(
-                        [str(commentary_ann) for commentary_ann in commentary_anns]
-                    )
+                    if self.is_meaning_segment(commentary_anns[0]):
+                        commentary_segment_strings = [
+                            str(commentary_ann) for commentary_ann in commentary_anns
+                        ]
+                    else:
+                        commentary_segment_strings = [
+                            str(
+                                commentary_ann.target().annotation(
+                                    self.target_ann_store
+                                )
+                            )
+                            for commentary_ann in commentary_anns
+                        ]
+
+                    commentary_segments.extend(commentary_segment_strings)
                     del commentary_anns
 
         output_path.mkdir(parents=True, exist_ok=True)
