@@ -24,5 +24,8 @@ def test_json_serializer():
     assert isinstance(source_ann_store, AnnotationStore)
     assert isinstance(target_ann_store, AnnotationStore)
 
+    output_path = DATA / "output"
+    serializer.serialize(output_path)
+
 
 test_json_serializer()

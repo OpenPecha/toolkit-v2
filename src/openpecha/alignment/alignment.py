@@ -14,7 +14,7 @@ class Alignment:
         return cls(alignment_id, alignment_path)
 
     @property
-    def alignment_pairs(self):
+    def segment_pairs(self):
         mapping_file_path = self.path / "alignment.json"
         with open(mapping_file_path) as f:
             alignment_pairs = json.load(f)
