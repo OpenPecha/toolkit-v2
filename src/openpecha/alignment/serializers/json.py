@@ -18,18 +18,19 @@ class JSONSerializer:
         self.source_pecha = source_pecha
         self.target_pecha = target_pecha
 
-        root_segment_file = next(
-            self.source_pecha.ann_path.rglob(f"{LayerEnum.root_segment.value}*.json")
+        source_pecha_ann_file = (
+            self.source_pecha.ann_path
+            / self.alignment.metadata["source"]["base"]
+            / self.alignment.metadata["source"]["layer"]
+        )
+        target_pecha_ann_file = (
+            self.target_pecha.ann_path
+            / self.alignment.metadata["target"]["base"]
+            / self.alignment.metadata["target"]["layer"]
         )
 
-        commentary_segment_file = next(
-            self.target_pecha.ann_path.rglob(
-                f"{LayerEnum.commentary_segment.value}*.json"
-            )
-        )
-
-        self.source_ann_store = AnnotationStore(file=root_segment_file.as_posix())
-        self.target_ann_store = AnnotationStore(file=commentary_segment_file.as_posix())
+        self.source_ann_store = AnnotationStore(file=source_pecha_ann_file.as_posix())
+        self.target_ann_store = AnnotationStore(file=target_pecha_ann_file.as_posix())
 
         return self.source_ann_store, self.target_ann_store
 
