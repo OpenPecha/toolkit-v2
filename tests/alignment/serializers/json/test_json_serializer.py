@@ -10,13 +10,13 @@ from openpecha.pecha import Pecha
 def test_json_serializer():
     DATA = Path(__file__).parent / "data"
 
-    alignment_path = DATA / "A26734E88"
+    alignment_path = DATA / "A689D66A2"
 
     alignment = Alignment.from_path(alignment_path)
     serializer = JSONSerializer(alignment)
 
-    source_pecha = Pecha.from_path(DATA / "IB6D0A20F")
-    target_pecha = Pecha.from_path(DATA / "IFBDF1D6F")
+    source_pecha = Pecha.from_path(DATA / "I7044B942")
+    target_pecha = Pecha.from_path(DATA / "I54BD0D9E")
 
     source_ann_store, target_ann_store = serializer.load_pechas(
         source_pecha, target_pecha

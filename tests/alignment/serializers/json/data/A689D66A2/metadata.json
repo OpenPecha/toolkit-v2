@@ -1,0 +1,22 @@
+{
+  "source": {
+    "title": "Buddha Shakyamuni",
+    "language": "zh",
+    "author": "Chojuk Source Author 1",
+    "versionSource": "བཟང་སྤྱོད་སྨོན་ལམ།",
+    "type": "Root_Segment",
+    "pecha_id": "I7044B942",
+    "base": "03aa",
+    "layer": "Root_Segment-fa6.json"
+  },
+  "target": {
+    "title": "Master Di Xian",
+    "language": "zh",
+    "author": "Chojuk Target Author 1",
+    "versionSource": "Chojuk Target",
+    "type": "Commentary_Segment",
+    "pecha_id": "I54BD0D9E",
+    "base": "35af",
+    "layer": "Commentary_Segment-cb7.json"
+  }
+}

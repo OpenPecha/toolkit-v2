@@ -1,0 +1,123 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "I7044B942",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "03aa",
+      "@include": "../../base/03aa.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "Meta_Data",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "title"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "language"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "author"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "versionSource"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "type"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "68a9d1d80e304f6cb8695ba49330aad6",
+          "key": "title",
+          "value": {
+            "@type": "String",
+            "value": "Buddha Shakyamuni"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "685f470006f44f46ab6e87e8a0d613d8",
+          "key": "language",
+          "value": {
+            "@type": "String",
+            "value": "zh"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "d664bdd5b61b4afdac3c0f9cab7b5462",
+          "key": "author",
+          "value": {
+            "@type": "String",
+            "value": "Chojuk Source Author 1"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "09fb32fcb267427c8a820177631fba2d",
+          "key": "versionSource",
+          "value": {
+            "@type": "String",
+            "value": "བཟང་སྤྱོད་སྨོན་ལམ།"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "a118fbc7aabe43ca9b336f145f66c65e",
+          "key": "type",
+          "value": {
+            "@type": "String",
+            "value": "Root_Segment"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "fafed2b484454c24a9a5c4f704a7df59",
+      "target": {
+        "@type": "ResourceSelector",
+        "resource": "03aa"
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "68a9d1d80e304f6cb8695ba49330aad6",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "685f470006f44f46ab6e87e8a0d613d8",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "d664bdd5b61b4afdac3c0f9cab7b5462",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "09fb32fcb267427c8a820177631fba2d",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "a118fbc7aabe43ca9b336f145f66c65e",
+          "set": "Meta_Data"
+        }
+      ]
+    }
+  ]
+}

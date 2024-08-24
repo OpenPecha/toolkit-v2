@@ -1,0 +1,123 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "I54BD0D9E",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "35af",
+      "@include": "../../base/35af.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "Meta_Data",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "title"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "language"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "author"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "versionSource"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "type"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "ad76329cb65c43f5b669a185609ad4e8",
+          "key": "title",
+          "value": {
+            "@type": "String",
+            "value": "Master Di Xian"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "b8b5288cbfaf4612b98e575a79811a35",
+          "key": "language",
+          "value": {
+            "@type": "String",
+            "value": "zh"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "dce46ab81e19462ab9ba072c24d25cd9",
+          "key": "author",
+          "value": {
+            "@type": "String",
+            "value": "Chojuk Target Author 1"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "c0c2af31a671475082bc8e5a5a8f766c",
+          "key": "versionSource",
+          "value": {
+            "@type": "String",
+            "value": "Chojuk Target"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "d3b8d4f462c64ce699707d04c6ea6ae8",
+          "key": "type",
+          "value": {
+            "@type": "String",
+            "value": "Commentary_Segment"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "74f1ecde2ef842569b377bea41284986",
+      "target": {
+        "@type": "ResourceSelector",
+        "resource": "35af"
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "ad76329cb65c43f5b669a185609ad4e8",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "b8b5288cbfaf4612b98e575a79811a35",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "dce46ab81e19462ab9ba072c24d25cd9",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "c0c2af31a671475082bc8e5a5a8f766c",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "d3b8d4f462c64ce699707d04c6ea6ae8",
+          "set": "Meta_Data"
+        }
+      ]
+    }
+  ]
+}

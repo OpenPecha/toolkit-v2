@@ -1,11 +1,11 @@
 {
   "@type": "AnnotationStore",
-  "@id": "IFBDF1D6F",
+  "@id": "I54BD0D9E",
   "resources": [
     {
       "@type": "TextResource",
-      "@id": "8411",
-      "@include": "../../base/8411.txt"
+      "@id": "35af",
+      "@include": "../../base/35af.txt"
     }
   ],
   "annotationsets": [
@@ -21,7 +21,7 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "82139e112ed04605af5cadaa181b18da",
+          "@id": "fd625b42cd4c4ecfa18945606e9a79a6",
           "key": "Structure_Type",
           "value": {
             "@type": "String",
@@ -34,10 +34,10 @@
   "annotations": [
     {
       "@type": "Annotation",
-      "@id": "781036129de4473b86100511c412aeab",
+      "@id": "96c9ba84cdfc4615b456d0cacbbb9934",
       "target": {
         "@type": "TextSelector",
-        "resource": "8411",
+        "resource": "35af",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -53,17 +53,17 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "82139e112ed04605af5cadaa181b18da",
+          "@id": "fd625b42cd4c4ecfa18945606e9a79a6",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "49164fb35a1a48e3a363dc270c0a20e5",
+      "@id": "ae24747fd39d4cf98a00e7d9d08628d1",
       "target": {
         "@type": "TextSelector",
-        "resource": "8411",
+        "resource": "35af",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -79,7 +79,7 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "82139e112ed04605af5cadaa181b18da",
+          "@id": "fd625b42cd4c4ecfa18945606e9a79a6",
           "set": "Root_Commentary"
         }
       ]
