@@ -222,8 +222,8 @@ class PlainTextNumberAlignedParser:
         alignment_data_id = get_uuid()
         for idx, segment in enumerate(segments):
             """annotate meaning segments"""
-            is_root_segment = idx in [element[0] for element in ann_indicies]
-            if is_root_segment:
+            is_root_or_commentary = idx in [element[0] for element in ann_indicies]
+            if is_root_or_commentary:
                 match_ann_indicies = next(
                     element for element in ann_indicies if idx == element[0]
                 )
@@ -241,7 +241,7 @@ class PlainTextNumberAlignedParser:
                 ann_store, text_selector, LayerEnum.meaning_segment, meaning_ann_data_id
             )
 
-            if is_root_segment:
+            if is_root_or_commentary:
                 ann_selector = Selector.annotationselector(meaning_segment_ann)
                 data = [
                     {
