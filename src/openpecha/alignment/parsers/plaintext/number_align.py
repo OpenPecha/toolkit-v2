@@ -332,6 +332,7 @@ class PlainTextNumberAlignedParser:
                     alignment_mapping[get_uuid()] = {
                         target_pecha.id_: target_meaning_ann.id()
                     }
+                    target_ann_idx += 1
 
                 """get the associated commentary segment"""
                 associated_root_ann_ids = []
@@ -349,9 +350,9 @@ class PlainTextNumberAlignedParser:
                                 associated_commentary_ann.id()
                             )
 
-                alignment_mapping[ann_id] = {source_pecha.id: root_ann.id()}
+                alignment_mapping[ann_id] = {source_pecha.id_: root_ann.id()}
                 associated_root_mapping = {
-                    target_pecha.id: associated_root_ann_id
+                    target_pecha.id_: associated_root_ann_id
                     for associated_root_ann_id in associated_root_ann_ids
                 }
                 alignment_mapping[ann_id].update(associated_root_mapping)
