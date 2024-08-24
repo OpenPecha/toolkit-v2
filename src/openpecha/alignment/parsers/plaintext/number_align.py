@@ -308,7 +308,10 @@ class PlainTextNumberAlignedParser:
     ) -> alignment_path:
         alignment_mapping: Dict[str, Dict] = {}
         source_pecha = Pecha.from_path(source_pecha_path)
-        source_ann_store = source_pecha.get_annotation_store(
+        (
+            source_ann_store,
+            source_ann_store_file_path,
+        ) = source_pecha.get_annotation_store(
             self.source_basefile_name, LayerEnum.root_segment
         )
         source_dataset = next(source_ann_store.datasets())
@@ -323,7 +326,10 @@ class PlainTextNumberAlignedParser:
         del source_ann_key
 
         target_pecha = Pecha.from_path(target_pecha_path)
-        target_ann_store = target_pecha.get_annotation_store(
+        (
+            target_ann_store,
+            target_ann_store_file_path,
+        ) = target_pecha.get_annotation_store(
             self.target_basefile_name, LayerEnum.commentary_segment
         )
         target_dataset = next(target_ann_store.datasets())
@@ -413,6 +419,15 @@ class PlainTextNumberAlignedParser:
             json.dump(alignment_mapping, f, indent=2, ensure_ascii=False)
 
         """ write the metadata """
+        self.metadata["source"]["pecha_id"] = source_pecha.id_
+        self.metadata["target"]["pecha_id"] = target_pecha.id_
+
+        self.metadata["source"]["basefile_name"] = self.source_basefile_name
+        self.metadata["target"]["basefile_name"] = self.target_basefile_name
+
+        self.metadata["source"]["layer"] = source_ann_store_file_path.name
+        self.metadata["target"]["layer"] = target_ann_store_file_path.name
+
         with open(alignment_path / "metadata.json", "w", encoding="utf-8") as f:
             json.dump(self.metadata, f, indent=2, ensure_ascii=False)
 

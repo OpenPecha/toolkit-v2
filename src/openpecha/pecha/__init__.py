@@ -282,18 +282,18 @@ class Pecha:
         return ann
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
-        annotation_type_file_paths = list(
+        ann_store_file_paths = list(
             Path(self.ann_path / basefile_name).glob(f"{annotation_type.value}*.json")
         )
         annotation_stores = [
             AnnotationStore(file=str(annotation_file))
-            for annotation_file in annotation_type_file_paths
+            for annotation_file in ann_store_file_paths
         ]
 
         if len(annotation_stores) == 1:
-            return annotation_stores[0]
+            return annotation_stores[0], ann_store_file_paths[0]
 
-        return annotation_stores
+        return annotation_stores, ann_store_file_paths
 
     def save_ann_store(
         self, ann_store: AnnotationStore, ann_type: LayerEnum, basefile_name: str
