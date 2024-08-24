@@ -360,11 +360,12 @@ class PlainTextNumberAlignedParser:
                             )
 
                 alignment_mapping[ann_id] = {source_pecha.id_: root_segment.id()}
-                associated_root_mapping = {
-                    target_pecha.id_: associated_root_ann_id
-                    for associated_root_ann_id in related_root_segment_ids
-                }
-                alignment_mapping[ann_id].update(associated_root_mapping)
+                alignment_mapping[ann_id].update(
+                    {
+                        target_pecha.id_: associated_root_ann_id
+                        for associated_root_ann_id in related_root_segment_ids
+                    }
+                )
                 continue
 
             alignment_mapping[ann_id] = {source_pecha.id: source_meaning_segment.id()}
