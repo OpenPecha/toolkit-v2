@@ -398,7 +398,11 @@ class PlainTextNumberAlignedParser:
 
         alignment_path = _mkdir(output_path / self.alignment_id)
         with open(alignment_path / "alignment.json", "w", encoding="utf-8") as f:
-            json.dump(alignment_mapping, f, indent=2)
+            json.dump(alignment_mapping, f, indent=2, ensure_ascii=False)
+
+        """ write the metadata """
+        with open(alignment_path / "metadata.json", "w", encoding="utf-8") as f:
+            json.dump(self.metadata, f, indent=2, ensure_ascii=False)
 
         return alignment_path
 
