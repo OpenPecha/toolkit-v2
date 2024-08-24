@@ -26,10 +26,10 @@ class JSONSerializer:
             )
         )
 
-        source_ann_store = AnnotationStore(file=root_segment_file.as_posix())
-        target_ann_store = AnnotationStore(file=commentary_segment_file.as_posix())
+        self.source_ann_store = AnnotationStore(file=root_segment_file.as_posix())
+        self.target_ann_store = AnnotationStore(file=commentary_segment_file.as_posix())
 
-        return source_ann_store, target_ann_store
+        return self.source_ann_store, self.target_ann_store
 
     @staticmethod
     def get_standard_json():
@@ -52,12 +52,27 @@ class JSONSerializer:
 
         for _, segment_pair in self.alignment.segment_pairs.items():
             if self.source_pecha.id_ in segment_pair:
-                root_segments.append(segment_pair[self.source_pecha.id_])
+                root_ann = self.source_ann_store.annotation(
+                    segment_pair[self.source_pecha.id_]
+                )
+                root_segments.append(str(root_ann))
+                del root_ann
             if self.target_pecha.id_ in segment_pair:
                 if isinstance(segment_pair[self.target_pecha.id_], str):
-                    commentary_segments.append(segment_pair[self.target_pecha.id_])
+                    commentary_ann = self.target_ann_store.annotation(
+                        segment_pair[self.target_pecha.id_]
+                    )
+                    commentary_segments.append(str(commentary_ann))
+                    del commentary_ann
                 if isinstance(segment_pair[self.target_pecha.id_], list):
-                    commentary_segments.extend(segment_pair[self.target_pecha.id_])
+                    commentary_anns = [
+                        self.target_ann_store.annotation(segment_id)
+                        for segment_id in segment_pair[self.target_pecha.id_]
+                    ]
+                    commentary_segments.extend(
+                        [str(commentary_ann) for commentary_ann in commentary_anns]
+                    )
+                    del commentary_anns
 
         output_path.mkdir(parents=True, exist_ok=True)
 
