@@ -59,13 +59,16 @@ class PlainTextNumberAlignedParser:
         sapche_ann_indices: List[Tuple[int, int, int]] = []
 
         for idx, segment in enumerate(self.source_segments):
-            if re.match(r"^\d+\.", segment):
-                root_segment_indices.append(idx)
-
-            match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
+            match = re.search(r"^(\d+\.)", segment)
             if match:
-                start = match.start(1)
-                end = match.end(1)
+                start = match.end(1)
+                end = len(segment)
+                root_segment_indices.append((idx, start, end))
+
+            sapche_match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
+            if sapche_match:
+                start = sapche_match.start(1)
+                end = sapche_match.end(1)
                 sapche_ann_indices.append((idx, start, end))
 
         """ sort the root segment indices """
@@ -112,10 +115,14 @@ class PlainTextNumberAlignedParser:
             match = re.search(r"^([\d,-]+)\.", segment)
             if match:
                 root_mapped_expression = match.group(1)
+                start = match.end(1)
+                end = len(segment)
                 root_mapped_numbers = self.extract_root_mapped_numbers(
                     root_mapped_expression
                 )
-                commentary_segment_indices.append((idx, root_mapped_numbers))
+                commentary_segment_indices.append(
+                    (idx, start, end, root_mapped_numbers)
+                )
 
             match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
             if match:
@@ -207,10 +214,7 @@ class PlainTextNumberAlignedParser:
         if ann_type == LayerEnum.root_segment:
             ann_indicies = self.mapping_ann_indicies["root_indicies"]
         else:
-            ann_indicies = [
-                element[0]
-                for element in self.mapping_ann_indicies["commentary_indicies"]
-            ]
+            ann_indicies = self.mapping_ann_indicies["commentary_indicies"]
 
         char_count = 0
         meaning_ann_data_id = get_uuid()
@@ -218,6 +222,16 @@ class PlainTextNumberAlignedParser:
         alignment_data_id = get_uuid()
         for idx, segment in enumerate(segments):
             """annotate meaning segments"""
+            is_root_segment = idx in [element[0] for element in ann_indicies]
+            if is_root_segment:
+                match_ann_indicies = next(
+                    element for element in ann_indicies if idx == element[0]
+                )
+                start = char_count + match_ann_indicies[1]
+                end = char_count + match_ann_indicies[2]
+            else:
+                start = char_count
+                end = char_count + len(segment)
             text_selector = Selector.textselector(
                 ann_resource,
                 Offset.simple(char_count, char_count + len(segment)),
@@ -227,7 +241,7 @@ class PlainTextNumberAlignedParser:
                 ann_store, text_selector, LayerEnum.meaning_segment, meaning_ann_data_id
             )
 
-            if idx in ann_indicies:
+            if is_root_segment:
                 ann_selector = Selector.annotationselector(meaning_segment_ann)
                 data = [
                     {
@@ -350,6 +364,8 @@ class PlainTextNumberAlignedParser:
                 related_root_segment_ids = []
                 for (
                     target_meaning_segment_idx,
+                    _,
+                    _,
                     associated_commentary_segments,
                 ) in self.mapping_ann_indicies["commentary_indicies"]:
                     if root_segment_count in associated_commentary_segments:
