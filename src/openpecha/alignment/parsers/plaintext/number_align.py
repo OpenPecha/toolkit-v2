@@ -1,7 +1,7 @@
 import json
 import re
 from pathlib import Path
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from stam import Offset, Selector
 
@@ -10,7 +10,7 @@ from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
-pecha_path = str
+pecha_path = Path
 
 
 class PlainTextNumberAlignedParser:
@@ -123,7 +123,7 @@ class PlainTextNumberAlignedParser:
                 sapche_ann_indices.append((idx, start, end))
 
         """ sort the comment segment indices """
-        commentary_segment_indices.sort(key=lambda x: x[1][0])
+        commentary_segment_indices.sort(key=lambda x: x[0])
         sapche_ann_indices.sort(key=lambda x: x[0])
 
         return commentary_segment_indices, sapche_ann_indices
@@ -191,6 +191,11 @@ class PlainTextNumberAlignedParser:
         basefile_name = get_uuid()[:4]
         base_content = "\n\n".join(segments)
         pecha.set_base(basefile_name, base_content)
+
+        if ann_type == LayerEnum.root_segment:
+            self.source_basefile_name = basefile_name
+        else:
+            self.target_basefile_name = basefile_name
 
         """ annotate root segments / commentary segments """
         ann_store = pecha.create_ann_store(basefile_name, ann_type)
@@ -271,6 +276,93 @@ class PlainTextNumberAlignedParser:
 
         return pecha_path
 
+    def create_alignment(
+        self, source_pecha_path: Path, target_pecha_path: Path, output_path: Path
+    ):
+        alignment_mapping: Dict[str, Dict] = {}
+        source_pecha = Pecha.from_path(source_pecha_path)
+        source_ann_store = source_pecha.get_annotation_store(
+            self.source_basefile_name, LayerEnum.root_segment
+        )
+        source_dataset = next(source_ann_store.datasets())
+        source_ann_key = source_dataset.key(LayerGroupEnum.structure_type.value)
+        source_meaning_anns = list(
+            source_dataset.data(
+                source_ann_key, value=LayerEnum.meaning_segment.value
+            ).annotations()
+        )
+        del source_ann_store
+
+        target_pecha = Pecha.from_path(target_pecha_path)
+        target_ann_store = target_pecha.get_annotation_store(
+            self.target_basefile_name, LayerEnum.commentary_segment
+        )
+        target_dataset = next(target_ann_store.datasets())
+        target_ann_key = target_dataset.key(LayerGroupEnum.structure_type.value)
+        target_meaning_anns = list(
+            target_dataset.data(
+                target_ann_key, value=LayerEnum.meaning_segment.value
+            ).annotations()
+        )
+        del target_ann_store
+
+        root_ann_count = 0
+        target_ann_idx = 0
+        for source_meaning_ann in source_meaning_anns:
+            ann_id = get_uuid()
+            root_ann = next(source_meaning_ann.annotations(), None)
+            if root_ann:
+                root_ann_count += 1
+                """ get the meaning segment with no commmentary annotation """
+
+                """ skip the meaning segment with commentary annotation """
+                while (
+                    target_ann_idx < len(target_meaning_anns)
+                    and next(target_meaning_anns[target_ann_idx].annotations(), None)
+                    is not None
+                ):
+                    target_ann_idx += 1
+
+                """ map the meaning segment with no commentary annotation """
+                while target_ann_idx < len(target_meaning_anns):
+                    target_meaning_ann = target_meaning_anns[target_ann_idx]
+                    commentary_ann = next(target_meaning_ann.annotations(), None)
+                    if commentary_ann:
+                        break
+                    alignment_mapping[get_uuid()] = {
+                        target_pecha.id_: target_meaning_ann.id()
+                    }
+
+                """get the associated commentary segment"""
+                associated_root_ann_ids = []
+                for (
+                    meaning_ann_idx,
+                    associated_commentary_segments,
+                ) in self.mapping_ann_indicies["commentary_indicies"]:
+                    if root_ann_count in associated_commentary_segments:
+                        associated_meaning_ann = target_meaning_anns[meaning_ann_idx]
+                        associated_commentary_ann = next(
+                            associated_meaning_ann.annotations(), None
+                        )
+                        if associated_commentary_ann:
+                            associated_root_ann_ids.append(
+                                associated_commentary_ann.id()
+                            )
+
+                alignment_mapping[ann_id] = {source_pecha.id: root_ann.id()}
+                associated_root_mapping = {
+                    target_pecha.id: associated_root_ann_id
+                    for associated_root_ann_id in associated_root_ann_ids
+                }
+                alignment_mapping[ann_id].update(associated_root_mapping)
+                continue
+
+            alignment_mapping[ann_id] = {source_pecha.id: source_meaning_ann.id()}
+
+        alignment_path = _mkdir(output_path / self.alignment_id)
+        with open(alignment_path / "alignment.json", "w", encoding="utf-8") as f:
+            json.dump(alignment_mapping, f, indent=2)
+
     def parse(self, output_path: Path):
 
         """Check if the source and target segments are already parsed"""
@@ -293,4 +385,4 @@ class PlainTextNumberAlignedParser:
             self.target_segments, LayerEnum.commentary_segment, output_path
         )
 
-        return source_pecha_path, target_pecha_path
+        self.create_alignment(source_pecha_path, target_pecha_path, output_path)
