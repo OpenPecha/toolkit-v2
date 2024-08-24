@@ -306,13 +306,13 @@ class PlainTextNumberAlignedParser:
         )
         del target_ann_store
 
-        root_ann_count = 0
+        root_segment_count = 0
         target_segment_pointer = 0
         for source_meaning_segment in source_meaning_segments:
             ann_id = get_uuid()
             root_segment = next(source_meaning_segment.annotations(), None)
             if root_segment:
-                root_ann_count += 1
+                root_segment_count += 1
                 """ get the meaning segment with no commmentary annotation """
 
                 """ skip the meaning segment with commentary annotation """
@@ -342,27 +342,27 @@ class PlainTextNumberAlignedParser:
                     target_segment_pointer += 1
 
                 """get the associated commentary segment"""
-                associated_root_ann_ids = []
+                related_root_segment_ids = []
                 for (
-                    meaning_ann_idx,
+                    target_meaning_segment_idx,
                     associated_commentary_segments,
                 ) in self.mapping_ann_indicies["commentary_indicies"]:
-                    if root_ann_count in associated_commentary_segments:
+                    if root_segment_count in associated_commentary_segments:
                         associated_meaning_ann = target_meaning_segments[
-                            meaning_ann_idx
+                            target_meaning_segment_idx
                         ]
                         associated_commentary_ann = next(
                             associated_meaning_ann.annotations(), None
                         )
                         if associated_commentary_ann:
-                            associated_root_ann_ids.append(
+                            related_root_segment_ids.append(
                                 associated_commentary_ann.id()
                             )
 
                 alignment_mapping[ann_id] = {source_pecha.id_: root_segment.id()}
                 associated_root_mapping = {
                     target_pecha.id_: associated_root_ann_id
-                    for associated_root_ann_id in associated_root_ann_ids
+                    for associated_root_ann_id in related_root_segment_ids
                 }
                 alignment_mapping[ann_id].update(associated_root_mapping)
                 continue
