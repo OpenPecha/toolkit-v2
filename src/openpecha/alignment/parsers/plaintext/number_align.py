@@ -422,8 +422,8 @@ class PlainTextNumberAlignedParser:
         self.metadata["source"]["pecha_id"] = source_pecha.id_
         self.metadata["target"]["pecha_id"] = target_pecha.id_
 
-        self.metadata["source"]["basefile_name"] = self.source_basefile_name
-        self.metadata["target"]["basefile_name"] = self.target_basefile_name
+        self.metadata["source"]["base"] = self.source_basefile_name
+        self.metadata["target"]["base"] = self.target_basefile_name
 
         self.metadata["source"]["layer"] = source_ann_store_file_path.name
         self.metadata["target"]["layer"] = target_ann_store_file_path.name

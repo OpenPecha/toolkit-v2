@@ -14,6 +14,13 @@ class Alignment:
         return cls(alignment_id, alignment_path)
 
     @property
+    def metadata(self):
+        metadata_file_path = self.path / "metadata.json"
+        with open(metadata_file_path) as f:
+            metadata = json.load(f)
+        return metadata
+
+    @property
     def segment_pairs(self):
         mapping_file_path = self.path / "alignment.json"
         with open(mapping_file_path) as f:
