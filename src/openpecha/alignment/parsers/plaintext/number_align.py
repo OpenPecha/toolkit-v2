@@ -11,6 +11,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
 pecha_path = Path
+alignment_path = Path
 
 
 class PlainTextNumberAlignedParser:
@@ -278,7 +279,7 @@ class PlainTextNumberAlignedParser:
 
     def create_alignment(
         self, source_pecha_path: Path, target_pecha_path: Path, output_path: Path
-    ):
+    ) -> alignment_path:
         alignment_mapping: Dict[str, Dict] = {}
         source_pecha = Pecha.from_path(source_pecha_path)
         source_ann_store = source_pecha.get_annotation_store(
@@ -383,7 +384,9 @@ class PlainTextNumberAlignedParser:
         with open(alignment_path / "alignment.json", "w", encoding="utf-8") as f:
             json.dump(alignment_mapping, f, indent=2)
 
-    def parse(self, output_path: Path):
+        return alignment_path
+
+    def parse(self, output_path: Path) -> alignment_path:
 
         """Check if the source and target segments are already parsed"""
         neccessary_attrs = [
@@ -405,4 +408,7 @@ class PlainTextNumberAlignedParser:
             self.target_segments, LayerEnum.commentary_segment, output_path
         )
 
-        self.create_alignment(source_pecha_path, target_pecha_path, output_path)
+        alignment_path = self.create_alignment(
+            source_pecha_path, target_pecha_path, output_path
+        )
+        return alignment_path

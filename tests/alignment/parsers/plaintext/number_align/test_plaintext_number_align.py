@@ -109,8 +109,9 @@ def test_parse_pecha():
 
     OUTPUT = Path(__file__).parent / "output"
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    parser.parse(OUTPUT)
+    alignment_path = parser.parse(OUTPUT)
 
+    assert alignment_path.exists()
     """ clean up """
     rmtree(OUTPUT)
 
