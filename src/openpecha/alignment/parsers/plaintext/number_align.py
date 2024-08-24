@@ -59,9 +59,9 @@ class PlainTextNumberAlignedParser:
         sapche_ann_indices: List[Tuple[int, int, int]] = []
 
         for idx, segment in enumerate(self.source_segments):
-            match = re.search(r"^(\d+\.)", segment)
+            match = re.search(r"^(\d+\.)([\s]*)", segment)
             if match:
-                start = match.end(1)
+                start = match.end(2)
                 end = len(segment)
                 root_segment_indices.append((idx, start, end))
 
@@ -112,10 +112,10 @@ class PlainTextNumberAlignedParser:
         commentary_segment_indices = []
         sapche_ann_indices: List[Tuple[int, int, int]] = []
         for idx, segment in enumerate(self.target_segments):
-            match = re.search(r"^([\d,-]+)\.", segment)
+            match = re.search(r"^([\d,-]+)\.([\s]*)", segment)
             if match:
                 root_mapped_expression = match.group(1)
-                start = match.end(1)
+                start = match.end(2)
                 end = len(segment)
                 root_mapped_numbers = self.extract_root_mapped_numbers(
                     root_mapped_expression
@@ -234,7 +234,7 @@ class PlainTextNumberAlignedParser:
                 end = char_count + len(segment)
             text_selector = Selector.textselector(
                 ann_resource,
-                Offset.simple(char_count, char_count + len(segment)),
+                Offset.simple(start, end),
             )
             char_count += len(segment) + 2  # 2 being length for two newline characters
             meaning_segment_ann = pecha.annotate(
