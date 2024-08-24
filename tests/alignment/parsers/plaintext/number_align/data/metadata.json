@@ -4,21 +4,19 @@
     },
     "source":{
                 "id_":"12345",
-                "title":["Buddha Shakyamuni"],
-                "author":["Chojuk Source Author 1", "Chojuk Source Author 1"],
+                "title":"Buddha Shakyamuni",
+                "author":"Chojuk Source Author 1",
                 "source": "བཟང་སྤྱོད་སྨོན་ལམ།",
-                "source_metadata": {},
                 "type":"Root_Segment",
-                "language": "Tibetan"
+                "language": "zh"
             },
 
     "target":{
             "id_":"12345",
-            "title":["Master Di Xian"],
-            "author":["Chojuk Target Author 1", "Chojuk Target Author 1"],
+            "title":"Master Di Xian",
+            "author":"Chojuk Target Author 1",
             "source": "Chojuk Target",
-            "source_metadata": {},
             "type":"Commentary_Segment",
-            "language": "Tibetan"
+            "language": "zh"
     }
 }

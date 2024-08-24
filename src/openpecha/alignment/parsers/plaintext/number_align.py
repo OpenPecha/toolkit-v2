@@ -205,6 +205,18 @@ class PlainTextNumberAlignedParser:
         else:
             self.target_basefile_name = basefile_name
 
+        """ annotate metadata"""
+        ann_store = pecha.create_ann_store(basefile_name, LayerEnum.metadata)
+        metadata = (
+            self.metadata["source"]
+            if ann_type == LayerEnum.root_segment
+            else self.metadata["target"]
+        )
+        ann_store = pecha.annotate_metadata(ann_store, metadata)
+        pecha.save_ann_store(ann_store, LayerEnum.metadata, basefile_name)
+
+        del ann_store
+
         """ annotate root segments / commentary segments """
         ann_store = pecha.create_ann_store(basefile_name, ann_type)
 
@@ -394,7 +406,7 @@ class PlainTextNumberAlignedParser:
                 }
                 continue
 
-            alignment_mapping[ann_id] = {source_pecha.id: source_meaning_segment.id()}
+            alignment_mapping[ann_id] = {source_pecha.id_: source_meaning_segment.id()}
 
         alignment_path = _mkdir(output_path / self.alignment_id)
         with open(alignment_path / "alignment.json", "w", encoding="utf-8") as f:
