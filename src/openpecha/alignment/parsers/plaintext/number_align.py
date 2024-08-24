@@ -286,7 +286,7 @@ class PlainTextNumberAlignedParser:
         )
         source_dataset = next(source_ann_store.datasets())
         source_ann_key = source_dataset.key(LayerGroupEnum.structure_type.value)
-        source_meaning_anns = list(
+        source_meaning_segments = list(
             source_dataset.data(
                 source_ann_key, value=LayerEnum.meaning_segment.value
             ).annotations()
@@ -299,7 +299,7 @@ class PlainTextNumberAlignedParser:
         )
         target_dataset = next(target_ann_store.datasets())
         target_ann_key = target_dataset.key(LayerGroupEnum.structure_type.value)
-        target_meaning_anns = list(
+        target_meaning_segments = list(
             target_dataset.data(
                 target_ann_key, value=LayerEnum.meaning_segment.value
             ).annotations()
@@ -308,29 +308,31 @@ class PlainTextNumberAlignedParser:
 
         root_ann_count = 0
         target_ann_idx = 0
-        for source_meaning_ann in source_meaning_anns:
+        for source_meaning_segment in source_meaning_segments:
             ann_id = get_uuid()
-            root_ann = next(source_meaning_ann.annotations(), None)
+            root_ann = next(source_meaning_segment.annotations(), None)
             if root_ann:
                 root_ann_count += 1
                 """ get the meaning segment with no commmentary annotation """
 
                 """ skip the meaning segment with commentary annotation """
                 while (
-                    target_ann_idx < len(target_meaning_anns)
-                    and next(target_meaning_anns[target_ann_idx].annotations(), None)
+                    target_ann_idx < len(target_meaning_segments)
+                    and next(
+                        target_meaning_segments[target_ann_idx].annotations(), None
+                    )
                     is not None
                 ):
                     target_ann_idx += 1
 
                 """ map the meaning segment with no commentary annotation """
-                while target_ann_idx < len(target_meaning_anns):
-                    target_meaning_ann = target_meaning_anns[target_ann_idx]
-                    commentary_ann = next(target_meaning_ann.annotations(), None)
+                while target_ann_idx < len(target_meaning_segments):
+                    target_meaning_segment = target_meaning_segments[target_ann_idx]
+                    commentary_ann = next(target_meaning_segment.annotations(), None)
                     if commentary_ann:
                         break
                     alignment_mapping[get_uuid()] = {
-                        target_pecha.id_: target_meaning_ann.id()
+                        target_pecha.id_: target_meaning_segment.id()
                     }
                     target_ann_idx += 1
 
@@ -341,7 +343,9 @@ class PlainTextNumberAlignedParser:
                     associated_commentary_segments,
                 ) in self.mapping_ann_indicies["commentary_indicies"]:
                     if root_ann_count in associated_commentary_segments:
-                        associated_meaning_ann = target_meaning_anns[meaning_ann_idx]
+                        associated_meaning_ann = target_meaning_segments[
+                            meaning_ann_idx
+                        ]
                         associated_commentary_ann = next(
                             associated_meaning_ann.annotations(), None
                         )
@@ -358,7 +362,7 @@ class PlainTextNumberAlignedParser:
                 alignment_mapping[ann_id].update(associated_root_mapping)
                 continue
 
-            alignment_mapping[ann_id] = {source_pecha.id: source_meaning_ann.id()}
+            alignment_mapping[ann_id] = {source_pecha.id: source_meaning_segment.id()}
 
         alignment_path = _mkdir(output_path / self.alignment_id)
         with open(alignment_path / "alignment.json", "w", encoding="utf-8") as f:
