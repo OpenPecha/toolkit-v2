@@ -292,6 +292,8 @@ class PlainTextNumberAlignedParser:
             ).annotations()
         )
         del source_ann_store
+        del source_dataset
+        del source_ann_key
 
         target_pecha = Pecha.from_path(target_pecha_path)
         target_ann_store = target_pecha.get_annotation_store(
@@ -305,6 +307,8 @@ class PlainTextNumberAlignedParser:
             ).annotations()
         )
         del target_ann_store
+        del target_dataset
+        del target_ann_key
 
         root_segment_count = 0
         target_segment_pointer = 0
@@ -359,13 +363,10 @@ class PlainTextNumberAlignedParser:
                                 associated_commentary_ann.id()
                             )
 
-                alignment_mapping[ann_id] = {source_pecha.id_: root_segment.id()}
-                alignment_mapping[ann_id].update(
-                    {
-                        target_pecha.id_: associated_root_ann_id
-                        for associated_root_ann_id in related_root_segment_ids
-                    }
-                )
+                alignment_mapping[ann_id] = {
+                    source_pecha.id_: root_segment.id(),
+                    target_pecha.id_: related_root_segment_ids,
+                }
                 continue
 
             alignment_mapping[ann_id] = {source_pecha.id: source_meaning_segment.id()}

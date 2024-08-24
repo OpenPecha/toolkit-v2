@@ -42,12 +42,7 @@ expected_mapping_ann_indicies = {
         9,
     ],
     "root_sapche_indicies": [],
-    "commentary_indicies": [
-        (2, [1, 2, 3]),
-        (4, [1, 2, 3, 5]),
-        (1, [4]),
-        (5, [6]),
-    ],
+    "commentary_indicies": [(1, [4]), (2, [1, 2, 3]), (4, [1, 2, 3, 5]), (5, [6])],
     "commentary_sapche_indicies": [
         (0, 8, 38),
         (3, 8, 38),
