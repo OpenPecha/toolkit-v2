@@ -1,10 +1,11 @@
 import json
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from stam import Annotation, AnnotationStore
 
 from openpecha.alignment.alignment import Alignment
+from openpecha.config import LINE_BREAKERS
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
@@ -62,6 +63,15 @@ class JSONSerializer:
             metadata[LayerGroupEnum.structure_type.value]
             == LayerEnum.meaning_segment.value
         )
+
+    @staticmethod
+    def replace_newline_and_line_breakers(segments: List[str]):
+        for i, segment in enumerate(segments):
+            segment = segment.replace("\n", "<br>")
+            for line_breaker in LINE_BREAKERS:
+                segment = segment.replace(line_breaker, f"{line_breaker}<br>")
+            segments[i] = segment
+        return segments
 
     def serialize(self, output_path: Path):
         root_segments = []
@@ -122,6 +132,10 @@ class JSONSerializer:
                     del commentary_anns
 
         output_path.mkdir(parents=True, exist_ok=True)
+        root_segments = self.replace_newline_and_line_breakers(root_segments)
+        commentary_segments = self.replace_newline_and_line_breakers(
+            commentary_segments
+        )
 
         """ write the json files"""
         root_json = self.get_standard_json()
