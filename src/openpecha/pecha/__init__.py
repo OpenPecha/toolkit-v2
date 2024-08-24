@@ -239,14 +239,15 @@ class Pecha:
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
 
+        ann_data = []
         for k, v in metadata.items():
-            ann_store.annotate(
-                id=get_uuid(),
-                target=Selector.resourceselector(ann_resource),
-                data=[
-                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
-                ],
+            ann_data.append(
+                {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
             )
+
+        ann_store.annotate(
+            id=get_uuid(), target=Selector.resourceselector(ann_resource), data=ann_data
+        )
         return ann_store
 
     def annotate(
