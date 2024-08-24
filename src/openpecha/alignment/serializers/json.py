@@ -139,13 +139,13 @@ class JSONSerializer:
 
         """ write the json files"""
         root_json = self.get_standard_json()
-        root_json["books"][0]["content"] = root_segments
+        root_json["books"][0]["content"][0] = root_segments
         (output_path / "root.json").write_text(
             json.dumps(root_json, ensure_ascii=False, indent=2)
         )
 
         commentary_json = self.get_standard_json()
-        commentary_json["books"][0]["content"] = commentary_segments
+        commentary_json["books"][0]["content"][0] = commentary_segments
         (output_path / "commentary.json").write_text(
             json.dumps(commentary_json, ensure_ascii=False, indent=2)
         )
