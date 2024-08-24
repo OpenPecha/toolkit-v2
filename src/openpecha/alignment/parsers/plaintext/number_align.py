@@ -210,7 +210,7 @@ class PlainTextNumberAlignedParser:
         meaning_ann_data_id = get_uuid()
         ann_type_data_id = get_uuid()
         alignment_data_id = get_uuid()
-        for idx, segment in enumerate(self.source_segments):
+        for idx, segment in enumerate(segments):
             """annotate meaning segments"""
             text_selector = Selector.textselector(
                 ann_resource,
