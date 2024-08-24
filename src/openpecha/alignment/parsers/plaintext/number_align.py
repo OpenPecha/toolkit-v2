@@ -363,6 +363,11 @@ class PlainTextNumberAlignedParser:
                                 associated_commentary_ann.id()
                             )
 
+                if len(related_root_segment_ids) == 0:
+                    alignment_mapping[ann_id] = {
+                        source_pecha.id_: root_segment.id(),
+                    }
+                    continue
                 if len(related_root_segment_ids) == 1:
                     related_root_segment_ids = related_root_segment_ids[0]
 
