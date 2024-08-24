@@ -66,7 +66,7 @@ class JSONSerializer:
     def serialize(self, output_path: Path):
         root_segments = []
         commentary_segments = []
-
+        root_segment_count = 0
         for _, segment_pair in self.alignment.segment_pairs.items():
             """get the root segment"""
             if self.source_pecha.id_ in segment_pair:
@@ -79,6 +79,7 @@ class JSONSerializer:
                     root_string_segment = str(
                         root_ann.target().annotation(self.source_ann_store)
                     )
+                    root_segment_count += 1
 
                 root_segments.append(root_string_segment)
                 del root_ann
@@ -95,6 +96,9 @@ class JSONSerializer:
                         commentary_segment_string = str(
                             commentary_ann.target().annotation(self.target_ann_store)
                         )
+                        commentary_segment_string = (
+                            f"<1><{root_segment_count}>{commentary_segment_string}"
+                        )
 
                     commentary_segments.append(commentary_segment_string)
                     del commentary_ann
@@ -110,11 +114,7 @@ class JSONSerializer:
                         ]
                     else:
                         commentary_segment_strings = [
-                            str(
-                                commentary_ann.target().annotation(
-                                    self.target_ann_store
-                                )
-                            )
+                            f"<1><{root_segment_count}>{str(commentary_ann.target().annotation(self.target_ann_store))}"
                             for commentary_ann in commentary_anns
                         ]
 
