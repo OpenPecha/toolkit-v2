@@ -124,10 +124,10 @@ class PlainTextNumberAlignedParser:
                     (idx, start, end, root_mapped_numbers)
                 )
 
-            match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
-            if match:
-                start = match.start(1)
-                end = match.end(1)
+            sapche_match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
+            if sapche_match:
+                start = sapche_match.start(1)
+                end = sapche_match.end(1)
                 sapche_ann_indices.append((idx, start, end))
 
         """ sort the comment segment indices """
