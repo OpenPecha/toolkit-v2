@@ -1,11 +1,11 @@
 {
   "@type": "AnnotationStore",
-  "@id": "I79F4F48B",
+  "@id": "IB6D0A20F",
   "resources": [
     {
       "@type": "TextResource",
-      "@id": "e484",
-      "@include": "../../base/e484.txt"
+      "@id": "e854",
+      "@include": "../../base/e854.txt"
     }
   ],
   "annotationsets": [
@@ -25,7 +25,7 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "key": "Structure_Type",
           "value": {
             "@type": "String",
@@ -34,16 +34,16 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "key": "Associated_Alignment",
           "value": {
             "@type": "String",
-            "value": "A84686EBF"
+            "value": "A26734E88"
           }
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "key": "Structure_Type",
           "value": {
             "@type": "String",
@@ -56,15 +56,15 @@
   "annotations": [
     {
       "@type": "Annotation",
-      "@id": "7b135f5ae6f04a18b12e016d8661326e",
+      "@id": "1a946130fc2d44dc990b888a3dabc6b9",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 0
+            "value": 3
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -75,42 +75,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "f7c662031b27498f9ee3d247f0dbaf86",
+      "@id": "a3b33f1d60c947ee97b04b5cb16afbc0",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "7b135f5ae6f04a18b12e016d8661326e"
+        "annotation": "1a946130fc2d44dc990b888a3dabc6b9"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "2f3551ccee344968bd3793eaefde0b8a",
+      "@id": "96076930f3ed42f7ada0bbcef7f949de",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 30
+            "value": 33
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -121,42 +121,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "f4d873f87dee43ba9341a28fdfbbccee",
+      "@id": "3ebe017663ec42f0951db8099b494cc4",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "2f3551ccee344968bd3793eaefde0b8a"
+        "annotation": "96076930f3ed42f7ada0bbcef7f949de"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "574b193225a3494ea9a9c95898283f9a",
+      "@id": "9b39b7f79c1649da9f7d5a053b41a10f",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 57
+            "value": 60
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -167,42 +167,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "d3cab27ad6394682bc833894d5917701",
+      "@id": "b302f58506ff424584052ed32e79caab",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "574b193225a3494ea9a9c95898283f9a"
+        "annotation": "9b39b7f79c1649da9f7d5a053b41a10f"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "4594df832c4a4021a98db97fc9c7fdcf",
+      "@id": "d6a55ff89c0f463c8de9683563402631",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 83
+            "value": 86
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -213,42 +213,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "69c3cc20a21f45a5975b20e28a78b66d",
+      "@id": "2743af17204c40c6af0bca8631a1dbdb",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "4594df832c4a4021a98db97fc9c7fdcf"
+        "annotation": "d6a55ff89c0f463c8de9683563402631"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "548c257ca2c34256aec08be3c0e4d693",
+      "@id": "0f491770be9c4289a01d8f8b8e1816cb",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 95
+            "value": 98
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -259,42 +259,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "8666c1942f5a4644a27e0c436cd50141",
+      "@id": "c9bc5e1585994854899060c0e5f08329",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "548c257ca2c34256aec08be3c0e4d693"
+        "annotation": "0f491770be9c4289a01d8f8b8e1816cb"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "f4940e1f15c5476285d9bd5508111f0e",
+      "@id": "7f7d932188fe4cada32777e80917d63c",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 132
+            "value": 135
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -305,42 +305,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "f0fc395aea194b379c485454794a8caa",
+      "@id": "6ffe500441334717afa80a1879bb7e24",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "f4940e1f15c5476285d9bd5508111f0e"
+        "annotation": "7f7d932188fe4cada32777e80917d63c"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "7a74841d9fb64812971273560c1be646",
+      "@id": "343fb43213c74bb3bd6799b7a1625bbe",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 169
+            "value": 172
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -351,42 +351,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "c11e8bb033794733b85148073c8a8571",
+      "@id": "a924dee687894fca8f7e78d0f7e2336b",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "7a74841d9fb64812971273560c1be646"
+        "annotation": "343fb43213c74bb3bd6799b7a1625bbe"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "bb5940b583734e48be0b93abfdc7bb5e",
+      "@id": "0008a329a11b499b8cef3623ee5706f0",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 206
+            "value": 209
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -397,42 +397,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "3dd52c1ebece4bc2b9c23486a527692d",
+      "@id": "fb9f2ac747584eceac813957ee074117",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "bb5940b583734e48be0b93abfdc7bb5e"
+        "annotation": "0008a329a11b499b8cef3623ee5706f0"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "91bf7960a3e44957b9e4e90865a298c3",
+      "@id": "02d67984098e45b6becf0a547454c154",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 243
+            "value": 246
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -443,42 +443,42 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "85eb5fbffd0d484eaf49f461f2eaaa44",
+      "@id": "3a1dc2e5d41f4afdb9c75e529f6173b0",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "91bf7960a3e44957b9e4e90865a298c3"
+        "annotation": "02d67984098e45b6becf0a547454c154"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "cc0d34f76d1e4be7afa6b13bec3e9e62",
+      "@id": "05d0e1d1fec946498745e6a7b95dab86",
       "target": {
         "@type": "TextSelector",
-        "resource": "e484",
+        "resource": "e854",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 280
+            "value": 284
           },
           "end": {
             "@type": "BeginAlignedCursor",
@@ -489,27 +489,27 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5336ef2f55744b61989d969fff5ebe21",
+          "@id": "90cd490e0d74443bb396aaa70445a80a",
           "set": "Root_Commentary"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "3d7dffba364049898a8446570d1c396b",
+      "@id": "7d058dc5f687447dabed7fcd5cb5b16a",
       "target": {
         "@type": "AnnotationSelector",
-        "annotation": "cc0d34f76d1e4be7afa6b13bec3e9e62"
+        "annotation": "05d0e1d1fec946498745e6a7b95dab86"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "e8907031aa3a474a827e84df56f88db2",
+          "@id": "5197321c733e4b89ab175d0ac0420996",
           "set": "Root_Commentary"
         },
         {
           "@type": "AnnotationData",
-          "@id": "3d787b9e06d0402095629df978e4dca6",
+          "@id": "ff4a22a18aea47e189e9993d69f4eaea",
           "set": "Root_Commentary"
         }
       ]
