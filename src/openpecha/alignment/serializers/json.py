@@ -146,6 +146,7 @@ class JSONSerializer:
 
         commentary_json = self.get_standard_json()
         commentary_json["books"][0]["content"][0] = commentary_segments
+        commentary_json["books"][0]["base_text_titles"] = "root text title"
         (output_path / "commentary.json").write_text(
             json.dumps(commentary_json, ensure_ascii=False, indent=2)
         )
