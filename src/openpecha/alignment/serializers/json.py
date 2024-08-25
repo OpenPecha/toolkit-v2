@@ -87,12 +87,19 @@ class JSONSerializer:
         )
 
         source_segments = []
+        root_segment_count = 1
+        root_segment_mapping: Dict[
+            str, int
+        ] = {}  # mapping of root ann id and root segment count
         for ann in ann_store.data(
             set=ann_dataset, key=ann_key, value=ann_value
         ).annotations():
-            is_not_meaning = next(ann.annotations(), None)
-            if is_not_meaning:
-                source_segments.append(f"<1>{str(ann)}")
+            root_ann = next(ann.annotations(), None)
+            if root_ann:
+                source_segments.append(f"<1><{root_segment_count}>{str(ann)}")
+                root_segment_mapping[root_ann.id()] = root_segment_count
+                root_segment_count += 1
+
             else:
                 source_segments.append(str(ann))
 
@@ -108,9 +115,24 @@ class JSONSerializer:
         for ann in ann_store.data(
             set=ann_dataset, key=ann_key, value=ann_value
         ).annotations():
-            is_not_meaning = next(ann.annotations(), None)
-            if is_not_meaning:
-                target_segments.append(f"<1>{str(ann)}")
+            commentary_ann = next(ann.annotations(), None)
+            if commentary_ann:
+                paired_root_ann_id = None
+                for _, segment_pair in self.alignment.segment_pairs.items():
+                    if self.target_pecha.id_ not in segment_pair:
+                        continue
+                    if isinstance(segment_pair[self.target_pecha.id_], list):
+                        if commentary_ann.id() in segment_pair[self.target_pecha.id_]:
+                            paired_root_ann_id = segment_pair[self.source_pecha.id_]
+                            break
+                    if isinstance(segment_pair[self.target_pecha.id_], str):
+                        if commentary_ann.id() == segment_pair[self.target_pecha.id_]:
+                            paired_root_ann_id = segment_pair[self.source_pecha.id_]
+                            break
+                if not paired_root_ann_id:
+                    continue
+                paired_root_segment_count = root_segment_mapping.get(paired_root_ann_id)
+                target_segments.append(f"<1><{paired_root_segment_count}>{str(ann)}")
             else:
                 target_segments.append(str(ann))
 
