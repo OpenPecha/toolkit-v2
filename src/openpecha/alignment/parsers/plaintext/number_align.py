@@ -369,12 +369,8 @@ class PlainTextNumberAlignedParser:
                         alignment_mapping[get_uuid()] = {
                             target_pecha.id_: target_meaning_segment.id(),
                         }
-                        last_commentary_meaning_idx = (
-                            target_pointer
-                            if target_pointer > last_commentary_meaning_idx
-                            else last_commentary_meaning_idx + 1
-                        )
                     target_pointer += 1
+                    last_commentary_meaning_idx += 1
 
                 """get the associated commentary segment"""
                 related_root_segment_ids = []
