@@ -4,19 +4,21 @@
     "language": "zh",
     "author": "Chojuk Source Author 1",
     "versionSource": "བཟང་སྤྱོད་སྨོན་ལམ།",
+    "direction": "ltr",
     "type": "Root_Segment",
-    "pecha_id": "I7044B942",
-    "base": "03aa",
-    "layer": "Root_Segment-fa6.json"
+    "pecha_id": "I7EDB4637",
+    "base": "5ba3",
+    "layer": "Root_Segment-788.json"
   },
   "target": {
     "title": "Master Di Xian",
     "language": "zh",
     "author": "Chojuk Target Author 1",
     "versionSource": "Chojuk Target",
+    "direction": "ltr",
     "type": "Commentary_Segment",
-    "pecha_id": "I54BD0D9E",
-    "base": "35af",
-    "layer": "Commentary_Segment-cb7.json"
+    "pecha_id": "IA000D391",
+    "base": "b3b9",
+    "layer": "Commentary_Segment-a3e.json"
   }
 }

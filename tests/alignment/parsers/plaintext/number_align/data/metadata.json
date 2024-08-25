@@ -5,6 +5,7 @@
                 "language": "zh",
                 "author":"Chojuk Source Author 1",
                 "versionSource": "བཟང་སྤྱོད་སྨོན་ལམ།",
+                "direction": "ltr",
                 "type":"Root_Segment"
             },
 
@@ -13,7 +14,7 @@
             "language": "zh",
             "author":"Chojuk Target Author 1",
             "versionSource": "Chojuk Target",
-
+            "direction": "ltr",
             "type":"Commentary_Segment"
             
     }

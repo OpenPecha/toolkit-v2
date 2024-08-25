@@ -1,11 +1,11 @@
 {
   "@type": "AnnotationStore",
-  "@id": "I54BD0D9E",
+  "@id": "IA000D391",
   "resources": [
     {
       "@type": "TextResource",
-      "@id": "35af",
-      "@include": "../../base/35af.txt"
+      "@id": "b3b9",
+      "@include": "../../base/b3b9.txt"
     }
   ],
   "annotationsets": [
@@ -31,13 +31,17 @@
         },
         {
           "@type": "DataKey",
+          "@id": "direction"
+        },
+        {
+          "@type": "DataKey",
           "@id": "type"
         }
       ],
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "ad76329cb65c43f5b669a185609ad4e8",
+          "@id": "e2bafec56a2d4a5baf11f3a5265e7837",
           "key": "title",
           "value": {
             "@type": "String",
@@ -46,7 +50,7 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "b8b5288cbfaf4612b98e575a79811a35",
+          "@id": "731c0feb79624b58a7cf6f07ded16cbd",
           "key": "language",
           "value": {
             "@type": "String",
@@ -55,7 +59,7 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "dce46ab81e19462ab9ba072c24d25cd9",
+          "@id": "c33a62dbff1c460b84bd023fe28d3304",
           "key": "author",
           "value": {
             "@type": "String",
@@ -64,7 +68,7 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "c0c2af31a671475082bc8e5a5a8f766c",
+          "@id": "c16e51ef49664f1aafa72bc1a79e881a",
           "key": "versionSource",
           "value": {
             "@type": "String",
@@ -73,7 +77,16 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "d3b8d4f462c64ce699707d04c6ea6ae8",
+          "@id": "1a24989e70f64747ab28311f790af2f5",
+          "key": "direction",
+          "value": {
+            "@type": "String",
+            "value": "ltr"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "d480cc5bc8bc4658822463152f2ff7c8",
           "key": "type",
           "value": {
             "@type": "String",
@@ -86,35 +99,40 @@
   "annotations": [
     {
       "@type": "Annotation",
-      "@id": "74f1ecde2ef842569b377bea41284986",
+      "@id": "ae60f9296fe243619a703ce5068663ca",
       "target": {
         "@type": "ResourceSelector",
-        "resource": "35af"
+        "resource": "b3b9"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "ad76329cb65c43f5b669a185609ad4e8",
+          "@id": "e2bafec56a2d4a5baf11f3a5265e7837",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "b8b5288cbfaf4612b98e575a79811a35",
+          "@id": "731c0feb79624b58a7cf6f07ded16cbd",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "dce46ab81e19462ab9ba072c24d25cd9",
+          "@id": "c33a62dbff1c460b84bd023fe28d3304",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "c0c2af31a671475082bc8e5a5a8f766c",
+          "@id": "c16e51ef49664f1aafa72bc1a79e881a",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "d3b8d4f462c64ce699707d04c6ea6ae8",
+          "@id": "1a24989e70f64747ab28311f790af2f5",
+          "set": "Meta_Data"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "d480cc5bc8bc4658822463152f2ff7c8",
           "set": "Meta_Data"
         }
       ]

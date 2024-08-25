@@ -35,16 +35,16 @@ class JSONSerializer:
         return self.source_ann_store, self.target_ann_store
 
     @staticmethod
-    def get_standard_json():
+    def get_standard_json(metadata: Dict[str, str]):
         return {
             "books": [
                 {
-                    "title": "title",
-                    "language": "bo",
-                    "author": "author name",
-                    "versionSource": " ",
+                    "title": metadata["title"],
+                    "language": metadata["language"],
+                    "author": metadata["author"],
+                    "versionSource": metadata["versionSource"],
                     "content": [[]],
-                    "direction": "ltr",
+                    "direction": metadata["direction"],
                 }
             ]
         }
@@ -139,15 +139,18 @@ class JSONSerializer:
         )
 
         """ write the json files"""
-        root_json = self.get_standard_json()
+        root_json = self.get_standard_json(self.alignment.metadata["source"])
         root_json["books"][0]["content"][0] = root_segments
         (output_path / "root.json").write_text(
             json.dumps(root_json, ensure_ascii=False, indent=2)
         )
 
-        commentary_json = self.get_standard_json()
+        commentary_json = self.get_standard_json(self.alignment.metadata["target"])
+
         commentary_json["books"][0]["content"][0] = commentary_segments
-        commentary_json["books"][0]["base_text_titles"] = "root text title"
+        commentary_json["books"][0]["base_text_titles"] = self.alignment.metadata[
+            "source"
+        ]["title"]
         (output_path / "commentary.json").write_text(
             json.dumps(commentary_json, ensure_ascii=False, indent=2)
         )
