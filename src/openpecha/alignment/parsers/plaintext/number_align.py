@@ -363,7 +363,7 @@ class PlainTextNumberAlignedParser:
                             ]
                             if target_pointer == element[0]
                         )
-                        if root_segment_count < smallest_associated_root_segment:
+                        if root_segment_count <= smallest_associated_root_segment:
                             break
                     else:
                         alignment_mapping[get_uuid()] = {
