@@ -344,39 +344,37 @@ class PlainTextNumberAlignedParser:
         del target_ann_key
 
         root_segment_count = 0
-        target_segment_pointer = 0
+        last_commentary_meaning_idx = 0
         for source_meaning_segment in source_meaning_segments:
             ann_id = get_uuid()
             root_segment = next(source_meaning_segment.annotations(), None)
             if root_segment:
                 root_segment_count += 1
-                """ get the meaning segment with no commmentary annotation """
-
-                """ skip the meaning segment with commentary annotation """
-                while (
-                    target_segment_pointer < len(target_meaning_segments)
-                    and next(
-                        target_meaning_segments[target_segment_pointer].annotations(),
-                        None,
-                    )
-                    is not None
-                ):
-                    target_segment_pointer += 1
-
-                """ map the meaning segment with no commentary annotation """
-                while target_segment_pointer < len(target_meaning_segments):
-                    target_meaning_segment = target_meaning_segments[
-                        target_segment_pointer
-                    ]
-                    commentary_segment = next(
-                        target_meaning_segment.annotations(), None
-                    )
-                    if commentary_segment:
-                        break
-                    alignment_mapping[get_uuid()] = {
-                        target_pecha.id_: target_meaning_segment.id()
-                    }
-                    target_segment_pointer += 1
+                """ write commentary meaning statements """
+                target_pointer = last_commentary_meaning_idx
+                while target_pointer < len(target_meaning_segments):
+                    target_meaning_segment = target_meaning_segments[target_pointer]
+                    commentary_ann = next(target_meaning_segment.annotations(), None)
+                    if commentary_ann:
+                        smallest_associated_root_segment = next(
+                            element[3][0]
+                            for element in self.mapping_ann_indicies[
+                                "commentary_indicies"
+                            ]
+                            if target_pointer == element[0]
+                        )
+                        if root_segment_count < smallest_associated_root_segment:
+                            break
+                    else:
+                        alignment_mapping[get_uuid()] = {
+                            target_pecha.id_: target_meaning_segment.id(),
+                        }
+                        last_commentary_meaning_idx = (
+                            target_pointer
+                            if target_pointer > last_commentary_meaning_idx
+                            else last_commentary_meaning_idx + 1
+                        )
+                    target_pointer += 1
 
                 """get the associated commentary segment"""
                 related_root_segment_ids = []
@@ -384,9 +382,9 @@ class PlainTextNumberAlignedParser:
                     target_meaning_segment_idx,
                     _,
                     _,
-                    associated_commentary_segments,
+                    associated_root_segments,
                 ) in self.mapping_ann_indicies["commentary_indicies"]:
-                    if root_segment_count in associated_commentary_segments:
+                    if root_segment_count in associated_root_segments:
                         associated_meaning_ann = target_meaning_segments[
                             target_meaning_segment_idx
                         ]
