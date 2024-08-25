@@ -7,7 +7,7 @@ from stam import Annotation, AnnotationStore
 from openpecha.alignment.alignment import Alignment
 from openpecha.config import LINE_BREAKERS
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
 
 
 class JSONSerializer:
@@ -75,79 +75,61 @@ class JSONSerializer:
         return segments
 
     def serialize(self, output_path: Path):
-        root_segments = []
-        commentary_segments = []
-        root_segment_count = 0
-        for _, segment_pair in self.alignment.segment_pairs.items():
-            """get the root segment"""
-            if self.source_pecha.id_ in segment_pair:
-                root_ann = self.source_ann_store.annotation(
-                    segment_pair[self.source_pecha.id_]
-                )
-                if self.is_meaning_segment(root_ann):
-                    root_string_segment = str(root_ann)
-                else:
-                    root_string_segment = str(
-                        root_ann.target().annotation(self.source_ann_store)
-                    )
-                    root_segment_count += 1
+        """define the neccessary annotation dataset, key, value"""
+        ann_dataset = LayerCollectionEnum.root_commentory.value
+        ann_key = LayerGroupEnum.structure_type.value
+        ann_value = LayerEnum.meaning_segment.value
 
-                root_segments.append(root_string_segment)
-                del root_ann
-            """ get the commentary segment"""
-            if self.target_pecha.id_ in segment_pair:
-                if isinstance(segment_pair[self.target_pecha.id_], str):
-                    commentary_ann = self.target_ann_store.annotation(
-                        segment_pair[self.target_pecha.id_]
-                    )
+        source_base = self.alignment.metadata["source"]["base"]
+        source_ann_type = LayerEnum(self.alignment.metadata["source"]["type"])
+        ann_store, _ = self.source_pecha.get_annotation_store(
+            source_base, source_ann_type
+        )
 
-                    if self.is_meaning_segment(commentary_ann):
-                        commentary_segment_string = str(commentary_ann)
-                    else:
-                        commentary_segment_string = str(
-                            commentary_ann.target().annotation(self.target_ann_store)
-                        )
-                        commentary_segment_string = (
-                            f"<1><{root_segment_count}>{commentary_segment_string}"
-                        )
+        source_segments = []
+        for ann in ann_store.data(
+            set=ann_dataset, key=ann_key, value=ann_value
+        ).annotations():
+            is_not_meaning = next(ann.annotations(), None)
+            if is_not_meaning:
+                source_segments.append(f"<1>{str(ann)}")
+            else:
+                source_segments.append(str(ann))
 
-                    commentary_segments.append(commentary_segment_string)
-                    del commentary_ann
+        del ann_store
 
-                if isinstance(segment_pair[self.target_pecha.id_], list):
-                    commentary_anns = [
-                        self.target_ann_store.annotation(segment_id)
-                        for segment_id in segment_pair[self.target_pecha.id_]
-                    ]
-                    if self.is_meaning_segment(commentary_anns[0]):
-                        commentary_segment_strings = [
-                            str(commentary_ann) for commentary_ann in commentary_anns
-                        ]
-                    else:
-                        commentary_segment_strings = [
-                            f"<1><{root_segment_count}>{str(commentary_ann.target().annotation(self.target_ann_store))}"
-                            for commentary_ann in commentary_anns
-                        ]
+        target_base = self.alignment.metadata["target"]["base"]
+        target_ann_type = LayerEnum(self.alignment.metadata["target"]["type"])
+        ann_store, _ = self.target_pecha.get_annotation_store(
+            target_base, target_ann_type
+        )
 
-                    commentary_segments.extend(commentary_segment_strings)
-                    del commentary_anns
+        target_segments = []
+        for ann in ann_store.data(
+            set=ann_dataset, key=ann_key, value=ann_value
+        ).annotations():
+            is_not_meaning = next(ann.annotations(), None)
+            if is_not_meaning:
+                target_segments.append(f"<1>{str(ann)}")
+            else:
+                target_segments.append(str(ann))
+
+        del ann_store
 
         output_path.mkdir(parents=True, exist_ok=True)
-        root_segments = self.replace_newline_and_line_breakers(root_segments)
-        commentary_segments = self.replace_newline_and_line_breakers(
-            commentary_segments
-        )
+        source_segments = self.replace_newline_and_line_breakers(source_segments)
+        target_segments = self.replace_newline_and_line_breakers(target_segments)
 
         """ write the json files"""
         root_json = self.get_standard_json(self.alignment.metadata["source"])
-        root_json["books"][0]["content"][0] = root_segments
+        root_json["books"][0]["content"][0] = source_segments
         (output_path / "root.json").write_text(
             json.dumps(root_json, ensure_ascii=False, indent=2)
         )
 
         commentary_json = self.get_standard_json(self.alignment.metadata["target"])
 
-        commentary_json["books"][0]["content"][0] = commentary_segments
+        commentary_json["books"][0]["content"][0] = target_segments
         commentary_json["books"][0]["base_text_titles"] = self.alignment.metadata[
             "source"
         ]["title"]
