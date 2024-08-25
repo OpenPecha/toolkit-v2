@@ -110,7 +110,7 @@ class Alignment:
             """get root segment annotation"""
             base_file = self.metadata.segments_metadata[pecha_id].base
             ann_type = self.metadata.segments_metadata[pecha_id].type
-            pecha_ann_store = self.pechas[pecha_id].get_annotation_store(
+            pecha_ann_store, _ = self.pechas[pecha_id].get_annotation_store(
                 base_file, ann_type
             )
 

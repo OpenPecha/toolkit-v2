@@ -24,8 +24,19 @@ def test_json_serializer():
     assert isinstance(source_ann_store, AnnotationStore)
     assert isinstance(target_ann_store, AnnotationStore)
 
+    expected_path = DATA / "expected_output"
     output_path = DATA / "output"
     serializer.serialize(output_path)
+
+    assert (output_path / "root.json").exists()
+    assert (output_path / "commentary.json").is_file()
+
+    assert (output_path / "root.json").read_text(encoding="utf-8") == (
+        expected_path / "root.json"
+    ).read_text(encoding="utf-8")
+    assert (output_path / "commentary.json").read_text(encoding="utf-8") == (
+        expected_path / "commentary.json"
+    ).read_text(encoding="utf-8")
 
 
 test_json_serializer()
