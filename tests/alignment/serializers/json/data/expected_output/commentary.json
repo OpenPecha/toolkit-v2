@@ -1,10 +1,29 @@
 {
   "books": [
     {
-      "title": "Master Di Xian",
-      "language": "zh",
-      "author": "Chojuk Target Author 1",
-      "versionSource": "Chojuk Target",
+      "author": {
+        "EN": "Master Di Xian",
+        "ZH": "諦閑法師\n(1858-1932)"
+      },
+      "composition_date": {},
+      "source": {},
+      "presentation": {
+        "EN": "Classical Chinese",
+        "ZH": "文言文"
+      },
+      "usage_title": {},
+      "title_short": {
+        "EN": "Commentary on Samantabhadra’s “The King of Aspirations Prayer” – 1",
+        "ZH": "《普賢菩薩行願品釋論》 - 1"
+      },
+      "title_long_clean": {},
+      "title_alt_1": {},
+      "title_alt_2": {},
+      "is_commentary_of": {
+        "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
+      },
+      "is_version_of": {},
+      "lang": "zh",
       "content": [
         [
           "<sapche>乙二 正頌<br>丙一 頌正示行願<br>丁一 正頌行願<br>戊一 頌第一願</sapche>",
@@ -14,9 +33,7 @@
           "<1><1>行願之名雖有十義，意祇有七，以後三合故。初二句頌所禮，次一句頌能禮，第四句明周遍，第五句辯遍因。謂所以能如是周遍者，全仗普賢行願威神之力故也。後三句別顯禮相。謂一一佛所，各有多身；一一己身，能起多禮。",
           "<1><6>經云：一一如來所，一切剎塵禮。即此意也。"
         ]
-      ],
-      "direction": "ltr",
-      "base_text_titles": "Buddha Shakyamuni"
+      ]
     }
   ]
 }

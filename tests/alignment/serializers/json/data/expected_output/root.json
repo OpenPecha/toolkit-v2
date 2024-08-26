@@ -1,10 +1,26 @@
 {
   "books": [
     {
-      "title": "Buddha Shakyamuni",
-      "language": "zh",
-      "author": "Chojuk Source Author 1",
-      "versionSource": "བཟང་སྤྱོད་སྨོན་ལམ།",
+      "author": {
+        "ZH": "Buddha Shakyamuni"
+      },
+      "composition_date": {},
+      "source": {},
+      "presentation": {},
+      "usage_title": {},
+      "title_short": {
+        "ZH": "入不思議解脫境界普賢行願品"
+      },
+      "title_long_clean": {
+        "ZH": "v1大方廣佛華嚴經·v2入不思議解脫境界普賢行願品"
+      },
+      "title_alt_1": {},
+      "title_alt_2": {},
+      "is_commentary_of": {},
+      "is_version_of": {
+        "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
+      },
+      "lang": "zh",
       "content": [
         [
           "<1><1>v1大方廣佛華嚴經·v2入不思議解脫境界普賢行願品",
@@ -18,8 +34,7 @@
           "<1><9>以諸最勝妙華鬘，伎樂塗香及傘蓋，如是最勝莊嚴具，我以供養諸如來。",
           "<1><10>最勝衣服最勝香，末香燒香與燈燭，一一皆如妙高聚，我悉供養諸如來。"
         ]
-      ],
-      "direction": "ltr"
+      ]
     }
   ]
 }

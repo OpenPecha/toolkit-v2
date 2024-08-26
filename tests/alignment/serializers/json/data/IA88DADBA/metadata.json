@@ -1,11 +1,11 @@
 {
   "@type": "AnnotationStore",
-  "@id": "I7EDB4637",
+  "@id": "IA88DADBA",
   "resources": [
     {
       "@type": "TextResource",
-      "@id": "5ba3",
-      "@include": "../../base/5ba3.txt"
+      "@id": "8466",
+      "@include": "../../base/8466.txt"
     }
   ],
   "annotationsets": [
@@ -15,82 +15,69 @@
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "title"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "language"
-        },
-        {
-          "@type": "DataKey",
           "@id": "author"
         },
         {
           "@type": "DataKey",
-          "@id": "versionSource"
+          "@id": "presentation"
         },
         {
           "@type": "DataKey",
-          "@id": "direction"
+          "@id": "title_short"
         },
         {
           "@type": "DataKey",
-          "@id": "type"
+          "@id": "is_commentary_of"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "lang"
         }
       ],
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "3bb77a2b38e74e36972e7c9dc3103669",
-          "key": "title",
-          "value": {
-            "@type": "String",
-            "value": "Buddha Shakyamuni"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "1357d9cecf3a45ccb480e2fd5580ec3c",
-          "key": "language",
-          "value": {
-            "@type": "String",
-            "value": "zh"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "6751542493f542238eef0cbbada3c36b",
+          "@id": "383a5818a5044ea3be43094bf15f4545",
           "key": "author",
           "value": {
             "@type": "String",
-            "value": "Chojuk Source Author 1"
+            "value": "{\"EN\": \"Master Di Xian\", \"ZH\": \"諦閑法師\\n(1858-1932)\"}"
           }
         },
         {
           "@type": "AnnotationData",
-          "@id": "d82ae24a5a094774a83190e442712ab9",
-          "key": "versionSource",
+          "@id": "0ab1fe10f99346f8afd6fb1be8a3e334",
+          "key": "presentation",
           "value": {
             "@type": "String",
-            "value": "བཟང་སྤྱོད་སྨོན་ལམ།"
+            "value": "{\"EN\": \"Classical Chinese\", \"ZH\": \"文言文\"}"
           }
         },
         {
           "@type": "AnnotationData",
-          "@id": "5dcc275b68374a8098d06c0d2fb75776",
-          "key": "direction",
+          "@id": "fb114d41854e42928e8508676eeac8c7",
+          "key": "title_short",
           "value": {
             "@type": "String",
-            "value": "ltr"
+            "value": "{\"EN\": \"Commentary on Samantabhadra’s “The King of Aspirations Prayer” – 1\", \"ZH\": \"《普賢菩薩行願品釋論》 - 1\"}"
           }
         },
         {
           "@type": "AnnotationData",
-          "@id": "c1e53e3a157f493783dc3147541cbdb9",
-          "key": "type",
+          "@id": "823e072a432a4babbd05ecaf03a0d0a2",
+          "key": "is_commentary_of",
           "value": {
             "@type": "String",
-            "value": "Root_Segment"
+            "value": "{\"BO\": \"བཟང་སྤྱོད་སྨོན་ལམ།\"}"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "64be2bf1934e4c5aa6d2c4882850c0b1",
+          "key": "lang",
+          "value": {
+            "@type": "String",
+            "value": "zh"
           }
         }
       ]
@@ -99,40 +86,35 @@
   "annotations": [
     {
       "@type": "Annotation",
-      "@id": "eaf4337a0db64c1fb286e68ead7b6a38",
+      "@id": "f22074ba7bf8484da56033c2aac2a23c",
       "target": {
         "@type": "ResourceSelector",
-        "resource": "5ba3"
+        "resource": "8466"
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "3bb77a2b38e74e36972e7c9dc3103669",
+          "@id": "383a5818a5044ea3be43094bf15f4545",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "1357d9cecf3a45ccb480e2fd5580ec3c",
+          "@id": "0ab1fe10f99346f8afd6fb1be8a3e334",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "6751542493f542238eef0cbbada3c36b",
+          "@id": "fb114d41854e42928e8508676eeac8c7",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "d82ae24a5a094774a83190e442712ab9",
+          "@id": "823e072a432a4babbd05ecaf03a0d0a2",
           "set": "Meta_Data"
         },
         {
           "@type": "AnnotationData",
-          "@id": "5dcc275b68374a8098d06c0d2fb75776",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "c1e53e3a157f493783dc3147541cbdb9",
+          "@id": "64be2bf1934e4c5aa6d2c4882850c0b1",
           "set": "Meta_Data"
         }
       ]
