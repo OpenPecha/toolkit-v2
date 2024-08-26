@@ -136,8 +136,6 @@ class JSONSerializer:
         del ann_store
 
         output_path.mkdir(parents=True, exist_ok=True)
-        source_segments = self.replace_newline_and_line_breakers(source_segments)
-        target_segments = self.replace_newline_and_line_breakers(target_segments)
 
         """ write the json files"""
         root_json = self.get_standard_json(self.alignment.metadata["source"])
