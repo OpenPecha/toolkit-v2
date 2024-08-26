@@ -1,9 +1,9 @@
-import json
 from pathlib import Path
 from shutil import rmtree
 
 from openpecha.alignment.parsers.plaintext.number_align import (
     PlainTextNumberAlignedParser,
+    metadata_from_csv,
 )
 
 expected_source_segments = [
@@ -60,10 +60,11 @@ def test_parse_to_segments():
 
     root_file = DATA / "003-ch.txt"
     align_file = DATA / "004-ch-1-諦閑.txt"
-    metadata_file = DATA / "metadata.json"
+    root_metadata_file = DATA / "003-ch_metadata.csv"
+    align_metadata_file = DATA / "004-ch-1-諦閑_metadata.csv"
 
     parser = PlainTextNumberAlignedParser.from_files(
-        root_file, align_file, metadata_file
+        root_file, align_file, root_metadata_file, align_metadata_file
     )
 
     assert not hasattr(parser, "source_segments")
@@ -100,12 +101,15 @@ def test_parse_to_segments():
 
 def test_parse_pecha():
     DATA = Path(__file__).parent / "data"
-    metadata_file = DATA / "metadata.json"
+    root_metadata_file = DATA / "003-ch_metadata.csv"
+    align_metadata_file = DATA / "004-ch-1-諦閑_metadata.csv"
 
     source_text = (DATA / "003-ch.txt").read_text(encoding="utf-8")
     target_text = (DATA / "004-ch-1-諦閑.txt").read_text(encoding="utf-8")
-    with open(metadata_file) as f:
-        metadata = json.load(f)
+    metadata = {
+        "source": metadata_from_csv(root_metadata_file),
+        "target": metadata_from_csv(align_metadata_file),
+    }
 
     parser = PlainTextNumberAlignedParser(source_text, target_text, metadata)
     parser.source_segments = expected_source_segments

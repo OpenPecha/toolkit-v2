@@ -36,18 +36,11 @@ class JSONSerializer:
 
     @staticmethod
     def get_standard_json(metadata: Dict[str, str]):
-        return {
-            "books": [
-                {
-                    "title": metadata["title"],
-                    "language": metadata["language"],
-                    "author": metadata["author"],
-                    "versionSource": metadata["versionSource"],
-                    "content": [[]],
-                    "direction": metadata["direction"],
-                }
-            ]
+        neccessary_metadata = {
+            k: v for k, v in metadata.items() if k not in ["pecha_id", "base", "layer"]
         }
+        neccessary_metadata["content"] = [[]]  # type: ignore
+        return {"books": [neccessary_metadata]}
 
     @staticmethod
     def is_meaning_segment(ann: Annotation):
@@ -81,7 +74,9 @@ class JSONSerializer:
         ann_value = LayerEnum.meaning_segment.value
 
         source_base = self.alignment.metadata["source"]["base"]
-        source_ann_type = LayerEnum(self.alignment.metadata["source"]["type"])
+        source_ann_type = LayerEnum(
+            self.alignment.metadata["source"]["layer"].split("-")[0]
+        )
         ann_store, _ = self.source_pecha.get_annotation_store(
             source_base, source_ann_type
         )
@@ -106,7 +101,9 @@ class JSONSerializer:
         del ann_store
 
         target_base = self.alignment.metadata["target"]["base"]
-        target_ann_type = LayerEnum(self.alignment.metadata["target"]["type"])
+        target_ann_type = LayerEnum(
+            self.alignment.metadata["target"]["layer"].split("-")[0]
+        )
         ann_store, _ = self.target_pecha.get_annotation_store(
             target_base, target_ann_type
         )
@@ -152,9 +149,6 @@ class JSONSerializer:
         commentary_json = self.get_standard_json(self.alignment.metadata["target"])
 
         commentary_json["books"][0]["content"][0] = target_segments
-        commentary_json["books"][0]["base_text_titles"] = self.alignment.metadata[
-            "source"
-        ]["title"]
         (output_path / "commentary.json").write_text(
             json.dumps(commentary_json, ensure_ascii=False, indent=2)
         )

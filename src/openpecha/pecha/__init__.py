@@ -241,9 +241,11 @@ class Pecha:
 
         ann_data = []
         for k, v in metadata.items():
-            ann_data.append(
-                {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
-            )
+            if v:
+                v = v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)
+                ann_data.append(
+                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                )
 
         ann_store.annotate(
             id=get_uuid(), target=Selector.resourceselector(ann_resource), data=ann_data

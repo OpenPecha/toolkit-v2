@@ -1,3 +1,4 @@
+import csv
 import json
 import re
 from pathlib import Path
@@ -26,15 +27,21 @@ class PlainTextNumberAlignedParser:
 
     @classmethod
     def from_files(
-        cls, source_path: Path, target_path: Path, metadata_path: Path
+        cls,
+        source_path: Path,
+        target_path: Path,
+        root_metadata_path: Path,
+        target_metadata_path: Path,
     ) -> "PlainTextNumberAlignedParser":
         """
         Create a parser instance from file paths.
         """
         source_text = source_path.read_text(encoding="utf-8")
         target_text = target_path.read_text(encoding="utf-8")
-        with open(metadata_path) as f:
-            metadata = json.load(f)
+        metadata = {
+            "source": metadata_from_csv(root_metadata_path),
+            "target": metadata_from_csv(target_metadata_path),
+        }
         return cls(source_text, target_text, metadata)
 
     @staticmethod
@@ -453,3 +460,30 @@ class PlainTextNumberAlignedParser:
             source_pecha_path, target_pecha_path, output_path
         )
         return alignment_path
+
+
+def metadata_from_csv(metadata_path: Path):
+    metadata = {}
+
+    with open(metadata_path, encoding="utf-8") as file:
+        reader = csv.reader(file)
+        """ Read the header to get the language codes """
+        header = next(reader)
+        languages = header[1:]  # Exclude the first empty column
+
+        """ Iterate over each row and populate the metadata dictionary"""
+        for row in reader:
+            field_name = row[0]
+            values = row[1:]
+
+            if field_name == "lang":
+                """For 'lang', only store a single string value"""
+                metadata[field_name] = values[0] if values[0] else values[1]
+            else:
+                """Create a sub-dictionary for each field with language codes as keys"""
+                field_data = {
+                    languages[i]: values[i] for i in range(len(languages)) if values[i]
+                }
+                metadata[field_name] = field_data  # type: ignore
+
+    return metadata
