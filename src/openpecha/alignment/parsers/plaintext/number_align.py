@@ -170,8 +170,10 @@ class PlainTextNumberAlignedParser:
         cleaned_source_text = self.source_text.lstrip("\ufeff")
         cleaned_target_text = self.target_text.lstrip("\ufeff")
 
-        source_segments = self.normalize_newlines(cleaned_source_text).split("\n\n")
-        target_segments = self.normalize_newlines(cleaned_target_text).split("\n\n")
+        splitter = re.compile(r"\n[\s\t]*\n")
+
+        source_segments = splitter.split(self.normalize_newlines(cleaned_source_text))
+        target_segments = splitter.split(self.normalize_newlines(cleaned_target_text))
 
         self.source_segments = [
             source_segment.strip() for source_segment in source_segments
