@@ -121,15 +121,22 @@ class JSONSerializer:
                     if isinstance(segment_pair[self.target_pecha.id_], list):
                         if commentary_ann.id() in segment_pair[self.target_pecha.id_]:
                             paired_root_ann_id = segment_pair[self.source_pecha.id_]
-                            break
+                            paired_root_segment_count = root_segment_mapping.get(
+                                paired_root_ann_id
+                            )
+                            target_segments.append(
+                                f"<1><{paired_root_segment_count}>{str(ann)}"
+                            )
                     if isinstance(segment_pair[self.target_pecha.id_], str):
                         if commentary_ann.id() == segment_pair[self.target_pecha.id_]:
                             paired_root_ann_id = segment_pair[self.source_pecha.id_]
-                            break
-                if not paired_root_ann_id:
-                    continue
-                paired_root_segment_count = root_segment_mapping.get(paired_root_ann_id)
-                target_segments.append(f"<1><{paired_root_segment_count}>{str(ann)}")
+                            paired_root_segment_count = root_segment_mapping.get(
+                                paired_root_ann_id
+                            )
+                            target_segments.append(
+                                f"<1><{paired_root_segment_count}>{str(ann)}"
+                            )
+
             else:
                 target_segments.append(str(ann))
 
