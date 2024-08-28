@@ -27,3 +27,19 @@ To get started with the toolkit, we recommend following this [documentation](doc
 - [@10zinten](https://github.com/10zinten)
 - [@tsundue](https://github.com/tenzin3)
 
+### Pecha Annotation Transfer
+
+
+```py
+source_pecha_path = Path("source pecha path")
+target_pecha_path = Path("target pecha path")
+
+source_base_name = "source base name"
+target_base_name = "target base name"
+
+source_pecha = StamPecha(source_pecha_path)
+target_pecha = StamPecha(target_pecha_path)
+
+target_pecha.merge_pecha(source_pecha, source_base_name, target_base_name)
+
+```
