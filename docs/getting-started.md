@@ -36,4 +36,3 @@ You can also contact us
 - [@tsundue](https://github.com/tenzin3)
 
 
-Get more help [here](help.md).
