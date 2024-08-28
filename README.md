@@ -40,6 +40,10 @@ The following code snippet demonstrates how to transfer annotations from one pec
 If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
 
 ```py
+
+from pathlib import Path
+from openpecha.pecha import StamPecha
+
 source_pecha_path = Path("source pecha path")
 target_pecha_path = Path("target pecha path")
 
