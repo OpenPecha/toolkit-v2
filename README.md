@@ -27,6 +27,14 @@ To get started with the toolkit, we recommend following this [documentation](doc
 - [@10zinten](https://github.com/10zinten)
 - [@tsundue](https://github.com/tenzin3)
 
+
+## Diving Deeper
+- To learn more about the STAM data model, please refer to their following resources
+  - [stam github](https://github.com/annotation/stam)
+  - [stam python github](https://github.com/annotation/stam-python)
+  - [stam python documentation](https://stam-python.readthedocs.io/en/latest/)
+  - [stam python tutorial](https://github.com/annotation/stam-python/blob/master/tutorial.ipynb)
+
 ### Pecha Annotation Transfer
 The following code snippet demonstrates how to transfer annotations from one pecha to another pecha.
 If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
