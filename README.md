@@ -28,7 +28,8 @@ To get started with the toolkit, we recommend following this [documentation](doc
 - [@tsundue](https://github.com/tenzin3)
 
 ### Pecha Annotation Transfer
-
+The following code snippet demonstrates how to transfer annotations from one pecha to another pecha.
+If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
 
 ```py
 source_pecha_path = Path("source pecha path")
