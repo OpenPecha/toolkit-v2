@@ -17,6 +17,9 @@ A Python package designed for working with annotations within the **PechaData** 
 
 **The Stand-off Text Annotation Model (STAM)** is a data model for stand-off text annotation, where all information related to a text is represented as annotations.
 
+## Quickstart
+To get started with the toolkit, we recommend following this [documentation](docs/getting-started.md).
+
 ## Project owner(s)
 
 <!-- Link to the repo owners' github profiles -->
