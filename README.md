@@ -11,7 +11,11 @@
 
 ## Description
 
-OpenPecha toolkit version 2
+**Toolkit V2** is the second version of the existing toolkit.
+
+A Python package designed for working with annotations within the **PechaData** framework. PechaData is a GitHub repository that houses data in a distinct format called STAM.
+
+**The Stand-off Text Annotation Model (STAM)** is a data model for stand-off text annotation, where all information related to a text is represented as annotations.
 
 ## Project owner(s)
 
