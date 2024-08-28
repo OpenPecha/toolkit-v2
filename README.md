@@ -27,13 +27,3 @@ To get started with the toolkit, we recommend following this [documentation](doc
 - [@10zinten](https://github.com/10zinten)
 - [@tsundue](https://github.com/tenzin3)
 
-## Integrations
-
-<!-- Add any intregrations here or delete `- []()` and write None-->
-
-None
-## Docs
-
-<!-- Update the link to the docs -->
-
-Read the docs [here](https://wiki.openpecha.org/#/dev/coding-guidelines).
