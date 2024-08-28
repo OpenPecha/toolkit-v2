@@ -1,29 +1,39 @@
 # Getting started
 
-Intro
+
 
 ## 1. Prerequisites
 
-- Python version
-- _Dependency 1_
+- Python version >=3.8
 
 ## 2. Installation
-
-1. _Write the step here._
-2. _Write the step here._
+```bash
+pip install git+https://github.com/OpenPecha/toolkit-v2.git
+```
 
 ## 3. Configuration
 
-1. _Write the step here._
-2. _Write the step here._
+1. _Setup and Development initialization_
+```bash
+pip install -U pip
+pip install -e .
+pip install .[dev]
+pre-commit install
 
-## 4. Short how-to 
+```
 
-1. _Write the step here._
-2. _Write the step here._
+2. _Verify that all test cases pass_
+```bash
+pytest
+```
 
-## 5. Troubleshooting
 
-_Add any known issues and solutions_
+
+## 4. Reach out to us
+If you encounter any issues, please create an issue [here](https://github.com/OpenPecha/toolkit-v2/issues/new).
+You can also contact us 
+- [@10zinten](https://github.com/10zinten)
+- [@tsundue](https://github.com/tenzin3)
+
 
 Get more help [here](help.md).
