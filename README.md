@@ -44,3 +44,5 @@ target_pecha = StamPecha(target_pecha_path)
 target_pecha.merge_pecha(source_pecha, source_base_name, target_base_name)
 
 ```
+
+*__Important Note:__ In a pecha, there could be more than one base file. So above code snippet will transfer only the annotations which is related to the given base file name from source pecha to target pecha.*
