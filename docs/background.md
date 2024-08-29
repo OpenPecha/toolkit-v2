@@ -18,3 +18,5 @@ A Pecha is a traditional Tibetan book format that consists of loose-leaf pages s
 ### Alignment 
 Alignment is the process of matching the text of a translation with the original text. This process is essential for creating parallel texts, which are used for translation and language learning. The matching can be done for translation, commnetary, or any other type of text mapping.
 
+### STAM 
+STAM stands for Stand-off Text Annotation Model. It is a data model for stand-off text annotation, where all information related to a text is represented as annotations. STAM is used to store annotations in a structured format, making it easy to manage and access the annotations.We have decided to use STAM as the data model for our annotations as it align with our goal and satisfy our needs.
