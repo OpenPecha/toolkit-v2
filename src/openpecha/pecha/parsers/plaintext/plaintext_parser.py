@@ -19,29 +19,59 @@ class PlainTextParser:
         self.annotation_name = annotation_name
 
     @staticmethod
-    def space_segmenter(text: str) -> List[Dict[str, str]]:
-        return [{"annotation_text": ann_text} for ann_text in text.split(" ")]
+    def space_segmenter(text: str) -> List[Dict]:
+        res = []
+        char_count = 0
+        for word in text.split(" "):
+            res.append(
+                {
+                    "annotation_text": word,
+                    "start": char_count,
+                    "end": char_count + len(word),
+                }
+            )
+            char_count += len(word) + 1
+        return res
 
     @staticmethod
-    def new_line_segmenter(text: str) -> List[Dict[str, str]]:
-        return [{"annotation_text": ann_text} for ann_text in text.split("\n")]
+    def new_line_segmenter(text: str) -> List[Dict]:
+        res = []
+        char_count = 0
+        for line in text.split("\n"):
+            res.append(
+                {
+                    "annotation_text": line,
+                    "start": char_count,
+                    "end": char_count + len(line),
+                }
+            )
+            char_count += len(line) + 1
+        return res
 
     @staticmethod
     def regex_segmenter(
         text: str, pattern: str, group_mapping: List[str]
-    ) -> List[Dict[str, str]]:
+    ) -> List[Dict]:
         if "annotation_text" not in group_mapping:
             raise ValueError("group_mapping must contain 'annotation_text'")
 
-        matches = re.findall(pattern, text)
+        matches = re.finditer(pattern, text)
         result = []
 
         for match in matches:
-            if len(match) == len(group_mapping):
-                # Create a dictionary that maps group meanings to the matched groups
-                result.append({group_mapping[i]: match[i] for i in range(len(match))})
-                # Add start and end indicies of "annotation_text" group
+            groups = match.groups()
+            if len(groups) == len(group_mapping):
+                segment_data = {group_mapping[i]: groups[i] for i in range(len(groups))}
 
+                # Add start and end indices for the "annotation_text" group
+                annotation_index = group_mapping.index("annotation_text")
+                start, end = match.span(
+                    annotation_index + 1
+                )  # +1 because group 0 is the entire match
+                segment_data["start"] = start
+                segment_data["end"] = end
+
+                result.append(segment_data)
             else:
                 raise ValueError(
                     "Number of groups in pattern does not match the number of provided group meanings"
