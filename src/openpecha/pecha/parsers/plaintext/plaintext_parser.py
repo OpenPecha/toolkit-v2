@@ -103,9 +103,23 @@ class PlainTextParser:
             basefile_name, LayerEnum(self.annotation_name)
         )
         ann_resource = next(ann_store.resources())
-        char_count = 0  # noqa
+        ann_dataset = next(ann_store.datasets())
+        ann_type_id = get_uuid()
         for segment in segments:
-            text_selector = Selector.textselector(ann_resource, Offset.simple())  # noqa
+            assert isinstance(segment, dict)
+            text_selector = Selector.textselector(
+                ann_resource, Offset.simple(segment["start"], segment["end"])
+            )
+            ann_data = [
+                {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                for k, v in segment.items()
+                if k not in ["start", "end", "annotation_text"]
+            ]
             pecha.annotate(
                 ann_store,
+                text_selector,
+                LayerEnum(self.annotation_name),
+                ann_type_id,
+                ann_data,
             )
+        pecha.save_ann_store(ann_store, LayerEnum(self.annotation_name), basefile_name)
