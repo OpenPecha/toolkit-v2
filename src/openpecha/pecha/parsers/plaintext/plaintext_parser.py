@@ -1,6 +1,8 @@
 import re
 from typing import Callable, Dict, List
 
+from openpecha.pecha.layer import LayerEnum
+
 
 class PlainTextParser:
     def __init__(
@@ -39,6 +41,14 @@ class PlainTextParser:
 
         return result
 
+    @staticmethod
+    def is_annotation_name_valid(annotation_name: str) -> bool:
+        return annotation_name in [layer.value for layer in LayerEnum]
+
     def parse(self):
         segments = self.segmenter(self.text)
-        print(segments)
+        """ check if annotation name is in LayerEnum """
+        if not self.is_annotation_name_valid(self.annotation_name):
+            raise ValueError("Invalid annotation name")
+
+        return segments
