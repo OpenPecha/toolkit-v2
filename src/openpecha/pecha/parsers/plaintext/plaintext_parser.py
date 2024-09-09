@@ -83,7 +83,7 @@ class PlainTextParser:
     def is_annotation_name_valid(annotation_name: str) -> bool:
         return annotation_name in [layer.value for layer in LayerEnum]
 
-    def parse(self, output_path: Path):
+    def parse(self, output_path: Path) -> Path:
         segments = self.segmenter(self.text)
         """ check if annotation name is in LayerEnum """
         if not self.is_annotation_name_valid(self.annotation_name):
@@ -122,4 +122,7 @@ class PlainTextParser:
                 ann_type_id,
                 ann_data,
             )
-        pecha.save_ann_store(ann_store, LayerEnum(self.annotation_name), basefile_name)
+        ann_store_path = pecha.save_ann_store(
+            ann_store, LayerEnum(self.annotation_name), basefile_name
+        )
+        return ann_store_path
