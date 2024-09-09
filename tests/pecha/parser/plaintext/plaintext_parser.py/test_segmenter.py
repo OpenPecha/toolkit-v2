@@ -4,13 +4,21 @@ from openpecha.pecha.parsers.plaintext.plaintext_parser import PlainTextParser
 def test_space_segmenter():
     input = "བཀྲ་ཤིས་བདེ་ལེགས། །བདེ་ལེགས་བཀྲ་ཤིས། །"
     parser = PlainTextParser(input, PlainTextParser.space_segmenter, "")
-    assert parser.segmenter(input) == ["བཀྲ་ཤིས་བདེ་ལེགས།", "།བདེ་ལེགས་བཀྲ་ཤིས།", "།"]
+    assert parser.segmenter(input) == [
+        {"annotation_text": "བཀྲ་ཤིས་བདེ་ལེགས།"},
+        {"annotation_text": "།བདེ་ལེགས་བཀྲ་ཤིས།"},
+        {"annotation_text": "།"},
+    ]
 
 
 def test_new_line_segmenter():
     input = "བཀྲ་ཤིས་བདེ་ལེགས།\n།བདེ་ལེགས་བཀྲ་ཤིས།\n།"
     parser = PlainTextParser(input, PlainTextParser.new_line_segmenter, "")
-    assert parser.segmenter(input) == ["བཀྲ་ཤིས་བདེ་ལེགས།", "།བདེ་ལེགས་བཀྲ་ཤིས།", "།"]
+    assert parser.segmenter(input) == [
+        {"annotation_text": "བཀྲ་ཤིས་བདེ་ལེགས།"},
+        {"annotation_text": "།བདེ་ལེགས་བཀྲ་ཤིས།"},
+        {"annotation_text": "།"},
+    ]
 
 
 def test_regex_segmenter():
@@ -44,6 +52,3 @@ def test_regex_segmenter():
             "annotation_text": "དགེ་བ་བསྒོམ་ཕྱིར་བདག་གི་དད་པའི་ཤུགས། །འདི་དག་གིས་ཀྱང་རེ་ཞིག་འཕེལ་འགྱུར་ལ།\n\n    དལ་འབྱོར་འདི་ནི་རྙེད་པར་ཤིན་ཏུ་དཀའ། །སྐྱེས་བུའི་དོན་སྒྲུབ་ཐོབ་པར་གྱུར་པ་ལ། །གལ་ཏེ་འདི་ལ་ཕན་པ་མ་བསྒྲུབས་ན།\n\n    ཇི་ལྟར་མཚན་མོ་མུན་ནག་སྤྲིན་རུམ་ན། །གློག་འགྱུ་སྐད་ཅིག་བར་སྣང་སྟོན་པ་ལྟར། །དེ་བཞིན་སངས་རྒྱས་མཐུ་ཡིས་བརྒྱ་ལམ་ན།\n    ",
         },
     ]
-
-
-test_regex_segmenter()

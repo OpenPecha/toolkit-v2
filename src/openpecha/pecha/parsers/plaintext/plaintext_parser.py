@@ -1,5 +1,5 @@
 import re
-from typing import Callable, List
+from typing import Callable, Dict, List
 
 
 class PlainTextParser:
@@ -11,15 +11,17 @@ class PlainTextParser:
         self.annotation_name = annotation_name
 
     @staticmethod
-    def space_segmenter(text: str):
-        return text.split(" ")
+    def space_segmenter(text: str) -> List[Dict[str, str]]:
+        return [{"annotation_text": ann_text} for ann_text in text.split(" ")]
 
     @staticmethod
-    def new_line_segmenter(text: str):
-        return text.split("\n")
+    def new_line_segmenter(text: str) -> List[Dict[str, str]]:
+        return [{"annotation_text": ann_text} for ann_text in text.split("\n")]
 
     @staticmethod
-    def regex_segmenter(text: str, pattern: str, group_mapping: List[str]):
+    def regex_segmenter(
+        text: str, pattern: str, group_mapping: List[str]
+    ) -> List[Dict[str, str]]:
         if "annotation_text" not in group_mapping:
             raise ValueError("group_mapping must contain 'annotation_text'")
 
