@@ -1,0 +1,170 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "ID534D0B0",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "1bfe",
+      "@include": "/home/tenzin3/Monlam/toolkit-v2/tests/pecha/parser/plaintext/plaintext_parser.py/ann_on_ann/data/ID534D0B0/base/1bfe.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "Root_Commentary",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "chapter_number"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "chapter_name"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "Structure_Type"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "cb82d0d0bcf1462a90cabbe183d02303",
+          "key": "chapter_number",
+          "value": {
+            "@type": "String",
+            "value": "1"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "3fb64d95d86b4c549c229ee4f05088c3",
+          "key": "chapter_name",
+          "value": {
+            "@type": "String",
+            "value": "བྱང་ཆུབ་སེམས་ཀྱི་ཕན་ཡོན་བཤད་པ།"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1cb2214e02ee4fd8979f52ff6777a4db",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Chapter"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "18affe7b1bc545379194354fb56450bb",
+          "key": "chapter_number",
+          "value": {
+            "@type": "String",
+            "value": "2"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "43fde6cde4654cbf811f1d98d772582e",
+          "key": "chapter_name",
+          "value": {
+            "@type": "String",
+            "value": "སྡིག་པ་བཤགས་པ།"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "7cd8043fd5e84785a50407f79c0c5cca",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "090299ac637d4b59bdf1fcf5b2b0affd",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "5c0fca18187e40b4891724bc4d9755be",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "1bfe",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 183
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 487
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "cb82d0d0bcf1462a90cabbe183d02303",
+          "set": "Root_Commentary"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "3fb64d95d86b4c549c229ee4f05088c3",
+          "set": "Root_Commentary"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1cb2214e02ee4fd8979f52ff6777a4db",
+          "set": "Root_Commentary"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "cca39636fb1e467c9aae1800284ded7d",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "1bfe",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 508
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 960
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "18affe7b1bc545379194354fb56450bb",
+          "set": "Root_Commentary"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "43fde6cde4654cbf811f1d98d772582e",
+          "set": "Root_Commentary"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1cb2214e02ee4fd8979f52ff6777a4db",
+          "set": "Root_Commentary"
+        }
+      ]
+    }
+  ]
+}
