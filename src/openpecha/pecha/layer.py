@@ -18,6 +18,7 @@ class LayerEnum(Enum):
     chapter = "Chapter"
     sapche = "Sapche"
     metadata = "Meta_Data"
+    tsawa = "Tsawa"
 
 
 class LayerGroupEnum(Enum):
