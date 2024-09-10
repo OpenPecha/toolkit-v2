@@ -7,7 +7,7 @@ from stam import Offset, Selector
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import LayerEnum, get_layer_group
 
 
 class PlainTextParser:
@@ -141,6 +141,50 @@ class PlainTextParser:
                 ann_type_id,
                 ann_data,
             )
+        ann_store_path = pecha.save_ann_store(
+            ann_store, LayerEnum(self.annotation_name), basefile_name
+        )
+        return ann_store_path
+
+    def parse_ann_on_ann(self) -> Path:
+        assert isinstance(self.input, Path)
+        """ check if annotation name is in LayerEnum """
+        if not self.is_annotation_name_valid(self.annotation_name):
+            raise ValueError("Invalid annotation name")
+
+        pecha = Pecha.from_path(pecha_path=self.input.parents[2])
+
+        basefile_name = self.input.parent.name
+        ann_store = pecha.create_ann_store(
+            basefile_name, LayerEnum(self.annotation_name)
+        )
+        parent_ann_store = ann_store.add_substore(filename=str(self.input))
+        ann_dataset = next(ann_store.datasets())
+        ann_value = Path(parent_ann_store.filename()).stem.split("-")[0]
+        ann_key_value = get_layer_group(LayerEnum(ann_value)).value
+        ann_key = ann_dataset.key(ann_key_value)
+        ann_type_id = get_uuid()
+        for ann in ann_key.data(value=ann_value).annotations():
+            ann_str = str(ann)
+            segments = self.segmenter(ann_str)
+            for segment in segments:
+                assert isinstance(segment, dict)
+                selector = Selector.annotationselector(
+                    annotation=ann,
+                    offset=Offset.simple(segment["start"], segment["end"]),
+                )
+                ann_data = [
+                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                    for k, v in segment.items()
+                    if k not in ["start", "end", "annotation_text"]
+                ]
+                pecha.annotate(
+                    ann_store,
+                    selector,
+                    LayerEnum(self.annotation_name),
+                    ann_type_id,
+                    ann_data,
+                )
         ann_store_path = pecha.save_ann_store(
             ann_store, LayerEnum(self.annotation_name), basefile_name
         )
