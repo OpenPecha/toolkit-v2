@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union
 
 from stam import Offset, Selector
 
@@ -12,9 +12,12 @@ from openpecha.pecha.layer import LayerEnum
 
 class PlainTextParser:
     def __init__(
-        self, text: str, segmenter: Callable[[str], List[str]], annotation_name: str
+        self,
+        input: Union[str, Path],
+        segmenter: Callable[[str], List[str]],
+        annotation_name: str,
     ):
-        self.text = text
+        self.input = input
         self.segmenter = segmenter
         self.annotation_name = annotation_name
 
@@ -38,6 +41,21 @@ class PlainTextParser:
         res = []
         char_count = 0
         for line in text.split("\n"):
+            res.append(
+                {
+                    "annotation_text": line,
+                    "start": char_count,
+                    "end": char_count + len(line),
+                }
+            )
+            char_count += len(line) + 1
+        return res
+
+    @staticmethod
+    def two_new_line_segmenter(text: str) -> List[Dict]:
+        res = []
+        char_count = 0
+        for line in text.split("\n\n"):
             res.append(
                 {
                     "annotation_text": line,
@@ -84,7 +102,8 @@ class PlainTextParser:
         return annotation_name in [layer.value for layer in LayerEnum]
 
     def parse(self, output_path: Path) -> Path:
-        segments = self.segmenter(self.text)
+        assert isinstance(self.input, str)
+        segments = self.segmenter(self.input)
         """ check if annotation name is in LayerEnum """
         if not self.is_annotation_name_valid(self.annotation_name):
             raise ValueError("Invalid annotation name")
@@ -95,7 +114,7 @@ class PlainTextParser:
         pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
 
         """ create base file for new annotation store"""
-        basefile_name, base_content = get_uuid()[:4], self.text
+        basefile_name, base_content = get_uuid()[:4], self.input
         pecha.set_base(basefile_name, base_content)
 
         """ create annotation layer """
