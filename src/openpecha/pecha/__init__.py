@@ -331,4 +331,7 @@ class Pecha:
                 resource["@include"] = f"base/{original_path.name}"
             else:
                 resource["@include"] = f"../../base/{original_path.name}"
+        if "@include" in json_object:
+            json_object["@include"] = Path(json_object["@include"]).name
+
         return json_object
