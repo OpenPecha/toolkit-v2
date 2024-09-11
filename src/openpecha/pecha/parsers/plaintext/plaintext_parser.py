@@ -10,6 +10,25 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, get_layer_group
 
 
+def count_whitespace_details(text) -> Dict:
+    """Count whitespace characters at the start of the string"""
+    start_whitespace_match = re.match(r"\A([\s\n]*)", text)
+    start_whitespace_count = (
+        len(start_whitespace_match.group(1)) if start_whitespace_match else 0
+    )
+
+    """ Count whitespace characters at the end of the string"""
+    end_whitespace_match = re.search(r"([\s\n]*)\Z", text)
+    end_whitespace_count = (
+        len(end_whitespace_match.group(1)) if end_whitespace_match else 0
+    )
+
+    return {
+        "start_whitespace": start_whitespace_count,
+        "end_whitespace": end_whitespace_count,
+    }
+
+
 class PlainTextParser:
     def __init__(
         self,
@@ -22,45 +41,69 @@ class PlainTextParser:
         self.annotation_name = annotation_name
 
     @staticmethod
-    def space_segmenter(text: str) -> List[Dict]:
+    def space_segmenter(text: str, strip_segments: bool = True) -> List[Dict]:
         res = []
         char_count = 0
         for word in text.split(" "):
+            start_whitespace_count = 0
+            end_whitespace_count = 0
+            if strip_segments:
+                whitespace_count = count_whitespace_details(word)
+                start_whitespace_count = whitespace_count["start_whitespace"]
+                end_whitespace_count = whitespace_count["end_whitespace"]
+                word = word.strip()
+
             res.append(
                 {
                     "annotation_text": word,
-                    "start": char_count,
-                    "end": char_count + len(word),
+                    "start": char_count + start_whitespace_count,
+                    "end": char_count + len(word) - end_whitespace_count,
                 }
             )
             char_count += len(word) + 1
         return res
 
     @staticmethod
-    def new_line_segmenter(text: str) -> List[Dict]:
+    def new_line_segmenter(text: str, strip_segments: bool = True) -> List[Dict]:
         res = []
         char_count = 0
         for line in text.split("\n"):
+            start_whitespace_count = 0
+            end_whitespace_count = 0
+            if strip_segments:
+                whitespace_count = count_whitespace_details(line)
+                start_whitespace_count = whitespace_count["start_whitespace"]
+                end_whitespace_count = whitespace_count["end_whitespace"]
+                line = line.strip()
+
             res.append(
                 {
                     "annotation_text": line,
-                    "start": char_count,
-                    "end": char_count + len(line),
+                    "start": char_count + start_whitespace_count,
+                    "end": char_count + len(line) - end_whitespace_count,
                 }
             )
             char_count += len(line) + 1
         return res
 
     @staticmethod
-    def two_new_line_segmenter(text: str) -> List[Dict]:
+    def two_new_line_segmenter(text: str, strip_segments: bool = True) -> List[Dict]:
         res = []
         char_count = 0
         for line in text.split("\n\n"):
+            start_whitespace_count = 0
+            end_whitespace_count = 0
+            if strip_segments:
+                whitespace_count = count_whitespace_details(line)
+                start_whitespace_count = whitespace_count["start_whitespace"]
+                end_whitespace_count = whitespace_count["end_whitespace"]
+                line = line.strip()
+
             res.append(
                 {
                     "annotation_text": line,
-                    "start": char_count,
-                    "end": char_count + len(line),
+                    "start": char_count + start_whitespace_count,
+                    "end": char_count + len(line) - end_whitespace_count,
                 }
             )
             char_count += len(line) + 1
@@ -169,6 +212,10 @@ class PlainTextParser:
             segments = self.segmenter(ann_str)
             for segment in segments:
                 assert isinstance(segment, dict)
+
+                if not segment["annotation_text"]:
+                    continue
+
                 selector = Selector.annotationselector(
                     annotation=ann,
                     offset=Offset.simple(segment["start"], segment["end"]),
