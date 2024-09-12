@@ -41,76 +41,52 @@ class PlainTextParser:
         self.annotation_name = annotation_name
 
     @staticmethod
-    def space_segmenter(text: str, strip_segments: bool = True) -> List[Dict]:
+    def segment_text(
+        text: str,
+        delimiter: str,
+        strip_segments: bool = True,
+        delimiter_length: int = 1,
+    ) -> List[Dict]:
         res = []
         char_count = 0
-        for word in text.split(" "):
+        for segment in text.split(delimiter):
             start_whitespace_count = 0
             end_whitespace_count = 0
+
             if strip_segments:
-                whitespace_count = count_whitespace_details(word)
+                whitespace_count = count_whitespace_details(segment)
                 start_whitespace_count = whitespace_count["start_whitespace"]
                 end_whitespace_count = whitespace_count["end_whitespace"]
-                stripped_word = word.strip()
+                segment = segment.strip()
 
-            if word:
+            if segment:
                 res.append(
                     {
-                        "annotation_text": stripped_word,
+                        "annotation_text": segment,
                         "start": char_count + start_whitespace_count,
-                        "end": char_count + len(word) - end_whitespace_count,
+                        "end": char_count
+                        + len(segment)
+                        + start_whitespace_count
+                        - end_whitespace_count,
                     }
                 )
-            char_count += len(word) + 1
+
+            char_count += len(segment) + delimiter_length
         return res
+
+    @staticmethod
+    def space_segmenter(text: str, strip_segments: bool = True) -> List[Dict]:
+        return PlainTextParser.segment_text(text, " ", strip_segments)
 
     @staticmethod
     def new_line_segmenter(text: str, strip_segments: bool = True) -> List[Dict]:
-        res = []
-        char_count = 0
-        for line in text.split("\n"):
-            start_whitespace_count = 0
-            end_whitespace_count = 0
-            if strip_segments:
-                whitespace_count = count_whitespace_details(line)
-                start_whitespace_count = whitespace_count["start_whitespace"]
-                end_whitespace_count = whitespace_count["end_whitespace"]
-                stripped_line = line.strip()
-
-            if line:
-                res.append(
-                    {
-                        "annotation_text": stripped_line,
-                        "start": char_count + start_whitespace_count,
-                        "end": char_count + len(line) - end_whitespace_count,
-                    }
-                )
-            char_count += len(line) + 1
-        return res
+        return PlainTextParser.segment_text(text, "\n", strip_segments)
 
     @staticmethod
     def two_new_line_segmenter(text: str, strip_segments: bool = True) -> List[Dict]:
-        res = []
-        char_count = 0
-        for line in text.split("\n\n"):
-            start_whitespace_count = 0
-            end_whitespace_count = 0
-            if strip_segments:
-                whitespace_count = count_whitespace_details(line)
-                start_whitespace_count = whitespace_count["start_whitespace"]
-                end_whitespace_count = whitespace_count["end_whitespace"]
-                stripped_line = line.strip()
-
-            if line:
-                res.append(
-                    {
-                        "annotation_text": stripped_line,
-                        "start": char_count + start_whitespace_count,
-                        "end": char_count + len(line) - end_whitespace_count,
-                    }
-                )
-            char_count += len(line) + 2
-        return res
+        return PlainTextParser.segment_text(
+            text, "\n\n", strip_segments, delimiter_length=2
+        )
 
     @staticmethod
     def regex_segmenter(
