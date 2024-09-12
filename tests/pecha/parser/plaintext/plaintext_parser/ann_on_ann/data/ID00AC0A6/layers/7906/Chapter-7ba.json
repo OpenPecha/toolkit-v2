@@ -5,7 +5,7 @@
     {
       "@type": "TextResource",
       "@id": "7906",
-      "@include": "/home/tenzin3/Monlam/toolkit-v2/tests/pecha/parser/plaintext/plaintext_parser/ann_on_ann/data/ID00AC0A6/base/7906.txt"
+      "@include": "../../base/7906.txt"
     }
   ],
   "annotationsets": [
@@ -71,106 +71,8 @@
             "@type": "String",
             "value": "སྡིག་པ་བཤགས་པ།"
           }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "cee20b8efe1346ec9737c4477d9c3d5e",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "2c9c9df76e2b46f695dd9ddc06e2c863",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "1b89e174a18e49bb966141ee958ee6d3",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "84945ff70e8e4e50b80ef85155d6d70e",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "59ee6757d2684764a92cac1953b8e33d",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "a3e42aaead7a4d93bfb192decb9be062",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "cd07cddc29ac449abd5f57e36a93c682",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "a0ec9e33a63c4af4a0d00e277c905489",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "4054677263fe4c64a31739756e4aebf4",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "baa9b6fae4bf481d974aa0606dd0f258",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "5ff3041985c44b4eba7b96fbb0900a7f",
-          "key": "Structure_Type",
-          "value": {
-            "@type": "String",
-            "value": "Tsawa"
-          }
         }
+       
       ]
     }
   ],
