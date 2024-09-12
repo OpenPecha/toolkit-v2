@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 from typing import Callable, Dict, List, Union
 
-from stam import Offset, Selector
+from stam import AnnotationStore, Offset, Selector
 
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
@@ -237,5 +237,16 @@ class PlainTextParser:
                 )
         ann_store_path = pecha.save_ann_store(
             ann_store, LayerEnum(self.annotation_name), basefile_name
+        )
+        del ann_store
+
+        """ To be removed later, after stam is fixed"""
+        """ saving basefile path as relative  in AnnotationSubStore """
+        ann_type = self.input.stem.split("-")[0]
+        pecha.save_ann_store(
+            AnnotationStore(file=str(self.input)),
+            LayerEnum(ann_type),
+            basefile_name,
+            self.input.name,
         )
         return ann_store_path
