@@ -51,15 +51,16 @@ class PlainTextParser:
                 whitespace_count = count_whitespace_details(word)
                 start_whitespace_count = whitespace_count["start_whitespace"]
                 end_whitespace_count = whitespace_count["end_whitespace"]
-                word = word.strip()
+                stripped_word = word.strip()
 
-            res.append(
-                {
-                    "annotation_text": word,
-                    "start": char_count + start_whitespace_count,
-                    "end": char_count + len(word) - end_whitespace_count,
-                }
-            )
+            if word:
+                res.append(
+                    {
+                        "annotation_text": stripped_word,
+                        "start": char_count + start_whitespace_count,
+                        "end": char_count + len(word) - end_whitespace_count,
+                    }
+                )
             char_count += len(word) + 1
         return res
 
@@ -74,15 +75,16 @@ class PlainTextParser:
                 whitespace_count = count_whitespace_details(line)
                 start_whitespace_count = whitespace_count["start_whitespace"]
                 end_whitespace_count = whitespace_count["end_whitespace"]
-                line = line.strip()
+                stripped_line = line.strip()
 
-            res.append(
-                {
-                    "annotation_text": line,
-                    "start": char_count + start_whitespace_count,
-                    "end": char_count + len(line) - end_whitespace_count,
-                }
-            )
+            if line:
+                res.append(
+                    {
+                        "annotation_text": stripped_line,
+                        "start": char_count + start_whitespace_count,
+                        "end": char_count + len(line) - end_whitespace_count,
+                    }
+                )
             char_count += len(line) + 1
         return res
 
@@ -97,16 +99,17 @@ class PlainTextParser:
                 whitespace_count = count_whitespace_details(line)
                 start_whitespace_count = whitespace_count["start_whitespace"]
                 end_whitespace_count = whitespace_count["end_whitespace"]
-                line = line.strip()
+                stripped_line = line.strip()
 
-            res.append(
-                {
-                    "annotation_text": line,
-                    "start": char_count + start_whitespace_count,
-                    "end": char_count + len(line) - end_whitespace_count,
-                }
-            )
-            char_count += len(line) + 1
+            if line:
+                res.append(
+                    {
+                        "annotation_text": stripped_line,
+                        "start": char_count + start_whitespace_count,
+                        "end": char_count + len(line) - end_whitespace_count,
+                    }
+                )
+            char_count += len(line) + 2
         return res
 
     @staticmethod
