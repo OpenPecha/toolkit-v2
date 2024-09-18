@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Root_Commentary",
+      "@id": "Structure_Annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -71,8 +71,34 @@
             "@type": "String",
             "value": "སྡིག་པ་བཤགས་པ།"
           }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "ef4022f55ccf47d490e846ace4fa7bf2",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "f3db9ff78cc24b5bab22802b9ce7770a",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "f8665454412a4975bd4b5195e517accd",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
         }
-       
       ]
     }
   ],
@@ -99,17 +125,17 @@
         {
           "@type": "AnnotationData",
           "@id": "9dbc6adaebe849cd80dbbd115811e10c",
-          "set": "Root_Commentary"
+          "set": "Structure_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "8a7ea22509344dab80b0df96b1b4064d",
-          "set": "Root_Commentary"
+          "set": "Structure_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "1cc66b61f6524ef193e451afdd30dc14",
-          "set": "Root_Commentary"
+          "set": "Structure_Annotation"
         }
       ]
     },
@@ -135,17 +161,17 @@
         {
           "@type": "AnnotationData",
           "@id": "0afa4967f29c45869154db4549f44b8b",
-          "set": "Root_Commentary"
+          "set": "Structure_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "9328e734375d4e1293b30af413b4e4e2",
-          "set": "Root_Commentary"
+          "set": "Structure_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "1cc66b61f6524ef193e451afdd30dc14",
-          "set": "Root_Commentary"
+          "set": "Structure_Annotation"
         }
       ]
     }
