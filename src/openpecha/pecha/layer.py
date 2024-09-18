@@ -7,6 +7,7 @@ class LayerCollectionEnum(Enum):
     translation = "Translation"
     root_commentory = "Root_Commentary"
     metadata = "Meta_Data"
+    structure_annotation = "Structure_Annotation"
 
 
 class LayerEnum(Enum):
@@ -32,7 +33,18 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
     if layer_type in [LayerEnum.tibetan_segment, LayerEnum.english_segment]:
         return LayerGroupEnum.translation_segment
 
-    return LayerGroupEnum.structure_type
+    if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
+        return LayerGroupEnum.associated_alignment
+
+    if layer_type in [
+        LayerEnum.chapter,
+        LayerEnum.sapche,
+        LayerEnum.tsawa,
+        LayerEnum.meaning_segment,
+    ]:
+        return LayerGroupEnum.structure_type
+
+    raise ValueError(f"Layer type {layer_type} has no defined LayerGroupEnum")
 
 
 def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
@@ -43,4 +55,15 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
     if layer_type == LayerEnum.metadata:
         return LayerCollectionEnum.metadata
 
-    return LayerCollectionEnum.root_commentory
+    if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
+        return LayerCollectionEnum.root_commentory
+
+    if layer_type in [
+        LayerEnum.chapter,
+        LayerEnum.sapche,
+        LayerEnum.tsawa,
+        LayerEnum.meaning_segment,
+    ]:
+        return LayerCollectionEnum.structure_annotation
+
+    raise ValueError(f"Layer type {layer_type} has no defined LayerCollectionEnum")
