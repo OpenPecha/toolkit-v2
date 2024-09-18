@@ -1,3 +1,4 @@
+import csv
 import json
 import re
 from pathlib import Path
@@ -26,15 +27,21 @@ class PlainTextNumberAlignedParser:
 
     @classmethod
     def from_files(
-        cls, source_path: Path, target_path: Path, metadata_path: Path
+        cls,
+        source_path: Path,
+        target_path: Path,
+        root_metadata_path: Path,
+        target_metadata_path: Path,
     ) -> "PlainTextNumberAlignedParser":
         """
         Create a parser instance from file paths.
         """
         source_text = source_path.read_text(encoding="utf-8")
         target_text = target_path.read_text(encoding="utf-8")
-        with open(metadata_path) as f:
-            metadata = json.load(f)
+        metadata = {
+            "source": metadata_from_csv(root_metadata_path),
+            "target": metadata_from_csv(target_metadata_path),
+        }
         return cls(source_text, target_text, metadata)
 
     @staticmethod
@@ -59,13 +66,16 @@ class PlainTextNumberAlignedParser:
         sapche_ann_indices: List[Tuple[int, int, int]] = []
 
         for idx, segment in enumerate(self.source_segments):
-            if re.match(r"^\d+\.", segment):
-                root_segment_indices.append(idx)
-
-            match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
+            match = re.search(r"^(\d+\.)([\s]*)", segment)
             if match:
-                start = match.start(1)
-                end = match.end(1)
+                start = match.end(2)
+                end = len(segment)
+                root_segment_indices.append((idx, start, end))
+
+            sapche_match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
+            if sapche_match:
+                start = sapche_match.start(1)
+                end = sapche_match.end(1)
                 sapche_ann_indices.append((idx, start, end))
 
         """ sort the root segment indices """
@@ -109,18 +119,22 @@ class PlainTextNumberAlignedParser:
         commentary_segment_indices = []
         sapche_ann_indices: List[Tuple[int, int, int]] = []
         for idx, segment in enumerate(self.target_segments):
-            match = re.search(r"^([\d,-]+)\.", segment)
+            match = re.search(r"^([\d,-]+)\.([\s]*)", segment)
             if match:
                 root_mapped_expression = match.group(1)
+                start = match.end(2)
+                end = len(segment)
                 root_mapped_numbers = self.extract_root_mapped_numbers(
                     root_mapped_expression
                 )
-                commentary_segment_indices.append((idx, root_mapped_numbers))
+                commentary_segment_indices.append(
+                    (idx, start, end, root_mapped_numbers)
+                )
 
-            match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
-            if match:
-                start = match.start(1)
-                end = match.end(1)
+            sapche_match = re.search(r"<sapche>([\s\S]*?)</sapche>", segment)
+            if sapche_match:
+                start = sapche_match.start(1)
+                end = sapche_match.end(1)
                 sapche_ann_indices.append((idx, start, end))
 
         """ sort the comment segment indices """
@@ -156,8 +170,10 @@ class PlainTextNumberAlignedParser:
         cleaned_source_text = self.source_text.lstrip("\ufeff")
         cleaned_target_text = self.target_text.lstrip("\ufeff")
 
-        source_segments = self.normalize_newlines(cleaned_source_text).split("\n\n")
-        target_segments = self.normalize_newlines(cleaned_target_text).split("\n\n")
+        splitter = re.compile(r"\n[\s\t]*\n")
+
+        source_segments = splitter.split(self.normalize_newlines(cleaned_source_text))
+        target_segments = splitter.split(self.normalize_newlines(cleaned_target_text))
 
         self.source_segments = [
             source_segment.strip() for source_segment in source_segments
@@ -198,6 +214,18 @@ class PlainTextNumberAlignedParser:
         else:
             self.target_basefile_name = basefile_name
 
+        """ annotate metadata"""
+        ann_store = pecha.create_ann_store(basefile_name, LayerEnum.metadata)
+        metadata = (
+            self.metadata["source"]
+            if ann_type == LayerEnum.root_segment
+            else self.metadata["target"]
+        )
+        ann_store = pecha.annotate_metadata(ann_store, metadata)
+        pecha.save_ann_store(ann_store, LayerEnum.metadata, basefile_name)
+
+        del ann_store
+
         """ annotate root segments / commentary segments """
         ann_store = pecha.create_ann_store(basefile_name, ann_type)
 
@@ -207,10 +235,7 @@ class PlainTextNumberAlignedParser:
         if ann_type == LayerEnum.root_segment:
             ann_indicies = self.mapping_ann_indicies["root_indicies"]
         else:
-            ann_indicies = [
-                element[0]
-                for element in self.mapping_ann_indicies["commentary_indicies"]
-            ]
+            ann_indicies = self.mapping_ann_indicies["commentary_indicies"]
 
         char_count = 0
         meaning_ann_data_id = get_uuid()
@@ -218,16 +243,26 @@ class PlainTextNumberAlignedParser:
         alignment_data_id = get_uuid()
         for idx, segment in enumerate(segments):
             """annotate meaning segments"""
+            is_root_or_commentary = idx in [element[0] for element in ann_indicies]
+            if is_root_or_commentary:
+                match_ann_indicies = next(
+                    element for element in ann_indicies if idx == element[0]
+                )
+                start = char_count + match_ann_indicies[1]
+                end = char_count + match_ann_indicies[2]
+            else:
+                start = char_count
+                end = char_count + len(segment)
             text_selector = Selector.textselector(
                 ann_resource,
-                Offset.simple(char_count, char_count + len(segment)),
+                Offset.simple(start, end),
             )
             char_count += len(segment) + 2  # 2 being length for two newline characters
             meaning_segment_ann = pecha.annotate(
                 ann_store, text_selector, LayerEnum.meaning_segment, meaning_ann_data_id
             )
 
-            if idx in ann_indicies:
+            if is_root_or_commentary:
                 ann_selector = Selector.annotationselector(meaning_segment_ann)
                 data = [
                     {
@@ -282,7 +317,10 @@ class PlainTextNumberAlignedParser:
     ) -> alignment_path:
         alignment_mapping: Dict[str, Dict] = {}
         source_pecha = Pecha.from_path(source_pecha_path)
-        source_ann_store = source_pecha.get_annotation_store(
+        (
+            source_ann_store,
+            source_ann_store_file_path,
+        ) = source_pecha.get_annotation_store(
             self.source_basefile_name, LayerEnum.root_segment
         )
         source_dataset = next(source_ann_store.datasets())
@@ -297,7 +335,10 @@ class PlainTextNumberAlignedParser:
         del source_ann_key
 
         target_pecha = Pecha.from_path(target_pecha_path)
-        target_ann_store = target_pecha.get_annotation_store(
+        (
+            target_ann_store,
+            target_ann_store_file_path,
+        ) = target_pecha.get_annotation_store(
             self.target_basefile_name, LayerEnum.commentary_segment
         )
         target_dataset = next(target_ann_store.datasets())
@@ -312,47 +353,43 @@ class PlainTextNumberAlignedParser:
         del target_ann_key
 
         root_segment_count = 0
-        target_segment_pointer = 0
+        last_commentary_meaning_idx = 0
         for source_meaning_segment in source_meaning_segments:
             ann_id = get_uuid()
             root_segment = next(source_meaning_segment.annotations(), None)
             if root_segment:
                 root_segment_count += 1
-                """ get the meaning segment with no commmentary annotation """
-
-                """ skip the meaning segment with commentary annotation """
-                while (
-                    target_segment_pointer < len(target_meaning_segments)
-                    and next(
-                        target_meaning_segments[target_segment_pointer].annotations(),
-                        None,
-                    )
-                    is not None
-                ):
-                    target_segment_pointer += 1
-
-                """ map the meaning segment with no commentary annotation """
-                while target_segment_pointer < len(target_meaning_segments):
-                    target_meaning_segment = target_meaning_segments[
-                        target_segment_pointer
-                    ]
-                    commentary_segment = next(
-                        target_meaning_segment.annotations(), None
-                    )
-                    if commentary_segment:
-                        break
-                    alignment_mapping[get_uuid()] = {
-                        target_pecha.id_: target_meaning_segment.id()
-                    }
-                    target_segment_pointer += 1
+                """ write commentary meaning statements """
+                target_pointer = last_commentary_meaning_idx
+                while target_pointer < len(target_meaning_segments):
+                    target_meaning_segment = target_meaning_segments[target_pointer]
+                    commentary_ann = next(target_meaning_segment.annotations(), None)
+                    if commentary_ann:
+                        smallest_associated_root_segment = next(
+                            element[3][0]
+                            for element in self.mapping_ann_indicies[
+                                "commentary_indicies"
+                            ]
+                            if target_pointer == element[0]
+                        )
+                        if root_segment_count <= smallest_associated_root_segment:
+                            break
+                    else:
+                        alignment_mapping[get_uuid()] = {
+                            target_pecha.id_: target_meaning_segment.id(),
+                        }
+                    target_pointer += 1
+                    last_commentary_meaning_idx += 1
 
                 """get the associated commentary segment"""
                 related_root_segment_ids = []
                 for (
                     target_meaning_segment_idx,
-                    associated_commentary_segments,
+                    _,
+                    _,
+                    associated_root_segments,
                 ) in self.mapping_ann_indicies["commentary_indicies"]:
-                    if root_segment_count in associated_commentary_segments:
+                    if root_segment_count in associated_root_segments:
                         associated_meaning_ann = target_meaning_segments[
                             target_meaning_segment_idx
                         ]
@@ -378,11 +415,24 @@ class PlainTextNumberAlignedParser:
                 }
                 continue
 
-            alignment_mapping[ann_id] = {source_pecha.id: source_meaning_segment.id()}
+            alignment_mapping[ann_id] = {source_pecha.id_: source_meaning_segment.id()}
 
         alignment_path = _mkdir(output_path / self.alignment_id)
         with open(alignment_path / "alignment.json", "w", encoding="utf-8") as f:
-            json.dump(alignment_mapping, f, indent=2)
+            json.dump(alignment_mapping, f, indent=2, ensure_ascii=False)
+
+        """ write the metadata """
+        self.metadata["source"]["pecha_id"] = source_pecha.id_
+        self.metadata["target"]["pecha_id"] = target_pecha.id_
+
+        self.metadata["source"]["base"] = self.source_basefile_name
+        self.metadata["target"]["base"] = self.target_basefile_name
+
+        self.metadata["source"]["layer"] = source_ann_store_file_path.name
+        self.metadata["target"]["layer"] = target_ann_store_file_path.name
+
+        with open(alignment_path / "metadata.json", "w", encoding="utf-8") as f:
+            json.dump(self.metadata, f, indent=2, ensure_ascii=False)
 
         return alignment_path
 
@@ -412,3 +462,30 @@ class PlainTextNumberAlignedParser:
             source_pecha_path, target_pecha_path, output_path
         )
         return alignment_path
+
+
+def metadata_from_csv(metadata_path: Path):
+    metadata = {}
+
+    with open(metadata_path, encoding="utf-8") as file:
+        reader = csv.reader(file)
+        """ Read the header to get the language codes """
+        header = next(reader)
+        languages = header[1:]  # Exclude the first empty column
+
+        """ Iterate over each row and populate the metadata dictionary"""
+        for row in reader:
+            field_name = row[0]
+            values = row[1:]
+
+            if field_name == "lang":
+                """For 'lang', only store a single string value"""
+                metadata[field_name] = values[0] if values[0] else values[1]
+            else:
+                """Create a sub-dictionary for each field with language codes as keys"""
+                field_data = {
+                    languages[i]: values[i] for i in range(len(languages)) if values[i]
+                }
+                metadata[field_name] = field_data  # type: ignore
+
+    return metadata

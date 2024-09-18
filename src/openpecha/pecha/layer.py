@@ -17,6 +17,7 @@ class LayerEnum(Enum):
     english_segment = "English_Segment"
     chapter = "Chapter"
     sapche = "Sapche"
+    metadata = "Meta_Data"
 
 
 class LayerGroupEnum(Enum):
@@ -37,5 +38,8 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
     """return the annotation category where annotation type falls in"""
     if layer_type in [LayerEnum.tibetan_segment, LayerEnum.english_segment]:
         return LayerCollectionEnum.translation
+
+    if layer_type == LayerEnum.metadata:
+        return LayerCollectionEnum.metadata
 
     return LayerCollectionEnum.root_commentory

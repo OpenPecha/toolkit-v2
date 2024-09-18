@@ -1,6 +1,7 @@
 pechas/
 output/
 chapter/
+output_json/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

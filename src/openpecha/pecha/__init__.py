@@ -235,6 +235,23 @@ class Pecha:
 
         return ann_store
 
+    def annotate_metadata(self, ann_store: AnnotationStore, metadata: dict):
+        ann_resource = next(ann_store.resources())
+        ann_dataset = next(ann_store.datasets())
+
+        ann_data = []
+        for k, v in metadata.items():
+            if v:
+                v = v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)
+                ann_data.append(
+                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                )
+
+        ann_store.annotate(
+            id=get_uuid(), target=Selector.resourceselector(ann_resource), data=ann_data
+        )
+        return ann_store
+
     def annotate(
         self,
         ann_store: AnnotationStore,
@@ -267,30 +284,34 @@ class Pecha:
         return ann
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
-        annotation_type_file_paths = list(
+        ann_store_file_paths = list(
             Path(self.ann_path / basefile_name).glob(f"{annotation_type.value}*.json")
         )
         annotation_stores = [
             AnnotationStore(file=str(annotation_file))
-            for annotation_file in annotation_type_file_paths
+            for annotation_file in ann_store_file_paths
         ]
 
         if len(annotation_stores) == 1:
-            return annotation_stores[0]
+            return annotation_stores[0], ann_store_file_paths[0]
 
-        return annotation_stores
+        return annotation_stores, ann_store_file_paths
 
     def save_ann_store(
         self, ann_store: AnnotationStore, ann_type: LayerEnum, basefile_name: str
     ):
-        new_ann_file_name = f"{ann_type.value}-{get_uuid()[:3]}.json"
-        ann_store_path = self.ann_path / basefile_name
+        if ann_type == LayerEnum.metadata:
+            file_name = "metadata.json"
+            ann_store_path = self.pecha_path
+        else:
+            file_name = f"{ann_type.value}-{get_uuid()[:3]}.json"
+            ann_store_path = self.ann_path / basefile_name
         ann_store_path.mkdir(parents=True, exist_ok=True)
         ann_store_json_dict = self.convert_absolute_to_relative_path(
             ann_store, ann_store_path
         )
 
-        with open(ann_store_path / new_ann_file_name, "w", encoding="utf-8") as f:
+        with open(ann_store_path / file_name, "w", encoding="utf-8") as f:
             f.write(json.dumps(ann_store_json_dict, indent=2, ensure_ascii=False))
 
         return ann_store_path

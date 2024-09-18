@@ -1,9 +1,9 @@
-import json
 from pathlib import Path
 from shutil import rmtree
 
 from openpecha.alignment.parsers.plaintext.number_align import (
     PlainTextNumberAlignedParser,
+    metadata_from_csv,
 )
 
 expected_source_segments = [
@@ -30,19 +30,24 @@ expected_target_segments = [
 
 expected_mapping_ann_indicies = {
     "root_indicies": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
+        (0, 3, 28),
+        (1, 3, 25),
+        (2, 3, 24),
+        (3, 3, 10),
+        (4, 3, 35),
+        (5, 3, 35),
+        (6, 3, 35),
+        (7, 3, 35),
+        (8, 3, 35),
+        (9, 4, 36),
     ],
     "root_sapche_indicies": [],
-    "commentary_indicies": [(1, [4]), (2, [1, 2, 3]), (4, [1, 2, 3, 5]), (5, [6])],
+    "commentary_indicies": [
+        (1, 3, 103, [4]),
+        (2, 5, 25, [1, 2, 3]),
+        (4, 7, 107, [1, 2, 3, 5]),
+        (5, 3, 23, [6]),
+    ],
     "commentary_sapche_indicies": [
         (0, 8, 38),
         (3, 8, 38),
@@ -55,10 +60,11 @@ def test_parse_to_segments():
 
     root_file = DATA / "003-ch.txt"
     align_file = DATA / "004-ch-1-諦閑.txt"
-    metadata_file = DATA / "metadata.json"
+    root_metadata_file = DATA / "003-ch_metadata.csv"
+    align_metadata_file = DATA / "004-ch-1-諦閑_metadata.csv"
 
     parser = PlainTextNumberAlignedParser.from_files(
-        root_file, align_file, metadata_file
+        root_file, align_file, root_metadata_file, align_metadata_file
     )
 
     assert not hasattr(parser, "source_segments")
@@ -95,12 +101,15 @@ def test_parse_to_segments():
 
 def test_parse_pecha():
     DATA = Path(__file__).parent / "data"
-    metadata_file = DATA / "metadata.json"
+    root_metadata_file = DATA / "003-ch_metadata.csv"
+    align_metadata_file = DATA / "004-ch-1-諦閑_metadata.csv"
 
     source_text = (DATA / "003-ch.txt").read_text(encoding="utf-8")
     target_text = (DATA / "004-ch-1-諦閑.txt").read_text(encoding="utf-8")
-    with open(metadata_file) as f:
-        metadata = json.load(f)
+    metadata = {
+        "source": metadata_from_csv(root_metadata_file),
+        "target": metadata_from_csv(align_metadata_file),
+    }
 
     parser = PlainTextNumberAlignedParser(source_text, target_text, metadata)
     parser.source_segments = expected_source_segments
