@@ -8,11 +8,13 @@ from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
 def test_pecha_read():
     DATA = Path(__file__).parent / "data"
-    pecha_path = DATA / "I0F8FC40B"
+    pecha_path = DATA / "I2E095029"
     pecha = Pecha.from_path(pecha_path)
-    assert pecha.id_ == "I0F8FC40B"
+    assert pecha.id_ == "I2E095029"
 
-    ann_store = pecha.get_annotation_store(LayerEnum.root_segment)
+    base_path = pecha.base_path / "base"
+    basefile_name = list(base_path.rglob("*.txt"))[0].stem
+    ann_store = pecha.get_annotation_store(basefile_name, LayerEnum.root_segment)
     assert isinstance(ann_store, AnnotationStore)
 
     expected_anns = [

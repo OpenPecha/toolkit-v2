@@ -1,7 +1,8 @@
+from collections import defaultdict
 from enum import Enum
 from typing import Dict
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from openpecha.ids import get_alignment_id
 from openpecha.pecha.layer import LayerEnum
@@ -43,11 +44,16 @@ class SegmentMetaData(BaseModel):
 class AlignmentMetaData(BaseModel):
     id_: str
     segments_metadata: Dict[str, SegmentMetaData]
+    source_metadata: Dict = defaultdict(lambda: defaultdict(dict))
+
+    model_config = ConfigDict(extra="allow")
 
     @classmethod
     def from_dict(cls, metadata: Dict, alignment_id: str = None) -> "AlignmentMetaData":
         segments_metadata: Dict[str, SegmentMetaData] = {}
-        for segment_source_id, segment_metadata in metadata.items():
+        for segment_source_id, segment_metadata in metadata[
+            "segments_metadata"
+        ].items():
             type = LayerEnum(segment_metadata["type"])
             relation = AlignmentRelationEnum(segment_metadata["relation"])
             lang = LanguageEnum(segment_metadata["lang"])
@@ -58,7 +64,11 @@ class AlignmentMetaData(BaseModel):
                 type=type, relation=relation, lang=lang, base=base, layer=layer
             )
 
-        return cls(id_=alignment_id, segments_metadata=segments_metadata)
+        return cls(
+            id_=alignment_id,
+            segments_metadata=segments_metadata,
+            source_metadata=metadata["metadata"],
+        )
 
     @model_validator(mode="before")
     @classmethod
@@ -78,4 +88,5 @@ class AlignmentMetaData(BaseModel):
                 segment_id: segment.to_dict()
                 for segment_id, segment in self.segments_metadata.items()
             },
+            "source_metadata": {k: v for k, v in self.source_metadata.items()},
         }
