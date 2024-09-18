@@ -65,7 +65,7 @@ class PlainTextLineAlignedParser:
         Parse the source and target texts, create annotations, and save to files.
         """
 
-        alignment_type = LayerCollectionEnum(self.metadata["source_metadata"]["type"])
+        alignment_type = LayerCollectionEnum(self.metadata["metadata"]["type"])
         (source_ann_store, source_ann_store_name), (
             target_ann_store,
             target_ann_store_name,
@@ -87,7 +87,7 @@ class PlainTextLineAlignedParser:
         """ building alignment metadata """
         metadata: Dict = defaultdict(lambda: defaultdict(dict))
 
-        metadata["source_metadata"] = self.metadata["source_metadata"]
+        metadata["metadata"] = self.metadata["metadata"]
         source_id = self.source_ann_store.id()
         resource = [
             resource

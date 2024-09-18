@@ -22,7 +22,7 @@ def test_plain_text_chapter_ann_parser():
     assert (pecha_path / "base").exists()
     assert (pecha_path / "layers").exists()
     """ check there is only one json file in layers """
-    assert len(list((pecha_path / "layers").glob("*.json"))) == 1
+    assert len(list((pecha_path / "layers").rglob("*.json"))) == 1
     """ check there is one txt file in base """
     assert len(list((pecha_path / "base").glob("*.txt"))) == 1
 

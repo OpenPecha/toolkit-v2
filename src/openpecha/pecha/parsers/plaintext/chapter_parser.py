@@ -1,6 +1,7 @@
 import json
 import re
 from pathlib import Path
+from typing import Dict, List
 
 from stam import AnnotationStore, Offset, Selector
 
@@ -27,20 +28,69 @@ class PlainTextChapterAnnotationParser:
         pattern = re.compile(r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"")
         matches = pattern.finditer(self.plain_text)
 
+        """ get chapter titles"""
         for match in matches:
-            chapter = match.group(1)
-            tibetan_text = match.group(2)
+            chapter_number = match.group(1)
+            title = match.group(2)
+
             start_index = match.start()
             end_index = match.end()
             chapter_details.append(
                 {
-                    "chapter": chapter,
-                    "tibetan_text": tibetan_text,
-                    "start_index": start_index,
-                    "end_index": end_index,
+                    "chapter number": chapter_number,
+                    "title": title,
+                    "title_start": start_index,
+                    "title_end": end_index,
                 }
             )
+
+        """ get chapter details"""
+        for idx, chapter_detail in enumerate(chapter_details):
+            chapter_detail["chapter_start"] = chapter_detail["title_end"]
+            if idx + 1 < len(chapter_details):
+                chapter_detail["chapter_end"] = chapter_details[idx + 1]["title_start"]
+            else:
+                chapter_detail["chapter_end"] = len(self.plain_text)
+
         return chapter_details
+
+    def remove_chapter_titles(self, chapter_details: List[Dict]):
+        """find spacing after Chapter Number and Chapter Name"""
+        pattern = r'ch\d+-"[\u0F00-\u0FFF]+"(\s*)'
+        matches = re.findall(pattern, self.plain_text)
+        spaces_after_title = [len(spaces) for spaces in matches]
+
+        assert len(spaces_after_title) == len(chapter_details), ""
+        """remove chapter number and chapter titles"""
+        self.plain_text = re.sub('ch\\d+-"[\u0F00-\u0FFF]+"\\s*', "", self.plain_text)
+
+        """ update chapter co ordinate"""
+        updated_chapter_details = []
+        total_titles_len = 0  # Chapter Length
+        total_space_count = 0
+        for chapter_detail, space_count in zip(chapter_details, spaces_after_title):
+            total_titles_len += (
+                chapter_detail["title_end"] - chapter_detail["title_start"]
+            )
+
+            total_space_count += space_count
+            start = (
+                chapter_detail["chapter_start"]
+                - total_titles_len
+                - total_space_count
+                + 1
+            )
+            end = chapter_detail["chapter_end"] - total_titles_len - total_space_count
+            end = end if end < len(self.plain_text) else len(self.plain_text) - 1
+            updated_chapter_details.append(
+                {
+                    "chapter number": chapter_detail["chapter number"],
+                    "title": chapter_detail["title"],
+                    "start": start,
+                    "end": end,
+                }
+            )
+        return updated_chapter_details
 
     def parse(self, output_path: Path):
         pecha_id = get_initial_pecha_id()
@@ -50,9 +100,16 @@ class PlainTextChapterAnnotationParser:
         with open(pecha_path / "metadata.json", "w") as f:
             json.dump(self.meta_data, f, ensure_ascii=False, indent=2)
 
+        """ cleaning up base file """
+        """ remove chapter number and chapter details """
+        chapter_details = self.extract_chapters()
+        chapter_details = self.remove_chapter_titles(chapter_details)
+
         """ base file """
         base_dir = _mkdir(pecha_path / "base")
-        base_file_path = base_dir / f"{get_base_id()}.txt"
+        base_file_name = get_base_id()
+        base_file_path = base_dir / f"{base_file_name}.txt"
+
         base_file_path.write_text(self.plain_text, encoding="utf-8")
 
         """ chapter annotations """
@@ -66,14 +123,9 @@ class PlainTextChapterAnnotationParser:
         )
 
         unique_ann_data_id = get_uuid()
-        chapter_details = self.extract_chapters()
-        for idx, chapter_detail in enumerate(chapter_details):
-            start_index = chapter_detail["start_index"]
-            if idx == len(chapter_details) - 1:
-                end_index = len(self.plain_text)
-            else:
-                end_index = chapter_details[idx + 1]["start_index"]
-
+        for chapter_detail in chapter_details:
+            start_index = chapter_detail["start"]
+            end_index = chapter_detail["end"]
             target = Selector.textselector(
                 ann_resource,
                 Offset.simple(start_index, end_index),
@@ -92,7 +144,8 @@ class PlainTextChapterAnnotationParser:
                     "id": get_uuid(),
                     "set": ann_dataset.id(),
                     "key": "Chapter Number",
-                    "value": int(chapter_detail["chapter"]),
+                    "value": int(chapter_detail["chapter number"]),
+
                 }
             )
 
@@ -101,7 +154,7 @@ class PlainTextChapterAnnotationParser:
                     "id": get_uuid(),
                     "set": ann_dataset.id(),
                     "key": "Chapter Name",
-                    "value": chapter_detail["tibetan_text"],
+                    "value": chapter_detail["title"],
                 }
             )
 
@@ -109,6 +162,8 @@ class PlainTextChapterAnnotationParser:
 
         ann_store_filename = f"{LayerEnum.chapter.value}-{get_uuid()[:3]}.json"
 
-        save_stam(ann_store, output_path, layer_dir / ann_store_filename)
+        save_stam(
+            ann_store, output_path, layer_dir / base_file_name / ann_store_filename
+        )
 
         return pecha_path

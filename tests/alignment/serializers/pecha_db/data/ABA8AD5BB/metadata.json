@@ -16,7 +16,7 @@
       "layer": "English_Segment-1ba.json"
     }
   },
-  "source_metadata": {
+  "metadata": {
     "type": "Translation",
     "source": "nalanda-mt TM2380(github)"
   }
