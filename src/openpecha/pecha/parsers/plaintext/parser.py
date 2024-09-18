@@ -1,3 +1,4 @@
+import re
 from typing import Dict, List
 
 
@@ -51,13 +52,16 @@ class PechaFrameWork:
         """
         for pipe in pipelist:
             if isinstance(pipe, str):
-                getattr(self, pipe)(self.data)
+                self.data = getattr(self, pipe)(self.data)
             else:
-                pipe(self.data)
+                self.data = pipe(self.data)
 
-    def preprocess(self) -> List[str]:
+    def preprocess(self) -> List[Dict]:
         """split the text into atomic units with newline"""
-        return self.input.split("\n")
+        res = []
+        for i in self.input.split("\n"):
+            res.append({"string": i})
+        return res
 
     def chapter_parser_pipe(self, input: List[Dict]):
         """
@@ -65,10 +69,31 @@ class PechaFrameWork:
         process is to group all the lines within the same chapter together
         output is to update self.data and by including the chapter information
         """
+        chapter_number_regex = r"\Ach(\d+)-"
+        chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
 
-        pass
+        for i in input:
+            chapter_data = {}
 
-    def tsawa_parser_pipe(self, input: List[Dict]):
+            # Check for chapter number
+            chapter_number_match = re.match(chapter_number_regex, i["string"])
+            if chapter_number_match:
+                chapter_number = chapter_number_match.group(1)
+                chapter_data["chapter_number"] = chapter_number
+
+            # Check for chapter name
+            chapter_name_match = re.search(chapter_name_regex, i["string"])
+            if chapter_name_match:
+                chapter_name = chapter_name_match.group(1)
+                chapter_data["chapter_name"] = chapter_name
+
+            # Update input if chapter data is found
+            if chapter_data:
+                i["chapter"] = chapter_data
+
+        return input
+
+    def tsawa_parser_pipe(self):
         """
         Dependency: This pipe requires the chapter parser pipe already has been ran
 
