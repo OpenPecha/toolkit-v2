@@ -57,8 +57,9 @@ class PechaFrameWork:
                 pipe(self.data)
 
     def preprocess(self) -> Dict:
-        """split the text into atomic units with newline"""
-        return {"raw_string": self.input.split("\n")}
+        # Use regex to split by spaces or newlines and keep the delimiters
+        splited_strings = [x for x in re.split(r"([\s\n])", self.input) if x != ""]
+        return {"raw_string": splited_strings}
 
     def chapter_parser_pipe(self):
         """
@@ -69,7 +70,12 @@ class PechaFrameWork:
         chapter_number_regex = r"\Ach(\d+)-"
         chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
 
+        char_count = 0
         for i, input_line in enumerate(self.data["raw_string"]):
+            if input_line in [" ", "\n"]:
+                char_count += 1
+                continue
+
             chapter_data = {}
 
             # Check for chapter number
@@ -91,6 +97,8 @@ class PechaFrameWork:
                     self.data["chapter"] = [chapter_data]
                 else:
                     self.data["chapter"].append(chapter_data)
+
+            char_count += len(input_line)
 
         return input
 
