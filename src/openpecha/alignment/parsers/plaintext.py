@@ -1,7 +1,8 @@
 import json
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from stam import AnnotationStore, Offset, Selector
 
@@ -64,7 +65,7 @@ class PlainTextLineAlignedParser:
         Parse the source and target texts, create annotations, and save to files.
         """
 
-        alignment_type = LayerCollectionEnum(self.metadata["alignment"]["type"])
+        alignment_type = LayerCollectionEnum(self.metadata["source_metadata"]["type"])
         (source_ann_store, source_ann_store_name), (
             target_ann_store,
             target_ann_store_name,
@@ -84,15 +85,17 @@ class PlainTextLineAlignedParser:
             return None
 
         """ building alignment metadata """
-        metadata = {}
+        metadata: Dict = defaultdict(lambda: defaultdict(dict))
 
+        metadata["source_metadata"] = self.metadata["source_metadata"]
         source_id = self.source_ann_store.id()
         resource = [
             resource
             for resource in self.source_ann_store.resources()
             if resource.id() != "metadata"
         ][0]
-        metadata[source_id] = {
+
+        metadata["segments_metadata"][source_id] = {
             "type": self.metadata["source"]["type"],
             "relation": AlignmentRelationEnum.source.value,
             "lang": self.metadata["source"]["language"],
@@ -106,7 +109,7 @@ class PlainTextLineAlignedParser:
             for resource in self.target_ann_store.resources()
             if resource.id() != "metadata"
         ][0]
-        metadata[target_id] = {
+        metadata["segments_metadata"][target_id] = {
             "type": self.metadata["target"]["type"],
             "relation": AlignmentRelationEnum.target.value,
             "lang": self.metadata["target"]["language"],
@@ -300,3 +303,14 @@ def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
         else:
             resource["@include"] = f"../base/{original_path.name}"
     return json_object
+
+
+if __name__ == "__main__":
+    source_path = Path("TM2380-bo.txt")
+    target_path = Path("TM2380-en.txt")
+    metadata_path = Path("metadata.json")
+
+    parser = PlainTextLineAlignedParser.from_files(
+        source_path, target_path, metadata_path
+    )
+    parser.parse(Path("output"))
