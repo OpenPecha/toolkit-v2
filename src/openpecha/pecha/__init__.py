@@ -1,15 +1,17 @@
+import json
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Generator, Tuple, Union
+from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
-from stam import AnnotationStore, Selector
+from stam import Annotation, AnnotationStore, Selector
 
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo
+from openpecha.ids import get_uuid
 from openpecha.pecha.blupdate import update_layer
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 
 BASE_NAME = str
 LAYER_NAME = str
@@ -183,9 +185,9 @@ class StamPecha:
 
 
 class Pecha:
-    def __init__(self, pecha_id: str, base_path: Path) -> None:
+    def __init__(self, pecha_id: str, pecha_path: Path) -> None:
         self.id_ = pecha_id
-        self.base_path = base_path
+        self.pecha_path = pecha_path
 
     @classmethod
     def from_id(cls, pecha_id: str):
@@ -198,12 +200,71 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @property
+    def base_path(self) -> Path:
+        base_path = self.pecha_path / "base"
+        if not base_path.exists():
+            base_path.mkdir(parents=True, exist_ok=True)
+        return base_path
+
+    @property
     def ann_path(self):
-        return self.base_path / "layers"
+        ann_path = self.pecha_path / "layers"
+        if not ann_path.exists():
+            ann_path.mkdir(parents=True, exist_ok=True)
+        return ann_path
 
     @property
     def metadata(self):
-        return AnnotationStore(file=str(self.base_path / "metadata.json"))
+        return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
+
+    def set_base(self, base_name, content) -> None:
+        """
+        This function sets the base layer of the pecha to a new text.
+        """
+        (self.base_path / f"{base_name}.txt").write_text(content)
+
+    def create_ann_store(self, basefile_name: str, annotation_type: LayerEnum):
+        ann_store = AnnotationStore(id=self.id_)
+        ann_store.add_resource(
+            id=basefile_name,
+            filename=(self.base_path / f"{basefile_name}.txt").as_posix(),
+        )
+
+        dataset_id = get_layer_collection(annotation_type).value
+        ann_store.add_dataset(id=dataset_id)
+
+        return ann_store
+
+    def annotate(
+        self,
+        ann_store: AnnotationStore,
+        selector: Selector,
+        ann_type: LayerEnum,
+        ann_data_id: str,
+        data: Optional[List] = None,
+    ):
+        ann_id = get_uuid()
+        ann_dataset = next(ann_store.datasets())
+        ann_group = get_layer_group(ann_type)
+
+        if not ann_data_id:
+            ann_data_id = get_uuid()
+
+        ann_type_data = [
+            {
+                "id": ann_data_id,
+                "set": ann_dataset.id(),
+                "key": ann_group.value,
+                "value": ann_type.value,
+            }
+        ]
+        if not data:
+            data = ann_type_data
+        else:
+            data.extend(ann_type_data)
+
+        ann = ann_store.annotate(id=ann_id, target=selector, data=data)
+        return ann
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
         annotation_type_file_paths = list(
@@ -218,3 +279,35 @@ class Pecha:
             return annotation_stores[0]
 
         return annotation_stores
+
+    def save_ann_store(
+        self, ann_store: AnnotationStore, ann_type: LayerEnum, basefile_name: str
+    ):
+        new_ann_file_name = f"{ann_type.value}-{get_uuid()[:3]}.json"
+        ann_store_path = self.ann_path / basefile_name
+        ann_store_path.mkdir(parents=True, exist_ok=True)
+        ann_store_json_dict = self.convert_absolute_to_relative_path(
+            ann_store, ann_store_path
+        )
+
+        with open(ann_store_path / new_ann_file_name, "w", encoding="utf-8") as f:
+            f.write(json.dumps(ann_store_json_dict, indent=2, ensure_ascii=False))
+
+        return ann_store_path
+
+    @staticmethod
+    def convert_absolute_to_relative_path(
+        ann_store: AnnotationStore, ann_store_path: Path
+    ):
+        """
+        convert the absolute to relative path for base file in json string of annotation store
+        """
+        ann_store_json_string = ann_store.to_json_string()
+        json_object = json.loads(ann_store_json_string)
+        for resource in json_object["resources"]:
+            original_path = Path(resource["@include"])
+            if ann_store_path.name == "metadata.json":
+                resource["@include"] = f"base/{original_path.name}"
+            else:
+                resource["@include"] = f"../../base/{original_path.name}"
+        return json_object

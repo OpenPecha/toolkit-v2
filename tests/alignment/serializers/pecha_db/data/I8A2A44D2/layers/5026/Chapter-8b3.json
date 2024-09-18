@@ -15,7 +15,7 @@
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "Structure Type"
+          "@id": "Structure_Type"
         },
         {
           "@type": "DataKey",
@@ -30,7 +30,7 @@
         {
           "@type": "AnnotationData",
           "@id": "3e06ccb546d744adb19b7f99f29d2b83",
-          "key": "Structure Type",
+          "key": "Structure_Type",
           "value": {
             "@type": "String",
             "value": "Chapter"

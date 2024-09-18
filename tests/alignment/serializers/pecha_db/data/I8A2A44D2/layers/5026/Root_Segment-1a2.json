@@ -15,14 +15,14 @@
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "Structure Type"
+          "@id": "Structure_Type"
         }
       ],
       "data": [
         {
           "@type": "AnnotationData",
           "@id": "727f853eafc74dad8748a43eff7b1cdb",
-          "key": "Structure Type",
+          "key": "Structure_Type",
           "value": {
             "@type": "String",
             "value": "Root_Segment"

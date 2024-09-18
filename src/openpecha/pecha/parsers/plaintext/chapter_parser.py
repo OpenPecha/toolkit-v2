@@ -5,7 +5,7 @@ from typing import Dict, List
 
 from stam import AnnotationStore, Offset, Selector
 
-from openpecha.alignment.parsers.plaintext import save_stam
+from openpecha.alignment.parsers.plaintext.line_align import save_stam
 from openpecha.config import _mkdir
 from openpecha.ids import get_base_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
