@@ -259,7 +259,7 @@ def create_pecha_stam(
         )
 
     """save the new annotation store"""
-    ann_output_dir = _mkdir(pecha_path / "layers")
+    ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
     ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
     ann_store_path = ann_output_dir / ann_store_filename
     ann_store_path = save_stam(ann_store, output_path, ann_store_path)
@@ -301,16 +301,5 @@ def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
         if ann_store_path.name == "metadata.json":
             resource["@include"] = f"base/{original_path.name}"
         else:
-            resource["@include"] = f"../base/{original_path.name}"
+            resource["@include"] = f"../../base/{original_path.name}"
     return json_object
-
-
-if __name__ == "__main__":
-    source_path = Path("TM2380-bo.txt")
-    target_path = Path("TM2380-en.txt")
-    metadata_path = Path("metadata.json")
-
-    parser = PlainTextLineAlignedParser.from_files(
-        source_path, target_path, metadata_path
-    )
-    parser.parse(Path("output"))

@@ -1,11 +1,11 @@
 {
   "@type": "AnnotationStore",
-  "@id": "IDBEEDAAE",
+  "@id": "IA4C08511",
   "resources": [
     {
       "@type": "TextResource",
-      "@id": "389e",
-      "@include": "../base/389e.txt"
+      "@id": "0d78",
+      "@include": "../../base/0d78.txt"
     }
   ],
   "annotationsets": [
@@ -21,11 +21,11 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "df65226e143043a695be3a37119ebacb",
+          "@id": "8447a6ab9948463bb6dc8cceb01459b5",
           "key": "Translation Segment",
           "value": {
             "@type": "String",
-            "value": "Tibetan_Segment"
+            "value": "English_Segment"
           }
         }
       ]
@@ -34,10 +34,10 @@
   "annotations": [
     {
       "@type": "Annotation",
-      "@id": "e189815ebfdd4303b37a1802f9623ff3",
+      "@id": "68bbecc745a84bfcb286da9674bd7199",
       "target": {
         "@type": "TextSelector",
-        "resource": "389e",
+        "resource": "0d78",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -46,118 +46,118 @@
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 127
+            "value": 242
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "df65226e143043a695be3a37119ebacb",
+          "@id": "8447a6ab9948463bb6dc8cceb01459b5",
           "set": "Translation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "6bd1025361c142cda4383bfac9fa5805",
+      "@id": "8449998e0abf40ceb01fbb43b4990456",
       "target": {
         "@type": "TextSelector",
-        "resource": "389e",
+        "resource": "0d78",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 127
+            "value": 242
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 204
+            "value": 388
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "df65226e143043a695be3a37119ebacb",
+          "@id": "8447a6ab9948463bb6dc8cceb01459b5",
           "set": "Translation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "9871080ba0c24499925a3552061b5c47",
+      "@id": "95b402d66bbb4feb8417fec226fa48a9",
       "target": {
         "@type": "TextSelector",
-        "resource": "389e",
+        "resource": "0d78",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 204
+            "value": 388
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 353
+            "value": 590
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "df65226e143043a695be3a37119ebacb",
+          "@id": "8447a6ab9948463bb6dc8cceb01459b5",
           "set": "Translation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "18d329f041e848c4bee94e48018c5377",
+      "@id": "3a7e43f07d20474f9612cbedc8528d1d",
       "target": {
         "@type": "TextSelector",
-        "resource": "389e",
+        "resource": "0d78",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 353
+            "value": 590
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 428
+            "value": 709
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "df65226e143043a695be3a37119ebacb",
+          "@id": "8447a6ab9948463bb6dc8cceb01459b5",
           "set": "Translation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "1f8713526ac74441a3001f9d05d1d944",
+      "@id": "494b11f842604c71882284fdae93fc43",
       "target": {
         "@type": "TextSelector",
-        "resource": "389e",
+        "resource": "0d78",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 428
+            "value": 709
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 499
+            "value": 796
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "df65226e143043a695be3a37119ebacb",
+          "@id": "8447a6ab9948463bb6dc8cceb01459b5",
           "set": "Translation"
         }
       ]

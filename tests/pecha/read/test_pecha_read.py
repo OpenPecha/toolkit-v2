@@ -12,7 +12,9 @@ def test_pecha_read():
     pecha = Pecha.from_path(pecha_path)
     assert pecha.id_ == "I0F8FC40B"
 
-    ann_store = pecha.get_annotation_store(LayerEnum.root_segment)
+    base_path = pecha.base_path / "base"
+    basefile_name = list(base_path.rglob("*.txt"))[0].stem
+    ann_store = pecha.get_annotation_store(basefile_name, LayerEnum.root_segment)
     assert isinstance(ann_store, AnnotationStore)
 
     expected_anns = [
