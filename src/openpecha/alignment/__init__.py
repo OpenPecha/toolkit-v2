@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from openpecha.alignment.metadata import AlignmentMetaData
 from openpecha.config import ALIGNMENT_PATH, _mkdir
@@ -11,6 +11,7 @@ from openpecha.github_utils import (
 )
 from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
 
 
 class Alignment:
@@ -106,14 +107,56 @@ class Alignment:
 
         segment_pair = {}
         for pecha_id, ann_id in self.segment_pairs[id_].items():
-            """get annotation store"""
+            """get root segment annotation"""
             base_file = self.metadata.segments_metadata[pecha_id].base
             ann_type = self.metadata.segments_metadata[pecha_id].type
             pecha_ann_store = self.pechas[pecha_id].get_annotation_store(
                 base_file, ann_type
             )
+
+            """ get chapter annotation"""
+            chapter_ann_type = LayerEnum.chapter
+            chapter_file_path = next(
+                Path(self.pechas[pecha_id].ann_path / f"{base_file}").glob(
+                    f"{chapter_ann_type.value}*.json"
+                ),
+                None,
+            )
+
+            if chapter_file_path:
+                pecha_ann_store.from_file(chapter_file_path.as_posix())
+
+            """ get segment string and its chapter metadata"""
             ann = pecha_ann_store.annotation(ann_id)
-            segment_pair[pecha_id] = str(ann)
+            ann_text_selection = next(ann.textselections())
+            ann_text_begin, ann_text_end = (
+                ann_text_selection.begin(),
+                ann_text_selection.end(),
+            )
+
+            data_set = pecha_ann_store.dataset(
+                LayerCollectionEnum.root_commentory.value
+            )
+            key = data_set.key(LayerGroupEnum.structure_type.value)
+
+            ann_data: Dict[str, Any] = {}
+            ann_data["string"] = str(ann)
+            for chapter_ann in key.data(value=LayerEnum.chapter.value).annotations():
+                chapter_ann_text_begin = next(chapter_ann.textselections()).begin()
+                chapter_ann_text_end = next(chapter_ann.textselections()).end()
+                if (
+                    ann_text_begin >= chapter_ann_text_begin
+                    and ann_text_end <= chapter_ann_text_end
+                ):
+                    metadata: Dict[str, str] = {}
+                    for ann_metadata in chapter_ann:
+                        metadata[str(ann_metadata.key().id())] = str(
+                            ann_metadata.value()
+                        )
+
+                    ann_data["metadata"] = metadata
+                    break
+            segment_pair[pecha_id] = ann_data
         return segment_pair
 
     def upload_update_with_github(self):

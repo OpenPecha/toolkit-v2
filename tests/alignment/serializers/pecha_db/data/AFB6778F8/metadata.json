@@ -1,0 +1,23 @@
+{
+  "id_": "AFB6778F8",
+  "segments_metadata": {
+    "I8A2A44D2": {
+      "type": "Root_Segment",
+      "relation": "Source",
+      "lang": "Tibetan",
+      "base": "5026",
+      "layer": "Root_Segment-1a2.json"
+    },
+    "IA8419656": {
+      "type": "Commentary",
+      "relation": "Target",
+      "lang": "Tibetan",
+      "base": "1e4b",
+      "layer": "Commentary-e70.json"
+    }
+  },
+  "metadata": {
+    "type": "Root_Commentary",
+    "source": "https://github.com/Esukhia/chojuk-alignement/tree/master/D372-final"
+  }
+}
