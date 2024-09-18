@@ -52,18 +52,15 @@ class PechaFrameWork:
         """
         for pipe in pipelist:
             if isinstance(pipe, str):
-                self.data = getattr(self, pipe)(self.data)
+                getattr(self, pipe)()
             else:
-                self.data = pipe(self.data)
+                pipe(self.data)
 
-    def preprocess(self) -> List[Dict]:
+    def preprocess(self) -> Dict:
         """split the text into atomic units with newline"""
-        res = []
-        for i in self.input.split("\n"):
-            res.append({"string": i})
-        return res
+        return {"raw_string": self.input.split("\n")}
 
-    def chapter_parser_pipe(self, input: List[Dict]):
+    def chapter_parser_pipe(self):
         """
         input is self.data
         process is to group all the lines within the same chapter together
@@ -72,24 +69,28 @@ class PechaFrameWork:
         chapter_number_regex = r"\Ach(\d+)-"
         chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
 
-        for i in input:
+        for i, input_line in enumerate(self.data["raw_string"]):
             chapter_data = {}
 
             # Check for chapter number
-            chapter_number_match = re.match(chapter_number_regex, i["string"])
+            chapter_number_match = re.match(chapter_number_regex, input_line)
             if chapter_number_match:
                 chapter_number = chapter_number_match.group(1)
                 chapter_data["chapter_number"] = chapter_number
 
             # Check for chapter name
-            chapter_name_match = re.search(chapter_name_regex, i["string"])
+            chapter_name_match = re.search(chapter_name_regex, input_line)
             if chapter_name_match:
                 chapter_name = chapter_name_match.group(1)
                 chapter_data["chapter_name"] = chapter_name
 
             # Update input if chapter data is found
             if chapter_data:
-                i["chapter"] = chapter_data
+                chapter_data["start_index"] = i
+                if "chapter" not in self.data:
+                    self.data["chapter"] = [chapter_data]
+                else:
+                    self.data["chapter"].append(chapter_data)
 
         return input
 
@@ -103,7 +104,7 @@ class PechaFrameWork:
         """
         pass
 
-    def tsikhang_parser_pipe(self, input: List[Dict]):
+    def tsikhang_parser_pipe(self):
         """
         Dependency: This pipe requires the chapter tsawa parser pipe already has been ran
 
