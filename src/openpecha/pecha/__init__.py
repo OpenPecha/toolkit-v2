@@ -314,7 +314,7 @@ class Pecha:
         with open(ann_store_path / file_name, "w", encoding="utf-8") as f:
             f.write(json.dumps(ann_store_json_dict, indent=2, ensure_ascii=False))
 
-        return ann_store_path
+        return ann_store_path / file_name
 
     @staticmethod
     def convert_absolute_to_relative_path(

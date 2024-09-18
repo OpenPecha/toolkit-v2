@@ -11,7 +11,14 @@
 
 ## Description
 
-OpenPecha toolkit version 2
+**Toolkit V2** is the second version of the existing toolkit.
+
+A Python package designed for working with annotations within the **PechaData** framework. PechaData is a GitHub repository that houses data in a distinct format called STAM.
+
+**The Stand-off Text Annotation Model (STAM)** is a data model for stand-off text annotation, where all information related to a text is represented as annotations.
+
+## Quickstart
+To get started with the toolkit, we recommend following this [documentation](docs/getting-started.md).
 
 ## Project owner(s)
 
@@ -20,13 +27,34 @@ OpenPecha toolkit version 2
 - [@10zinten](https://github.com/10zinten)
 - [@tsundue](https://github.com/tenzin3)
 
-## Integrations
 
-<!-- Add any intregrations here or delete `- []()` and write None-->
+## Diving Deeper
+- To learn more about the STAM data model, please refer to their following resources
+  - [stam github](https://github.com/annotation/stam)
+  - [stam python github](https://github.com/annotation/stam-python)
+  - [stam python documentation](https://stam-python.readthedocs.io/en/latest/)
+  - [stam python tutorial](https://github.com/annotation/stam-python/blob/master/tutorial.ipynb)
 
-None
-## Docs
+### Pecha Annotation Transfer
+The following code snippet demonstrates how to transfer annotations from one pecha to another pecha.
+If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
 
-<!-- Update the link to the docs -->
+```py
 
-Read the docs [here](https://wiki.openpecha.org/#/dev/coding-guidelines).
+from pathlib import Path
+from openpecha.pecha import StamPecha
+
+source_pecha_path = Path("source pecha path")
+target_pecha_path = Path("target pecha path")
+
+source_base_name = "source base name"
+target_base_name = "target base name"
+
+source_pecha = StamPecha(source_pecha_path)
+target_pecha = StamPecha(target_pecha_path)
+
+target_pecha.merge_pecha(source_pecha, source_base_name, target_base_name)
+
+```
+
+*__Important Note:__ In a pecha, there could be more than one base file. So above code snippet will transfer only the annotations which is related to the given base file name from source pecha to target pecha.*
