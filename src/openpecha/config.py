@@ -20,3 +20,17 @@ PECHAS_PATH = _mkdir_if_not(BASE_PATH / "pechas")
 ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignment")
 
 PECHA_DATA_ORG = "PechaData"
+
+LINE_BREAKERS = [
+    "། །",
+    "ག །",
+    "ག།",
+    "།།",
+    "ཤ །",
+    "ཤ།",
+    "ཀ།",
+    "ཀ །",
+    "།། །།",
+    "། །།",
+    "།།།",
+]
