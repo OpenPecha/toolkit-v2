@@ -32,6 +32,7 @@ class PlainTextChapterAnnotationParser:
         for match in matches:
             chapter_number = match.group(1)
             title = match.group(2)
+
             start_index = match.start()
             end_index = match.end()
             chapter_details.append(
@@ -108,6 +109,7 @@ class PlainTextChapterAnnotationParser:
         base_dir = _mkdir(pecha_path / "base")
         base_file_name = get_base_id()
         base_file_path = base_dir / f"{base_file_name}.txt"
+
         base_file_path.write_text(self.plain_text, encoding="utf-8")
 
         """ chapter annotations """
@@ -124,7 +126,6 @@ class PlainTextChapterAnnotationParser:
         for chapter_detail in chapter_details:
             start_index = chapter_detail["start"]
             end_index = chapter_detail["end"]
-
             target = Selector.textselector(
                 ann_resource,
                 Offset.simple(start_index, end_index),
@@ -144,6 +145,7 @@ class PlainTextChapterAnnotationParser:
                     "set": ann_dataset.id(),
                     "key": "Chapter Number",
                     "value": int(chapter_detail["chapter number"]),
+
                 }
             )
 
