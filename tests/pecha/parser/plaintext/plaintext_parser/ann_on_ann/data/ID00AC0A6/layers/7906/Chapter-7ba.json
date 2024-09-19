@@ -197,6 +197,78 @@
             "@type": "String",
             "value": "Tsawa"
           }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "9745d8bf2f4948b9ae9b2b1a692fd839",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "a9ce9df30a2f4dca888b87fd91b41d6b",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "5f2c4ef52025436d93846c570840b3a7",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "51e4c7f5df634fcc90815a66d85070bd",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "40afbd0be8a94c7ebf9434d773efa8b5",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "2902f82230754e1ba3ab875f83bac3c3",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "9d722fcefb444af593b32a837ca14139",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "4bb18bf0436d42db9fe596465c26fe15",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
         }
       ]
     }

@@ -2,6 +2,33 @@ import re
 from typing import Dict, List
 
 
+def filter_pipeline(text: str, pipelist: List):
+    """
+    input: text, list of filtering pipes
+    output: True if any of the pipe returns True, False otherwise
+    """
+    for pipe in pipelist:
+        if pipe(text):
+            return True
+    return False
+
+
+def english_filter_pipe(text: str):
+    """
+    input: text
+    output: True if text contains english characters, False otherwise
+    """
+    return bool(re.search(r"[a-zA-Z]", text))
+
+
+def symbol_filter_pipe(text: str):
+    """
+    input: text
+    output: True if text contains symbols, False otherwise
+    """
+    return bool(re.search(r"[-\"\'$\*\+\?\|\[\]\{\}\;\(\)]", text))
+
+
 class PechaFrameWork:
     def __init__(self, input: str, metadata: Dict = None):
         self.input = input
@@ -133,8 +160,28 @@ class PechaFrameWork:
         Output is to update self.data by including the tsawa information.
         """
         index_start = 0
+
+        filter_pipeline_definition = [english_filter_pipe, symbol_filter_pipe]
+
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
+                continue
+
+            if filter_pipeline(input_line, filter_pipeline_definition):
+                index_end = i
+                if index_start == index_end:
+                    index_start = i + 1
+                    continue
+                tsawa_data = {
+                    "index_start": index_start,
+                    "index_end": index_end,
+                }
+                if "tsawa" not in self.data:
+                    self.data["tsawa"] = [tsawa_data]
+                else:
+                    self.data["tsawa"].append(tsawa_data)
+
+                index_start = i + 1
                 continue
 
             if i + 1 >= len(self.data["raw_string"]):

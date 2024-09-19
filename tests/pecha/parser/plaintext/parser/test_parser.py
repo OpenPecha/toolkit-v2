@@ -94,9 +94,9 @@ expected_tsawa_output = [
     {"index_start": 0, "index_end": 2},
     {"index_start": 5, "index_end": 7},
     {"index_start": 10, "index_end": 12},
-    {"index_start": 15, "index_end": 25},
+    {"index_start": 16, "index_end": 25},
     {"index_start": 28, "index_end": 36},
-    {"index_start": 39, "index_end": 49},
+    {"index_start": 40, "index_end": 49},
     {"index_start": 52, "index_end": 60},
     {"index_start": 63, "index_end": 71},
 ]
@@ -129,4 +129,4 @@ def test_tsawa_parser_pipe():
     assert openpecha_framework.data["tsawa"] == expected_tsawa_output
 
 
-test_chapter_parser_pipeline()
+test_tsawa_parser_pipe()
