@@ -132,13 +132,54 @@ class PechaFrameWork:
 
     def tsawa_parser_pipe(self):
         """
-        Dependency: This pipe requires the chapter parser pipe already has been ran
-
-        input is self.data with chapter information
-        process is to look inside every chapter and tag the chapter title
+        input is self.data
+        process is to look inside and check for tsawa
         output is to update self.data and by including the tsawa information
         """
-        pass
+        char_count = 0
+
+        index_start, char_start = 0, 0
+        for i, input_line in enumerate(self.data["raw_string"]):
+            if input_line in [" ", "\n"]:
+                char_count += 1
+                continue
+
+            char_count += len(input_line)
+            if i + 1 >= len(self.data["raw_string"]):
+                continue
+
+            if (
+                self.data["raw_string"][i + 1] == "\n"
+                and self.data["raw_string"][i + 2] == "\n"
+            ):
+                index_end = i
+                char_end = char_count
+                tsawa_data = {
+                    "index_start": index_start,
+                    "char_start": char_start,
+                    "index_end": index_end,
+                    "char_end": char_end,
+                }
+                if "tsawa" not in self.data:
+                    self.data["tsawa"] = [tsawa_data]
+                else:
+                    self.data["tsawa"].append(tsawa_data)
+
+                index_start = i + 3
+                char_start = char_count + 2
+
+        tsawa_data = {
+            "index_start": index_start,
+            "char_start": char_start,
+            "index_end": len(self.data["raw_string"]) - 1,
+            "char_end": char_count,
+        }
+        if "tsawa" not in self.data:
+            self.data["tsawa"] = [tsawa_data]
+        else:
+            self.data["tsawa"].append(tsawa_data)
+
+        return self.data
 
     def tsikhang_parser_pipe(self):
         """

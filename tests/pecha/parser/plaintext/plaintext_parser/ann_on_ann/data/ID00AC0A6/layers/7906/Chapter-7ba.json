@@ -143,6 +143,60 @@
             "@type": "String",
             "value": "Tsawa"
           }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "d55fe58ded234091ad457a6d24eee74b",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "f63ff25119ac4a1086e4f090456bc18d",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "5ecc40dc78c34365952f22fa681cdf4f",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "2047997bc27b4bbc9532e4a377ba0ff0",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "e457252f16604723b03429fed24b482f",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "01ed12cc1be449c2868d290a72296044",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
         }
       ]
     }

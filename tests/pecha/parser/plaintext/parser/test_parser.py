@@ -97,6 +97,93 @@ expected_chapter_output = {
     ],
 }
 
+expected_tsawa_output = {
+    "raw_string": [
+        "\ufeffརྒྱ་གར་སྐད་དུ།",
+        " ",
+        "བོ་དྷི་སཏྭ་ཙརྱ་ཨ་བ་ཏཱ་ར།",
+        "\n",
+        "\n",
+        "བོད་སྐད་དུ།",
+        " ",
+        "བྱང་ཆུབ་སེམས་དཔའི་སྤྱོད་པ་ལ་འཇུག་པ།",
+        "\n",
+        "\n",
+        "སངས་རྒྱས་དང་བྱང་ཆུབ་སེམས་དཔའ་ཐམས་ཅད་ལ་ཕྱག་འཚལ་ལོ།",
+        " ",
+        "།",
+        "\n",
+        "\n",
+        'ch1-"བྱང་ཆུབ་སེམས་ཀྱི་ཕན་ཡོན་བཤད་པ།"',
+        " ",
+        "བདེ་གཤེགས་ཆོས་ཀྱི་སྐུ་མངའ་སྲས་བཅས་དང་།",
+        " ",
+        "།ཕྱག་འོས་ཀུན་ལའང་གུས་པར་ཕྱག་འཚལ་ཏེ།",
+        " ",
+        "།བདེ་གཤེགས་སྲས་ཀྱི་སྡོམ་ལ་འཇུག་པ་ནི།",
+        " ",
+        "།ལུང་བཞིན་མདོར་བསྡུས་ནས་ནི་བརྗོད་པར་བྱ།",
+        " ",
+        "།",
+        "\n",
+        "\n",
+        "སྔོན་ཆད་མ་བྱུང་བ་ཡང་འདིར་བརྗོད་མེད།",
+        " ",
+        "།སྡེབ་སྦྱོར་མཁས་པའང་བདག་ལ་ཡོད་མིན་ཏེ།",
+        " ",
+        "།དེ་ཕྱིར་གཞན་དོན་བསམ་པ་བདག་ལ་མེད།",
+        " ",
+        "།རང་གི་ཡིད་ལ་བསྒོམ་ཕྱིར་ངས་འདི་བརྩམས།",
+        " ",
+        "།",
+        "\n",
+        "\n",
+        'ch2-"སྡིག་པ་བཤགས་པ།"',
+        " ",
+        "དགེ་བ་བསྒོམ་ཕྱིར་བདག་གི་དད་པའི་ཤུགས།",
+        " ",
+        "།འདི་དག་གིས་ཀྱང་རེ་ཞིག་འཕེལ་འགྱུར་ལ།",
+        " ",
+        "།བདག་དང་སྐལ་བ་མཉམ་པ་གཞན་གྱིས་ཀྱང་།",
+        " ",
+        "།ཅི་སྟེ་འདི་དག་མཐོང་ན་དོན་ཡོད་འགྱུར།",
+        " ",
+        "།",
+        "\n",
+        "\n",
+        "དལ་འབྱོར་འདི་ནི་རྙེད་པར་ཤིན་ཏུ་དཀའ།",
+        " ",
+        "།སྐྱེས་བུའི་དོན་སྒྲུབ་ཐོབ་པར་གྱུར་པ་ལ།",
+        " ",
+        "།གལ་ཏེ་འདི་ལ་ཕན་པ་མ་བསྒྲུབས་ན།",
+        " ",
+        "།ཕྱིས་འདི་ཡང་དག་འབྱོར་པར་ག་ལ་འགྱུར།",
+        " ",
+        "།",
+        "\n",
+        "\n",
+        "ཇི་ལྟར་མཚན་མོ་མུན་ནག་སྤྲིན་རུམ་ན།",
+        " ",
+        "།གློག་འགྱུ་སྐད་ཅིག་བར་སྣང་སྟོན་པ་ལྟར།",
+        " ",
+        "།དེ་བཞིན་སངས་རྒྱས་མཐུ་ཡིས་བརྒྱ་ལམ་ན།",
+        " ",
+        "།འཇིག་རྟེན་བསོད་ནམས་བློ་གྲོས་ཐང་འགའ་འབྱུང་།",
+        " ",
+        "།",
+    ],
+    "tsawa": [
+        {"index_start": 0, "char_start": 0, "index_end": 2, "char_end": 40},
+        {"index_start": 5, "char_start": 42, "index_end": 7, "char_end": 89},
+        {"index_start": 10, "char_start": 91, "index_end": 12, "char_end": 142},
+        {"index_start": 15, "char_start": 144, "index_end": 25, "char_end": 334},
+        {"index_start": 28, "char_start": 336, "index_end": 36, "char_end": 483},
+        {"index_start": 39, "char_start": 485, "index_end": 49, "char_end": 653},
+        {"index_start": 52, "char_start": 655, "index_end": 60, "char_end": 798},
+        {"index_start": 63, "char_start": 800, "index_end": 71, "char_end": 954},
+    ],
+}
+
 
 def test_chapter_parser_pipeline():
     DATA = Path(__file__).parent / "data"
@@ -109,4 +196,15 @@ def test_chapter_parser_pipeline():
     assert openpecha_framework.data == expected_chapter_output
 
 
-test_chapter_parser_pipeline()
+def test_tsawa_parser_pipe():
+    DATA = Path(__file__).parent / "data"
+    input_file = DATA / "basefile.txt"
+    input_text = input_file.read_text(encoding="utf-8")
+
+    openpecha_framework = PechaFrameWork(input_text)
+    pipeline_definition = ["tsawa_parser_pipe"]
+    openpecha_framework.parser_pipeline(pipeline_definition)
+    assert openpecha_framework.data == expected_tsawa_output
+
+
+test_tsawa_parser_pipe()
