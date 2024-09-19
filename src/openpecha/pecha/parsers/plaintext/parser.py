@@ -82,23 +82,28 @@ class PechaFrameWork:
             chapter_number_match = re.match(chapter_number_regex, input_line)
             if chapter_number_match:
                 chapter_number = chapter_number_match.group(1)
-                chapter_data["chapter_number"] = chapter_number
+                chapter_data["number"] = chapter_number
 
             # Check for chapter name
             chapter_name_match = re.search(chapter_name_regex, input_line)
             if chapter_name_match:
                 chapter_name = chapter_name_match.group(1)
-                chapter_data["chapter_name"] = chapter_name
+                chapter_data["name"] = chapter_name
+
+            char_count += len(input_line)
 
             # Update input if chapter data is found
             if chapter_data:
-                chapter_data["start_index"] = i
+                chapter_data["index_start"] = (
+                    i + 2
+                )  # Add two to skip the chapter number and name, and space between
+                chapter_data["char_start"] = (
+                    char_count + 1
+                )  # Add one to include the space character
                 if "chapter" not in self.data:
                     self.data["chapter"] = [chapter_data]
                 else:
                     self.data["chapter"].append(chapter_data)
-
-            char_count += len(input_line)
 
         return input
 
