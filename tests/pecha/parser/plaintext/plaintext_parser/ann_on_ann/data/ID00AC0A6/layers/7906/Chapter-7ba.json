@@ -98,6 +98,51 @@
             "@type": "String",
             "value": "Tsawa"
           }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1d1c12799c15442caf6852b1f4b016d3",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "efd354aafe75465c87b4d56e0e256bac",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1b6a505619e64098bdd2a37b8c08141a",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "7f4e7b0e495541c28bd92878a6d39652",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "6b6f5d46bd8d483c9893751d1807dfe2",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
         }
       ]
     }

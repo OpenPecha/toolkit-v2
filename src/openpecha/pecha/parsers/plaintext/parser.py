@@ -71,6 +71,7 @@ class PechaFrameWork:
         chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
 
         char_count = 0
+        previous_chapter_data = None  # Keep track of the previous chapter
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
                 char_count += 1
@@ -94,18 +95,40 @@ class PechaFrameWork:
 
             # Update input if chapter data is found
             if chapter_data:
+                # Set index_start and char_start for the current chapter
                 chapter_data["index_start"] = (
                     i + 2
-                )  # Add two to skip the chapter number and name, and space between
+                )  # Add two to skip chapter number and name
                 chapter_data["char_start"] = (
                     char_count + 1
                 )  # Add one to include the space character
+
+                # If there's a previous chapter, update its index_end and char_end
+                if previous_chapter_data:
+                    previous_chapter_data["index_end"] = (
+                        i - 1
+                    )  # End at the line before the current chapter starts
+                    previous_chapter_data["char_end"] = char_count - len(
+                        input_line
+                    )  # char_end just before current chapter starts
+
+                # Append the new chapter data
                 if "chapter" not in self.data:
                     self.data["chapter"] = [chapter_data]
                 else:
                     self.data["chapter"].append(chapter_data)
 
-        return input
+                # Set current chapter as the previous for the next iteration
+                previous_chapter_data = chapter_data
+
+        # After the loop, update the last chapter's index_end and char_end to the end of the data
+        if previous_chapter_data:
+            previous_chapter_data["index_end"] = len(self.data["raw_string"]) - 1
+            previous_chapter_data[
+                "char_end"
+            ] = char_count  # Final char count to the end of the text
+
+        return self.data
 
     def tsawa_parser_pipe(self):
         """
