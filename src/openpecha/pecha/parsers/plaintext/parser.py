@@ -180,13 +180,3 @@ class PechaFrameWork:
             self.data["tsawa"].append(tsawa_data)
 
         return self.data
-
-    def tsikhang_parser_pipe(self):
-        """
-        Dependency: This pipe requires the chapter tsawa parser pipe already has been ran
-
-        input is self.data with chapter information and chapter title information
-        process is to look inside the content of each chapter ignoring the title and split into tsikhang
-        output is to update self.data and by including the tsikhang information
-        """
-        pass
