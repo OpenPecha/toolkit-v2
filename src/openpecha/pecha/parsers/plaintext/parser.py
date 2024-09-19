@@ -49,7 +49,9 @@ class PechaFrameWork:
                 pipe(self.data)
 
     def preprocess(self) -> Dict:
-        # Use regex to split by spaces or newlines and keep the delimiters
+        """
+        Preprocess the input text by splitting it into atomic units.
+        """
         splited_strings = [x for x in re.split(r"([\s\n])", self.input) if x != ""]
         return {"raw_string": splited_strings}
 
@@ -126,6 +128,7 @@ class PechaFrameWork:
         """
         index_start = 0
 
+        """ filter out the atomic unit strings that are not tsawa """
         filter_pipeline_definition = [english_filter_pipe, symbol_filter_pipe]
 
         for i, input_line in enumerate(self.data["raw_string"]):
