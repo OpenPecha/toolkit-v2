@@ -269,6 +269,51 @@
             "@type": "String",
             "value": "Tsawa"
           }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "85d0e903686c4ee6a608c5cdb56a224c",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "3abcb0e7f87a4e2cb6afd79d5c39d1fe",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "9d7525946e8b44b5bd83fea60009b048",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "ffdd256b3ef648caa1b6da743bcca966",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "2081823854e84ff98fc36fc49be58188",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
         }
       ]
     }

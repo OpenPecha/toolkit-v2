@@ -36,41 +36,6 @@ class PechaFrameWork:
         self.data = self.preprocess()
         self.output = None
 
-    def serialize_json(self):
-        pipeline_definition = ["pecha_publish_serializer_pipe"]
-        self.serializer_pipeline(pipeline_definition)
-
-    def parse_text(self):
-        pipeline_defination = [
-            "chapter_parser_pipe",
-            "tsawa_parser_pipe",
-            "tsikhang_parser_pipe",
-        ]
-        self.parser_pipeline(pipeline_defination)
-
-    def pecha_human_check_serializer_pipe(self):
-        """
-        input is self.data
-        process is to export data in docx format
-        """
-
-        pass
-
-    def pecha_publish_serializer_pipe(self):
-        """
-        input is self.data
-        process is to export data in json format to be published on website
-        """
-        pass
-
-    def serializer_pipeline(self, pipelist: List):
-        """
-        reads the list of pipes and runs them in sequence
-        if a pipe is a string, call built-in pipe,
-        if it is a function, call the function
-        """
-        pass
-
     def parser_pipeline(self, pipelist: List):
         """
         reads the list of pipes and runs them in sequence
