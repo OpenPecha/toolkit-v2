@@ -75,6 +75,7 @@ class PechaFrameWork:
         chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
 
         previous_chapter_data = None  # Keep track of the previous chapter
+        self.data["chapter"] = []
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
                 continue
@@ -106,10 +107,7 @@ class PechaFrameWork:
                     )  # End at the line before the current chapter starts
 
                 # Append the new chapter data
-                if "chapter" not in self.data:
-                    self.data["chapter"] = [chapter_data]
-                else:
-                    self.data["chapter"].append(chapter_data)
+                self.data["chapter"].append(chapter_data)
 
                 # Set current chapter as the previous for the next iteration
                 previous_chapter_data = chapter_data
@@ -117,6 +115,9 @@ class PechaFrameWork:
         # After the loop, update the last chapter's index_end to the end of the data
         if previous_chapter_data:
             previous_chapter_data["index_end"] = len(self.data["raw_string"]) - 1
+
+        if self.data["chapter"] == []:
+            del self.data["chapter"]
 
         return self.data
 
@@ -130,7 +131,7 @@ class PechaFrameWork:
 
         """ filter out the atomic unit strings that are not tsawa """
         filter_pipeline_definition = [english_filter_pipe, symbol_filter_pipe]
-
+        self.data["tsawa"] = []
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
                 continue
@@ -144,10 +145,8 @@ class PechaFrameWork:
                     "index_start": index_start,
                     "index_end": index_end,
                 }
-                if "tsawa" not in self.data:
-                    self.data["tsawa"] = [tsawa_data]
-                else:
-                    self.data["tsawa"].append(tsawa_data)
+
+                self.data["tsawa"].append(tsawa_data)
 
                 index_start = i + 1
                 continue
@@ -164,10 +163,7 @@ class PechaFrameWork:
                     "index_start": index_start,
                     "index_end": index_end,
                 }
-                if "tsawa" not in self.data:
-                    self.data["tsawa"] = [tsawa_data]
-                else:
-                    self.data["tsawa"].append(tsawa_data)
+                self.data["tsawa"].append(tsawa_data)
 
                 index_start = i + 3
 
@@ -175,9 +171,6 @@ class PechaFrameWork:
             "index_start": index_start,
             "index_end": len(self.data["raw_string"]) - 1,
         }
-        if "tsawa" not in self.data:
-            self.data["tsawa"] = [tsawa_data]
-        else:
-            self.data["tsawa"].append(tsawa_data)
+        self.data["tsawa"].append(tsawa_data)
 
         return self.data
