@@ -75,7 +75,7 @@ class PechaFrameWork:
         """
         Input is self.data.
         Process is to group all the lines within the same chapter together.
-        Output is to update self.data by including the chapter information (without char_start and char_end).
+        Output is to update self.data by including the chapter information.
         """
         chapter_number_regex = r"\Ach(\d+)-"
         chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
@@ -129,8 +129,8 @@ class PechaFrameWork:
     def tsawa_parser_pipe(self):
         """
         Input is self.data.
-        Process is to look inside and check for tsawa.
-        Output is to update self.data by including the tsawa information (without char_start and char_end).
+        Process is to look inside and check for tsawa(String separated by new line).
+        Output is to update self.data by including the tsawa information.
         """
         index_start = 0
         for i, input_line in enumerate(self.data["raw_string"]):
