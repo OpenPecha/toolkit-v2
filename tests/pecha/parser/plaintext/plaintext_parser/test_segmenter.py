@@ -1,4 +1,25 @@
-from openpecha.pecha.parsers.plaintext.plaintext_parser import PlainTextParser
+from openpecha.pecha.parsers.plaintext.plaintext_parser import (
+    PlainTextParser,
+    count_whitespace_details,
+)
+
+
+def test_count_whitespace_details():
+    text = " Hello world!\n\n"
+    result = count_whitespace_details(text)
+    assert result == {"start_whitespace": 1, "end_whitespace": 2}
+
+    text = "Hello world!\n\n"
+    result = count_whitespace_details(text)
+    assert result == {"start_whitespace": 0, "end_whitespace": 2}
+
+    text = " Hello world!"
+    result = count_whitespace_details(text)
+    assert result == {"start_whitespace": 1, "end_whitespace": 0}
+
+    text = "Hello world!"
+    result = count_whitespace_details(text)
+    assert result == {"start_whitespace": 0, "end_whitespace": 0}
 
 
 def test_space_segmenter():

@@ -298,13 +298,22 @@ class Pecha:
         return annotation_stores, ann_store_file_paths
 
     def save_ann_store(
-        self, ann_store: AnnotationStore, ann_type: LayerEnum, basefile_name: str
+        self,
+        ann_store: AnnotationStore,
+        ann_type: LayerEnum,
+        basefile_name: str,
+        file_name: Optional[str] = None,
     ):
+
         if ann_type == LayerEnum.metadata:
-            file_name = "metadata.json"
+            file_name = "metadata.json" if not file_name else file_name
             ann_store_path = self.pecha_path
         else:
-            file_name = f"{ann_type.value}-{get_uuid()[:3]}.json"
+            file_name = (
+                f"{ann_type.value}-{get_uuid()[:3]}.json"
+                if not file_name
+                else file_name
+            )
             ann_store_path = self.ann_path / basefile_name
         ann_store_path.mkdir(parents=True, exist_ok=True)
         ann_store_json_dict = self.convert_absolute_to_relative_path(
@@ -331,6 +340,9 @@ class Pecha:
                 resource["@include"] = f"base/{original_path.name}"
             else:
                 resource["@include"] = f"../../base/{original_path.name}"
+        if "@include" in json_object:
+            json_object["@include"] = Path(json_object["@include"]).name
+
         return json_object
 
 

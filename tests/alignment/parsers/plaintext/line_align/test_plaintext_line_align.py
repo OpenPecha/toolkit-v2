@@ -39,7 +39,7 @@ def test_plaintext_line_aligned_parser():
     """ comparing source lines"""
     dataset = list(source_ann_store.datasets())[0]
 
-    source_key = dataset.key(LayerGroupEnum.structure_type.value)
+    source_key = dataset.key(LayerGroupEnum.associated_alignment.value)
     source_anns = list(
         dataset.data(source_key, value=LayerEnum.root_segment.value).annotations()
     )
@@ -49,7 +49,7 @@ def test_plaintext_line_aligned_parser():
     """ comparing target text lines"""
     dataset = list(target_ann_store.datasets())[0]
 
-    target_key = dataset.key(LayerGroupEnum.structure_type.value)
+    target_key = dataset.key(LayerGroupEnum.associated_alignment.value)
     target_anns = list(
         dataset.data(target_key, value=LayerEnum.commentary_segment.value).annotations()
     )

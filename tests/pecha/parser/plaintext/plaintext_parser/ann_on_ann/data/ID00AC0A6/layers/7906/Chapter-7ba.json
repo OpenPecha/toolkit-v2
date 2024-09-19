@@ -1,0 +1,215 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "ID00AC0A6",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "7906",
+      "@include": "../../base/7906.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "Structure_Annotation",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "chapter_number"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "chapter_name"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "Structure_Type"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "9dbc6adaebe849cd80dbbd115811e10c",
+          "key": "chapter_number",
+          "value": {
+            "@type": "String",
+            "value": "1"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "8a7ea22509344dab80b0df96b1b4064d",
+          "key": "chapter_name",
+          "value": {
+            "@type": "String",
+            "value": "བྱང་ཆུབ་སེམས་ཀྱི་ཕན་ཡོན་བཤད་པ།"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1cc66b61f6524ef193e451afdd30dc14",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Chapter"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "0afa4967f29c45869154db4549f44b8b",
+          "key": "chapter_number",
+          "value": {
+            "@type": "String",
+            "value": "2"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "9328e734375d4e1293b30af413b4e4e2",
+          "key": "chapter_name",
+          "value": {
+            "@type": "String",
+            "value": "སྡིག་པ་བཤགས་པ།"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "ef4022f55ccf47d490e846ace4fa7bf2",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "f3db9ff78cc24b5bab22802b9ce7770a",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "f8665454412a4975bd4b5195e517accd",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "6421189c956c4bff8ffddebadb135e14",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "3d5a3759a90b42e588b1b1c033d4e12e",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "826468ebe3c8438e9813002dd0e9e0ae",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "aab1a3a0eb594bd2881a35b684340687",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "6f137c0c0fa747a290d952982a47a0ea",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "7906",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 183
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 484
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "9dbc6adaebe849cd80dbbd115811e10c",
+          "set": "Structure_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "8a7ea22509344dab80b0df96b1b4064d",
+          "set": "Structure_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1cc66b61f6524ef193e451afdd30dc14",
+          "set": "Structure_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "297412116f254c3c9747ad0faf85ecd7",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "7906",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 508
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 955
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "0afa4967f29c45869154db4549f44b8b",
+          "set": "Structure_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "9328e734375d4e1293b30af413b4e4e2",
+          "set": "Structure_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "1cc66b61f6524ef193e451afdd30dc14",
+          "set": "Structure_Annotation"
+        }
+      ]
+    }
+  ]
+}
