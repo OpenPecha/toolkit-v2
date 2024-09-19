@@ -219,6 +219,8 @@ class PechaFrameWork:
         basefile_name, base_content = get_uuid()[:4], self.input
         pecha.set_base(basefile_name, base_content)
 
+        pecha_ann_file_paths = []
+
         for ann_name in anns_list:
             """create annotation layer"""
             ann_store = pecha.create_ann_store(basefile_name, LayerEnum(ann_name))
@@ -249,3 +251,6 @@ class PechaFrameWork:
             ann_store_path = pecha.save_ann_store(  # noqa
                 ann_store, LayerEnum(ann_name), basefile_name
             )
+            pecha_ann_file_paths.append(ann_store_path)
+
+        return pecha_ann_file_paths
