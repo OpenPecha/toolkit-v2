@@ -61,20 +61,28 @@ class PechaFrameWork:
         splited_strings = [x for x in re.split(r"([\s\n])", self.input) if x != ""]
         return {"raw_string": splited_strings}
 
+    def calculate_char_positions(self, index_start, index_end):
+        """
+        Calculates char_start and char_end based on the start and end indexes.
+        """
+        char_start = sum(len(self.data["raw_string"][i]) for i in range(index_start))
+        char_end = char_start + sum(
+            len(self.data["raw_string"][i]) for i in range(index_start, index_end + 1)
+        )
+        return char_start, char_end
+
     def chapter_parser_pipe(self):
         """
-        input is self.data
-        process is to group all the lines within the same chapter together
-        output is to update self.data and by including the chapter information
+        Input is self.data.
+        Process is to group all the lines within the same chapter together.
+        Output is to update self.data by including the chapter information (without char_start and char_end).
         """
         chapter_number_regex = r"\Ach(\d+)-"
         chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
 
-        char_count = 0
         previous_chapter_data = None  # Keep track of the previous chapter
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
-                char_count += 1
                 continue
 
             chapter_data = {}
@@ -91,26 +99,17 @@ class PechaFrameWork:
                 chapter_name = chapter_name_match.group(1)
                 chapter_data["name"] = chapter_name
 
-            char_count += len(input_line)
-
             # Update input if chapter data is found
             if chapter_data:
-                # Set index_start and char_start for the current chapter
                 chapter_data["index_start"] = (
                     i + 2
                 )  # Add two to skip chapter number and name
-                chapter_data["char_start"] = (
-                    char_count + 1
-                )  # Add one to include the space character
 
-                # If there's a previous chapter, update its index_end and char_end
+                # If there's a previous chapter, update its index_end
                 if previous_chapter_data:
                     previous_chapter_data["index_end"] = (
                         i - 1
                     )  # End at the line before the current chapter starts
-                    previous_chapter_data["char_end"] = char_count - len(
-                        input_line
-                    )  # char_end just before current chapter starts
 
                 # Append the new chapter data
                 if "chapter" not in self.data:
@@ -121,30 +120,23 @@ class PechaFrameWork:
                 # Set current chapter as the previous for the next iteration
                 previous_chapter_data = chapter_data
 
-        # After the loop, update the last chapter's index_end and char_end to the end of the data
+        # After the loop, update the last chapter's index_end to the end of the data
         if previous_chapter_data:
             previous_chapter_data["index_end"] = len(self.data["raw_string"]) - 1
-            previous_chapter_data[
-                "char_end"
-            ] = char_count  # Final char count to the end of the text
 
         return self.data
 
     def tsawa_parser_pipe(self):
         """
-        input is self.data
-        process is to look inside and check for tsawa
-        output is to update self.data and by including the tsawa information
+        Input is self.data.
+        Process is to look inside and check for tsawa.
+        Output is to update self.data by including the tsawa information (without char_start and char_end).
         """
-        char_count = 0
-
-        index_start, char_start = 0, 0
+        index_start = 0
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
-                char_count += 1
                 continue
 
-            char_count += len(input_line)
             if i + 1 >= len(self.data["raw_string"]):
                 continue
 
@@ -153,12 +145,9 @@ class PechaFrameWork:
                 and self.data["raw_string"][i + 2] == "\n"
             ):
                 index_end = i
-                char_end = char_count
                 tsawa_data = {
                     "index_start": index_start,
-                    "char_start": char_start,
                     "index_end": index_end,
-                    "char_end": char_end,
                 }
                 if "tsawa" not in self.data:
                     self.data["tsawa"] = [tsawa_data]
@@ -166,13 +155,10 @@ class PechaFrameWork:
                     self.data["tsawa"].append(tsawa_data)
 
                 index_start = i + 3
-                char_start = char_count + 2
 
         tsawa_data = {
             "index_start": index_start,
-            "char_start": char_start,
             "index_end": len(self.data["raw_string"]) - 1,
-            "char_end": char_count,
         }
         if "tsawa" not in self.data:
             self.data["tsawa"] = [tsawa_data]
