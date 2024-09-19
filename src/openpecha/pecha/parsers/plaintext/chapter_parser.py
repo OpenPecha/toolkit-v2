@@ -145,7 +145,6 @@ class PlainTextChapterAnnotationParser:
                     "set": ann_dataset.id(),
                     "key": "Chapter Number",
                     "value": int(chapter_detail["chapter number"]),
-
                 }
             )
 
@@ -162,8 +161,6 @@ class PlainTextChapterAnnotationParser:
 
         ann_store_filename = f"{LayerEnum.chapter.value}-{get_uuid()[:3]}.json"
 
-        save_stam(
-            ann_store, output_path, layer_dir / base_file_name / ann_store_filename
-        )
+        save_stam(ann_store, layer_dir / base_file_name / ann_store_filename)
 
         return pecha_path

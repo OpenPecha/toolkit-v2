@@ -332,3 +332,31 @@ class Pecha:
             else:
                 resource["@include"] = f"../../base/{original_path.name}"
         return json_object
+
+
+def save_stam(ann_store: AnnotationStore, ann_store_path: Path) -> Path:
+    """
+    Save the annotation store to a file.
+    """
+    ann_store_path.parent.mkdir(parents=True, exist_ok=True)
+
+    ann_json_str = ann_store.to_json_string()
+    ann_json_dict = convert_absolute_to_relative_path(ann_json_str, ann_store_path)
+    with open(ann_store_path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(ann_json_dict, indent=2, ensure_ascii=False))
+
+    return ann_store_path
+
+
+def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
+    """
+    convert the absolute to relative path for base file in json string of annotation store
+    """
+    json_object = json.loads(json_string)
+    for resource in json_object["resources"]:
+        original_path = Path(resource["@include"])
+        if ann_store_path.name == "metadata.json":
+            resource["@include"] = f"base/{original_path.name}"
+        else:
+            resource["@include"] = f"../../base/{original_path.name}"
+    return json_object

@@ -61,3 +61,13 @@ def test_pecha_merge(temp_data):
     target_post_merge_n_layers = len(list(target_pecha.get_layers(target_base_name)))
 
     assert target_post_merge_n_layers == target_pre_merge_n_layers + source_n_layers
+
+    """ clean up"""
+    target_new_post_layer_path = (
+        Path(__file__).parent / "data" / "P0001" / "layers" / "0001" / "pos-a222.json"
+    )
+    if target_new_post_layer_path.exists():
+        target_new_post_layer_path.unlink()
+
+
+test_pecha_merge(Path(__file__).parent / "data")

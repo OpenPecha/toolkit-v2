@@ -10,6 +10,7 @@ from openpecha.alignment import Alignment, AlignmentMetaData
 from openpecha.alignment.metadata import AlignmentRelationEnum
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.pecha import save_stam
 from openpecha.pecha.layer import (
     LayerCollectionEnum,
     LayerEnum,
@@ -226,7 +227,7 @@ def create_pecha_stam(
         data=data,
     )
 
-    save_stam(metadata_ann_store, output_path, pecha_path / "metadata.json")
+    save_stam(metadata_ann_store, pecha_path / "metadata.json")
 
     ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
 
@@ -258,7 +259,7 @@ def create_pecha_stam(
     ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
     ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
     ann_store_path = ann_output_dir / ann_store_filename
-    ann_store_path = save_stam(ann_store, output_path, ann_store_path)
+    ann_store_path = save_stam(ann_store, ann_store_path)
 
     return (ann_store, ann_store_path.name)
 
@@ -269,22 +270,6 @@ def split_text_into_lines(text: str) -> List[str]:
     """
     lines = text.split("\n")
     return [line + "\n" if i < len(lines) - 1 else line for i, line in enumerate(lines)]
-
-
-def save_stam(
-    ann_store: AnnotationStore, base_path: Path, ann_store_path: Path
-) -> Path:
-    """
-    Save the annotation store to a file.
-    """
-    ann_store_path.parent.mkdir(parents=True, exist_ok=True)
-
-    ann_json_str = ann_store.to_json_string()
-    ann_json_dict = convert_absolute_to_relative_path(ann_json_str, ann_store_path)
-    with open(ann_store_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(ann_json_dict, indent=2, ensure_ascii=False))
-
-    return ann_store_path
 
 
 def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):

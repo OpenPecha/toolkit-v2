@@ -5,7 +5,7 @@
     {
       "@type": "TextResource",
       "@id": "0002",
-      "@include": "P0002/base/0002.txt"
+      "@include": "../../base/0002.txt"
     }
   ],
   "annotationsets": [
