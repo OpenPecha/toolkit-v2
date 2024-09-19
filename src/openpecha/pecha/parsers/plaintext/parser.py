@@ -75,6 +75,7 @@ class PechaFrameWork:
         chapter_name_regex = r"-\"([\u0F00-\u0FFF]+)\""
 
         previous_chapter_data = None  # Keep track of the previous chapter
+        found_chapter = False
         self.data["chapter"] = []
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
@@ -87,12 +88,14 @@ class PechaFrameWork:
             if chapter_number_match:
                 chapter_number = chapter_number_match.group(1)
                 chapter_data["number"] = chapter_number
+                found_chapter = True
 
             # Check for chapter name
             chapter_name_match = re.search(chapter_name_regex, input_line)
             if chapter_name_match:
                 chapter_name = chapter_name_match.group(1)
                 chapter_data["name"] = chapter_name
+                found_chapter = True
 
             # Update input if chapter data is found
             if chapter_data:
@@ -113,7 +116,7 @@ class PechaFrameWork:
                 previous_chapter_data = chapter_data
 
         # After the loop, update the last chapter's index_end to the end of the data
-        if previous_chapter_data:
+        if previous_chapter_data and found_chapter:
             previous_chapter_data["index_end"] = len(self.data["raw_string"]) - 1
 
         if self.data["chapter"] == []:
@@ -131,6 +134,7 @@ class PechaFrameWork:
 
         """ filter out the atomic unit strings that are not tsawa """
         filter_pipeline_definition = [english_filter_pipe, symbol_filter_pipe]
+        found_tsawa = False
         self.data["tsawa"] = []
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
@@ -158,19 +162,24 @@ class PechaFrameWork:
                 self.data["raw_string"][i + 1] == "\n"
                 and self.data["raw_string"][i + 2] == "\n"
             ):
+
                 index_end = i
                 tsawa_data = {
                     "index_start": index_start,
                     "index_end": index_end,
                 }
                 self.data["tsawa"].append(tsawa_data)
-
+                found_tsawa = True
                 index_start = i + 3
 
         tsawa_data = {
             "index_start": index_start,
             "index_end": len(self.data["raw_string"]) - 1,
         }
-        self.data["tsawa"].append(tsawa_data)
+        if found_tsawa:
+            self.data["tsawa"].append(tsawa_data)
+
+        if self.data["tsawa"] == []:
+            del self.data["tsawa"]
 
         return self.data

@@ -314,6 +314,96 @@
             "@type": "String",
             "value": "Tsawa"
           }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "3ca429db96b442e69139427cb95b7f16",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "592fecb013354d0084f28c790a17867a",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "5de53fa9340348f5946ff96198b1ab97",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "4b74325b4639485a905275c51e76fb90",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "0a63be96ee634e3780178c3fe6f63a88",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "044221d93fe84483a5f77d36af5e9a72",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "345ac33f49ab4a30a2f23b9ebeea25d2",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "0f029ba023d34506a8ff0e6ce8b78020",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "bf5f39b4bf0c4b79826c10eab09d6b3b",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "f9f298e4a31c49069d052ea1f4de9e4a",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Tsawa"
+          }
         }
       ]
     }
