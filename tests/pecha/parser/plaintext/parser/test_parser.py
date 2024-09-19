@@ -113,8 +113,8 @@ def test_chapter_parser_pipeline():
 
     pipeline_definition = ["chapter_parser_pipe"]
     openpecha_framework.parser_pipeline(pipeline_definition)
-    assert "chapter" in openpecha_framework.data
-    assert openpecha_framework.data["chapter"] == expected_chapter_output
+    assert "Chapter" in openpecha_framework.data
+    assert openpecha_framework.data["Chapter"] == expected_chapter_output
 
 
 def test_tsawa_parser_pipe():
@@ -125,8 +125,8 @@ def test_tsawa_parser_pipe():
     openpecha_framework = PechaFrameWork(input_text)
     pipeline_definition = ["tsawa_parser_pipe"]
     openpecha_framework.parser_pipeline(pipeline_definition)
-    assert "tsawa" in openpecha_framework.data
-    assert openpecha_framework.data["tsawa"] == expected_tsawa_output
+    assert "Tsawa" in openpecha_framework.data
+    assert openpecha_framework.data["Tsawa"] == expected_tsawa_output
 
 
-test_tsawa_parser_pipe()
+test_chapter_parser_pipeline()

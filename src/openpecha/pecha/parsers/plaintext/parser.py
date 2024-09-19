@@ -1,5 +1,13 @@
 import re
+from pathlib import Path
 from typing import Dict, List
+
+from stam import Offset, Selector
+
+from openpecha.config import _mkdir
+from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
 
 
 def filter_pipeline(text: str, pipelist: List):
@@ -76,7 +84,7 @@ class PechaFrameWork:
 
         previous_chapter_data = None  # Keep track of the previous chapter
         found_chapter = False
-        self.data["chapter"] = []
+        self.data["Chapter"] = []
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
                 continue
@@ -110,7 +118,7 @@ class PechaFrameWork:
                     )  # End at the line before the current chapter starts
 
                 # Append the new chapter data
-                self.data["chapter"].append(chapter_data)
+                self.data["Chapter"].append(chapter_data)
 
                 # Set current chapter as the previous for the next iteration
                 previous_chapter_data = chapter_data
@@ -119,8 +127,8 @@ class PechaFrameWork:
         if previous_chapter_data and found_chapter:
             previous_chapter_data["index_end"] = len(self.data["raw_string"]) - 1
 
-        if self.data["chapter"] == []:
-            del self.data["chapter"]
+        if self.data["Chapter"] == []:
+            del self.data["Chapter"]
 
         return self.data
 
@@ -135,7 +143,7 @@ class PechaFrameWork:
         """ filter out the atomic unit strings that are not tsawa """
         filter_pipeline_definition = [english_filter_pipe, symbol_filter_pipe]
         found_tsawa = False
-        self.data["tsawa"] = []
+        self.data["Tsawa"] = []
         for i, input_line in enumerate(self.data["raw_string"]):
             if input_line in [" ", "\n"]:
                 continue
@@ -150,7 +158,7 @@ class PechaFrameWork:
                     "index_end": index_end,
                 }
 
-                self.data["tsawa"].append(tsawa_data)
+                self.data["Tsawa"].append(tsawa_data)
 
                 index_start = i + 1
                 continue
@@ -168,7 +176,7 @@ class PechaFrameWork:
                     "index_start": index_start,
                     "index_end": index_end,
                 }
-                self.data["tsawa"].append(tsawa_data)
+                self.data["Tsawa"].append(tsawa_data)
                 found_tsawa = True
                 index_start = i + 3
 
@@ -177,9 +185,67 @@ class PechaFrameWork:
             "index_end": len(self.data["raw_string"]) - 1,
         }
         if found_tsawa:
-            self.data["tsawa"].append(tsawa_data)
+            self.data["Tsawa"].append(tsawa_data)
 
-        if self.data["tsawa"] == []:
-            del self.data["tsawa"]
+        if self.data["Tsawa"] == []:
+            del self.data["Tsawa"]
 
         return self.data
+
+    @staticmethod
+    def is_annotation_name_valid(annotation_name: str) -> bool:
+        return annotation_name in [layer.value for layer in LayerEnum]
+
+    def pecha_convertor_pipeline(self, anns_list: List[str], output_path: Path):
+        """
+        reads the list of annotations and convert them to stam in sequence
+        the annotation string should contain in the self.data
+        """
+        for ann_name in anns_list:
+            assert ann_name in self.data, f"{ann_name} not found in self.data"
+            assert self.is_annotation_name_valid(
+                ann_name
+            ), f"{ann_name} is not a valid annotation name"
+
+        if not output_path.exists():
+            output_path.mkdir(parents=True, exist_ok=True)
+
+        """create pecha file"""
+        pecha_id = get_initial_pecha_id()
+        pecha_path = _mkdir(output_path / pecha_id)
+        pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
+
+        """ create base file for new annotation store"""
+        basefile_name, base_content = get_uuid()[:4], self.input
+        pecha.set_base(basefile_name, base_content)
+
+        for ann_name in anns_list:
+            """create annotation layer"""
+            ann_store = pecha.create_ann_store(basefile_name, LayerEnum(ann_name))
+            ann_resource = next(ann_store.resources())
+            ann_dataset = next(ann_store.datasets())
+            ann_type_id = get_uuid()
+            for ann_info in self.data[ann_name]:
+                assert isinstance(ann_info, dict)
+
+                char_start, char_end = self.calculate_char_positions(
+                    ann_info["index_start"], ann_info["index_end"]
+                )
+                text_selector = Selector.textselector(
+                    ann_resource, Offset.simple(char_start, char_end)
+                )
+                ann_data = [
+                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                    for k, v in ann_info.items()
+                    if k not in ["index_start", "index_end"]
+                ]
+                pecha.annotate(
+                    ann_store,
+                    text_selector,
+                    LayerEnum(ann_name),
+                    ann_type_id,
+                    ann_data,
+                )
+            ann_store_path = pecha.save_ann_store(  # noqa
+                ann_store, LayerEnum(ann_name), basefile_name
+            )
