@@ -4,8 +4,7 @@ from typing import Callable, Dict, List, Union
 
 from stam import AnnotationStore, Offset, Selector
 
-from openpecha.config import _mkdir
-from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, get_layer_group
 
@@ -131,9 +130,7 @@ class PlainTextParser:
             raise ValueError("Invalid annotation name")
 
         """create pecha file"""
-        pecha_id = get_initial_pecha_id()
-        pecha_path = _mkdir(output_path / pecha_id)
-        pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
+        pecha = Pecha.create_pecha(output_path)
 
         """ create base file for new annotation store"""
         basefile_name, base_content = get_uuid()[:4], self.input

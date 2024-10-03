@@ -9,7 +9,7 @@ from stam import Annotation, AnnotationStore, Selector
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo
-from openpecha.ids import get_uuid
+from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 
@@ -197,6 +197,13 @@ class Pecha:
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
         pecha_id = pecha_path.stem
+        return cls(pecha_id, pecha_path)
+
+    @classmethod
+    def create_pecha(cls, output_path: Path) -> "Pecha":
+        pecha_id = get_initial_pecha_id()
+        pecha_path = output_path / pecha_id
+        pecha_path.mkdir(parents=True, exist_ok=True)
         return cls(pecha_id, pecha_path)
 
     @property
