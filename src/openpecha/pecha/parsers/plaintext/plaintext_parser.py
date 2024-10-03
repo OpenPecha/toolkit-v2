@@ -4,6 +4,7 @@ from typing import Callable, Dict, List, Union
 
 from stam import AnnotationStore, Offset, Selector
 
+from openpecha.config import PECHAS_PATH
 from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, get_layer_group
@@ -122,7 +123,7 @@ class PlainTextParser:
     def is_annotation_name_valid(annotation_name: str) -> bool:
         return annotation_name in [layer.value for layer in LayerEnum]
 
-    def parse(self, output_path: Path) -> Path:
+    def parse(self, output_path: Path = PECHAS_PATH) -> Path:
         assert isinstance(self.input, str)
         segments = self.segmenter(self.input)
         """ check if annotation name is in LayerEnum """
