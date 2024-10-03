@@ -224,11 +224,13 @@ class Pecha:
     def metadata(self):
         return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
 
-    def set_base(self, base_name, content) -> None:
+    def set_base(self, content: str, base_name=None):
         """
         This function sets the base layer of the pecha to a new text.
         """
+        base_name = base_name if base_name else get_uuid()[:4]
         (self.base_path / f"{base_name}.txt").write_text(content)
+        return base_name
 
     def create_ann_store(self, basefile_name: str, annotation_type: LayerEnum):
         ann_store = AnnotationStore(id=self.id_)

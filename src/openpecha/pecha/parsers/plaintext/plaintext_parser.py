@@ -133,8 +133,7 @@ class PlainTextParser:
         pecha = Pecha.create_pecha(output_path)
 
         """ create base file for new annotation store"""
-        basefile_name, base_content = get_uuid()[:4], self.input
-        pecha.set_base(basefile_name, base_content)
+        basefile_name = pecha.set_base(self.input)
 
         """ create annotation layer """
         ann_store = pecha.create_ann_store(
