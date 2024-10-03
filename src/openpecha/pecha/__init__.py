@@ -200,7 +200,7 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @classmethod
-    def create_pecha(cls, output_path: Path) -> "Pecha":
+    def create(cls, output_path: Path) -> "Pecha":
         pecha_id = get_initial_pecha_id()
         pecha_path = output_path / pecha_id
         pecha_path.mkdir(parents=True, exist_ok=True)

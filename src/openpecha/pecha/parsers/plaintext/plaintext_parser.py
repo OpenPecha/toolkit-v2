@@ -131,7 +131,7 @@ class PlainTextParser:
             raise ValueError("Invalid annotation name")
 
         """create pecha file"""
-        pecha = Pecha.create_pecha(output_path)
+        pecha = Pecha.create(output_path)
 
         """ create base file for new annotation store"""
         basefile_name = pecha.set_base(self.input)
