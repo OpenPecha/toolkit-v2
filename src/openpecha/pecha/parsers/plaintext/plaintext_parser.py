@@ -4,8 +4,8 @@ from typing import Callable, Dict, List, Union
 
 from stam import AnnotationStore, Offset, Selector
 
-from openpecha.config import _mkdir
-from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.config import PECHAS_PATH
+from openpecha.ids import get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, get_layer_group
 
@@ -123,7 +123,7 @@ class PlainTextParser:
     def is_annotation_name_valid(annotation_name: str) -> bool:
         return annotation_name in [layer.value for layer in LayerEnum]
 
-    def parse(self, output_path: Path) -> Path:
+    def parse(self, output_path: Path = PECHAS_PATH) -> Path:
         assert isinstance(self.input, str)
         segments = self.segmenter(self.input)
         """ check if annotation name is in LayerEnum """
@@ -131,13 +131,10 @@ class PlainTextParser:
             raise ValueError("Invalid annotation name")
 
         """create pecha file"""
-        pecha_id = get_initial_pecha_id()
-        pecha_path = _mkdir(output_path / pecha_id)
-        pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
+        pecha = Pecha.create(output_path)
 
         """ create base file for new annotation store"""
-        basefile_name, base_content = get_uuid()[:4], self.input
-        pecha.set_base(basefile_name, base_content)
+        basefile_name = pecha.set_base(self.input)
 
         """ create annotation layer """
         ann_store = pecha.create_ann_store(
