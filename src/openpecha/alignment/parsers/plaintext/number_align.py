@@ -214,7 +214,7 @@ class PlainTextNumberAlignedParser:
             self.target_basefile_name = basefile_name
 
         """ annotate metadata"""
-        ann_store = pecha.create_ann_store(basefile_name, LayerEnum.metadata)
+        ann_store = pecha.add_layer(basefile_name, LayerEnum.metadata)
         metadata = (
             self.metadata["source"]
             if ann_type == LayerEnum.root_segment
@@ -226,7 +226,7 @@ class PlainTextNumberAlignedParser:
         del ann_store
 
         """ annotate root segments / commentary segments """
-        ann_store = pecha.create_ann_store(basefile_name, ann_type)
+        ann_store = pecha.add_layer(basefile_name, ann_type)
 
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
@@ -287,7 +287,7 @@ class PlainTextNumberAlignedParser:
         else:
             sapche_indicies = self.mapping_ann_indicies["commentary_sapche_indicies"]
 
-        ann_store = pecha.create_ann_store(basefile_name, LayerEnum.sapche)
+        ann_store = pecha.add_layer(basefile_name, LayerEnum.sapche)
         ann_resource = next(ann_store.resources())
 
         char_count = 0

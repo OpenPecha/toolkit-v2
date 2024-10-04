@@ -8,7 +8,9 @@ class TestChonjukPlainTextParser:
         data = Path(__file__).parent / "data"
         chonjuk_text = (data / "chonjuk.txt").read_text(encoding="utf-8")
         parser = ChonjukPlainTextParser(chonjuk_text)
-        parser.parse()
+
+        output_path = Path(__file__).parent / "output"
+        parser.parse(output_path)
 
 
 TestChonjukPlainTextParser().test_chonjuk_plaintext_parser()

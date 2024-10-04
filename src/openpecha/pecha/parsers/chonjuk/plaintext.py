@@ -82,4 +82,6 @@ class ChapterParser:
         chapter_layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
         for chapter_ann in updated_chapter_anns:
-            pecha.add_annotation(chapter_layer, chapter_ann)
+            chapter_layer = pecha.add_annotation(chapter_layer, chapter_ann)
+
+        chapter_layer.save()

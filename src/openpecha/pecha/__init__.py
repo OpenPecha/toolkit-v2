@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
-from stam import Annotation, AnnotationStore, Selector
+from stam import Annotation, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
@@ -274,7 +274,7 @@ class Pecha:
 
         layer = AnnotationStore(id=self.id_)
         layer.set_filename(
-            self.ann_path / base_name / f"{layer_name.value}-{get_uuid()[:4]}.json"
+            str(self.ann_path / base_name / f"{layer_name.value}-{get_uuid()[:4]}.json")
         )
         layer.add_resource(
             id=base_name,
@@ -285,7 +285,7 @@ class Pecha:
 
         return layer
 
-    def add_annotation(self, layer: AnnotationStore, data: Dict):
+    def add_annotation(self, layer: AnnotationStore, annotation: Dict):
         """
         Inputs:
             layer: annotation store
@@ -297,19 +297,43 @@ class Pecha:
         Output:
             - annotation
         """
-        pass
+        ann_data = []
+        selectors = []
 
-    def create_ann_store(self, basefile_name: str, annotation_type: LayerEnum):
-        ann_store = AnnotationStore(id=self.id_)
-        ann_store.add_resource(
-            id=basefile_name,
-            filename=(self.base_path / f"{basefile_name}.txt").as_posix(),
-        )
+        ann_resource = next(layer.resources())
+        ann_dataset = next(layer.datasets())
+        for ann_name, ann_value in annotation.items():
+            if not isinstance(ann_name, str):
+                raise ValueError("Annotation name should be a string.")
 
-        dataset_id = get_layer_collection(annotation_type).value
-        ann_store.add_dataset(id=dataset_id)
+            if isinstance(ann_value, tuple):
+                start, end = ann_value
+                text_selector = Selector.textselector(
+                    ann_resource, Offset.simple(start, end)
+                )
+                selectors.append(text_selector)
 
-        return ann_store
+            if isinstance(ann_value, str):
+                ann_data.append(
+                    {
+                        "id": get_uuid(),
+                        "set": ann_dataset.id(),
+                        "key": ann_name,
+                        "value": ann_value,
+                    }
+                )
+
+        if len(selectors) == 0:
+            raise ValueError("Annotation has nothing to point to.")
+
+        if len(selectors) == 1:
+            selectors = selectors[0]
+
+        if len(selectors) > 1:
+            selectors = Selector.compositeselector(*selectors)
+        layer.annotate(target=selectors, data=ann_data, id=get_uuid())
+
+        return layer
 
     def annotate_metadata(self, ann_store: AnnotationStore, metadata: dict):
         ann_resource = next(ann_store.resources())
