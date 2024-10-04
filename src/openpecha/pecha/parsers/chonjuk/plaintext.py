@@ -3,6 +3,7 @@ from pathlib import Path
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -16,29 +17,29 @@ class ChonjukPlainTextParser(BaseParser):
         base_name = pecha.set_base(self.text)
 
         for component in self.components:
-            component(base_name)
+            component(pecha, base_name)
 
 
 class ChapterParser:
     def __init__(self, text: str):
         self.text = text
 
-    def __call__(self, base_name: str):
+    def __call__(self, pecha: Pecha, base_name: str):
         chapter_regex = (
             r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"\s*([\u0F00-\u0FFF\s\n]+)[\u0F00-\u0FFF]"
         )
         # Find all matches
         matches = re.finditer(chapter_regex, self.text)
 
-        chapter_matches = []
+        chapter_anns = []
         # Iterate over the matches and store the spans
         for match in matches:
             curr_match = {
-                "chapter_number_span": match.span(1),
-                "title_span": match.span(2),
-                "content_span": match.span(3),
+                "chapter_number": match.span(1),
+                "chapter_title": match.span(2),
+                "chapter": match.span(3),
             }
-            chapter_matches.append(curr_match)
+            chapter_anns.append(curr_match)
 
         # Get the updated text with no annotations
         def keep_groups(match):
@@ -46,30 +47,39 @@ class ChapterParser:
 
         cleaned_text = re.sub(chapter_regex, keep_groups, self.text)  # noqa
         # Get the updated chapter co-ordinate
-        updated_chapter_matches = []
+        updated_chapter_anns = []
         offset = 0
-        for chapter_match in chapter_matches:
+        for chapter_match in chapter_anns:
             offset += 2  # Account for 'ch' and '-'
-            chapter_no_span = chapter_match["chapter_number_span"]
-            updated_chapter_no_span = (
-                chapter_no_span[0] - offset,
-                chapter_no_span[1] - offset,
+            chapter_number = chapter_match["chapter_number"]
+            updated_chapter_number = (
+                chapter_number[0] - offset,
+                chapter_number[1] - offset,
             )
             offset += 1  # Account for '"'
 
-            title_span = chapter_match["title_span"]
-            updated_title_span = (title_span[0] - offset, title_span[1] - offset)
+            chapter_title = chapter_match["chapter_title"]
+            updated_chapter_title = (
+                chapter_title[0] - offset,
+                chapter_title[1] - offset,
+            )
             offset += 1  # Account for  '"' and substract a space
 
-            content_span = chapter_match["content_span"]
-            spaces = content_span[0] - title_span[1] - 1
+            chapter = chapter_match["chapter"]
+            spaces = chapter[0] - chapter_title[1] - 1
             offset += spaces
-            updated_content_span = (content_span[0] - offset, content_span[1] - offset)
+            updated_chapter = (chapter[0] - offset, chapter[1] - offset)
 
-            updated_chapter_matches.append(
+            updated_chapter_anns.append(
                 {
-                    "chapter_number_span": updated_chapter_no_span,
-                    "title_span": updated_title_span,
-                    "content_span": updated_content_span,
+                    "chapter_number": updated_chapter_number,
+                    "chapter_title": updated_chapter_title,
+                    "chapter": updated_chapter,
                 }
             )
+
+        # add the chapter to the pecha
+        chapter_layer = pecha.add_layer(base_name, LayerEnum.chapter)
+
+        for chapter_ann in updated_chapter_anns:
+            pecha.add_annotation(chapter_layer, chapter_ann)

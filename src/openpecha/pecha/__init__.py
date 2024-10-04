@@ -188,6 +188,8 @@ class Pecha:
     def __init__(self, pecha_id: str, pecha_path: Path) -> None:
         self.id_ = pecha_id
         self.pecha_path = pecha_path
+        self.bases = self.load_bases()
+        self.layers = self.load_layers()
 
     @classmethod
     def from_id(cls, pecha_id: str):
@@ -224,13 +226,78 @@ class Pecha:
     def metadata(self):
         return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
 
+    def load_bases(self):
+        bases = {}
+        for base_file in self.base_path.rglob("*.txt"):
+            base_name = base_file.stem
+            bases[base_name] = base_file.read_text(encoding="utf-8")
+        return bases
+
+    def load_layers(self):
+        layers = defaultdict(list)
+        for layer_file in self.ann_path.rglob("*.json"):
+            base_name = layer_file.parent.name
+            layers[base_name].append(AnnotationStore(file=str(layer_file)))
+        return layers
+
     def set_base(self, content: str, base_name=None):
         """
         This function sets the base layer of the pecha to a new text.
         """
         base_name = base_name if base_name else get_uuid()[:4]
         (self.base_path / f"{base_name}.txt").write_text(content)
+
+        # add base to the attribute 'bases'
+        if base_name not in self.bases:
+            self.bases[base_name] = content
+
+        # make a folder for the base in the 'layers' folder
+        (self.ann_path / base_name).mkdir(parents=True, exist_ok=True)
         return base_name
+
+    def add_layer(self, base_name: str, layer_name: LayerEnum):
+        """
+        Inputs:
+            base_name: .txt file which this annotation is associated with
+            layer_name: the type of annotation layer, it should be include in LayerEnum
+
+        Process:
+            - create an annotation store
+            - add the resource to the annotation store
+            - add the dataset to the annotation store
+
+        Output:
+            - annotation store
+        """
+        if base_name not in self.bases:
+            raise ValueError(f"Base {base_name} does not exist.")
+
+        layer = AnnotationStore(id=self.id_)
+        layer.set_filename(
+            self.ann_path / base_name / f"{layer_name.value}-{get_uuid()[:4]}.json"
+        )
+        layer.add_resource(
+            id=base_name,
+            filename=(self.base_path / f"{base_name}.txt").as_posix(),
+        )
+        dataset_id = get_layer_collection(layer_name).value
+        layer.add_dataset(id=dataset_id)
+
+        return layer
+
+    def add_annotation(self, layer: AnnotationStore, data: Dict):
+        """
+        Inputs:
+            layer: annotation store
+            data: annotation data
+
+        Process:
+            - add the annotation to the annotation store
+
+        Output:
+            - annotation
+        """
+        pass
 
     def create_ann_store(self, basefile_name: str, annotation_type: LayerEnum):
         ann_store = AnnotationStore(id=self.id_)
