@@ -221,8 +221,8 @@ class PlainTextNumberAlignedParser:
             else self.metadata["target"]
         )
         ann_store = pecha.annotate_metadata(ann_store, metadata)
-        pecha.save_ann_store(ann_store, LayerEnum.metadata, basefile_name)
-
+        ann_store.set_filename(pecha.pecha_path.joinpath("metadata.json").as_posix())
+        ann_store.save()
         del ann_store
 
         """ annotate root segments / commentary segments """
@@ -275,7 +275,14 @@ class PlainTextNumberAlignedParser:
                     ann_store, ann_selector, ann_type, ann_type_data_id, data
                 )
         """save root segments / commentary segments annotations"""
-        pecha.save_ann_store(ann_store, ann_type, basefile_name)
+        ann_store.set_filename(
+            str(
+                pecha.ann_path
+                / basefile_name
+                / f"{ann_type.value}-{get_uuid()[:3]}.json"
+            )
+        )
+        ann_store.save()
 
         """ annotate sapche annotations """
         del ann_store  # In STAM, there is an warning on not to load multiple ann_store
@@ -307,8 +314,14 @@ class PlainTextNumberAlignedParser:
 
         """save root segments / commentary segments annotations"""
         if ann_store.annotations_len() > 0:
-            pecha.save_ann_store(ann_store, LayerEnum.sapche, basefile_name)
-
+            ann_store.set_filename(
+                str(
+                    pecha.ann_path
+                    / basefile_name
+                    / f"{LayerEnum.sapche.value}-{get_uuid()[:3]}.json"
+                )
+            )
+            ann_store.save()
         return pecha_path
 
     def create_alignment(
