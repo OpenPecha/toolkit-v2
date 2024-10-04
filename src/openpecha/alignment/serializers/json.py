@@ -19,12 +19,12 @@ class JSONSerializer:
         self.target_pecha = target_pecha
 
         source_pecha_ann_file = (
-            self.source_pecha.ann_path
+            self.source_pecha.layer_path
             / self.alignment.metadata["source"]["base"]
             / self.alignment.metadata["source"]["layer"]
         )
         target_pecha_ann_file = (
-            self.target_pecha.ann_path
+            self.target_pecha.layer_path
             / self.alignment.metadata["target"]["base"]
             / self.alignment.metadata["target"]["layer"]
         )

@@ -90,8 +90,8 @@ class Alignment:
             json.dump(self.metadata.to_dict(), f, indent=2)
 
         """ write alingment annotations"""
-        ann_path = alignment_path / "alignment.json"
-        with open(ann_path, "w", encoding="utf-8") as fp:
+        layer_path = alignment_path / "alignment.json"
+        with open(layer_path, "w", encoding="utf-8") as fp:
             json.dump(self.segment_pairs, fp, indent=2)
 
     def get_segment_pairs(self):
@@ -117,7 +117,7 @@ class Alignment:
             """ get chapter annotation"""
             chapter_ann_type = LayerEnum.chapter
             chapter_file_path = next(
-                Path(self.pechas[pecha_id].ann_path / f"{base_file}").glob(
+                Path(self.pechas[pecha_id].layer_path / f"{base_file}").glob(
                     f"{chapter_ann_type.value}*.json"
                 ),
                 None,

@@ -216,11 +216,11 @@ class Pecha:
         return base_path
 
     @property
-    def ann_path(self):
-        ann_path = self.pecha_path / "layers"
-        if not ann_path.exists():
-            ann_path.mkdir(parents=True, exist_ok=True)
-        return ann_path
+    def layer_path(self):
+        layer_path = self.pecha_path / "layers"
+        if not layer_path.exists():
+            layer_path.mkdir(parents=True, exist_ok=True)
+        return layer_path
 
     @property
     def metadata(self):
@@ -235,7 +235,7 @@ class Pecha:
 
     def load_layers(self):
         layers = defaultdict(list)
-        for layer_file in self.ann_path.rglob("*.json"):
+        for layer_file in self.layer_path.rglob("*.json"):
             base_name = layer_file.parent.name
             layers[base_name].append(AnnotationStore(file=str(layer_file)))
         return layers
@@ -252,7 +252,7 @@ class Pecha:
             self.bases[base_name] = content
 
         # make a folder for the base in the 'layers' folder
-        (self.ann_path / base_name).mkdir(parents=True, exist_ok=True)
+        (self.layer_path / base_name).mkdir(parents=True, exist_ok=True)
         return base_name
 
     def add_layer(self, base_name: str, layer_type: LayerEnum):
@@ -274,7 +274,11 @@ class Pecha:
 
         layer = AnnotationStore(id=self.id_)
         layer.set_filename(
-            str(self.ann_path / base_name / f"{layer_type.value}-{get_uuid()[:4]}.json")
+            str(
+                self.layer_path
+                / base_name
+                / f"{layer_type.value}-{get_uuid()[:4]}.json"
+            )
         )
         layer.add_resource(
             id=base_name,
@@ -428,7 +432,7 @@ class Pecha:
 
     def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
         ann_store_file_paths = list(
-            Path(self.ann_path / basefile_name).glob(f"{annotation_type.value}*.json")
+            Path(self.layer_path / basefile_name).glob(f"{annotation_type.value}*.json")
         )
         annotation_stores = [
             AnnotationStore(file=str(annotation_file))

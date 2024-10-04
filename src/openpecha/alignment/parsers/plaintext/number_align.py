@@ -277,7 +277,7 @@ class PlainTextNumberAlignedParser:
         """save root segments / commentary segments annotations"""
         ann_store.set_filename(
             str(
-                pecha.ann_path
+                pecha.layer_path
                 / basefile_name
                 / f"{ann_type.value}-{get_uuid()[:3]}.json"
             )
@@ -316,7 +316,7 @@ class PlainTextNumberAlignedParser:
         if ann_store.annotations_len() > 0:
             ann_store.set_filename(
                 str(
-                    pecha.ann_path
+                    pecha.layer_path
                     / basefile_name
                     / f"{LayerEnum.sapche.value}-{get_uuid()[:3]}.json"
                 )
