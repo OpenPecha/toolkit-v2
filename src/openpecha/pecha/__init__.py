@@ -234,10 +234,13 @@ class Pecha:
         return bases
 
     def load_layers(self):
-        layers = defaultdict(list)
+        layers: Dict[str, Dict[LayerEnum, List[AnnotationStore]]] = defaultdict(
+            lambda: defaultdict(list)
+        )
         for layer_file in self.layer_path.rglob("*.json"):
             base_name = layer_file.parent.name
-            layers[base_name].append(AnnotationStore(file=str(layer_file)))
+            ann_enum = LayerEnum(layer_file.stem.split("-")[0])
+            layers[base_name][ann_enum].append(AnnotationStore(file=str(layer_file)))
         return layers
 
     def set_base(self, content: str, base_name=None):
@@ -286,6 +289,7 @@ class Pecha:
         )
         dataset_id = get_layer_collection(layer_type).value
         ann_store.add_dataset(id=dataset_id)
+        self.layers[base_name][layer_type].append(ann_store)
 
         return ann_store
 
