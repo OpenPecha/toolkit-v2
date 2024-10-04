@@ -37,7 +37,7 @@ class ChapterParser:
             curr_match = {
                 "chapter_number": match.span(1),
                 "chapter_title": match.span(2),
-                "chapter": match.span(3),
+                "Chapter": match.span(3),
             }
             chapter_anns.append(curr_match)
 
@@ -65,7 +65,7 @@ class ChapterParser:
             )
             offset += 1  # Account for  '"' and substract a space
 
-            chapter = chapter_match["chapter"]
+            chapter = chapter_match["Chapter"]
             spaces = chapter[0] - chapter_title[1] - 1
             offset += spaces
             updated_chapter = (chapter[0] - offset, chapter[1] - offset)
@@ -74,7 +74,7 @@ class ChapterParser:
                 {
                     "chapter_number": updated_chapter_number,
                     "chapter_title": updated_chapter_title,
-                    "chapter": updated_chapter,
+                    "Chapter": updated_chapter,
                 }
             )
 
@@ -82,6 +82,8 @@ class ChapterParser:
         chapter_layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
         for chapter_ann in updated_chapter_anns:
-            chapter_layer = pecha.add_annotation(chapter_layer, chapter_ann)
+            chapter_layer = pecha.add_annotation(
+                chapter_layer, chapter_ann, LayerEnum.chapter
+            )
 
         chapter_layer.save()

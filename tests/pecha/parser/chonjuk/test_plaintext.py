@@ -1,4 +1,5 @@
 from pathlib import Path
+from shutil import rmtree
 
 from openpecha.pecha.parsers.chonjuk.plaintext import ChonjukPlainTextParser
 
@@ -11,6 +12,7 @@ class TestChonjukPlainTextParser:
 
         output_path = Path(__file__).parent / "output"
         parser.parse(output_path)
+        rmtree(output_path)
 
 
 TestChonjukPlainTextParser().test_chonjuk_plaintext_parser()

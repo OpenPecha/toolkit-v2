@@ -14,7 +14,7 @@ from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 
 BASE_NAME = str
-LAYER_NAME = str
+layer_type = str
 
 
 class StamPecha:
@@ -24,7 +24,7 @@ class StamPecha:
         self.path: Path = path.resolve()
         self.parent: Path = self.path.parent
         self.pecha_id: str = self.path.name
-        self.layers: Dict[BASE_NAME, Dict[LAYER_NAME, AnnotationStore]] = defaultdict(
+        self.layers: Dict[BASE_NAME, Dict[layer_type, AnnotationStore]] = defaultdict(
             dict
         )
 
@@ -92,13 +92,13 @@ class StamPecha:
                 self.layers[base_name][rel_layer_fn.name] = store
                 yield layer_fn.name, store
 
-    def get_layer(self, base_name, layer_name):
+    def get_layer(self, base_name, layer_type):
         """
         This function returns a specific layer of the pecha.
         """
         if not self.layers[base_name]:
             self.get_layers(base_name)
-        return self.layers[base_name][layer_name]
+        return self.layers[base_name][layer_type]
 
     def update_base(self, base_name, new_base, save=True):
         """
@@ -255,11 +255,11 @@ class Pecha:
         (self.ann_path / base_name).mkdir(parents=True, exist_ok=True)
         return base_name
 
-    def add_layer(self, base_name: str, layer_name: LayerEnum):
+    def add_layer(self, base_name: str, layer_type: LayerEnum):
         """
         Inputs:
             base_name: .txt file which this annotation is associated with
-            layer_name: the type of annotation layer, it should be include in LayerEnum
+            layer_type: the type of annotation layer, it should be include in LayerEnum
 
         Process:
             - create an annotation store
@@ -274,18 +274,53 @@ class Pecha:
 
         layer = AnnotationStore(id=self.id_)
         layer.set_filename(
-            str(self.ann_path / base_name / f"{layer_name.value}-{get_uuid()[:4]}.json")
+            str(self.ann_path / base_name / f"{layer_type.value}-{get_uuid()[:4]}.json")
         )
         layer.add_resource(
             id=base_name,
             filename=f"../../base/{base_name}.txt",
         )
-        dataset_id = get_layer_collection(layer_name).value
+        dataset_id = get_layer_collection(layer_type).value
         layer.add_dataset(id=dataset_id)
 
         return layer
 
-    def add_annotation(self, layer: AnnotationStore, annotation: Dict):
+    def check_annotation(self, annotation: Dict, layer_type: LayerEnum):
+        """
+        Inputs:annotation: annotation data
+        Process: - check if the annotation data is valid
+                - raise error if the annotation data is invalid
+        """
+
+        # Check if an annotation with LayerEnum is present in the annotation data
+        if layer_type.value not in annotation.keys():
+            raise ValueError(f"Annotation data should contain {layer_type.value} key.")
+
+        # Check if the annotation with LayerEnum has Span value as tuple
+        if not isinstance(annotation[layer_type.value], tuple):
+            raise ValueError(
+                f"The {layer_type.value} annotation should be a Span of two integers."
+            )
+
+        # Check if the annotataion data has a valid value
+        for ann_name, ann_value in annotation.items():
+            if not isinstance(ann_name, str):
+                raise ValueError("The annotation metadata key should be a string.")
+
+            if not isinstance(ann_value, (str, tuple)):
+                raise ValueError(
+                    "The annotation value should be either a string or a tuple of two integers."
+                )
+
+            if isinstance(ann_value, tuple):
+                if len(ann_value) != 2:
+                    raise ValueError(
+                        "The annotation Span value should only contain be a tuple of two integers."
+                    )
+
+    def add_annotation(
+        self, layer: AnnotationStore, annotation: Dict, layer_type: LayerEnum
+    ):
         """
         Inputs:
             layer: annotation store
@@ -297,42 +332,50 @@ class Pecha:
         Output:
             - annotation
         """
-        ann_data = []
-        selectors = []
+        self.check_annotation(annotation, layer_type)
 
         ann_resource = next(layer.resources())
         ann_dataset = next(layer.datasets())
-        for ann_name, ann_value in annotation.items():
-            if not isinstance(ann_name, str):
-                raise ValueError("Annotation name should be a string.")
 
-            if isinstance(ann_value, tuple):
+        # Get annotation data and the annotation main selector
+        ann_data = {k: v for k, v in annotation.items() if not isinstance(v, tuple)}
+        ann_data[get_layer_group(layer_type).value] = layer_type.value
+
+        start, end = annotation[layer_type.value]
+        text_selector = Selector.textselector(ann_resource, Offset.simple(start, end))
+
+        # Add if there is any additional selectors needed for more annotations with Span
+        selectors = []
+
+        for ann_name, ann_value in annotation.items():
+            if isinstance(ann_value, tuple) and ann_name != layer_type.value:
                 start, end = ann_value
-                text_selector = Selector.textselector(
+                curr_selector = Selector.textselector(
                     ann_resource, Offset.simple(start, end)
                 )
-                selectors.append(text_selector)
-
-            if isinstance(ann_value, str):
-                ann_data.append(
+                data = [
                     {
                         "id": get_uuid(),
                         "set": ann_dataset.id(),
-                        "key": ann_name,
-                        "value": ann_value,
+                        "key": f"{layer_type.value}_metadata",
+                        "value": ann_name,
                     }
-                )
+                ]
+                ann = layer.annotate(target=curr_selector, data=data, id=get_uuid())
+                ann_selector = Selector.annotationselector(ann)
+                selectors.append(ann_selector)
 
-        if len(selectors) == 0:
-            raise ValueError("Annotation has nothing to point to.")
+        # Add the main annotation
+        if selectors:
+            main_selector = Selector.compositeselector(text_selector, *selectors)
+        else:
+            main_selector = text_selector
 
-        if len(selectors) == 1:
-            selectors = selectors[0]
-
-        if len(selectors) > 1:
-            selectors = Selector.compositeselector(*selectors)
-        layer.annotate(target=selectors, data=ann_data, id=get_uuid())
-
+        main_ann_data = [
+            {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+            for k, v in ann_data.items()
+        ]
+        layer.annotate(target=main_selector, data=main_ann_data, id=get_uuid())
         return layer
 
     def annotate_metadata(self, ann_store: AnnotationStore, metadata: dict):
