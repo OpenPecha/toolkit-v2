@@ -37,7 +37,7 @@ class ChapterParser:
             curr_match = {
                 "chapter_number": match.span(1),
                 "chapter_title": match.span(2),
-                "Chapter": match.span(3),
+                LayerEnum.chapter.value: match.span(3),
             }
             chapter_anns.append(curr_match)
 
@@ -65,7 +65,7 @@ class ChapterParser:
             )
             offset += 1  # Account for  '"' and substract a space
 
-            chapter = chapter_match["Chapter"]
+            chapter = chapter_match[LayerEnum.chapter.value]
             spaces = chapter[0] - chapter_title[1] - 1
             offset += spaces
             updated_chapter = (chapter[0] - offset, chapter[1] - offset)
@@ -74,7 +74,7 @@ class ChapterParser:
                 {
                     "chapter_number": updated_chapter_number,
                     "chapter_title": updated_chapter_title,
-                    "Chapter": updated_chapter,
+                    LayerEnum.chapter.value: updated_chapter,
                 }
             )
 
