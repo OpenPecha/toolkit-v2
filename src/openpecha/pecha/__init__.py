@@ -272,22 +272,22 @@ class Pecha:
         if base_name not in self.bases:
             raise ValueError(f"Base {base_name} does not exist.")
 
-        layer = AnnotationStore(id=self.id_)
-        layer.set_filename(
+        ann_store = AnnotationStore(id=self.id_)
+        ann_store.set_filename(
             str(
                 self.layer_path
                 / base_name
                 / f"{layer_type.value}-{get_uuid()[:4]}.json"
             )
         )
-        layer.add_resource(
+        ann_store.add_resource(
             id=base_name,
             filename=f"../../base/{base_name}.txt",
         )
         dataset_id = get_layer_collection(layer_type).value
-        layer.add_dataset(id=dataset_id)
+        ann_store.add_dataset(id=dataset_id)
 
-        return layer
+        return ann_store
 
     def check_annotation(self, annotation: Dict, layer_type: LayerEnum):
         """
@@ -323,7 +323,7 @@ class Pecha:
                     )
 
     def add_annotation(
-        self, layer: AnnotationStore, annotation: Dict, layer_type: LayerEnum
+        self, ann_store: AnnotationStore, annotation: Dict, layer_type: LayerEnum
     ):
         """
         Inputs:
@@ -338,8 +338,8 @@ class Pecha:
         """
         self.check_annotation(annotation, layer_type)
 
-        ann_resource = next(layer.resources())
-        ann_dataset = next(layer.datasets())
+        ann_resource = next(ann_store.resources())
+        ann_dataset = next(ann_store.datasets())
 
         # Get annotation data and the annotation main selector
         ann_data = {k: v for k, v in annotation.items() if not isinstance(v, tuple)}
@@ -365,7 +365,7 @@ class Pecha:
                         "value": ann_name,
                     }
                 ]
-                ann = layer.annotate(target=curr_selector, data=data, id=get_uuid())
+                ann = ann_store.annotate(target=curr_selector, data=data, id=get_uuid())
                 ann_selector = Selector.annotationselector(ann)
                 selectors.append(ann_selector)
 
@@ -379,8 +379,8 @@ class Pecha:
             {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
             for k, v in ann_data.items()
         ]
-        layer.annotate(target=main_selector, data=main_ann_data, id=get_uuid())
-        return layer
+        ann_store.annotate(target=main_selector, data=main_ann_data, id=get_uuid())
+        return ann_store
 
     def annotate_metadata(self, ann_store: AnnotationStore, metadata: dict):
         ann_resource = next(ann_store.resources())
@@ -430,16 +430,15 @@ class Pecha:
         ann = ann_store.annotate(id=ann_id, target=selector, data=data)
         return ann
 
-    def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
-        ann_store_file_paths = list(
-            Path(self.layer_path / basefile_name).glob(f"{annotation_type.value}*.json")
-        )
+    def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
+        dir_to_search = self.layer_path / basefile_name
+        ann_store_files = list(dir_to_search.glob(f"{annotation_type.value}*.json"))
+
         annotation_stores = [
             AnnotationStore(file=str(annotation_file))
-            for annotation_file in ann_store_file_paths
+            for annotation_file in ann_store_files
         ]
 
         if len(annotation_stores) == 1:
-            return annotation_stores[0], ann_store_file_paths[0]
-
-        return annotation_stores, ann_store_file_paths
+            return annotation_stores[0], ann_store_files[0]
+        return annotation_stores, ann_store_files

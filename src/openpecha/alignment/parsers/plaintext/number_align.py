@@ -332,9 +332,7 @@ class PlainTextNumberAlignedParser:
         (
             source_ann_store,
             source_ann_store_file_path,
-        ) = source_pecha.get_annotation_store(
-            self.source_basefile_name, LayerEnum.root_segment
-        )
+        ) = source_pecha.get_layer(self.source_basefile_name, LayerEnum.root_segment)
         source_dataset = next(source_ann_store.datasets())
         source_ann_key = source_dataset.key(LayerGroupEnum.structure_type.value)
         source_meaning_segments = list(
@@ -347,10 +345,7 @@ class PlainTextNumberAlignedParser:
         del source_ann_key
 
         target_pecha = Pecha.from_path(target_pecha_path)
-        (
-            target_ann_store,
-            target_ann_store_file_path,
-        ) = target_pecha.get_annotation_store(
+        (target_ann_store, target_ann_store_file_path,) = target_pecha.get_layer(
             self.target_basefile_name, LayerEnum.commentary_segment
         )
         target_dataset = next(target_ann_store.datasets())
