@@ -396,37 +396,3 @@ class Pecha:
             return annotation_stores[0], ann_store_file_paths[0]
 
         return annotation_stores, ann_store_file_paths
-
-    @staticmethod
-    def convert_absolute_to_relative_path(
-        ann_store: AnnotationStore, ann_store_path: Path
-    ):
-        """
-        convert the absolute to relative path for base file in json string of annotation store
-        """
-        ann_store_json_string = ann_store.to_json_string()
-        json_object = json.loads(ann_store_json_string)
-        for resource in json_object["resources"]:
-            original_path = Path(resource["@include"])
-            if ann_store_path.name == "metadata.json":
-                resource["@include"] = f"base/{original_path.name}"
-            else:
-                resource["@include"] = f"../../base/{original_path.name}"
-        if "@include" in json_object:
-            json_object["@include"] = Path(json_object["@include"]).name
-
-        return json_object
-
-
-def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
-    """
-    convert the absolute to relative path for base file in json string of annotation store
-    """
-    json_object = json.loads(json_string)
-    for resource in json_object["resources"]:
-        original_path = Path(resource["@include"])
-        if ann_store_path.name == "metadata.json":
-            resource["@include"] = f"base/{original_path.name}"
-        else:
-            resource["@include"] = f"../../base/{original_path.name}"
-    return json_object
