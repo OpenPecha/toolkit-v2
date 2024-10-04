@@ -9,7 +9,7 @@ from stam import Offset, Selector
 from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_layer_group
 
 pecha_path = Path
 alignment_path = Path
@@ -257,12 +257,20 @@ class PlainTextNumberAlignedParser:
                 Offset.simple(start, end),
             )
             char_count += len(segment) + 2  # 2 being length for two newline characters
-            meaning_segment_ann = pecha.annotate(
-                ann_store, text_selector, LayerEnum.meaning_segment, meaning_ann_data_id
+            data = [
+                {
+                    "id": meaning_ann_data_id,
+                    "set": next(ann_store.datasets()).id(),
+                    "key": get_layer_group(LayerEnum.meaning_segment).value,
+                    "value": ann_type.value,
+                }
+            ]
+            meaning_segment_ann = ann_store.annotate(
+                id=get_uuid(), target=text_selector, data=data
             )
 
             if is_root_or_commentary:
-                ann_selector = Selector.annotationselector(meaning_segment_ann)
+                ann_selector = Selector.annotationselector(meaning_segment_ann)  # noqa
                 data = [
                     {
                         "id": alignment_data_id,
@@ -270,10 +278,15 @@ class PlainTextNumberAlignedParser:
                         "key": LayerGroupEnum.associated_alignment.value,
                         "value": self.alignment_id,
                     },
+                    {
+                        "id": ann_type_data_id,
+                        "set": ann_dataset.id(),
+                        "key": get_layer_group(ann_type).value,
+                        "value": ann_type.value,
+                    },
                 ]
-                pecha.annotate(
-                    ann_store, ann_selector, ann_type, ann_type_data_id, data
-                )
+                ann_store.annotate(id=get_uuid(), target=ann_selector, data=data)
+
         """save root segments / commentary segments annotations"""
         ann_store.set_filename(
             str(
@@ -306,9 +319,15 @@ class PlainTextNumberAlignedParser:
                         ann_resource,
                         Offset.simple(char_count + start, char_count + end),
                     )
-                    pecha.annotate(
-                        ann_store, text_selector, LayerEnum.sapche, sapche_ann_data_id
-                    )
+                    data = [
+                        {
+                            "id": sapche_ann_data_id,
+                            "set": next(ann_store.datasets()).id(),
+                            "key": get_layer_group(LayerEnum.sapche).value,
+                            "value": ann_type.value,
+                        }
+                    ]
+                    ann_store.annotate(id=get_uuid(), target=text_selector, data=[])
                     break
             char_count += len(segment) + 2  # 2 being length for two newline characters
 

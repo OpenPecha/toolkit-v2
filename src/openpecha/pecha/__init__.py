@@ -399,37 +399,6 @@ class Pecha:
         )
         return ann_store
 
-    def annotate(
-        self,
-        ann_store: AnnotationStore,
-        selector: Selector,
-        ann_type: LayerEnum,
-        ann_data_id: str,
-        data: Optional[List] = None,
-    ):
-        ann_id = get_uuid()
-        ann_dataset = next(ann_store.datasets())
-        ann_group = get_layer_group(ann_type)
-
-        if not ann_data_id:
-            ann_data_id = get_uuid()
-
-        ann_type_data = [
-            {
-                "id": ann_data_id,
-                "set": ann_dataset.id(),
-                "key": ann_group.value,
-                "value": ann_type.value,
-            }
-        ]
-        if not data:
-            data = ann_type_data
-        else:
-            data.extend(ann_type_data)
-
-        ann = ann_store.annotate(id=ann_id, target=selector, data=data)
-        return ann
-
     def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
         dir_to_search = self.layer_path / basefile_name
         ann_store_files = list(dir_to_search.glob(f"{annotation_type.value}*.json"))
