@@ -278,7 +278,7 @@ class Pecha:
         )
         layer.add_resource(
             id=base_name,
-            filename=(self.base_path / f"{base_name}.txt").as_posix(),
+            filename=f"../../base/{base_name}.txt",
         )
         dataset_id = get_layer_collection(layer_name).value
         layer.add_dataset(id=dataset_id)
