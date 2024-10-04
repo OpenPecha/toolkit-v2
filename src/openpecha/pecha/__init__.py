@@ -9,7 +9,7 @@ from stam import Annotation, AnnotationStore, Selector
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo
-from openpecha.ids import get_uuid
+from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 
@@ -199,6 +199,13 @@ class Pecha:
         pecha_id = pecha_path.stem
         return cls(pecha_id, pecha_path)
 
+    @classmethod
+    def create(cls, output_path: Path) -> "Pecha":
+        pecha_id = get_initial_pecha_id()
+        pecha_path = output_path / pecha_id
+        pecha_path.mkdir(parents=True, exist_ok=True)
+        return cls(pecha_id, pecha_path)
+
     @property
     def base_path(self) -> Path:
         base_path = self.pecha_path / "base"
@@ -217,11 +224,13 @@ class Pecha:
     def metadata(self):
         return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
 
-    def set_base(self, base_name, content) -> None:
+    def set_base(self, content: str, base_name=None):
         """
         This function sets the base layer of the pecha to a new text.
         """
+        base_name = base_name if base_name else get_uuid()[:4]
         (self.base_path / f"{base_name}.txt").write_text(content)
+        return base_name
 
     def create_ann_store(self, basefile_name: str, annotation_type: LayerEnum):
         ann_store = AnnotationStore(id=self.id_)

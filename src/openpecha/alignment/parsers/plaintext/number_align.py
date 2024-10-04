@@ -205,9 +205,8 @@ class PlainTextNumberAlignedParser:
         pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
 
         """ create base file for new annotation store"""
-        basefile_name = get_uuid()[:4]
         base_content = "\n\n".join(segments)
-        pecha.set_base(basefile_name, base_content)
+        basefile_name = pecha.set_base(base_content)
 
         if ann_type == LayerEnum.root_segment:
             self.source_basefile_name = basefile_name
