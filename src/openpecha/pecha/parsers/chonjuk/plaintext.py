@@ -14,22 +14,21 @@ class ChonjukPlainTextParser(BaseParser):
 
     def parse(self, output_path: Path = PECHAS_PATH):
         pecha = Pecha.create(output_path)
-        base_name = pecha.set_base(self.text)
 
         for component in self.components:
-            component(pecha, base_name)
+            component(pecha)
 
 
 class ChapterParser:
     def __init__(self, text: str):
         self.text = text
-
-    def __call__(self, pecha: Pecha, base_name: str):
-        chapter_regex = (
+        self.regex = (
             r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"\s*([\u0F00-\u0FFF\s\n]+)[\u0F00-\u0FFF]"
         )
+
+    def get_annotations(self):
         # Find all matches
-        matches = re.finditer(chapter_regex, self.text)
+        matches = re.finditer(self.regex, self.text)
 
         chapter_anns = []
         # Iterate over the matches and store the spans
@@ -40,16 +39,21 @@ class ChapterParser:
                 LayerEnum.chapter.value: match.span(3),
             }
             chapter_anns.append(curr_match)
+        return chapter_anns
 
+    def get_updated_text(self):
         # Get the updated text with no annotations
         def keep_groups(match):
             return " ".join(match.groups())
 
-        cleaned_text = re.sub(chapter_regex, keep_groups, self.text)  # noqa
+        cleaned_text = re.sub(self.regex, keep_groups, self.text)
+        return cleaned_text
+
+    def get_updated_annotations(self, initial_anns):
         # Get the updated chapter co-ordinate
-        updated_chapter_anns = []
+        updated_anns = []
         offset = 0
-        for chapter_match in chapter_anns:
+        for chapter_match in initial_anns:
             offset += 2  # Account for 'ch' and '-'
             chapter_number = chapter_match["chapter_number"]
             updated_chapter_number = (
@@ -70,20 +74,24 @@ class ChapterParser:
             offset += spaces
             updated_chapter = (chapter[0] - offset, chapter[1] - offset)
 
-            updated_chapter_anns.append(
+            updated_anns.append(
                 {
                     "chapter_number": updated_chapter_number,
                     "chapter_title": updated_chapter_title,
                     LayerEnum.chapter.value: updated_chapter,
                 }
             )
+        return updated_anns
 
-        # add the chapter to the pecha
-        chapter_layer = pecha.add_layer(base_name, LayerEnum.chapter)
+    def __call__(self, pecha: Pecha):
+        anns = self.get_annotations()
+        cleaned_text = self.get_updated_text()
+        updated_anns = self.get_updated_annotations(anns)
 
-        for chapter_ann in updated_chapter_anns:
-            chapter_layer = pecha.add_annotation(
-                chapter_layer, chapter_ann, LayerEnum.chapter
-            )
+        base_name = pecha.set_base(cleaned_text)
+        layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
-        chapter_layer.save()
+        for ann in updated_anns:
+            pecha.add_annotation(layer, ann, LayerEnum.chapter)
+
+        layer.save()
