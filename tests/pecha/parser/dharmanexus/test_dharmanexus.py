@@ -13,7 +13,8 @@ def test_dharmanexus():
             "./tests/pecha/parser/dharmanexus/data/BO_K01_D0001-2_H0001-2$1.json"
             ]
     }
-    dharmanexus = DharamanexusParser()
+    regex_pattern = r'\b[a-zA-Z]{3}\b'
+    dharmanexus = DharamanexusParser(regex_pattern)
     dharmanexus.parse(file_dict)
     assert dharmanexus.state['BO_K01_D0001_H0001']['base_text'] == Path("./tests/pecha/parser/dharmanexus/data/expected_base_text.txt").read_text(encoding="utf-8")
     assert dharmanexus.state['BO_K01_D0001_H0001']['annotations']['segments']['BO_K01_D0001_H0001:80a-16']['span'] == {'start': 175695, 'end': 175795}
