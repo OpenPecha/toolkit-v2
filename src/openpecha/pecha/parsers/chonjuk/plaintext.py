@@ -10,7 +10,7 @@ from openpecha.pecha.parsers import BaseParser
 class ChonjukPlainTextParser(BaseParser):
     def __init__(self, text: str):
         self.text = text
-        self.components = [ChapterParser(self.text)]
+        self.components = [ChonjukChapterParser(self.text)]
 
     def parse(self, output_path: Path = PECHAS_PATH):
         pecha = Pecha.create(output_path)
@@ -19,7 +19,7 @@ class ChonjukPlainTextParser(BaseParser):
             component(pecha)
 
 
-class ChapterParser:
+class ChonjukChapterParser:
     def __init__(self, text: str):
         self.text = text
         self.regex = (
@@ -84,6 +84,7 @@ class ChapterParser:
         return updated_anns
 
     def __call__(self, pecha: Pecha):
+
         anns = self.get_annotations()
         cleaned_text = self.get_updated_text()
         updated_anns = self.get_updated_annotations(anns)
