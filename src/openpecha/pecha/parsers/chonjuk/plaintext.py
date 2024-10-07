@@ -63,7 +63,7 @@ class ChonjukChapterParser(BaseParser):
 
             start, end = ann_spans[LayerEnum.chapter.value]
             # Update the offset (2 is char length of 'ch' before chapter number)
-            offset += start - ann_spans["chapter_number"][0] - 2
+            offset += start - ann_spans["chapter_number"][0] + 2
 
             Chapter_span = start - offset, end - offset
             chapter_anns.append(
@@ -81,6 +81,7 @@ class ChonjukChapterParser(BaseParser):
         output_path: Path = PECHAS_PATH,
         metadata: Union[Dict, Path] = None,
     ):
+        output_path.mkdir(parents=True, exist_ok=True)
 
         self.cleaned_text = self.get_updated_text(input)
         self.annotations = self.get_annotations(input)
