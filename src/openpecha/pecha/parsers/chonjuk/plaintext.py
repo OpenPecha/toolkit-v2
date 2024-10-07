@@ -16,9 +16,10 @@ class ChonjukChapterParser(BaseParser):
         self.updated_text = ""
         self.annotations: List[Dict] = []
 
-    def get_initial_annotations(self, text: str):
+    def get_initial_ann_spans(self, text: str):
         """
-        Process:Find Chapter annotations in the text before removing the string annotations
+        Process: - Extract Chapter annotations in the text before removing the string annotations
+                 - Store the spans of the chapter annotations
         Output: Return the initial chapter annotations
         """
 
@@ -40,11 +41,9 @@ class ChonjukChapterParser(BaseParser):
         """
         Process: Remove the chapter string annotations from the text
         """
+        pattern = r"ch\d+-\"[\u0F00-\u0FFF]+\"\s*"
 
-        def keep_groups(match):
-            return " ".join(match.groups())
-
-        cleaned_text = re.sub(self.regex, keep_groups, text)
+        cleaned_text = re.sub(pattern, "", text)
         return cleaned_text
 
     def get_annotations(self, text: str):
@@ -52,38 +51,29 @@ class ChonjukChapterParser(BaseParser):
         Process: Update the chapter annotations after removing the string annotations
         Output: Return the updated chapter annotations
         """
-        initial_anns = self.get_initial_annotations(text)
-        updated_anns = []
+        initial_ann_spans = self.get_initial_ann_spans(text)
+        chapter_anns = []
         offset = 0
-        for chapter_match in initial_anns:
-            offset += 2  # Account for 'ch' and '-'
-            chapter_number = chapter_match["chapter_number"]
-            updated_chapter_number = (
-                chapter_number[0] - offset,
-                chapter_number[1] - offset,
-            )
-            offset += 1  # Account for '"'
+        for ann_spans in initial_ann_spans:
+            start, end = ann_spans["chapter_number"]
+            chapter_number = text[start:end]
 
-            chapter_title = chapter_match["chapter_title"]
-            updated_chapter_title = (
-                chapter_title[0] - offset,
-                chapter_title[1] - offset,
-            )
-            offset += 1  # Account for  '"' and substract a space
+            start, end = ann_spans["chapter_title"]
+            chapter_title = text[start:end]
 
-            chapter = chapter_match[LayerEnum.chapter.value]
-            spaces = chapter[0] - chapter_title[1] - 1
-            offset += spaces
-            updated_chapter = (chapter[0] - offset, chapter[1] - offset)
+            start, end = ann_spans[LayerEnum.chapter.value]
+            # Update the offset (2 is char length of 'ch' before chapter number)
+            offset += start - ann_spans["chapter_number"][0] - 2
 
-            updated_anns.append(
+            Chapter_span = start - offset, end - offset
+            chapter_anns.append(
                 {
-                    "chapter_number": updated_chapter_number,
-                    "chapter_title": updated_chapter_title,
-                    LayerEnum.chapter.value: updated_chapter,
+                    "chapter_number": chapter_number,
+                    "chapter_title": chapter_title,
+                    LayerEnum.chapter.value: Chapter_span,
                 }
             )
-        return updated_anns
+        return chapter_anns
 
     def parse(
         self,
