@@ -70,7 +70,10 @@ class ChonjukChapterParser(BaseParser):
                 {
                     "chapter_number": chapter_number,
                     "chapter_title": chapter_title,
-                    LayerEnum.chapter.value: Chapter_span,
+                    LayerEnum.chapter.value: {
+                        "start": Chapter_span[0],
+                        "end": Chapter_span[1],
+                    },
                 }
             )
         return chapter_anns

@@ -305,9 +305,9 @@ class Pecha:
             raise ValueError(f"Annotation data should contain {layer_type.value} key.")
 
         # Check if the annotation with LayerEnum has Span value as tuple
-        if not isinstance(annotation[layer_type.value], tuple):
+        if not isinstance(annotation[layer_type.value], Dict):
             raise ValueError(
-                f"The {layer_type.value} annotation should be a Span of two integers."
+                f"The {layer_type.value} annotation should have a Span of 'start' and 'end'."
             )
 
         # Check if the annotataion data has a valid value
@@ -315,16 +315,10 @@ class Pecha:
             if not isinstance(ann_name, str):
                 raise ValueError("The annotation metadata key should be a string.")
 
-            if not isinstance(ann_value, (str, tuple)):
+            if not isinstance(ann_value, (str, Dict)):
                 raise ValueError(
-                    "The annotation value should be either a string or a tuple of two integers."
+                    "The annotation value should be either a string or a Span Dictionary."
                 )
-
-            if isinstance(ann_value, tuple):
-                if len(ann_value) != 2:
-                    raise ValueError(
-                        "The annotation Span value should only contain be a tuple of two integers."
-                    )
 
     def add_annotation(
         self, ann_store: AnnotationStore, annotation: Dict, layer_type: LayerEnum
@@ -345,45 +339,22 @@ class Pecha:
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
 
-        # Get annotation data and the annotation main selector
-        ann_data = {k: v for k, v in annotation.items() if not isinstance(v, tuple)}
+        # Get annotation metadata / payloads
+        ann_data = {k: v for k, v in annotation.items() if not isinstance(v, Dict)}
+        # Annotate layer_type into the annotation
         ann_data[get_layer_group(layer_type).value] = layer_type.value
 
-        start, end = annotation[layer_type.value]
+        start, end = (
+            annotation[layer_type.value]["start"],
+            annotation[layer_type.value]["end"],
+        )
         text_selector = Selector.textselector(ann_resource, Offset.simple(start, end))
 
-        # Add if there is any additional selectors needed for more annotations with Span
-        selectors = []
-
-        for ann_name, ann_value in annotation.items():
-            if isinstance(ann_value, tuple) and ann_name != layer_type.value:
-                start, end = ann_value
-                curr_selector = Selector.textselector(
-                    ann_resource, Offset.simple(start, end)
-                )
-                data = [
-                    {
-                        "id": get_uuid(),
-                        "set": ann_dataset.id(),
-                        "key": f"{layer_type.value}_metadata",
-                        "value": ann_name,
-                    }
-                ]
-                ann = ann_store.annotate(target=curr_selector, data=data, id=get_uuid())
-                ann_selector = Selector.annotationselector(ann)
-                selectors.append(ann_selector)
-
-        # Add the main annotation
-        if selectors:
-            main_selector = Selector.compositeselector(text_selector, *selectors)
-        else:
-            main_selector = text_selector
-
-        main_ann_data = [
+        prepared_ann_data = [
             {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
             for k, v in ann_data.items()
         ]
-        ann_store.annotate(target=main_selector, data=main_ann_data, id=get_uuid())
+        ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
         return ann_store
 
     def annotate_metadata(self, ann_store: AnnotationStore, metadata: dict):

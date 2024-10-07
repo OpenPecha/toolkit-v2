@@ -16,16 +16,16 @@ class TestChonjukPlainTextParser:
             {
                 "chapter_number": "1",
                 "chapter_title": "བྱང་ཆུབ་སེམས་ཀྱི་ཕན་ཡོན་བཤད་པ།",
-                "Chapter": (145, 446),
+                "Chapter": {"start": 145, "end": 446},
             },
             {
                 "chapter_number": "2",
                 "chapter_title": "སྡིག་པ་བཤགས་པ།",
-                "Chapter": (449, 896),
+                "Chapter": {"start": 449, "end": 896},
             },
         ]
 
-        output_path = data / "output"
+        output_path = Path(__file__).parent / "output"
 
         parser.parse(chonjuk_text, output_path=output_path)
         assert parser.cleaned_text == expected_base_text
