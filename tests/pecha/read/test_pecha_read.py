@@ -14,7 +14,7 @@ def test_pecha_read():
 
     base_path = pecha.pecha_path / "base"
     basefile_name = list(base_path.rglob("*.txt"))[0].stem
-    ann_store, _ = pecha.get_annotation_store(basefile_name, LayerEnum.root_segment)
+    ann_store, _ = pecha.get_layer(basefile_name, LayerEnum.root_segment)
     assert isinstance(ann_store, AnnotationStore)
 
     expected_anns = [

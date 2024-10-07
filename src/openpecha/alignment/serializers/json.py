@@ -19,12 +19,12 @@ class JSONSerializer:
         self.target_pecha = target_pecha
 
         source_pecha_ann_file = (
-            self.source_pecha.ann_path
+            self.source_pecha.layer_path
             / self.alignment.metadata["source"]["base"]
             / self.alignment.metadata["source"]["layer"]
         )
         target_pecha_ann_file = (
-            self.target_pecha.ann_path
+            self.target_pecha.layer_path
             / self.alignment.metadata["target"]["base"]
             / self.alignment.metadata["target"]["layer"]
         )
@@ -77,9 +77,7 @@ class JSONSerializer:
         source_ann_type = LayerEnum(
             self.alignment.metadata["source"]["layer"].split("-")[0]
         )
-        ann_store, _ = self.source_pecha.get_annotation_store(
-            source_base, source_ann_type
-        )
+        ann_store, _ = self.source_pecha.get_layer(source_base, source_ann_type)
 
         source_segments = []
         root_segment_count = 1
@@ -104,9 +102,7 @@ class JSONSerializer:
         target_ann_type = LayerEnum(
             self.alignment.metadata["target"]["layer"].split("-")[0]
         )
-        ann_store, _ = self.target_pecha.get_annotation_store(
-            target_base, target_ann_type
-        )
+        ann_store, _ = self.target_pecha.get_layer(target_base, target_ann_type)
 
         target_segments = []
         for ann in ann_store.data(

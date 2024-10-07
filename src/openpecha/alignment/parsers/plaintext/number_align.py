@@ -9,7 +9,7 @@ from stam import Offset, Selector
 from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_layer_group
 
 pecha_path = Path
 alignment_path = Path
@@ -214,19 +214,19 @@ class PlainTextNumberAlignedParser:
             self.target_basefile_name = basefile_name
 
         """ annotate metadata"""
-        ann_store = pecha.create_ann_store(basefile_name, LayerEnum.metadata)
+        ann_store = pecha.add_layer(basefile_name, LayerEnum.metadata)
         metadata = (
             self.metadata["source"]
             if ann_type == LayerEnum.root_segment
             else self.metadata["target"]
         )
         ann_store = pecha.annotate_metadata(ann_store, metadata)
-        pecha.save_ann_store(ann_store, LayerEnum.metadata, basefile_name)
-
+        ann_store.set_filename(pecha.pecha_path.joinpath("metadata.json").as_posix())
+        ann_store.save()
         del ann_store
 
         """ annotate root segments / commentary segments """
-        ann_store = pecha.create_ann_store(basefile_name, ann_type)
+        ann_store = pecha.add_layer(basefile_name, ann_type)
 
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
@@ -257,12 +257,20 @@ class PlainTextNumberAlignedParser:
                 Offset.simple(start, end),
             )
             char_count += len(segment) + 2  # 2 being length for two newline characters
-            meaning_segment_ann = pecha.annotate(
-                ann_store, text_selector, LayerEnum.meaning_segment, meaning_ann_data_id
+            data = [
+                {
+                    "id": meaning_ann_data_id,
+                    "set": next(ann_store.datasets()).id(),
+                    "key": get_layer_group(LayerEnum.meaning_segment).value,
+                    "value": ann_type.value,
+                }
+            ]
+            meaning_segment_ann = ann_store.annotate(
+                id=get_uuid(), target=text_selector, data=data
             )
 
             if is_root_or_commentary:
-                ann_selector = Selector.annotationselector(meaning_segment_ann)
+                ann_selector = Selector.annotationselector(meaning_segment_ann)  # noqa
                 data = [
                     {
                         "id": alignment_data_id,
@@ -270,12 +278,24 @@ class PlainTextNumberAlignedParser:
                         "key": LayerGroupEnum.associated_alignment.value,
                         "value": self.alignment_id,
                     },
+                    {
+                        "id": ann_type_data_id,
+                        "set": ann_dataset.id(),
+                        "key": get_layer_group(ann_type).value,
+                        "value": ann_type.value,
+                    },
                 ]
-                pecha.annotate(
-                    ann_store, ann_selector, ann_type, ann_type_data_id, data
-                )
+                ann_store.annotate(id=get_uuid(), target=ann_selector, data=data)
+
         """save root segments / commentary segments annotations"""
-        pecha.save_ann_store(ann_store, ann_type, basefile_name)
+        ann_store.set_filename(
+            str(
+                pecha.layer_path
+                / basefile_name
+                / f"{ann_type.value}-{get_uuid()[:3]}.json"
+            )
+        )
+        ann_store.save()
 
         """ annotate sapche annotations """
         del ann_store  # In STAM, there is an warning on not to load multiple ann_store
@@ -287,7 +307,7 @@ class PlainTextNumberAlignedParser:
         else:
             sapche_indicies = self.mapping_ann_indicies["commentary_sapche_indicies"]
 
-        ann_store = pecha.create_ann_store(basefile_name, LayerEnum.sapche)
+        ann_store = pecha.add_layer(basefile_name, LayerEnum.sapche)
         ann_resource = next(ann_store.resources())
 
         char_count = 0
@@ -299,16 +319,28 @@ class PlainTextNumberAlignedParser:
                         ann_resource,
                         Offset.simple(char_count + start, char_count + end),
                     )
-                    pecha.annotate(
-                        ann_store, text_selector, LayerEnum.sapche, sapche_ann_data_id
-                    )
+                    data = [
+                        {
+                            "id": sapche_ann_data_id,
+                            "set": next(ann_store.datasets()).id(),
+                            "key": get_layer_group(LayerEnum.sapche).value,
+                            "value": ann_type.value,
+                        }
+                    ]
+                    ann_store.annotate(id=get_uuid(), target=text_selector, data=[])
                     break
             char_count += len(segment) + 2  # 2 being length for two newline characters
 
         """save root segments / commentary segments annotations"""
         if ann_store.annotations_len() > 0:
-            pecha.save_ann_store(ann_store, LayerEnum.sapche, basefile_name)
-
+            ann_store.set_filename(
+                str(
+                    pecha.layer_path
+                    / basefile_name
+                    / f"{LayerEnum.sapche.value}-{get_uuid()[:3]}.json"
+                )
+            )
+            ann_store.save()
         return pecha_path
 
     def create_alignment(
@@ -319,9 +351,7 @@ class PlainTextNumberAlignedParser:
         (
             source_ann_store,
             source_ann_store_file_path,
-        ) = source_pecha.get_annotation_store(
-            self.source_basefile_name, LayerEnum.root_segment
-        )
+        ) = source_pecha.get_layer(self.source_basefile_name, LayerEnum.root_segment)
         source_dataset = next(source_ann_store.datasets())
         source_ann_key = source_dataset.key(LayerGroupEnum.structure_type.value)
         source_meaning_segments = list(
@@ -334,10 +364,7 @@ class PlainTextNumberAlignedParser:
         del source_ann_key
 
         target_pecha = Pecha.from_path(target_pecha_path)
-        (
-            target_ann_store,
-            target_ann_store_file_path,
-        ) = target_pecha.get_annotation_store(
+        (target_ann_store, target_ann_store_file_path,) = target_pecha.get_layer(
             self.target_basefile_name, LayerEnum.commentary_segment
         )
         target_dataset = next(target_ann_store.datasets())

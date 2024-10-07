@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
-from stam import Annotation, AnnotationStore, Selector
+from stam import Annotation, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
@@ -14,7 +14,7 @@ from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 
 BASE_NAME = str
-LAYER_NAME = str
+layer_type = str
 
 
 class StamPecha:
@@ -24,7 +24,7 @@ class StamPecha:
         self.path: Path = path.resolve()
         self.parent: Path = self.path.parent
         self.pecha_id: str = self.path.name
-        self.layers: Dict[BASE_NAME, Dict[LAYER_NAME, AnnotationStore]] = defaultdict(
+        self.layers: Dict[BASE_NAME, Dict[layer_type, AnnotationStore]] = defaultdict(
             dict
         )
 
@@ -92,13 +92,13 @@ class StamPecha:
                 self.layers[base_name][rel_layer_fn.name] = store
                 yield layer_fn.name, store
 
-    def get_layer(self, base_name, layer_name):
+    def get_layer(self, base_name, layer_type):
         """
         This function returns a specific layer of the pecha.
         """
         if not self.layers[base_name]:
             self.get_layers(base_name)
-        return self.layers[base_name][layer_name]
+        return self.layers[base_name][layer_type]
 
     def update_base(self, base_name, new_base, save=True):
         """
@@ -188,6 +188,8 @@ class Pecha:
     def __init__(self, pecha_id: str, pecha_path: Path) -> None:
         self.id_ = pecha_id
         self.pecha_path = pecha_path
+        self.bases = self.load_bases()
+        self.layers = self.load_layers()
 
     @classmethod
     def from_id(cls, pecha_id: str):
@@ -214,15 +216,32 @@ class Pecha:
         return base_path
 
     @property
-    def ann_path(self):
-        ann_path = self.pecha_path / "layers"
-        if not ann_path.exists():
-            ann_path.mkdir(parents=True, exist_ok=True)
-        return ann_path
+    def layer_path(self):
+        layer_path = self.pecha_path / "layers"
+        if not layer_path.exists():
+            layer_path.mkdir(parents=True, exist_ok=True)
+        return layer_path
 
     @property
     def metadata(self):
         return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
+
+    def load_bases(self):
+        bases = {}
+        for base_file in self.base_path.rglob("*.txt"):
+            base_name = base_file.stem
+            bases[base_name] = base_file.read_text(encoding="utf-8")
+        return bases
+
+    def load_layers(self):
+        layers: Dict[str, Dict[LayerEnum, List[AnnotationStore]]] = defaultdict(
+            lambda: defaultdict(list)
+        )
+        for layer_file in self.layer_path.rglob("*.json"):
+            base_name = layer_file.parent.name
+            ann_enum = LayerEnum(layer_file.stem.split("-")[0])
+            layers[base_name][ann_enum].append(AnnotationStore(file=str(layer_file)))
+        return layers
 
     def set_base(self, content: str, base_name=None):
         """
@@ -230,18 +249,114 @@ class Pecha:
         """
         base_name = base_name if base_name else get_uuid()[:4]
         (self.base_path / f"{base_name}.txt").write_text(content)
+
+        # add base to the attribute 'bases'
+        if base_name not in self.bases:
+            self.bases[base_name] = content
+
+        # make a folder for the base in the 'layers' folder
+        (self.layer_path / base_name).mkdir(parents=True, exist_ok=True)
         return base_name
 
-    def create_ann_store(self, basefile_name: str, annotation_type: LayerEnum):
+    def add_layer(self, base_name: str, layer_type: LayerEnum):
+        """
+        Inputs:
+            base_name: .txt file which this annotation is associated with
+            layer_type: the type of annotation layer, it should be include in LayerEnum
+
+        Process:
+            - create an annotation store
+            - add the resource to the annotation store
+            - add the dataset to the annotation store
+
+        Output:
+            - annotation store
+        """
+        if base_name not in self.bases:
+            raise ValueError(f"Base {base_name} does not exist.")
+
         ann_store = AnnotationStore(id=self.id_)
-        ann_store.add_resource(
-            id=basefile_name,
-            filename=(self.base_path / f"{basefile_name}.txt").as_posix(),
+        ann_store.set_filename(
+            str(
+                self.layer_path
+                / base_name
+                / f"{layer_type.value}-{get_uuid()[:4]}.json"
+            )
         )
-
-        dataset_id = get_layer_collection(annotation_type).value
+        ann_store.add_resource(
+            id=base_name,
+            filename=f"../../base/{base_name}.txt",
+        )
+        dataset_id = get_layer_collection(layer_type).value
         ann_store.add_dataset(id=dataset_id)
+        self.layers[base_name][layer_type].append(ann_store)
 
+        return ann_store
+
+    def check_annotation(self, annotation: Dict, layer_type: LayerEnum):
+        """
+        Inputs:annotation: annotation data
+        Process: - check if the annotation data is valid
+                - raise error if the annotation data is invalid
+        """
+
+        # Check if an annotation with LayerEnum is present in the annotation data
+        if layer_type.value not in annotation.keys():
+            raise ValueError(f"Annotation data should contain {layer_type.value} key.")
+
+        # Check if the annotation with LayerEnum has Span value as tuple
+        if not isinstance(annotation[layer_type.value], Dict):
+            raise ValueError(
+                f"The {layer_type.value} annotation should have a Span of 'start' and 'end'."
+            )
+
+        # Check if the annotataion data has a valid value
+        for ann_name, ann_value in annotation.items():
+            if not isinstance(ann_name, str):
+                raise ValueError("The annotation metadata key should be a string.")
+
+            if not isinstance(ann_value, (str, Dict)):
+                raise ValueError(
+                    "The annotation value should be either a string or a Span Dictionary."
+                )
+
+    def add_annotation(
+        self, ann_store: AnnotationStore, annotation: Dict, layer_type: LayerEnum
+    ):
+        """
+        Inputs: layer: annotation store, data: annotation data
+        Process: add the annotation to the annotation store
+        Output:annotation
+        """
+        self.check_annotation(annotation, layer_type)
+
+        ann_resource = next(ann_store.resources())
+        ann_dataset = next(ann_store.datasets())
+
+        # Get annotation metadata / payloads
+        ann_data = {k: v for k, v in annotation.items() if not isinstance(v, Dict)}
+        # Add main annotation such as Chapter, Sabche, Segment into the annotation data
+        ann_data[get_layer_group(layer_type).value] = layer_type.value
+
+        # Get the start and end of the annotation
+        start, end = (
+            annotation[layer_type.value]["start"],
+            annotation[layer_type.value]["end"],
+        )
+        text_selector = Selector.textselector(ann_resource, Offset.simple(start, end))
+
+        # If ann data already exists, use it . Otherwise create a new one with new id
+        prepared_ann_data = []
+        for k, v in ann_data.items():
+            try:
+                ann_datas = list(ann_store.data(set=ann_dataset.id(), key=k, value=v))
+                prepared_ann_data.append(ann_datas[0])
+            except:  # noqa
+                prepared_ann_data.append(
+                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                )
+
+        ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
         return ann_store
 
     def annotate_metadata(self, ann_store: AnnotationStore, metadata: dict):
@@ -261,123 +376,15 @@ class Pecha:
         )
         return ann_store
 
-    def annotate(
-        self,
-        ann_store: AnnotationStore,
-        selector: Selector,
-        ann_type: LayerEnum,
-        ann_data_id: str,
-        data: Optional[List] = None,
-    ):
-        ann_id = get_uuid()
-        ann_dataset = next(ann_store.datasets())
-        ann_group = get_layer_group(ann_type)
+    def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
+        dir_to_search = self.layer_path / basefile_name
+        ann_store_files = list(dir_to_search.glob(f"{annotation_type.value}*.json"))
 
-        if not ann_data_id:
-            ann_data_id = get_uuid()
-
-        ann_type_data = [
-            {
-                "id": ann_data_id,
-                "set": ann_dataset.id(),
-                "key": ann_group.value,
-                "value": ann_type.value,
-            }
-        ]
-        if not data:
-            data = ann_type_data
-        else:
-            data.extend(ann_type_data)
-
-        ann = ann_store.annotate(id=ann_id, target=selector, data=data)
-        return ann
-
-    def get_annotation_store(self, basefile_name: str, annotation_type: LayerEnum):
-        ann_store_file_paths = list(
-            Path(self.ann_path / basefile_name).glob(f"{annotation_type.value}*.json")
-        )
         annotation_stores = [
             AnnotationStore(file=str(annotation_file))
-            for annotation_file in ann_store_file_paths
+            for annotation_file in ann_store_files
         ]
 
         if len(annotation_stores) == 1:
-            return annotation_stores[0], ann_store_file_paths[0]
-
-        return annotation_stores, ann_store_file_paths
-
-    def save_ann_store(
-        self,
-        ann_store: AnnotationStore,
-        ann_type: LayerEnum,
-        basefile_name: str,
-        file_name: Optional[str] = None,
-    ):
-
-        if ann_type == LayerEnum.metadata:
-            file_name = "metadata.json" if not file_name else file_name
-            ann_store_path = self.pecha_path
-        else:
-            file_name = (
-                f"{ann_type.value}-{get_uuid()[:3]}.json"
-                if not file_name
-                else file_name
-            )
-            ann_store_path = self.ann_path / basefile_name
-        ann_store_path.mkdir(parents=True, exist_ok=True)
-        ann_store_json_dict = self.convert_absolute_to_relative_path(
-            ann_store, ann_store_path
-        )
-
-        with open(ann_store_path / file_name, "w", encoding="utf-8") as f:
-            f.write(json.dumps(ann_store_json_dict, indent=2, ensure_ascii=False))
-
-        return ann_store_path / file_name
-
-    @staticmethod
-    def convert_absolute_to_relative_path(
-        ann_store: AnnotationStore, ann_store_path: Path
-    ):
-        """
-        convert the absolute to relative path for base file in json string of annotation store
-        """
-        ann_store_json_string = ann_store.to_json_string()
-        json_object = json.loads(ann_store_json_string)
-        for resource in json_object["resources"]:
-            original_path = Path(resource["@include"])
-            if ann_store_path.name == "metadata.json":
-                resource["@include"] = f"base/{original_path.name}"
-            else:
-                resource["@include"] = f"../../base/{original_path.name}"
-        if "@include" in json_object:
-            json_object["@include"] = Path(json_object["@include"]).name
-
-        return json_object
-
-
-def save_stam(ann_store: AnnotationStore, ann_store_path: Path) -> Path:
-    """
-    Save the annotation store to a file.
-    """
-    ann_store_path.parent.mkdir(parents=True, exist_ok=True)
-
-    ann_json_str = ann_store.to_json_string()
-    ann_json_dict = convert_absolute_to_relative_path(ann_json_str, ann_store_path)
-    with open(ann_store_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(ann_json_dict, indent=2, ensure_ascii=False))
-
-    return ann_store_path
-
-
-def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
-    """
-    convert the absolute to relative path for base file in json string of annotation store
-    """
-    json_object = json.loads(json_string)
-    for resource in json_object["resources"]:
-        original_path = Path(resource["@include"])
-        if ann_store_path.name == "metadata.json":
-            resource["@include"] = f"base/{original_path.name}"
-        else:
-            resource["@include"] = f"../../base/{original_path.name}"
-    return json_object
+            return annotation_stores[0], ann_store_files[0]
+        return annotation_stores, ann_store_files
