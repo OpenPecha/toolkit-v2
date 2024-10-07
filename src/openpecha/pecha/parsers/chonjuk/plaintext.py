@@ -8,19 +8,7 @@ from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers import BaseParser
 
 
-class ChonjukPlainTextParser(BaseParser):
-    def __init__(self, text: str):
-        self.text = text
-        self.components = [ChonjukChapterParser(self.text)]
-
-    def parse(self, output_path: Path = PECHAS_PATH):
-        pecha = Pecha.create(output_path)
-
-        for component in self.components:
-            component(pecha)
-
-
-class ChonjukChapterParser:
+class ChonjukChapterParser(BaseParser):
     def __init__(self, text: str):
         self.text = text
         self.regex = (
@@ -103,8 +91,10 @@ class ChonjukChapterParser:
         self.cleaned_text = self.get_updated_text()
         self.annotations = self.get_annotations()
 
-    def __call__(self, pecha):
+    def write(self, output_path: Path = PECHAS_PATH):
         self.parse()
+
+        pecha = Pecha.create(output_path)
         base_name = pecha.set_base(self.cleaned_text)
         layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
