@@ -212,5 +212,5 @@ This will save the annotation layer under the `base name` which comes one level 
             - da0c.txt
         - layers(dir)
             - da0c
-                - chapter-123.json
+                - Chapter-123.json
 ```
