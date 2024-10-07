@@ -130,7 +130,7 @@ layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
 # Add an annotation to the layer
 annotation = {
-    "chapter": {"start": 0, "end": 10},
+    "Chapter": {"start": 0, "end": 10},
     "title": "Chapter 1"
 }
 pecha.add_annotation(layer, annotation, LayerEnum.chapter)
@@ -184,13 +184,16 @@ A particular pecha can have more than one layer with same layer type. For exampl
 ### 4. Add an annotation to the layer
 ```python
 annotation = {
-    "chapter": {"start": 0, "end": 10},
+    "Chapter": {"start": 0, "end": 10},
     "title": "Chapter 1"
 }
 pecha.add_annotation(layer, annotation, LayerEnum.chapter)
 ```
 
-This will store the annotation in the `annotation store/layer`.The main data in the annotation such that `"chapter": {"start": 0, "end": 10}` would be store as a text selector pointing to the base file and other annotation metadata such as `"title": "Chapter 1"` would be stored in the `annotation_data` attribute of the `annotation` in `AnnotationStore` object.
+This will store the annotation in the `annotation store/layer`.
+- The main data in the annotation such that `"Chapter": {"start": 0, "end": 10}` would be store as a text selector pointing to the base file.
+- The main data in annotation should be present in the `annotation` argument and its key should be same as the `layer_type` value of the `layer`.
+- Other annotation metadata such as `"title": "Chapter 1"` would be stored in the `annotation_data` attribute of the `annotation`.
 
 
 ### 5. Save the layer
@@ -198,7 +201,7 @@ This will store the annotation in the `annotation store/layer`.The main data in 
 layer.save()
 ```
 
-This will save the annotation layer in the `layer_path` directory with the `layer_name` as the filename.
+This will save the annotation layer under the `base name` which comes one level below the `layer_path` directory.
 
 
 
