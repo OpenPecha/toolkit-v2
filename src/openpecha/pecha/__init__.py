@@ -324,15 +324,9 @@ class Pecha:
         self, ann_store: AnnotationStore, annotation: Dict, layer_type: LayerEnum
     ):
         """
-        Inputs:
-            layer: annotation store
-            data: annotation data
-
-        Process:
-            - add the annotation to the annotation store
-
-        Output:
-            - annotation
+        Inputs: layer: annotation store, data: annotation data
+        Process: add the annotation to the annotation store
+        Output:annotation
         """
         self.check_annotation(annotation, layer_type)
 
@@ -341,19 +335,27 @@ class Pecha:
 
         # Get annotation metadata / payloads
         ann_data = {k: v for k, v in annotation.items() if not isinstance(v, Dict)}
-        # Annotate layer_type into the annotation
+        # Add main annotation such as Chapter, Sabche, Segment into the annotation data
         ann_data[get_layer_group(layer_type).value] = layer_type.value
 
+        # Get the start and end of the annotation
         start, end = (
             annotation[layer_type.value]["start"],
             annotation[layer_type.value]["end"],
         )
         text_selector = Selector.textselector(ann_resource, Offset.simple(start, end))
 
-        prepared_ann_data = [
-            {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
-            for k, v in ann_data.items()
-        ]
+        # If ann data already exists, use it . Otherwise create a new one with new id
+        prepared_ann_data = []
+        for k, v in ann_data.items():
+            try:
+                ann_datas = list(ann_store.data(set=ann_dataset.id(), key=k, value=v))
+                prepared_ann_data.append(ann_datas[0])
+            except:  # noqa
+                prepared_ann_data.append(
+                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                )
+
         ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
         return ann_store
 
