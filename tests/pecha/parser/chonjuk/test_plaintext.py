@@ -10,10 +10,8 @@ class TestChonjukPlainTextParser:
         chapter_parser = ChonjukChapterParser(text=chonjuk_text)
 
         expected_base_text = (data / "expected_base.txt").read_text(encoding="utf-8")
-        assert chapter_parser.get_updated_text() == expected_base_text
 
-        chapter_anns = chapter_parser.get_annotations()
-        assert chapter_anns == [
+        expected_chapter_anns = [
             {
                 "chapter_number": (145, 146),
                 "chapter_title": (147, 177),
@@ -25,6 +23,10 @@ class TestChonjukPlainTextParser:
                 "Chapter": (497, 944),
             },
         ]
+
+        chapter_parser.parse()
+        assert chapter_parser.cleaned_text == expected_base_text
+        assert chapter_parser.annotations == expected_chapter_anns
 
 
 TestChonjukPlainTextParser().test_chonjuk_plaintext_parser()

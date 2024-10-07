@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Dict, List
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
@@ -25,6 +26,8 @@ class ChonjukChapterParser:
         self.regex = (
             r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"\s*([\u0F00-\u0FFF\s\n]+)[\u0F00-\u0FFF]"
         )
+        self.updated_text = ""
+        self.annotations: List[Dict] = []
 
     def get_initial_annotations(self):
         """
@@ -95,15 +98,17 @@ class ChonjukChapterParser:
             )
         return updated_anns
 
-    def __call__(self, pecha: Pecha):
+    def parse(self):
 
-        cleaned_text = self.get_updated_text()
-        anns = self.get_annotations()
+        self.cleaned_text = self.get_updated_text()
+        self.annotations = self.get_annotations()
 
-        base_name = pecha.set_base(cleaned_text)
+    def __call__(self, pecha):
+        self.parse()
+        base_name = pecha.set_base(self.cleaned_text)
         layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
-        for ann in anns:
+        for ann in self.annotations:
             pecha.add_annotation(layer, ann, LayerEnum.chapter)
 
         layer.save()
