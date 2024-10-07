@@ -26,7 +26,12 @@ class ChonjukChapterParser:
             r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"\s*([\u0F00-\u0FFF\s\n]+)[\u0F00-\u0FFF]"
         )
 
-    def get_annotations(self):
+    def get_initial_annotations(self):
+        """
+        Process:Find Chapter annotations in the text before removing the string annotations
+        Output: Return the initial chapter annotations
+        """
+
         # Find all matches
         matches = re.finditer(self.regex, self.text)
 
@@ -42,15 +47,22 @@ class ChonjukChapterParser:
         return chapter_anns
 
     def get_updated_text(self):
-        # Get the updated text with no annotations
+        """
+        Process: Remove the chapter string annotations from the text
+        """
+
         def keep_groups(match):
             return " ".join(match.groups())
 
         cleaned_text = re.sub(self.regex, keep_groups, self.text)
         return cleaned_text
 
-    def get_updated_annotations(self, initial_anns):
-        # Get the updated chapter co-ordinate
+    def get_annotations(self):
+        """
+        Process: Update the chapter annotations after removing the string annotations
+        Output: Return the updated chapter annotations
+        """
+        initial_anns = self.get_initial_annotations()
         updated_anns = []
         offset = 0
         for chapter_match in initial_anns:
@@ -85,14 +97,13 @@ class ChonjukChapterParser:
 
     def __call__(self, pecha: Pecha):
 
-        anns = self.get_annotations()
         cleaned_text = self.get_updated_text()
-        updated_anns = self.get_updated_annotations(anns)
+        anns = self.get_annotations()
 
         base_name = pecha.set_base(cleaned_text)
         layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
-        for ann in updated_anns:
+        for ann in anns:
             pecha.add_annotation(layer, ann, LayerEnum.chapter)
 
         layer.save()
