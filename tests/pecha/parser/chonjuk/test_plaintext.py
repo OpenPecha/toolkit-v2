@@ -1,4 +1,5 @@
 from pathlib import Path
+from shutil import rmtree
 
 from openpecha.pecha.parsers.chonjuk.plaintext import ChonjukChapterParser
 
@@ -7,7 +8,7 @@ class TestChonjukPlainTextParser:
     def test_chonjuk_plaintext_parser(self):
         data = Path(__file__).parent / "data"
         chonjuk_text = (data / "chonjuk.txt").read_text(encoding="utf-8")
-        chapter_parser = ChonjukChapterParser(text=chonjuk_text)
+        chapter_parser = ChonjukChapterParser()
 
         expected_base_text = (data / "expected_base.txt").read_text(encoding="utf-8")
 
@@ -24,9 +25,12 @@ class TestChonjukPlainTextParser:
             },
         ]
 
-        chapter_parser.parse()
+        output_path = data / "output"
+        chapter_parser.parse(chonjuk_text, output_path=output_path)
         assert chapter_parser.cleaned_text == expected_base_text
         assert chapter_parser.annotations == expected_chapter_anns
+
+        rmtree(output_path)
 
 
 TestChonjukPlainTextParser().test_chonjuk_plaintext_parser()

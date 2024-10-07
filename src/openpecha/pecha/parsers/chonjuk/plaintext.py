@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
@@ -9,22 +9,21 @@ from openpecha.pecha.parsers import BaseParser
 
 
 class ChonjukChapterParser(BaseParser):
-    def __init__(self, text: str):
-        self.text = text
+    def __init__(self):
         self.regex = (
             r"ch(\d+)-\"([\u0F00-\u0FFF]+)\"\s*([\u0F00-\u0FFF\s\n]+)[\u0F00-\u0FFF]"
         )
         self.updated_text = ""
         self.annotations: List[Dict] = []
 
-    def get_initial_annotations(self):
+    def get_initial_annotations(self, text: str):
         """
         Process:Find Chapter annotations in the text before removing the string annotations
         Output: Return the initial chapter annotations
         """
 
         # Find all matches
-        matches = re.finditer(self.regex, self.text)
+        matches = re.finditer(self.regex, text)
 
         chapter_anns = []
         # Iterate over the matches and store the spans
@@ -37,7 +36,7 @@ class ChonjukChapterParser(BaseParser):
             chapter_anns.append(curr_match)
         return chapter_anns
 
-    def get_updated_text(self):
+    def get_updated_text(self, text: str):
         """
         Process: Remove the chapter string annotations from the text
         """
@@ -45,15 +44,15 @@ class ChonjukChapterParser(BaseParser):
         def keep_groups(match):
             return " ".join(match.groups())
 
-        cleaned_text = re.sub(self.regex, keep_groups, self.text)
+        cleaned_text = re.sub(self.regex, keep_groups, text)
         return cleaned_text
 
-    def get_annotations(self):
+    def get_annotations(self, text: str):
         """
         Process: Update the chapter annotations after removing the string annotations
         Output: Return the updated chapter annotations
         """
-        initial_anns = self.get_initial_annotations()
+        initial_anns = self.get_initial_annotations(text)
         updated_anns = []
         offset = 0
         for chapter_match in initial_anns:
@@ -86,13 +85,15 @@ class ChonjukChapterParser(BaseParser):
             )
         return updated_anns
 
-    def parse(self):
+    def parse(
+        self,
+        input: str,
+        output_path: Path = PECHAS_PATH,
+        metadata: Union[Dict, Path] = None,
+    ):
 
-        self.cleaned_text = self.get_updated_text()
-        self.annotations = self.get_annotations()
-
-    def write(self, output_path: Path = PECHAS_PATH):
-        self.parse()
+        self.cleaned_text = self.get_updated_text(input)
+        self.annotations = self.get_annotations(input)
 
         pecha = Pecha.create(output_path)
         base_name = pecha.set_base(self.cleaned_text)
