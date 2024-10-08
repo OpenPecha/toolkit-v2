@@ -12,6 +12,7 @@ from openpecha.github_utils import clone_repo
 from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
+from openpecha.pecha.metadata import PechaMetaData
 
 BASE_NAME = str
 layer_type = str
@@ -359,7 +360,7 @@ class Pecha:
         ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
         return ann_store
 
-    def annotate_metadata(self, metadata: dict, base_name: str):
+    def annotate_metadata(self, pecha_metadata: PechaMetaData, base_name: str):
 
         ann_store = AnnotationStore(id=self.id_)
         ann_store.set_filename(self.pecha_path.joinpath("metadata.json").as_posix())
@@ -371,13 +372,10 @@ class Pecha:
             id=get_layer_collection(LayerEnum.metadata).value
         )
 
-        ann_data = []
-        for k, v in metadata.items():
-            if v:
-                v = v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)
-                ann_data.append(
-                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
-                )
+        ann_data = [
+            {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+            for k, v in pecha_metadata.to_dict().items()
+        ]
 
         ann_store.annotate(
             id=get_uuid(), target=Selector.resourceselector(ann_resource), data=ann_data

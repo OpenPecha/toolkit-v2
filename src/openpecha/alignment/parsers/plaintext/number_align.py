@@ -10,6 +10,7 @@ from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_layer_group
+from openpecha.pecha.metadata import KungsangMonlamMetaData
 
 pecha_path = Path
 alignment_path = Path
@@ -219,7 +220,9 @@ class PlainTextNumberAlignedParser:
             if ann_type == LayerEnum.root_segment
             else self.metadata["target"]
         )
-        pecha.annotate_metadata(metadata, basefile_name)
+        pecha_metadata = KungsangMonlamMetaData(**metadata).to_pecha_metadata(pecha_id)
+
+        pecha.annotate_metadata(pecha_metadata, basefile_name)
 
         """ annotate root segments / commentary segments """
         ann_store = pecha.add_layer(basefile_name, ann_type)
