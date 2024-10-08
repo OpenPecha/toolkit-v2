@@ -359,9 +359,17 @@ class Pecha:
         ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
         return ann_store
 
-    def annotate_metadata(self, ann_store: AnnotationStore, metadata: dict):
-        ann_resource = next(ann_store.resources())
-        ann_dataset = next(ann_store.datasets())
+    def annotate_metadata(self, metadata: dict, base_name: str):
+
+        ann_store = AnnotationStore(id=self.id_)
+        ann_store.set_filename(self.pecha_path.joinpath("metadata.json").as_posix())
+
+        ann_resource = ann_store.add_resource(
+            id=base_name, filename=f"base/{base_name}.txt"
+        )
+        ann_dataset = ann_store.add_dataset(
+            id=get_layer_collection(LayerEnum.metadata).value
+        )
 
         ann_data = []
         for k, v in metadata.items():
@@ -374,7 +382,7 @@ class Pecha:
         ann_store.annotate(
             id=get_uuid(), target=Selector.resourceselector(ann_resource), data=ann_data
         )
-        return ann_store
+        ann_store.save()
 
     def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
         dir_to_search = self.layer_path / basefile_name

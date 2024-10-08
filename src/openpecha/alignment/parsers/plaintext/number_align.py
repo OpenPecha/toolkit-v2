@@ -214,16 +214,12 @@ class PlainTextNumberAlignedParser:
             self.target_basefile_name = basefile_name
 
         """ annotate metadata"""
-        ann_store = pecha.add_layer(basefile_name, LayerEnum.metadata)
         metadata = (
             self.metadata["source"]
             if ann_type == LayerEnum.root_segment
             else self.metadata["target"]
         )
-        ann_store = pecha.annotate_metadata(ann_store, metadata)
-        ann_store.set_filename(pecha.pecha_path.joinpath("metadata.json").as_posix())
-        ann_store.save()
-        del ann_store
+        pecha.annotate_metadata(metadata, basefile_name)
 
         """ annotate root segments / commentary segments """
         ann_store = pecha.add_layer(basefile_name, ann_type)
