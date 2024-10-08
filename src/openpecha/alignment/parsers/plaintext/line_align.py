@@ -10,7 +10,6 @@ from openpecha.alignment import Alignment, AlignmentMetaData
 from openpecha.alignment.metadata import AlignmentRelationEnum
 from openpecha.config import _mkdir
 from openpecha.ids import get_initial_pecha_id, get_uuid
-from openpecha.pecha import save_stam
 from openpecha.pecha.layer import (
     LayerCollectionEnum,
     LayerEnum,
@@ -227,7 +226,8 @@ def create_pecha_stam(
         data=data,
     )
 
-    save_stam(metadata_ann_store, pecha_path / "metadata.json")
+    metadata_ann_store.set_filename((pecha_path / "metadata.json").as_posix())
+    metadata_ann_store.save()
 
     ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
 
@@ -259,7 +259,8 @@ def create_pecha_stam(
     ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
     ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
     ann_store_path = ann_output_dir / ann_store_filename
-    ann_store_path = save_stam(ann_store, ann_store_path)
+    ann_store.set_filename(ann_store_path.as_posix())
+    ann_store.save()
 
     return (ann_store, ann_store_path.name)
 
@@ -270,17 +271,3 @@ def split_text_into_lines(text: str) -> List[str]:
     """
     lines = text.split("\n")
     return [line + "\n" if i < len(lines) - 1 else line for i, line in enumerate(lines)]
-
-
-def convert_absolute_to_relative_path(json_string: str, ann_store_path: Path):
-    """
-    convert the absolute to relative path for base file in json string of annotation store
-    """
-    json_object = json.loads(json_string)
-    for resource in json_object["resources"]:
-        original_path = Path(resource["@include"])
-        if ann_store_path.name == "metadata.json":
-            resource["@include"] = f"base/{original_path.name}"
-        else:
-            resource["@include"] = f"../../base/{original_path.name}"
-    return json_object
