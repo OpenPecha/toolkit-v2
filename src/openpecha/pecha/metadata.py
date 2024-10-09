@@ -135,6 +135,7 @@ class PechaMetaData(BaseModel):
             raise ValueError(
                 f"Parser {values['parser']} not found in the Toolkit parsers."
             )
+        return values
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
