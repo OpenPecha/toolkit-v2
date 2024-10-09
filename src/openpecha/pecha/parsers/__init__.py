@@ -14,7 +14,7 @@ class BaseParser(ABC):
     def parse(
         self,
         input: Any,
+        metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
-        metadata: Union[Dict, Path] = None,
     ):
         pass

@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Dict, List, Optional, Union
 
 import toml
-from pydantic import BaseModel, ConfigDict, Extra, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class InitialCreationType(Enum):
@@ -32,8 +32,7 @@ class Copyright(BaseModel):
     notice: Optional[str] = ""
     info_url: Optional[str] = None
 
-    class Config:
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
 
 Copyright_copyrighted = Copyright(
@@ -78,7 +77,7 @@ class PechaMetaData(BaseModel):
     imported: Optional[datetime] = None
     source: Optional[str] = None
     toolkit_version: Optional[str] = None
-    parser: Optional[str] = None
+    parser: str
     inital_creation_type: InitialCreationType
     language: Language
     source_metadata: Dict[str, str] = {}
@@ -86,7 +85,7 @@ class PechaMetaData(BaseModel):
     copyright: Copyright = Copyright()
     licence: LicenseType = LicenseType.UNKNOWN
 
-    model_config = ConfigDict(extra="allow")
+    model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):

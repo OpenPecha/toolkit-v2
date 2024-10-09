@@ -83,12 +83,13 @@ class ChonjukChapterParser(BaseParser):
     def parse(
         self,
         input: str,
+        metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
-        metadata: Union[Dict, Path] = None,
     ):
         if isinstance(metadata, Path):
             with open(metadata) as f:
                 metadata = json.load(f)
+        assert isinstance(metadata, dict)
 
         output_path.mkdir(parents=True, exist_ok=True)
 
@@ -97,8 +98,9 @@ class ChonjukChapterParser(BaseParser):
 
         pecha = Pecha.create(output_path)
         base_name = pecha.set_base(self.cleaned_text)
-        if isinstance(metadata, dict):
-            pecha.set_metadata(PechaMetaData(**metadata))
+
+        pecha_metadata = PechaMetaData(parser=self.name, **metadata)
+        pecha.set_metadata(pecha_metadata)
 
         layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
