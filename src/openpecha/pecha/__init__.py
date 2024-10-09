@@ -288,13 +288,10 @@ class Pecha:
             raise ValueError(f"Base {base_name} does not exist.")
 
         ann_store = AnnotationStore(id=self.id)
-        ann_store.set_filename(
-            str(
-                self.layer_path
-                / base_name
-                / f"{layer_type.value}-{get_uuid()[:4]}.json"
-            )
+        ann_store_path = (
+            self.layer_path / base_name / f"{layer_type.value}-{get_uuid()[:4]}.json"
         )
+        ann_store.set_filename(str(ann_store_path))
         ann_store.add_resource(
             id=base_name,
             filename=f"../../base/{base_name}.txt",
@@ -303,7 +300,7 @@ class Pecha:
         ann_store.add_dataset(id=dataset_id)
         self.layers[base_name][layer_type].append(ann_store)
 
-        return ann_store
+        return ann_store, ann_store_path
 
     def check_annotation(self, annotation: Dict, layer_type: LayerEnum):
         """

@@ -1,3 +1,4 @@
+import importlib
 import inspect
 import json
 from datetime import datetime
@@ -118,6 +119,7 @@ class PechaMetaData(BaseModel):
 
             start_index = path_parts.index(pecha_parser_path.split(".")[0])
             parser_path = ".".join(path_parts[start_index:])
+            importlib.import_module(parser_path)
             classes = inspect.getmembers(sys.modules[parser_path], inspect.isclass)
             all_classes.extend(classes)
 
@@ -205,7 +207,7 @@ class KungsangMonlamMetaData(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    def to_pecha_metadata(self, id_: str) -> PechaMetaData:
+    def to_pecha_metadata(self, id: str) -> PechaMetaData:
         """
         Extract relevant fields from KunsangMonlamMetaData and map them to PechaMetaData fields
         """
@@ -226,7 +228,7 @@ class KungsangMonlamMetaData(BaseModel):
         }
 
         return PechaMetaData(
-            id_=id_,
+            id=id,
             title=title,
             author=author,
             source=source,

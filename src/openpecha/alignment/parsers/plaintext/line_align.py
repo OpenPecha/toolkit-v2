@@ -1,40 +1,13 @@
 import json
-from collections import defaultdict
-from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
-
-from stam import AnnotationStore, Offset, Selector
+from typing import List, Optional
 
 from openpecha.alignment import Alignment, AlignmentMetaData
-from openpecha.alignment.metadata import AlignmentRelationEnum
-from openpecha.config import _mkdir
-from openpecha.ids import get_initial_pecha_id, get_uuid
-from openpecha.pecha.layer import (
-    LayerCollectionEnum,
-    LayerEnum,
-    LayerGroupEnum,
-    get_layer_group,
-)
+from openpecha.alignment.metadata import AlignmentRelationEnum, SegmentMetaData
+from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import PechaMetaData
-
-
-class AnnotationMetadata:
-    """
-    Class to store metadata for annotations.
-    """
-
-    def __init__(
-        self,
-        dataset_id: str,
-        base_text: str,
-        annotation_category: LayerGroupEnum,
-        annotation_type: LayerEnum,
-    ):
-        self.dataset_id = dataset_id
-        self.base_text = base_text
-        self.annotation_category = annotation_category
-        self.annotation_type = annotation_type
+from openpecha.pecha.parsers.chonjuk.plaintext import DummyParser
 
 
 class PlainTextLineAlignedParser:
@@ -64,205 +37,109 @@ class PlainTextLineAlignedParser:
         """
         Parse the source and target texts, create annotations, and save to files.
         """
+        (source_layer, source_layer_name), (
+            target_layer,
+            target_layer_name,
+        ) = self.parse_pechas(output_path)
+        self.source_layer = source_layer
+        self.target_layer = target_layer
 
-        alignment_type = LayerCollectionEnum(self.metadata["metadata"]["type"])
-        (source_ann_store, source_ann_store_name), (
-            target_ann_store,
-            target_ann_store_name,
-        ) = self.parse_pechas(alignment_type.value, output_path)
-        self.source_ann_store = source_ann_store
-        self.target_ann_store = target_ann_store
-
-        alignment = self.create_alignment(source_ann_store_name, target_ann_store_name)
+        alignment = self.create_alignment(source_layer_name, target_layer_name)
         if alignment:
             alignment.write(output_path)
         return alignment
 
     def create_alignment(
-        self, source_ann_store_name: str, target_ann_store_name: str
+        self, source_layer_name: str, target_layer_name: str
     ) -> Optional[Alignment]:
-        if not self.source_ann_store or not self.target_ann_store:
+        if not self.source_layer or not self.target_layer:
             return None
 
         """ building alignment metadata """
-        metadata: Dict = defaultdict(lambda: defaultdict(dict))
-
-        metadata["metadata"] = self.metadata["metadata"]
-        source_id = self.source_ann_store.id()
-        resource = [
-            resource
-            for resource in self.source_ann_store.resources()
-            if resource.id() != "metadata"
-        ][0]
-
-        metadata["segments_metadata"][source_id] = {
-            "type": self.metadata["source"]["type"],
+        source_resource_id = next(self.source_layer.resources()).id()
+        source_metadata = {
+            "type": LayerEnum.root_segment.value,
             "relation": AlignmentRelationEnum.source.value,
             "lang": self.metadata["source"]["language"],
-            "base": resource.id(),
-            "layer": source_ann_store_name,
+            "base": source_resource_id,
+            "layer": source_layer_name,
         }
+        source_metadata = SegmentMetaData(**source_metadata)
 
-        target_id = self.target_ann_store.id()
-        resource = [
-            resource
-            for resource in self.target_ann_store.resources()
-            if resource.id() != "metadata"
-        ][0]
-        metadata["segments_metadata"][target_id] = {
-            "type": self.metadata["target"]["type"],
+        target_resource_id = next(self.target_layer.resources()).id()
+        target_metadata = {
+            "type": LayerEnum.commentary_segment.value,
             "relation": AlignmentRelationEnum.target.value,
             "lang": self.metadata["target"]["language"],
-            "base": resource.id(),
-            "layer": target_ann_store_name,
+            "base": target_resource_id,
+            "layer": target_layer_name,
+        }
+        target_metadata = SegmentMetaData(**target_metadata)
+
+        source_id = self.source_layer.id()
+        target_id = self.target_layer.id()
+        alignment_metadata = {
+            "segments_metadata": {
+                source_id: source_metadata,
+                target_id: target_metadata,
+            },
+            "source_metadata": {},
         }
 
-        alignment_metadata = AlignmentMetaData.from_dict(metadata)
+        alignment_metadata = AlignmentMetaData(**alignment_metadata)
         segment_pairs = [
             ((source_id, source_ann.id()), (target_id, target_ann.id()))
             for source_ann, target_ann in zip(
-                self.source_ann_store.annotations(), self.target_ann_store.annotations()
+                self.source_layer.annotations(), self.target_layer.annotations()
             )
         ]
 
         alignment = Alignment.from_segment_pairs(segment_pairs, alignment_metadata)
         return alignment
 
-    def parse_pechas(self, dataset_id: str, output_path: Path):
+    def parse_pechas(self, output_path: Path):
 
-        source_metadata = PechaMetaData(**self.metadata["source"])
-        target_metadata = PechaMetaData(**self.metadata["target"])
-
-        source_ann_metadata = AnnotationMetadata(
-            dataset_id=dataset_id,
-            base_text=self.source_text,
-            annotation_category=get_layer_group(LayerEnum(source_metadata.type)),
-            annotation_type=LayerEnum(source_metadata.type),
+        source_metadata = PechaMetaData(
+            parser=DummyParser().name, **self.metadata["source"]
         )
-        target_ann_metadata = AnnotationMetadata(
-            dataset_id=dataset_id,
-            base_text=self.target_text,
-            annotation_category=get_layer_group(LayerEnum(target_metadata.type)),
-            annotation_type=LayerEnum(target_metadata.type),
+        target_metadata = PechaMetaData(
+            parser=DummyParser().name, **self.metadata["target"]
         )
 
-        (source_ann_store, source_ann_store_name) = create_pecha_stam(
-            source_ann_metadata, source_metadata, output_path
+        source_layer, source_layer_name = create_pecha_stam(
+            self.source_text, source_metadata, LayerEnum.root_segment, output_path
         )
-        (target_ann_store, target_ann_store_name) = create_pecha_stam(
-            target_ann_metadata, target_metadata, output_path
+        target_layer, target_layer_name = create_pecha_stam(
+            self.target_text, target_metadata, LayerEnum.commentary_segment, output_path
         )
-        return (source_ann_store, source_ann_store_name), (
-            target_ann_store,
-            target_ann_store_name,
-        )
+
+        return (source_layer, source_layer_name), (target_layer, target_layer_name)
 
 
 def create_pecha_stam(
-    ann_metadata: AnnotationMetadata, metadata: PechaMetaData, output_path: Path
-) -> AnnotationStore:
+    base_text: str, metadata: PechaMetaData, ann_type: LayerEnum, output_path: Path
+):
 
-    """create new annotation store for the given annotation layer"""
-    ann_store_id = get_initial_pecha_id()
-    pecha_path = _mkdir(output_path / ann_store_id)
-    ann_store = AnnotationStore(id=ann_store_id)
+    pecha = Pecha.create(output_path, metadata)
+    base_name = pecha.set_base(base_text)
 
-    """ create base file for new annotation store"""
-    base_dir = _mkdir(pecha_path / "base")
-    base_file_name = get_uuid()[:4]
-    base_file_path = base_dir / f"{base_file_name}.txt"
-    base_file_path.write_text(ann_metadata.base_text, encoding="utf-8")
-    ann_resource = ann_store.add_resource(
-        id=base_file_name, filename=base_file_path.as_posix()
-    )
-
-    """ write metadata"""
-    metadata_ann_store = AnnotationStore(id=ann_store_id)
-    metadata_dataset = metadata_ann_store.add_dataset(
-        id=LayerCollectionEnum.metadata.value
-    )
-    metadata_ann_resource = metadata_ann_store.add_resource(
-        id=base_file_name, filename=base_file_path.as_posix()
-    )
-
-    data = []
-    for key, value in metadata.model_dump().items():
-        if isinstance(value, datetime):
-            value = value.strftime("%Y-%m-%d %H:%M:%S.%f")
-        if isinstance(value, List):
-            for v in value:
-                data.append(
-                    {
-                        "id": get_uuid(),
-                        "set": metadata_dataset.id(),
-                        "key": key,
-                        "value": v,
-                    }
-                )
-            continue
-        if isinstance(value, dict):
-            for k, v in value.items():
-                data.append(
-                    {
-                        "id": get_uuid(),
-                        "set": metadata_dataset.id(),
-                        "key": k,
-                        "value": v,
-                    }
-                )
-            continue
-        data.append(
-            {
-                "id": get_uuid(),
-                "set": metadata_dataset.id(),
-                "key": key,
-                "value": value,
-            }
-        )
-
-    metadata_ann_store.annotate(
-        id=get_uuid(),
-        target=Selector.resourceselector(resource=metadata_ann_resource),
-        data=data,
-    )
-
-    metadata_ann_store.set_filename((pecha_path / "metadata.json").as_posix())
-    metadata_ann_store.save()
-
-    ann_dataset = ann_store.add_dataset(id=ann_metadata.dataset_id)
+    layer, layer_path = pecha.add_layer(base_name, ann_type)
 
     """ create annotation for each line in new annotation store"""
-    lines = split_text_into_lines(ann_metadata.base_text)
-    unque_ann_data_id = get_uuid()
+    lines = split_text_into_lines(base_text)
     char_count = 0
     for line in lines:
-        target = Selector.textselector(
-            ann_resource,
-            Offset.simple(char_count, char_count + len(line)),
-        )
+        annotation = {
+            ann_type.value: {
+                "start": char_count,
+                "end": char_count + len(line),
+            }
+        }
+        pecha.add_annotation(layer, annotation, ann_type)
         char_count += len(line)
 
-        ann_store.annotate(
-            id=get_uuid(),
-            target=target,
-            data=[
-                {
-                    "id": unque_ann_data_id,
-                    "set": ann_dataset.id(),
-                    "key": ann_metadata.annotation_category.value,
-                    "value": ann_metadata.annotation_type.value,
-                }
-            ],
-        )
-
-    """save the new annotation store"""
-    ann_output_dir = _mkdir(pecha_path / "layers" / base_file_name)
-    ann_store_filename = f"{ann_metadata.annotation_type.value}-{get_uuid()[:3]}.json"
-    ann_store_path = ann_output_dir / ann_store_filename
-    ann_store.set_filename(ann_store_path.as_posix())
-    ann_store.save()
-
-    return (ann_store, ann_store_path.name)
+    layer.save()
+    return (layer, layer_path.name)
 
 
 def split_text_into_lines(text: str) -> List[str]:

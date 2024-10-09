@@ -101,9 +101,19 @@ class ChonjukChapterParser(BaseParser):
         pecha = Pecha.create(output_path, pecha_metadata)
         base_name = pecha.set_base(self.cleaned_text)
 
-        layer = pecha.add_layer(base_name, LayerEnum.chapter)
+        layer, _ = pecha.add_layer(base_name, LayerEnum.chapter)
 
         for ann in self.annotations:
             pecha.add_annotation(layer, ann, LayerEnum.chapter)
 
         layer.save()
+
+
+class DummyParser(BaseParser):
+    def parse(
+        self,
+        input: str,
+        metadata: Union[Dict, Path],
+        output_path: Path = PECHAS_PATH,
+    ):
+        pass
