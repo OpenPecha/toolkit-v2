@@ -9,6 +9,7 @@ import toml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from openpecha.ids import get_initial_pecha_id
+from openpecha.pecha.parsers import BaseParser
 
 
 class InitialCreationType(Enum):
@@ -98,39 +99,42 @@ class PechaMetaData(BaseModel):
         return values
 
     @classmethod
-    def get_classes_from_package(cls):
+    def get_toolkit_parsers(cls):
         # List to store all classes from the package
         all_classes = []
         import sys
 
         base_path = Path(__file__).parent / "parsers"
-        package_base = "openpecha.pecha.parsers"
+        pecha_parser_path = "openpecha.pecha.parsers"
 
         for py_file in base_path.rglob("*.py"):
-            if py_file.stem == "__init__":
-                continue
+            path_parts = list(py_file.parts)
+            path_parts[-1] = path_parts[-1].replace(".py", "")
+            if path_parts[-1] == "__init__":
+                path_parts.pop()
 
-            module_name = str(py_file)[: -len(".py")].replace("/", ".")
-            if module_name.startswith("."):
-                module_name = module_name[1:]
-            if module_name.endswith("__init__"):
-                module_name = module_name[: -len("__init__")]
-            if module_name.endswith("."):
-                module_name = module_name[:-1]
+            if path_parts[0] == "/":
+                path_parts.pop(0)
 
-            path_parts = module_name.split(".")
-            start_index = path_parts.index(package_base.split(".")[0])
-            # Extract the package path starting from 'openpecha'
-            package_path = ".".join(path_parts[start_index:])
-            clsmembers = inspect.getmembers(sys.modules[package_path], inspect.isclass)
-            all_classes.extend(clsmembers)
+            start_index = path_parts.index(pecha_parser_path.split(".")[0])
+            parser_path = ".".join(path_parts[start_index:])
+            classes = inspect.getmembers(sys.modules[parser_path], inspect.isclass)
+            all_classes.extend(classes)
 
-        return all_classes
+        parser_classes = [
+            (name, class_)
+            for name, class_ in all_classes
+            if issubclass(class_, BaseParser) and class_ is not BaseParser
+        ]
+        return parser_classes
 
     @model_validator(mode="before")
     def validate_parser(cls, values):
-        parser_classes = cls.get_classes_from_package()
-        print(parser_classes)
+        parser_classes = cls.get_toolkit_parsers()
+        if values["parser"] not in [name for name, _ in parser_classes]:
+            raise ValueError(
+                f"Parser {values['parser']} not found in the Toolkit parsers."
+            )
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
@@ -228,5 +232,5 @@ class KungsangMonlamMetaData(BaseModel):
             source_metadata={},
             type=type,
             language=language,
-            **extra_metadata
+            **extra_metadata,
         )
