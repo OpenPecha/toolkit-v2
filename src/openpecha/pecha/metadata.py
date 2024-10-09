@@ -6,6 +6,8 @@ from typing import Dict, List, Optional, Union
 import toml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from openpecha.ids import get_initial_pecha_id
+
 
 class InitialCreationType(Enum):
     ocr = "ocr"
@@ -86,6 +88,12 @@ class PechaMetaData(BaseModel):
     licence: LicenseType = LicenseType.UNKNOWN
 
     model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
+
+    @model_validator(mode="before")
+    def set_id(cls, values):
+        if "id" not in values or values["id"] is None:
+            values["id"] = get_initial_pecha_id()
+        return values
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):

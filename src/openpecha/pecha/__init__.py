@@ -186,9 +186,12 @@ class StamPecha:
 
 
 class Pecha:
-    def __init__(self, pecha_id: str, pecha_path: Path) -> None:
-        self.id_ = pecha_id
+    def __init__(
+        self, pecha_id: str, pecha_path: Path, metadata: Optional[PechaMetaData] = None
+    ) -> None:
+        self.id = pecha_id
         self.pecha_path = pecha_path
+        self.metadata = metadata if metadata else self.load_metadata()
         self.bases = self.load_bases()
         self.layers = self.load_layers()
 
@@ -203,11 +206,13 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @classmethod
-    def create(cls, output_path: Path) -> "Pecha":
-        pecha_id = get_initial_pecha_id()
+    def create(cls, output_path: Path, metadata: PechaMetaData) -> "Pecha":
+        pecha_id = metadata.id
         pecha_path = output_path / pecha_id
         pecha_path.mkdir(parents=True, exist_ok=True)
-        return cls(pecha_id, pecha_path)
+        pecha = cls(pecha_id, pecha_path, metadata)
+        pecha.set_metadata(metadata)
+        return pecha
 
     @property
     def base_path(self) -> Path:
@@ -226,6 +231,12 @@ class Pecha:
     @property
     def metadata_path(self):
         return self.pecha_path / "metadata.json"
+
+    def load_metadata(self):
+        with open(self.metadata_path) as f:
+            metadata = json.load(f)
+
+        return PechaMetaData(**metadata)
 
     def load_bases(self):
         bases = {}
@@ -276,7 +287,7 @@ class Pecha:
         if base_name not in self.bases:
             raise ValueError(f"Base {base_name} does not exist.")
 
-        ann_store = AnnotationStore(id=self.id_)
+        ann_store = AnnotationStore(id=self.id)
         ann_store.set_filename(
             str(
                 self.layer_path

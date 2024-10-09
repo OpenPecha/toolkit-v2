@@ -96,11 +96,10 @@ class ChonjukChapterParser(BaseParser):
         self.cleaned_text = self.get_updated_text(input)
         self.annotations = self.get_annotations(input)
 
-        pecha = Pecha.create(output_path)
-        base_name = pecha.set_base(self.cleaned_text)
-
         pecha_metadata = PechaMetaData(parser=self.name, **metadata)
-        pecha.set_metadata(pecha_metadata)
+
+        pecha = Pecha.create(output_path, pecha_metadata)
+        base_name = pecha.set_base(self.cleaned_text)
 
         layer = pecha.add_layer(base_name, LayerEnum.chapter)
 
