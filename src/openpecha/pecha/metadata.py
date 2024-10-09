@@ -123,6 +123,27 @@ class PechaMetaData(BaseModel):
         data["inital_creation_type"] = data["inital_creation_type"].value
 
         data["copyright"]["status"] = data["copyright"]["status"].value
+
+        # Dynamically get standard fields from the model
+        standard_fields = list(set(self.model_fields.keys()))
+
+        # Move any extra fields to source_metadata
+        extra_fields = {}
+        for k, v in data.items():
+            if k not in standard_fields:
+                if isinstance(v, Enum):
+                    extra_fields[k] = v.value
+                elif isinstance(v, datetime):
+                    extra_fields[k] = v.isoformat()
+                else:
+                    extra_fields[k] = v
+
+        data["source_metadata"].update(extra_fields)
+
+        # Remove extra fields from the top-level data
+        for field in extra_fields:
+            del data[field]
+
         return data
 
 
