@@ -1,6 +1,8 @@
+import inspect
 import json
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import toml
@@ -94,6 +96,41 @@ class PechaMetaData(BaseModel):
         if "id" not in values or values["id"] is None:
             values["id"] = get_initial_pecha_id()
         return values
+
+    @classmethod
+    def get_classes_from_package(cls):
+        # List to store all classes from the package
+        all_classes = []
+        import sys
+
+        base_path = Path(__file__).parent / "parsers"
+        package_base = "openpecha.pecha.parsers"
+
+        for py_file in base_path.rglob("*.py"):
+            if py_file.stem == "__init__":
+                continue
+
+            module_name = str(py_file)[: -len(".py")].replace("/", ".")
+            if module_name.startswith("."):
+                module_name = module_name[1:]
+            if module_name.endswith("__init__"):
+                module_name = module_name[: -len("__init__")]
+            if module_name.endswith("."):
+                module_name = module_name[:-1]
+
+            path_parts = module_name.split(".")
+            start_index = path_parts.index(package_base.split(".")[0])
+            # Extract the package path starting from 'openpecha'
+            package_path = ".".join(path_parts[start_index:])
+            clsmembers = inspect.getmembers(sys.modules[package_path], inspect.isclass)
+            all_classes.extend(clsmembers)
+
+        return all_classes
+
+    @model_validator(mode="before")
+    def validate_parser(cls, values):
+        parser_classes = cls.get_classes_from_package()
+        print(parser_classes)
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
