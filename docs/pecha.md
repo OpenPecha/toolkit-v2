@@ -98,7 +98,7 @@ The `Pecha` class is designed to manage the loading, setting, and manipulating o
   - `layer_type` (LayerEnum): The type of annotation.
 - Returns: `AnnotationStore`.
 
-### `annotate_metadata(self, ann_store: AnnotationStore, metadata: dict)`
+### `set_metadata(self, ann_store: AnnotationStore, metadata: dict)`
 
 - Adds metadata to the specified annotation store.
 - Parameters:

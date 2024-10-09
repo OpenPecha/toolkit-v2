@@ -224,8 +224,8 @@ class Pecha:
         return layer_path
 
     @property
-    def metadata(self):
-        return AnnotationStore(file=str(self.pecha_path / "metadata.json"))
+    def metadata_path(self):
+        return self.pecha_path / "metadata.json"
 
     def load_bases(self):
         bases = {}
@@ -360,27 +360,11 @@ class Pecha:
         ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
         return ann_store
 
-    def annotate_metadata(self, pecha_metadata: PechaMetaData, base_name: str):
+    def set_metadata(self, pecha_metadata: PechaMetaData) -> Path:
+        with open(self.metadata_path, "w") as f:
+            json.dump(pecha_metadata.to_dict(), f, indent=2)
 
-        ann_store = AnnotationStore(id=self.id_)
-        ann_store.set_filename(self.pecha_path.joinpath("metadata.json").as_posix())
-
-        ann_resource = ann_store.add_resource(
-            id=base_name, filename=f"base/{base_name}.txt"
-        )
-        ann_dataset = ann_store.add_dataset(
-            id=get_layer_collection(LayerEnum.metadata).value
-        )
-
-        ann_data = [
-            {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
-            for k, v in pecha_metadata.to_dict().items()
-        ]
-
-        ann_store.annotate(
-            id=get_uuid(), target=Selector.resourceselector(ann_resource), data=ann_data
-        )
-        ann_store.save()
+        return self.metadata_path
 
     def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
         dir_to_search = self.layer_path / basefile_name

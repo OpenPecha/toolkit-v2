@@ -1,0 +1,10 @@
+{
+    "id": "12345",
+    "title": "Dummy Title",
+    "author": "Dummy Author",
+    "source": "Dummy Source",
+    "toolkit_version": "0.0.1",
+    "parser": "DummyParser",
+    "inital_creation_type": "ebook",
+    "language": "bo"
+}

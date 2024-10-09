@@ -222,7 +222,7 @@ class PlainTextNumberAlignedParser:
         )
         pecha_metadata = KungsangMonlamMetaData(**metadata).to_pecha_metadata(pecha_id)
 
-        pecha.annotate_metadata(pecha_metadata, basefile_name)
+        pecha.set_metadata(pecha_metadata)
 
         """ annotate root segments / commentary segments """
         ann_store = pecha.add_layer(basefile_name, ann_type)

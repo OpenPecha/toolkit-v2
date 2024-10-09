@@ -6,6 +6,10 @@ from openpecha.config import PECHAS_PATH
 
 
 class BaseParser(ABC):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
     @abstractmethod
     def parse(
         self,
