@@ -367,11 +367,11 @@ class Pecha:
         ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
         return ann_store
 
-    def set_metadata(self, pecha_metadata: PechaMetaData) -> Path:
+    def set_metadata(self, pecha_metadata: PechaMetaData):
         with open(self.metadata_path, "w") as f:
             json.dump(pecha_metadata.to_dict(), f, ensure_ascii=False, indent=2)
 
-        return self.metadata_path
+        return pecha_metadata
 
     def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
         dir_to_search = self.layer_path / basefile_name
