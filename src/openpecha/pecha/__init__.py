@@ -235,7 +235,7 @@ class Pecha:
         with open(self.metadata_path) as f:
             metadata = json.load(f)
 
-        return metadata
+        return PechaMetaData(**metadata)
 
     def load_bases(self):
         bases = {}

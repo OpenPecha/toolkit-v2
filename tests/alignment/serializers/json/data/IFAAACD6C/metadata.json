@@ -1,123 +1,25 @@
 {
-  "@type": "AnnotationStore",
-  "@id": "IFAAACD6C",
-  "resources": [
-    {
-      "@type": "TextResource",
-      "@id": "7794",
-      "@include": "../../base/7794.txt"
-    }
-  ],
-  "annotationsets": [
-    {
-      "@type": "AnnotationDataSet",
-      "@id": "Meta_Data",
-      "keys": [
-        {
-          "@type": "DataKey",
-          "@id": "author"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "title_short"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "title_long_clean"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "is_version_of"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "lang"
-        }
-      ],
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "15b3009461854be3b57ebc2c0e0b07ce",
-          "key": "author",
-          "value": {
-            "@type": "String",
-            "value": "{\"ZH\": \"Buddha Shakyamuni\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "fd83f325cb154dcab6940e91adb95a61",
-          "key": "title_short",
-          "value": {
-            "@type": "String",
-            "value": "{\"ZH\": \"入不思議解脫境界普賢行願品\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "30aec374120049ce8e7c7868dbbeaaae",
-          "key": "title_long_clean",
-          "value": {
-            "@type": "String",
-            "value": "{\"ZH\": \"v1大方廣佛華嚴經·v2入不思議解脫境界普賢行願品\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "31085e885e6a482483eba0ca1e6b8262",
-          "key": "is_version_of",
-          "value": {
-            "@type": "String",
-            "value": "{\"BO\": \"བཟང་སྤྱོད་སྨོན་ལམ།\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "1fd5ff9f15a74b309965f560b781267c",
-          "key": "lang",
-          "value": {
-            "@type": "String",
-            "value": "zh"
-          }
-        }
-      ]
-    }
-  ],
-  "annotations": [
-    {
-      "@type": "Annotation",
-      "@id": "52c9249c7e9b44b49e1228752a106e8c",
-      "target": {
-        "@type": "ResourceSelector",
-        "resource": "7794"
-      },
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "15b3009461854be3b57ebc2c0e0b07ce",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "fd83f325cb154dcab6940e91adb95a61",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "30aec374120049ce8e7c7868dbbeaaae",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "31085e885e6a482483eba0ca1e6b8262",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "1fd5ff9f15a74b309965f560b781267c",
-          "set": "Meta_Data"
-        }
-      ]
-    }
-  ]
+  "author": {
+    "ZH": "Buddha Shakyamuni"
+  },
+  "composition_date": {},
+  "source": {},
+  "presentation": {},
+  "usage_title": {},
+  "title_short": {
+    "ZH": "入不思議解脫境界普賢行願品"
+  },
+  "title_long_clean": {
+    "ZH": "v1大方廣佛華嚴經·v2入不思議解脫境界普賢行願品"
+  },
+  "title_alt_1": {},
+  "title_alt_2": {},
+  "is_commentary_of": {},
+  "is_version_of": {
+    "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
+  },
+  "lang": "zh",
+  "pecha_id": "IFAAACD6C",
+  "base": "7794",
+  "layer": "Root_Segment-f7d.json"
 }

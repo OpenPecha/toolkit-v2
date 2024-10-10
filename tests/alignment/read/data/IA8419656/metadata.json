@@ -1,159 +1,43 @@
 {
-  "@type": "AnnotationStore",
-  "@id": "IA8419656",
-  "resources": [
-    {
-      "@type": "TextResource",
-      "@id": "1e4b",
-      "@include": "base/1e4b.txt"
-    }
-  ],
-  "annotationsets": [
-    {
-      "@type": "AnnotationDataSet",
-      "@id": "Meta_Data",
-      "keys": [
-        {
-          "@type": "DataKey",
-          "@id": "id"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "title"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "author"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "created_at"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "source"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "type"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "language"
-        }
-      ],
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "abcee4cc8cbd43139bcc99155776bcaa",
-          "key": "id",
-          "value": {
-            "@type": "String",
-            "value": "12345"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "c6380af9196b41599df7dbcb610d6d86",
-          "key": "title",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Target Title 1"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "4656e45e882742c592541d3b2e612bb0",
-          "key": "author",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Target Author 1"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "7feb1605114349f18e5b495ccfd41468",
-          "key": "created_at",
-          "value": {
-            "@type": "String",
-            "value": "2024-08-21 11:16:13.489214"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "db641e36ba124290b7e10f02124fdc9e",
-          "key": "source",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Target"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "6f45e3af2fdf42508f34647f46997ff3",
-          "key": "type",
-          "value": {
-            "@type": "String",
-            "value": "Commentary_Segment"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "97ff0309f23e4bd3929752b1f8e0b334",
-          "key": "language",
-          "value": {
-            "@type": "String",
-            "value": "Tibetan"
-          }
-        }
-      ]
-    }
-  ],
-  "annotations": [
-    {
-      "@type": "Annotation",
-      "@id": "70c1970b2bfd439596bc59f4f6bb32be",
-      "target": {
-        "@type": "ResourceSelector",
-        "resource": "1e4b"
-      },
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "abcee4cc8cbd43139bcc99155776bcaa",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "c6380af9196b41599df7dbcb610d6d86",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "4656e45e882742c592541d3b2e612bb0",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "7feb1605114349f18e5b495ccfd41468",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "db641e36ba124290b7e10f02124fdc9e",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "6f45e3af2fdf42508f34647f46997ff3",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "97ff0309f23e4bd3929752b1f8e0b334",
-          "set": "Meta_Data"
-        }
-      ]
-    }
-  ]
+  "id": "I4A70A7FB",
+  "title": {
+    "EN": "Commentary on Samantabhadra’s “The King of Aspirations Prayer” – 1",
+    "ZH": "《普賢菩薩行願品釋論》 - 1"
+  },
+  "author": {
+    "EN": "Master Di Xian",
+    "ZH": "諦閑法師\n(1858-1932)"
+  },
+  "imported": "2024-10-10T12:28:48.910052",
+  "source": "",
+  "toolkit_version": "0.0.1",
+  "parser": "DummyParser",
+  "inital_creation_type": "input",
+  "language": "zh",
+  "source_metadata": {
+    "composition_date": {},
+    "presentation": {
+      "EN": "Classical Chinese",
+      "ZH": "文言文"
+    },
+    "usage_title": {},
+    "title_short": {
+      "EN": "Commentary on Samantabhadra’s “The King of Aspirations Prayer” – 1",
+      "ZH": "《普賢菩薩行願品釋論》 - 1"
+    },
+    "title_long_clean": {},
+    "title_alt_1": {},
+    "title_alt_2": {},
+    "is_commentary_of": {
+      "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
+    },
+    "is_version_of": {}
+  },
+  "bases": [],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
 }

@@ -1,187 +1,39 @@
 {
-  "@type": "AnnotationStore",
-  "@id": "I2E095029",
-  "resources": [
-    {
-      "@type": "TextResource",
-      "@id": "3b43",
-      "@include": "base/3b43.txt"
+  "id": "IC5EC5F25",
+  "title": {
+    "ZH": "入不思議解脫境界普賢行願品"
+  },
+  "author": {
+    "ZH": "Buddha Shakyamuni"
+  },
+  "imported": "2024-10-10T12:28:48.900648",
+  "source": "",
+  "toolkit_version": "0.0.1",
+  "parser": "DummyParser",
+  "inital_creation_type": "input",
+  "language": "zh",
+  "source_metadata": {
+    "composition_date": {},
+    "presentation": {},
+    "usage_title": {},
+    "title_short": {
+      "ZH": "入不思議解脫境界普賢行願品"
+    },
+    "title_long_clean": {
+      "ZH": "v1大方廣佛華嚴經·v2入不思議解脫境界普賢行願品"
+    },
+    "title_alt_1": {},
+    "title_alt_2": {},
+    "is_commentary_of": {},
+    "is_version_of": {
+      "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
     }
-  ],
-  "annotationsets": [
-    {
-      "@type": "AnnotationDataSet",
-      "@id": "Meta_Data",
-      "keys": [
-        {
-          "@type": "DataKey",
-          "@id": "id"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "title"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "author"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "created_at"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "source"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "type"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "language"
-        }
-      ],
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "7d7791df69ec48c2a865b7471d4fb7df",
-          "key": "id",
-          "value": {
-            "@type": "String",
-            "value": "12345"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "42151f492cca44b2b7831917d549e1ce",
-          "key": "title",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Source Title 1"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "36a9e6ed622449f6bcb4868c4e3c4a13",
-          "key": "title",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Source Title 1"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "ce0c1ca2463d4ad191b7d7c9ec6dc17c",
-          "key": "author",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Source Author 1"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "35bf752735684f67827d32e68ac913d8",
-          "key": "author",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Source Author 1"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "63d963540c90448d985f72b68345a56a",
-          "key": "created_at",
-          "value": {
-            "@type": "String",
-            "value": "2024-08-20 15:11:29.675229"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "1e322e39d6744bd490c8e9712b9a3205",
-          "key": "source",
-          "value": {
-            "@type": "String",
-            "value": "Chojuk Source"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "21d48727832e4d11a733bdcfdb5b4637",
-          "key": "type",
-          "value": {
-            "@type": "String",
-            "value": "Root_Segment"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "9eab673a018d44f6901ebaebed85d06b",
-          "key": "language",
-          "value": {
-            "@type": "String",
-            "value": "Tibetan"
-          }
-        }
-      ]
-    }
-  ],
-  "annotations": [
-    {
-      "@type": "Annotation",
-      "@id": "a99333cc48ea4395a22eaf3ccdd27c8c",
-      "target": {
-        "@type": "ResourceSelector",
-        "resource": "3b43"
-      },
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "7d7791df69ec48c2a865b7471d4fb7df",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "42151f492cca44b2b7831917d549e1ce",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "36a9e6ed622449f6bcb4868c4e3c4a13",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "ce0c1ca2463d4ad191b7d7c9ec6dc17c",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "35bf752735684f67827d32e68ac913d8",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "63d963540c90448d985f72b68345a56a",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "1e322e39d6744bd490c8e9712b9a3205",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "21d48727832e4d11a733bdcfdb5b4637",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "9eab673a018d44f6901ebaebed85d06b",
-          "set": "Meta_Data"
-        }
-      ]
-    }
-  ]
+  },
+  "bases": [],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
 }

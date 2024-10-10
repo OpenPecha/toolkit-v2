@@ -85,7 +85,7 @@ class PechaMetaData(BaseModel):
     parser: str
     inital_creation_type: InitialCreationType
     language: Language
-    source_metadata: Dict[str, str] = {}
+    source_metadata: Dict = {}
     bases: List[Dict] = []
     copyright: Copyright = Copyright()
     licence: LicenseType = LicenseType.UNKNOWN
