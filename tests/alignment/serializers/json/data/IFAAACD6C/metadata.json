@@ -1,25 +1,39 @@
 {
+  "id": "IC5EC5F25",
+  "title": {
+    "ZH": "入不思議解脫境界普賢行願品"
+  },
   "author": {
     "ZH": "Buddha Shakyamuni"
   },
-  "composition_date": {},
-  "source": {},
-  "presentation": {},
-  "usage_title": {},
-  "title_short": {
-    "ZH": "入不思議解脫境界普賢行願品"
+  "imported": "2024-10-10T12:28:48.900648",
+  "source": "",
+  "toolkit_version": "0.0.1",
+  "parser": "DummyParser",
+  "inital_creation_type": "input",
+  "language": "zh",
+  "source_metadata": {
+    "composition_date": {},
+    "presentation": {},
+    "usage_title": {},
+    "title_short": {
+      "ZH": "入不思議解脫境界普賢行願品"
+    },
+    "title_long_clean": {
+      "ZH": "v1大方廣佛華嚴經·v2入不思議解脫境界普賢行願品"
+    },
+    "title_alt_1": {},
+    "title_alt_2": {},
+    "is_commentary_of": {},
+    "is_version_of": {
+      "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
+    }
   },
-  "title_long_clean": {
-    "ZH": "v1大方廣佛華嚴經·v2入不思議解脫境界普賢行願品"
+  "bases": [],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
   },
-  "title_alt_1": {},
-  "title_alt_2": {},
-  "is_commentary_of": {},
-  "is_version_of": {
-    "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
-  },
-  "lang": "zh",
-  "pecha_id": "IFAAACD6C",
-  "base": "7794",
-  "layer": "Root_Segment-f7d.json"
+  "licence": "Unknown"
 }
