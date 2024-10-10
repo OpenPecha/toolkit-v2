@@ -207,7 +207,7 @@ class KungsangMonlamMetaData(BaseModel):
 
     model_config = ConfigDict(extra="allow")
 
-    def to_pecha_metadata(self, id: str) -> PechaMetaData:
+    def to_pecha_metadata(self, parser: str) -> PechaMetaData:
         """
         Extract relevant fields from KunsangMonlamMetaData and map them to PechaMetaData fields
         """
@@ -218,7 +218,6 @@ class KungsangMonlamMetaData(BaseModel):
         )
         author = [json.dumps(self.author, ensure_ascii=False)] if self.author else []
         source = json.dumps(self.source, ensure_ascii=False) if self.source else ""
-        type = "kunsang_monlam"
         language = self.lang if self.lang else ""
 
         extra_metadata = {
@@ -228,12 +227,12 @@ class KungsangMonlamMetaData(BaseModel):
         }
 
         return PechaMetaData(
-            id=id,
             title=title,
             author=author,
             source=source,
-            source_metadata={},
-            type=type,
+            parser=parser,
+            inital_creation_type=InitialCreationType.input,
             language=language,
+            source_metadata={},
             **extra_metadata,
         )

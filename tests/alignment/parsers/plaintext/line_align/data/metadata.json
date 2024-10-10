@@ -10,7 +10,6 @@
             
 
     "target":{
-            "id":"12345",
             "title":["Chojuk Target Title 1","Chojuk Target Title 1"],
             "author":["Chojuk Target Author 1", "Chojuk Target Author 1"],
             "source": "Chojuk Target",

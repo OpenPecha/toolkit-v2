@@ -233,10 +233,13 @@ class Pecha:
         return self.pecha_path / "metadata.json"
 
     def load_metadata(self):
+        if not self.metadata_path.exists():
+            return None
+
         with open(self.metadata_path) as f:
             metadata = json.load(f)
 
-        return PechaMetaData(**metadata)
+        return metadata
 
     def load_bases(self):
         bases = {}

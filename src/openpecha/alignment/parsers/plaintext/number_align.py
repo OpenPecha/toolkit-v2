@@ -11,6 +11,7 @@ from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_layer_group
 from openpecha.pecha.metadata import KungsangMonlamMetaData
+from openpecha.pecha.parsers.chonjuk.plaintext import DummyParser
 
 pecha_path = Path
 alignment_path = Path
@@ -220,7 +221,12 @@ class PlainTextNumberAlignedParser:
             if ann_type == LayerEnum.root_segment
             else self.metadata["target"]
         )
-        pecha_metadata = KungsangMonlamMetaData(**metadata).to_pecha_metadata(pecha_id)
+
+        kunsangmonlam_metadata = KungsangMonlamMetaData(**metadata)
+
+        pecha_metadata = kunsangmonlam_metadata.to_pecha_metadata(
+            parser=DummyParser().name
+        )
 
         pecha.set_metadata(pecha_metadata)
 
