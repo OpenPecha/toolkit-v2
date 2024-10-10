@@ -77,8 +77,8 @@ class LicenseType(Enum):
 
 class PechaMetaData(BaseModel):
     id: str
-    title: Union[List[str], Dict[str, str], str]
-    author: Union[List[str], Dict[str, str], str]
+    title: Optional[Union[List[str], Dict[str, str], str]] = None
+    author: Optional[Union[List[str], Dict[str, str], str]] = None
     imported: Optional[datetime] = None
     source: Optional[str] = None
     toolkit_version: Optional[str] = None
