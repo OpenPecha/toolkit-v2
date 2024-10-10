@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import toml
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from openpecha.ids import get_initial_pecha_id
 from openpecha.pecha.parsers import BaseParser
@@ -154,18 +154,36 @@ class PechaMetaData(BaseModel):
             values["imported"] = datetime.now()
         return values
 
+    # Custom serializers using field_serializer
+    @field_serializer("imported", mode="plain")
+    def serialize_imported(self, value: Optional[datetime]) -> Optional[str]:
+        return value.isoformat() if value else None
+
+    @field_serializer("licence", mode="plain")
+    def serialize_licence(self, value: LicenseType) -> str:
+        return value.value
+
+    @field_serializer("language", mode="plain")
+    def serialize_language(self, value: Language) -> str:
+        return value.value
+
+    @field_serializer("inital_creation_type", mode="plain")
+    def serialize_inital_creation_type(self, value: InitialCreationType) -> str:
+        return value.value
+
+    @field_serializer("copyright", mode="plain")
+    def serialize_copyright(self, value: Copyright) -> Dict:
+        return {
+            "status": value.status.value,
+            "notice": value.notice,
+            "info_url": value.info_url,
+        }
+
     def to_dict(self):
         """
         Prepare PechaMetaData attribute to be JSON serializable
         """
         data = self.model_dump()
-        data["imported"] = data["imported"].isoformat()
-
-        data["licence"] = data["licence"].value
-        data["language"] = data["language"].value
-        data["inital_creation_type"] = data["inital_creation_type"].value
-
-        data["copyright"]["status"] = data["copyright"]["status"].value
 
         # Dynamically get standard fields from the model
         standard_fields = list(set(self.model_fields.keys()))
