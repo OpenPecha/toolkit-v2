@@ -1,3 +1,4 @@
+import json
 import re
 from pathlib import Path
 from typing import Dict, List, Union
@@ -5,6 +6,7 @@ from typing import Dict, List, Union
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -81,9 +83,14 @@ class ChonjukChapterParser(BaseParser):
     def parse(
         self,
         input: str,
+        metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
-        metadata: Union[Dict, Path] = None,
-    ):
+    ) -> Path:
+        if isinstance(metadata, Path):
+            with open(metadata) as f:
+                metadata = json.load(f)
+        assert isinstance(metadata, dict)
+
         output_path.mkdir(parents=True, exist_ok=True)
 
         self.cleaned_text = self.get_updated_text(input)
@@ -91,9 +98,21 @@ class ChonjukChapterParser(BaseParser):
 
         pecha = Pecha.create(output_path)
         base_name = pecha.set_base(self.cleaned_text)
-        layer = pecha.add_layer(base_name, LayerEnum.chapter)
+        layer, _ = pecha.add_layer(base_name, LayerEnum.chapter)
 
         for ann in self.annotations:
             pecha.add_annotation(layer, ann, LayerEnum.chapter)
 
+        pecha.set_metadata(PechaMetaData(id=pecha.id, parser=self.name, **metadata))
         layer.save()
+        return pecha.pecha_path
+
+
+class DummyParser(BaseParser):
+    def parse(
+        self,
+        input: str,
+        metadata: Union[Dict, Path],
+        output_path: Path = PECHAS_PATH,
+    ):
+        pass

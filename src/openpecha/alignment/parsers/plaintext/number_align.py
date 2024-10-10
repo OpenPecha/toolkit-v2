@@ -10,6 +10,8 @@ from openpecha.config import _mkdir
 from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_layer_group
+from openpecha.pecha.metadata import KungsangMonlamMetaData
+from openpecha.pecha.parsers.chonjuk.plaintext import DummyParser
 
 pecha_path = Path
 alignment_path = Path
@@ -214,19 +216,22 @@ class PlainTextNumberAlignedParser:
             self.target_basefile_name = basefile_name
 
         """ annotate metadata"""
-        ann_store = pecha.add_layer(basefile_name, LayerEnum.metadata)
         metadata = (
             self.metadata["source"]
             if ann_type == LayerEnum.root_segment
             else self.metadata["target"]
         )
-        ann_store = pecha.annotate_metadata(ann_store, metadata)
-        ann_store.set_filename(pecha.pecha_path.joinpath("metadata.json").as_posix())
-        ann_store.save()
-        del ann_store
+
+        kunsangmonlam_metadata = KungsangMonlamMetaData(**metadata)
+
+        pecha_metadata = kunsangmonlam_metadata.to_pecha_metadata(
+            parser=DummyParser().name
+        )
+
+        pecha.set_metadata(pecha_metadata)
 
         """ annotate root segments / commentary segments """
-        ann_store = pecha.add_layer(basefile_name, ann_type)
+        ann_store, _ = pecha.add_layer(basefile_name, ann_type)
 
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
@@ -307,7 +312,7 @@ class PlainTextNumberAlignedParser:
         else:
             sapche_indicies = self.mapping_ann_indicies["commentary_sapche_indicies"]
 
-        ann_store = pecha.add_layer(basefile_name, LayerEnum.sapche)
+        ann_store, _ = pecha.add_layer(basefile_name, LayerEnum.sapche)
         ann_resource = next(ann_store.resources())
 
         char_count = 0
@@ -402,7 +407,7 @@ class PlainTextNumberAlignedParser:
                             break
                     else:
                         alignment_mapping[get_uuid()] = {
-                            target_pecha.id_: target_meaning_segment.id(),
+                            target_pecha.id: target_meaning_segment.id(),
                         }
                     target_pointer += 1
                     last_commentary_meaning_idx += 1
@@ -429,27 +434,27 @@ class PlainTextNumberAlignedParser:
 
                 if len(related_root_segment_ids) == 0:
                     alignment_mapping[ann_id] = {
-                        source_pecha.id_: root_segment.id(),
+                        source_pecha.id: root_segment.id(),
                     }
                     continue
                 if len(related_root_segment_ids) == 1:
                     related_root_segment_ids = related_root_segment_ids[0]
 
                 alignment_mapping[ann_id] = {
-                    source_pecha.id_: root_segment.id(),
-                    target_pecha.id_: related_root_segment_ids,
+                    source_pecha.id: root_segment.id(),
+                    target_pecha.id: related_root_segment_ids,
                 }
                 continue
 
-            alignment_mapping[ann_id] = {source_pecha.id_: source_meaning_segment.id()}
+            alignment_mapping[ann_id] = {source_pecha.id: source_meaning_segment.id()}
 
         alignment_path = _mkdir(output_path / self.alignment_id)
         with open(alignment_path / "alignment.json", "w", encoding="utf-8") as f:
             json.dump(alignment_mapping, f, indent=2, ensure_ascii=False)
 
         """ write the metadata """
-        self.metadata["source"]["pecha_id"] = source_pecha.id_
-        self.metadata["target"]["pecha_id"] = target_pecha.id_
+        self.metadata["source"]["pecha_id"] = source_pecha.id
+        self.metadata["target"]["pecha_id"] = target_pecha.id
 
         self.metadata["source"]["base"] = self.source_basefile_name
         self.metadata["target"]["base"] = self.target_basefile_name
