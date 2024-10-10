@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 from shutil import rmtree
 
@@ -9,7 +8,7 @@ from openpecha.alignment.parsers.plaintext.line_align import (
     PlainTextLineAlignedParser,
     split_text_into_lines,
 )
-from openpecha.pecha.layer import LayerCollectionEnum, LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
 
 
 def test_plaintext_line_aligned_parser():
@@ -22,22 +21,19 @@ def test_plaintext_line_aligned_parser():
         source_path, target_path, metadata_path
     )
 
-    with open(metadata_path, encoding="utf-8") as f:
-        metadata = json.load(f)
-    alignment_type = LayerCollectionEnum(metadata["metadata"]["type"])
-    (source_ann_store, source_ann_store_name), (
-        target_ann_store,
-        target_ann_store_name,
-    ) = parser.parse_pechas(dataset_id=alignment_type.value, output_path=DATA)
+    (source_layer, source_layer_name), (
+        target_layer,
+        target_layer_name,
+    ) = parser.parse_pechas(output_path=DATA)
 
-    assert isinstance(source_ann_store, AnnotationStore)
-    assert isinstance(target_ann_store, AnnotationStore)
+    assert isinstance(source_layer, AnnotationStore)
+    assert isinstance(target_layer, AnnotationStore)
 
     source_lines = split_text_into_lines(source_path.read_text(encoding="utf-8"))
     target_lines = split_text_into_lines(target_path.read_text(encoding="utf-8"))
 
     """ comparing source lines"""
-    dataset = list(source_ann_store.datasets())[0]
+    dataset = list(source_layer.datasets())[0]
 
     source_key = dataset.key(LayerGroupEnum.associated_alignment.value)
     source_anns = list(
@@ -47,7 +43,7 @@ def test_plaintext_line_aligned_parser():
         assert str(annotation) == source_line
 
     """ comparing target text lines"""
-    dataset = list(target_ann_store.datasets())[0]
+    dataset = list(target_layer.datasets())[0]
 
     target_key = dataset.key(LayerGroupEnum.associated_alignment.value)
     target_anns = list(
@@ -57,18 +53,18 @@ def test_plaintext_line_aligned_parser():
         assert str(annotation) == target_line
 
     """ alignment """
-    parser.source_ann_store = source_ann_store
-    parser.target_ann_store = target_ann_store
+    parser.source_layer = source_layer
+    parser.target_layer = target_layer
 
-    alignment = parser.create_alignment(source_ann_store_name, target_ann_store_name)
+    alignment = parser.create_alignment(source_layer_name, target_layer_name)
     if alignment:
         alignment.write(output_path=DATA)
     assert isinstance(alignment, Alignment)
 
     """ clean up """
-    rmtree(Path(DATA / source_ann_store.id()))
-    rmtree(Path(DATA / target_ann_store.id()))
-    rmtree(Path(DATA / alignment.id_))
+    rmtree(Path(DATA / source_layer.id()))
+    rmtree(Path(DATA / target_layer.id()))
+    rmtree(Path(DATA / alignment.id))
 
 
 test_plaintext_line_aligned_parser()

@@ -15,7 +15,7 @@
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "id_"
+          "@id": "id"
         },
         {
           "@type": "DataKey",
@@ -46,7 +46,7 @@
         {
           "@type": "AnnotationData",
           "@id": "abcee4cc8cbd43139bcc99155776bcaa",
-          "key": "id_",
+          "key": "id",
           "value": {
             "@type": "String",
             "value": "12345"

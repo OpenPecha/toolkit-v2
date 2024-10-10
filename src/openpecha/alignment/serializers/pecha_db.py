@@ -118,7 +118,7 @@ class PechaDbSerializer:
                         ["".join(chapter_segments)]
                     )
 
-        output_file = output_path / f"{self.alignment.id_}.json"
+        output_file = output_path / f"{self.alignment.id}.json"
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(pecha_db_json, f, ensure_ascii=False, indent=2)
 
