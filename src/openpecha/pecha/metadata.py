@@ -1,6 +1,5 @@
 import importlib
 import inspect
-import json
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -78,8 +77,8 @@ class LicenseType(Enum):
 
 class PechaMetaData(BaseModel):
     id: str
-    title: Union[List[str], str]
-    author: Union[List[str], str]
+    title: Union[List[str], Dict[str, str], str]
+    author: Union[List[str], Dict[str, str], str]
     imported: Optional[datetime] = None
     source: Optional[str] = None
     toolkit_version: Optional[str] = None
@@ -211,13 +210,9 @@ class KungsangMonlamMetaData(BaseModel):
         """
         Extract relevant fields from KunsangMonlamMetaData and map them to PechaMetaData fields
         """
-        title = (
-            [json.dumps(self.title_short, ensure_ascii=False)]
-            if self.title_short
-            else []
-        )
-        author = [json.dumps(self.author, ensure_ascii=False)] if self.author else []
-        source = json.dumps(self.source, ensure_ascii=False) if self.source else ""
+        title = self.title_short if self.title_short else {}
+        author = self.author if self.author else []
+        source = self.source if self.source else ""
         language = self.lang if self.lang else ""
 
         extra_metadata = {

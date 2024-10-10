@@ -373,7 +373,7 @@ class Pecha:
 
     def set_metadata(self, pecha_metadata: PechaMetaData) -> Path:
         with open(self.metadata_path, "w") as f:
-            json.dump(pecha_metadata.to_dict(), f, indent=2)
+            json.dump(pecha_metadata.to_dict(), f, ensure_ascii=False, indent=2)
 
         return self.metadata_path
 
