@@ -3,17 +3,17 @@ import re
 import json
 import pyewts
 from pathlib import Path
-from typing import Callable, Dict, List, Union
-from stam import AnnotationStore, Offset, Selector
-from openpecha.config import _mkdir
-from openpecha.ids import get_initial_pecha_id, get_uuid
+from typing import Any, Dict, Union
+from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, get_layer_group
+from openpecha.pecha.parsers import BaseParser
+from openpecha.pecha.metadata import PechaMetaData
 
 ewts = pyewts.pyewts()
 
 
-class DharamanexusParser():
+class DharamanexusParser(BaseParser):
     def __init__(self, regex_pattern):
         self.regex_pattern = regex_pattern
         self.state = {}
@@ -108,34 +108,86 @@ class DharamanexusParser():
         return curr_dict
 
 
-    def parse(self, file_dict):
-        for vol, file_paths in file_dict.items():
+    def get_temp_state(
+            self, 
+            json_file: Dict[str, Any]
+            ) -> None:
+        for info in json_file:
+            text = ewts.toUnicode(info["original"])
+            segment_id = info["segmentnr"]
+            page_id = info["folio"]
+            curr_dict = self.get_info_dict(segment_id, page_id, text)
+            if self.temp_state['base_text'] == "":
+                self.temp_state['base_text'] = text
+            elif self.temp_state['base_text'] != "" and self.temp_state['prev_info_dict']['page_id'] == page_id:
+                self.temp_state['base_text'] += " " + text
+            elif self.temp_state['prev_info_dict']['page_id'] != page_id:
+                self.temp_state['base_text'] += "\n" + text
+            self.temp_state['annotations']['segments'][segment_id] = curr_dict['annotations']['segments'][segment_id]
+            self.temp_state['annotations']['pages'][page_id] = curr_dict['annotations']['pages'][page_id]
+            self.temp_state['prev_info_dict'] = {
+                    'segment_id' : segment_id,
+                    'page_id': page_id,
+                    'segments': curr_dict['annotations']['segments'][segment_id],
+                    'pages': curr_dict['annotations']['pages'][page_id]
+                }
+
+
+    def make_state(self, input):
+        for vol, file_paths in input.items():
             for file_path in file_paths:
                 json_file = self.read_json(file_path)
-                for info in json_file:
-                    text = ewts.toUnicode(info["original"])
-                    segment_id = info["segmentnr"]
-                    page_id = info["folio"]
-                    curr_dict = self.get_info_dict(segment_id, page_id, text)
-                    if self.temp_state['base_text'] == "":
-                        self.temp_state['base_text'] = text
-                    elif self.temp_state['base_text'] != "" and self.temp_state['prev_info_dict']['page_id'] == page_id:
-                        self.temp_state['base_text'] += " " + text
-                    elif self.temp_state['prev_info_dict']['page_id'] != page_id:
-                        self.temp_state['base_text'] += "\n" + text
-                    self.temp_state['annotations']['segments'][segment_id] = curr_dict['annotations']['segments'][segment_id]
-                    self.temp_state['annotations']['pages'][page_id] = curr_dict['annotations']['pages'][page_id]
-                    self.temp_state['prev_info_dict'] = {
-                            'segment_id' : segment_id,
-                            'page_id': page_id,
-                            'segments': curr_dict['annotations']['segments'][segment_id],
-                            'pages': curr_dict['annotations']['pages'][page_id]
-                        }
+                self.get_temp_state(json_file)
             self.state[vol]={
                 'base_text': self.temp_state['base_text'],
                 'annotations': self.temp_state['annotations']
                 }
             self.temp_state = { 'base_text': "", 'annotations': { 'segments': {}, 'pages': {}},'prev_info_dict': {}}
+
+
+    def write_to_pecha(self, pecha, metadata):
+        for vol, data in self.state.items():
+            base_name = pecha.set_base(content=data['base_text'])
+
+            segment = pecha.add_layer(base_name, LayerEnum.meaning_segment)
+            for segment_id, segment_span in data['annotations']['segments'].items():
+                segment_ann = {
+                    'segment': segment_span['span'],
+                    'segment_id': segment_id
+                }
+                pecha.add_annotation(segment, segment_ann, LayerEnum.meaning_segment)
+            segment.save()
+
+            pagination = pecha.add_layer(base_name, LayerEnum.Pagination)
+            for page_id, page_ann in data['annotations']['pages'].items():
+                page_ann = {
+                    'pagination': page_ann['span'],
+                    'folio': page_id
+                }
+                pecha.add_annotation(pagination, page_ann, LayerEnum.Pagination)
+            pagination.save()
+
+            bases = {
+                base_name: {
+                    'source_metadata':{
+                        "source_id": vol,
+                        "total_pages": len(data['annotations']['pages'])
+                    },
+                    'base_file': base_name
+                }
+            }
+
+
+    def parse(
+        self,
+        input: Any,
+        output_path: Path = PECHAS_PATH,
+        metadata: Union[Dict, Path] = None,
+    ):
+        self.make_state(input)
+
+        pecha = Pecha.create(output_path)
+        self.write_to_pecha(self, pecha, metadata)
 
 
     def get_sorted_file_paths(self, file_paths):
