@@ -22,9 +22,9 @@ class Alignment:
         segment_pairs: Dict[str, Dict[str, str]] = None,
         pechas: Dict[str, Pecha] = None,
     ):
-        self.id_ = metadata.id_
+        self.id = metadata.id
         self.base_path = (
-            _mkdir(ALIGNMENT_PATH / self.id_) if not base_path else base_path
+            _mkdir(ALIGNMENT_PATH / self.id) if not base_path else base_path
         )
         self.metadata = metadata
         self.segment_pairs = segment_pairs
@@ -36,7 +36,7 @@ class Alignment:
         with open(metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
         metadata = AlignmentMetaData.from_dict(
-            metadata=metadata, alignment_id=metadata["id_"]
+            metadata=metadata, alignment_id=metadata["id"]
         )
 
         anns_path = path / "alignment.json"
@@ -81,7 +81,7 @@ class Alignment:
 
     def write(self, output_path: Path):
         """ """
-        alignment_id = self.id_
+        alignment_id = self.id
         alignment_path = _mkdir(output_path / alignment_id)
 
         """ write metadata"""
@@ -98,15 +98,15 @@ class Alignment:
         if not self.segment_pairs:
             return None
 
-        for id_ in self.segment_pairs:
-            yield {id_: self.get_segment_pair(id_)}
+        for id in self.segment_pairs:
+            yield {id: self.get_segment_pair(id)}
 
-    def get_segment_pair(self, id_: str):
+    def get_segment_pair(self, id: str):
         if not self.segment_pairs or not self.pechas:
             return None
 
         segment_pair = {}
-        for pecha_id, ann_id in self.segment_pairs[id_].items():
+        for pecha_id, ann_id in self.segment_pairs[id].items():
             """get root segment annotation"""
             base_file = self.metadata.segments_metadata[pecha_id].base
             ann_type = self.metadata.segments_metadata[pecha_id].type
@@ -160,6 +160,6 @@ class Alignment:
     def upload_update_with_github(self):
         """upload files if first time"""
         """ update files if already exist"""
-        repo_created = create_github_repo(self.id_)
+        repo_created = create_github_repo(self.id)
         if repo_created:
-            upload_folder_to_github(self.id_, self.base_path)
+            upload_folder_to_github(self.id, self.base_path)

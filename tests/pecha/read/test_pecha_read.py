@@ -10,7 +10,7 @@ def test_pecha_read():
     DATA = Path(__file__).parent / "data"
     pecha_path = DATA / "I2E095029"
     pecha = Pecha.from_path(pecha_path)
-    assert pecha.id_ == "I2E095029"
+    assert pecha.id == "I2E095029"
 
     base_path = pecha.pecha_path / "base"
     basefile_name = list(base_path.rglob("*.txt"))[0].stem
