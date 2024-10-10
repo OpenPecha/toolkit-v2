@@ -20,6 +20,7 @@ class LayerEnum(Enum):
     sapche = "Sapche"
     metadata = "Meta_Data"
     tsawa = "Tsawa"
+    pagination = "Pagination"
 
 
 class LayerGroupEnum(Enum):
@@ -41,6 +42,7 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
         LayerEnum.sapche,
         LayerEnum.tsawa,
         LayerEnum.meaning_segment,
+        LayerEnum.pagination,
     ]:
         return LayerGroupEnum.structure_type
 
@@ -63,6 +65,7 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
         LayerEnum.sapche,
         LayerEnum.tsawa,
         LayerEnum.meaning_segment,
+        LayerEnum.pagination,
     ]:
         return LayerCollectionEnum.structure_annotation
 

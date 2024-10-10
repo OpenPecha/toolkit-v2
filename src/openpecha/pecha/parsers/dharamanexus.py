@@ -146,36 +146,48 @@ class DharamanexusParser(BaseParser):
 
 
     def write_to_pecha(self, pecha, metadata):
+        curr_bases = {}
+        bases = []
         for vol, data in self.state.items():
             base_name = pecha.set_base(content=data['base_text'])
 
-            segment = pecha.add_layer(base_name, LayerEnum.meaning_segment)
+            segment, _ = pecha.add_layer(base_name, LayerEnum.meaning_segment)
             for segment_id, segment_span in data['annotations']['segments'].items():
                 segment_ann = {
-                    'segment': segment_span['span'],
+                    LayerEnum.meaning_segment.value: segment_span['span'],
                     'segment_id': segment_id
                 }
                 pecha.add_annotation(segment, segment_ann, LayerEnum.meaning_segment)
             segment.save()
 
-            pagination = pecha.add_layer(base_name, LayerEnum.Pagination)
+            pagination, _ = pecha.add_layer(base_name, LayerEnum.pagination)
             for page_id, page_ann in data['annotations']['pages'].items():
                 page_ann = {
-                    'pagination': page_ann['span'],
+                    LayerEnum.pagination.value: page_ann['span'],
                     'folio': page_id
                 }
-                pecha.add_annotation(pagination, page_ann, LayerEnum.Pagination)
+                pecha.add_annotation(pagination, page_ann, LayerEnum.pagination)
             pagination.save()
 
-            bases = {
+            curr_bases = {
                 base_name: {
                     'source_metadata':{
                         "source_id": vol,
+                        "total_segments": len(data['annotations']['segments']),
                         "total_pages": len(data['annotations']['pages'])
                     },
                     'base_file': base_name
                 }
             }
+            bases.append(curr_bases)
+            curr_bases = {}
+
+        pecha.set_metadata(PechaMetaData(
+                id=pecha.id,
+                parser=self.name,
+                bases=bases,
+                **metadata
+            ))
 
 
     def parse(
@@ -187,7 +199,7 @@ class DharamanexusParser(BaseParser):
         self.make_state(input)
 
         pecha = Pecha.create(output_path)
-        self.write_to_pecha(self, pecha, metadata)
+        self.write_to_pecha(pecha, metadata)
 
 
     def get_sorted_file_paths(self, file_paths):
