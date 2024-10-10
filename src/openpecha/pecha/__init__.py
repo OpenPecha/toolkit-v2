@@ -186,12 +186,10 @@ class StamPecha:
 
 
 class Pecha:
-    def __init__(
-        self, pecha_id: str, pecha_path: Path, metadata: Optional[PechaMetaData] = None
-    ) -> None:
+    def __init__(self, pecha_id: str, pecha_path: Path) -> None:
         self.id = pecha_id
         self.pecha_path = pecha_path
-        self.metadata = metadata if metadata else self.load_metadata()
+        self.metadata = self.load_metadata()
         self.bases = self.load_bases()
         self.layers = self.load_layers()
 
@@ -206,13 +204,11 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @classmethod
-    def create(cls, output_path: Path, metadata: PechaMetaData) -> "Pecha":
-        pecha_id = metadata.id
+    def create(cls, output_path: Path) -> "Pecha":
+        pecha_id = get_initial_pecha_id()
         pecha_path = output_path / pecha_id
         pecha_path.mkdir(parents=True, exist_ok=True)
-        pecha = cls(pecha_id, pecha_path, metadata)
-        pecha.set_metadata(metadata)
-        return pecha
+        return cls(pecha_id, pecha_path)
 
     @property
     def base_path(self) -> Path:

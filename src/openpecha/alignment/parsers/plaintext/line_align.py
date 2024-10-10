@@ -120,8 +120,10 @@ def create_pecha_stam(
     base_text: str, metadata: PechaMetaData, ann_type: LayerEnum, output_path: Path
 ):
 
-    pecha = Pecha.create(output_path, metadata)
+    pecha = Pecha.create(output_path)
     base_name = pecha.set_base(base_text)
+
+    pecha.set_metadata(metadata)
 
     layer, layer_path = pecha.add_layer(base_name, ann_type)
 
