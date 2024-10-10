@@ -4,7 +4,7 @@
                 "author":["Chojuk Source Author 1", "Chojuk Source Author 1"],
                 "source": "Chojuk Source",
                 "source_metadata": {},
-                "inital_creation_type": "ebook",
+                "initial_creation_type": "ebook",
                 "language": "bo"
             },
             
@@ -14,7 +14,7 @@
             "author":["Chojuk Target Author 1", "Chojuk Target Author 1"],
             "source": "Chojuk Target",
             "source_metadata": {},
-            "inital_creation_type": "ebook",
+            "initial_creation_type": "ebook",
             "language": "bo"
     }
 }

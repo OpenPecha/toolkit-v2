@@ -12,7 +12,7 @@
   "source": "",
   "toolkit_version": "0.0.1",
   "parser": "DummyParser",
-  "inital_creation_type": "input",
+  "initial_creation_type": "input",
   "language": "zh",
   "source_metadata": {
     "composition_date": {},

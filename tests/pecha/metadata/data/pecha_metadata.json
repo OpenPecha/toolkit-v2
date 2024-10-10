@@ -6,7 +6,7 @@
     "source": "Dummy Source",
     "toolkit_version": "0.0.1",
     "parser": "ChonjukChapterParser",
-    "inital_creation_type": "ebook",
+    "initial_creation_type": "ebook",
     "language": "bo",
     "source_metadata": {},
     "bases": [],

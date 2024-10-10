@@ -83,7 +83,7 @@ class PechaMetaData(BaseModel):
     source: Optional[str] = None
     toolkit_version: Optional[str] = None
     parser: str
-    inital_creation_type: InitialCreationType
+    initial_creation_type: InitialCreationType
     language: Language
     source_metadata: Dict = {}
     bases: List[Dict] = []
@@ -167,7 +167,7 @@ class PechaMetaData(BaseModel):
     def serialize_language(self, value: Language) -> str:
         return value.value
 
-    @field_serializer("inital_creation_type", mode="plain")
+    @field_serializer("initial_creation_type", mode="plain")
     def serialize_inital_creation_type(self, value: InitialCreationType) -> str:
         return value.value
 
@@ -244,7 +244,7 @@ class KungsangMonlamMetaData(BaseModel):
             author=author,
             source=source,
             parser=parser,
-            inital_creation_type=InitialCreationType.input,
+            initial_creation_type=InitialCreationType.input,
             language=language,
             source_metadata={},
             **extra_metadata,
