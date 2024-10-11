@@ -25,7 +25,7 @@ dependencies = [
   "pyewts == 0.2.0",
   "toml >= 0.10.2",
   "GitPython>=3.1.0, <4.0",
-  "tomli-w == 1.1.0",
+  "tomli == 2.0.2",
 
 ]
 
