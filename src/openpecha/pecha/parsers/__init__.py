@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, Union
 
 from openpecha.config import PECHAS_PATH
+from openpecha.pecha import Pecha
 
 
 class BaseParser(ABC):
@@ -16,5 +17,5 @@ class BaseParser(ABC):
         input: Any,
         metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
-    ):
+    ) -> Pecha:
         pass

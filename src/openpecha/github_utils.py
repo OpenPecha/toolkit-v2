@@ -1,5 +1,6 @@
 import os
 import subprocess
+import time
 from pathlib import Path
 
 from github import Github
@@ -16,42 +17,45 @@ from openpecha.exceptions import (
     GithubRepoError,
     InvalidTokenError,
     OrganizationNotFoundError,
-    RepositoryCreationError,
 )
 
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 if not GITHUB_TOKEN:
     raise OSError("[ERROR]: GITHUB_TOKEN environment variable not set.")
 
+org = None
 
-def create_github_repo(repo_name: str, org_name: str = PECHA_DATA_ORG) -> bool:
-    """
-    Create a GitHub repository in the specified organization.
 
-    :param org_name: The name of the GitHub organization.
-    :param repo_name: The name of the repository to create.
-    :return: True if the repository was created successfully or if it already exists or an error occurred.
-    """
-    try:
-        g = Github(GITHUB_TOKEN)
+def _get_openpecha_data_org(org_name=None, token=None):
+    """OpenPecha github org singleton."""
+    global org
+    if org is None:
+        if not token:
+            token = os.environ.get("GITHUB_TOKEN")
+        if not org_name:
+            org_name = os.environ["OPENPECHA_DATA_GITHUB_ORG"]
+        g = Github(token)
         org = g.get_organization(org_name)
-        org.create_repo(repo_name)
-        return True
-    except BadCredentialsException:
-        raise InvalidTokenError("[ERROR]: Invalid GitHub token.")
-    except UnknownObjectException:
-        raise OrganizationNotFoundError(
-            f"[ERROR]: Organization '{org_name}' not found."
-        )
-    except GithubException as e:
-        if e.status == 422:
-            return True
-        else:
-            raise RepositoryCreationError(
-                f"[ERROR]: Failed to create repository '{repo_name}'. Error: {e.data}"
-            )
-    except Exception as e:
-        raise GithubRepoError(f"[ERROR]: An unexpected error occurred. Error: {e}")
+    return org
+
+
+def get_github_repo(repo_name, org_name, token):
+    org = _get_openpecha_data_org(org_name, token)
+    repo = org.get_repo(repo_name)
+    return repo
+
+
+def create_github_repo(path, org_name, token, private=False, description=None):
+    org = _get_openpecha_data_org(org_name, token)
+    repo = org.create_repo(
+        path.name,
+        description=description,
+        private=private,
+        has_wiki=False,
+        has_projects=False,
+    )
+    time.sleep(2)
+    return repo._html_url.value
 
 
 def upload_folder_to_github(
@@ -115,7 +119,7 @@ def clone_repo(
     if (target_path).exists():
         _mkdir(target_path)
 
-    repo_url = f"https://github.com/{org_name}/{repo_name}.git"
+    repo_url = f"https://github.com/{org_name}/{repo_name}.git"  # noqa
     try:
         subprocess.run(
             ["git", "clone", repo_url, str(target_path)],

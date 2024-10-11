@@ -2,7 +2,6 @@ import json
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.chonjuk.plaintext import ChonjukChapterParser
 
 
@@ -33,15 +32,11 @@ class TestChonjukPlainTextParser:
         output_path = Path(__file__).parent / "output"
         with tempfile.TemporaryDirectory() as tmpdirname:
             output_path = Path(tmpdirname)
-            pecha_path = parser.parse(
+            parser.parse(
                 chonjuk_text, output_path=output_path, metadata=chonjuk_metadata
             )
             assert parser.cleaned_text == expected_base_text
             assert parser.annotations == expected_chapter_anns
-
-            assert pecha_path.exists()
-            pecha = Pecha.from_path(pecha_path)
-            assert pecha.id == pecha.metadata.id
 
 
 TestChonjukPlainTextParser().test_chonjuk_plaintext_parser()

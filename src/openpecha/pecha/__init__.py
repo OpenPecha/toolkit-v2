@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
+from git import Repo
 from stam import Annotation, AnnotationStore, Offset, Selector
 
 from openpecha import utils
@@ -13,6 +14,7 @@ from openpecha.ids import get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
+from openpecha.storages import GithubStorage, Storage, commit_and_push
 
 BASE_NAME = str
 layer_type = str
@@ -192,6 +194,7 @@ class Pecha:
         self.metadata = self.load_metadata()
         self.bases = self.load_bases()
         self.layers = self.load_layers()
+        self.storage: Optional[Storage] = None
 
     @classmethod
     def from_id(cls, pecha_id: str):
@@ -368,10 +371,11 @@ class Pecha:
         return ann_store
 
     def set_metadata(self, pecha_metadata: PechaMetaData):
+        self.metadata = pecha_metadata
         with open(self.metadata_path, "w") as f:
-            json.dump(pecha_metadata.to_dict(), f, ensure_ascii=False, indent=2)
+            json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)
 
-        return pecha_metadata
+        return self.metadata
 
     def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
         dir_to_search = self.layer_path / basefile_name
@@ -385,3 +389,23 @@ class Pecha:
         if len(annotation_stores) == 1:
             return annotation_stores[0], ann_store_files[0]
         return annotation_stores, ann_store_files
+
+    def publish(
+        self,
+        branch: Optional[str] = "main",
+        is_private: bool = False,
+    ):
+        if not self.storage:
+            self.storage = GithubStorage()
+        if isinstance(self.storage, GithubStorage) and self.storage.is_git_repo(
+            self.pecha_path
+        ):
+            local_repo = Repo(self.pecha_path)
+            commit_and_push(repo=local_repo, message="Pecha update", branch=branch)
+        else:
+            self.storage.add_dir(
+                path=self.pecha_path,
+                description=self.metadata.title,
+                is_private=is_private,
+                branch=branch,
+            )
