@@ -4,7 +4,7 @@ from pathlib import Path
 
 class Alignment:
     def __init__(self, alignment_id: str, path: Path):
-        self.id_ = alignment_id
+        self.id = alignment_id
         self.path = path
 
     @classmethod

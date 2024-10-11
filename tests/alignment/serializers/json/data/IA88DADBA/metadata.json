@@ -1,123 +1,43 @@
 {
-  "@type": "AnnotationStore",
-  "@id": "IA88DADBA",
-  "resources": [
-    {
-      "@type": "TextResource",
-      "@id": "8466",
-      "@include": "../../base/8466.txt"
-    }
-  ],
-  "annotationsets": [
-    {
-      "@type": "AnnotationDataSet",
-      "@id": "Meta_Data",
-      "keys": [
-        {
-          "@type": "DataKey",
-          "@id": "author"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "presentation"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "title_short"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "is_commentary_of"
-        },
-        {
-          "@type": "DataKey",
-          "@id": "lang"
-        }
-      ],
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "383a5818a5044ea3be43094bf15f4545",
-          "key": "author",
-          "value": {
-            "@type": "String",
-            "value": "{\"EN\": \"Master Di Xian\", \"ZH\": \"諦閑法師\\n(1858-1932)\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "0ab1fe10f99346f8afd6fb1be8a3e334",
-          "key": "presentation",
-          "value": {
-            "@type": "String",
-            "value": "{\"EN\": \"Classical Chinese\", \"ZH\": \"文言文\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "fb114d41854e42928e8508676eeac8c7",
-          "key": "title_short",
-          "value": {
-            "@type": "String",
-            "value": "{\"EN\": \"Commentary on Samantabhadra’s “The King of Aspirations Prayer” – 1\", \"ZH\": \"《普賢菩薩行願品釋論》 - 1\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "823e072a432a4babbd05ecaf03a0d0a2",
-          "key": "is_commentary_of",
-          "value": {
-            "@type": "String",
-            "value": "{\"BO\": \"བཟང་སྤྱོད་སྨོན་ལམ།\"}"
-          }
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "64be2bf1934e4c5aa6d2c4882850c0b1",
-          "key": "lang",
-          "value": {
-            "@type": "String",
-            "value": "zh"
-          }
-        }
-      ]
-    }
-  ],
-  "annotations": [
-    {
-      "@type": "Annotation",
-      "@id": "f22074ba7bf8484da56033c2aac2a23c",
-      "target": {
-        "@type": "ResourceSelector",
-        "resource": "8466"
-      },
-      "data": [
-        {
-          "@type": "AnnotationData",
-          "@id": "383a5818a5044ea3be43094bf15f4545",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "0ab1fe10f99346f8afd6fb1be8a3e334",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "fb114d41854e42928e8508676eeac8c7",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "823e072a432a4babbd05ecaf03a0d0a2",
-          "set": "Meta_Data"
-        },
-        {
-          "@type": "AnnotationData",
-          "@id": "64be2bf1934e4c5aa6d2c4882850c0b1",
-          "set": "Meta_Data"
-        }
-      ]
-    }
-  ]
+  "id": "I4A70A7FB",
+  "title": {
+    "EN": "Commentary on Samantabhadra’s “The King of Aspirations Prayer” – 1",
+    "ZH": "《普賢菩薩行願品釋論》 - 1"
+  },
+  "author": {
+    "EN": "Master Di Xian",
+    "ZH": "諦閑法師\n(1858-1932)"
+  },
+  "imported": "2024-10-10T12:28:48.910052",
+  "source": "",
+  "toolkit_version": "0.0.1",
+  "parser": "DummyParser",
+  "initial_creation_type": "input",
+  "language": "zh",
+  "source_metadata": {
+    "composition_date": {},
+    "presentation": {
+      "EN": "Classical Chinese",
+      "ZH": "文言文"
+    },
+    "usage_title": {},
+    "title_short": {
+      "EN": "Commentary on Samantabhadra’s “The King of Aspirations Prayer” – 1",
+      "ZH": "《普賢菩薩行願品釋論》 - 1"
+    },
+    "title_long_clean": {},
+    "title_alt_1": {},
+    "title_alt_2": {},
+    "is_commentary_of": {
+      "BO": "བཟང་སྤྱོད་སྨོན་ལམ།"
+    },
+    "is_version_of": {}
+  },
+  "bases": [],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
 }

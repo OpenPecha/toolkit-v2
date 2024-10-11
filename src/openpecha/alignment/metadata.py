@@ -14,10 +14,10 @@ class AlignmentRelationEnum(Enum):
 
 
 class LanguageEnum(Enum):
-    tibetan = "Tibetan"
-    english = "English"
-    chinese = "Chinese"
-    sanskrit = "Sanskrit"
+    tibetan = "bo"
+    english = "en"
+    chinese = "zh"
+    sanskrit = "sa"
 
 
 class SegmentMetaData(BaseModel):
@@ -42,7 +42,7 @@ class SegmentMetaData(BaseModel):
 
 
 class AlignmentMetaData(BaseModel):
-    id_: str
+    id: str
     segments_metadata: Dict[str, SegmentMetaData]
     source_metadata: Dict = defaultdict(lambda: defaultdict(dict))
 
@@ -65,7 +65,7 @@ class AlignmentMetaData(BaseModel):
             )
 
         return cls(
-            id_=alignment_id,
+            id=alignment_id,
             segments_metadata=segments_metadata,
             source_metadata=metadata["metadata"],
         )
@@ -73,8 +73,8 @@ class AlignmentMetaData(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def set_id(cls, values):
-        if "id_" not in values or values["id_"] is None:
-            values["id_"] = get_alignment_id()
+        if "id" not in values or values["id"] is None:
+            values["id"] = get_alignment_id()
         return values
 
     def to_dict(self) -> Dict:
@@ -83,7 +83,7 @@ class AlignmentMetaData(BaseModel):
         converting enum attributes to their values.
         """
         return {
-            "id_": self.id_,
+            "id": self.id,
             "segments_metadata": {
                 segment_id: segment.to_dict()
                 for segment_id, segment in self.segments_metadata.items()
