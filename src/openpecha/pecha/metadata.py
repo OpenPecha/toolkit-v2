@@ -5,11 +5,10 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import toml
+import tomli
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from openpecha.ids import get_initial_pecha_id
-from openpecha.pecha.parsers import BaseParser
 
 
 class InitialCreationType(Enum):
@@ -33,7 +32,7 @@ class CopyrightStatus(Enum):
 
 
 class Copyright(BaseModel):
-    status: CopyrightStatus = CopyrightStatus.UNKNOWN
+    status: CopyrightStatus = CopyrightStatus.UNKNOWN  # noqa
     notice: Optional[str] = ""
     info_url: Optional[str] = None
 
@@ -122,10 +121,12 @@ class PechaMetaData(BaseModel):
             classes = inspect.getmembers(sys.modules[parser_path], inspect.isclass)
             all_classes.extend(classes)
 
+        parsers = importlib.import_module("openpecha.pecha.parsers")
         parser_classes = [
             (name, class_)
             for name, class_ in all_classes
-            if issubclass(class_, BaseParser) and class_ is not BaseParser
+            if issubclass(class_, parsers.BaseParser)
+            and class_ is not parsers.BaseParser
         ]
         return parser_classes
 
@@ -133,16 +134,14 @@ class PechaMetaData(BaseModel):
     def validate_parser(cls, values):
         parser_classes = cls.get_toolkit_parsers()
         if values["parser"] not in [name for name, _ in parser_classes]:
-            raise ValueError(
-                f"Parser {values['parser']} not found in the Toolkit parsers."
-            )
+            raise ValueError(f"Parser {values['parser']} not in the Toolkit parsers.")
         return values
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
         if "toolkit_version" not in values or values["toolkit_version"] is None:
-            with open("pyproject.toml") as f:
-                pyproject_data = toml.load(f)
+            with open("pyproject.toml", "rb") as f:
+                pyproject_data = tomli.load(f)
 
             toolkit_version = pyproject_data["project"]["version"]
             values["toolkit_version"] = toolkit_version

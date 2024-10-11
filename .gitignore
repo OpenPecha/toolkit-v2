@@ -136,3 +136,4 @@ dmypy.json
 # project
 playground/
 .vscode
+**/.DS_Store

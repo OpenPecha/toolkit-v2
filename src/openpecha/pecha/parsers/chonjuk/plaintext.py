@@ -85,7 +85,7 @@ class ChonjukChapterParser(BaseParser):
         input: str,
         metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
-    ) -> Path:
+    ) -> Pecha:
         if isinstance(metadata, Path):
             with open(metadata) as f:
                 metadata = json.load(f)
@@ -105,7 +105,7 @@ class ChonjukChapterParser(BaseParser):
 
         pecha.set_metadata(PechaMetaData(id=pecha.id, parser=self.name, **metadata))
         layer.save()
-        return pecha.pecha_path
+        return pecha
 
 
 class DummyParser(BaseParser):
