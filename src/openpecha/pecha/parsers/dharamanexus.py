@@ -88,8 +88,8 @@ class DharamanexusParser(BaseParser):
             }
         return curr_dict
 
-    def get_temp_state(self, json_file: Dict[str, Any]) -> None:
-        for _, info in json_file.items():
+    def get_temp_state(self, json_file: List[Dict[str, Any]]) -> None:
+        for info in json_file:
             text = ewts.toUnicode(info["original"])
             segment_id = info["segmentnr"]
             page_id = info["folio"]

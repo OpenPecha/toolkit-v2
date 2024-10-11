@@ -5,7 +5,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import tomli_w
+import tomli
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from openpecha.ids import get_initial_pecha_id
@@ -140,8 +140,8 @@ class PechaMetaData(BaseModel):
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
         if "toolkit_version" not in values or values["toolkit_version"] is None:
-            with open("pyproject.toml") as f:
-                pyproject_data = tomli_w.load(f)
+            with open("pyproject.toml", "rb") as f:
+                pyproject_data = tomli.load(f)
 
             toolkit_version = pyproject_data["project"]["version"]
             values["toolkit_version"] = toolkit_version
