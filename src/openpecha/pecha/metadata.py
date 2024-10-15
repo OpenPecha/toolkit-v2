@@ -16,6 +16,7 @@ class InitialCreationType(Enum):
     ebook = "ebook"
     input = "input"
     tmx = "tmx"
+    json = "json"
 
 
 class Language(Enum):
