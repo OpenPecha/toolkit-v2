@@ -1,0 +1,40 @@
+{
+  "id": "IB1A4B480",
+  "title": "Ka",
+  "author": null,
+  "imported": "2024-10-14T16:55:19.232433",
+  "source": null,
+  "toolkit_version": "0.0.1",
+  "parser": "DharamanexusParser",
+  "initial_creation_type": "ebook",
+  "language": "bo",
+  "source_metadata": {},
+  "bases": [
+    {
+      "9f92": {
+        "source_metadata": {
+          "source_id": "BO_K01_D0001_H0001",
+          "total_segments": 4000,
+          "total_pages": 185
+        },
+        "base_file": "9f92"
+      }
+    },
+    {
+      "feb6": {
+        "source_metadata": {
+          "source_id": "BO_K01_D0001-2_H0001-2",
+          "total_segments": 4000,
+          "total_pages": 155
+        },
+        "base_file": "feb6"
+      }
+    }
+  ],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}
