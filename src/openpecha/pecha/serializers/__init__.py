@@ -11,5 +11,6 @@ class BaseSerializer(ABC):
     def serialize(
         self,
         pecha_path: Path,
+        source_type: str,
     ):
         pass
