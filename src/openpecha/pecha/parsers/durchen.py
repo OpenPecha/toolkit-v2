@@ -50,6 +50,7 @@ class DurchenParser(BaseParser):
         # Create a pecha
         pecha = Pecha.create(output_path)
 
+        input = input.replace("#", "\n")
         self.base_text = self.get_base_text(input)
         basename = pecha.set_base(self.base_text)
 
