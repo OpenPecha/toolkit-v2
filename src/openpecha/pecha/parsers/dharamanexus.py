@@ -134,6 +134,7 @@ class DharamanexusParser(BaseParser):
     def write_to_pecha(self, pecha, metadata):
         curr_bases = {}
         bases = []
+        order = 1
         for vol, data in self.state.items():
             base_name = pecha.set_base(content=data["base_text"])
 
@@ -163,10 +164,12 @@ class DharamanexusParser(BaseParser):
                         "total_pages": len(data["annotations"]["pages"]),
                     },
                     "base_file": base_name,
+                    "order": order,
                 }
             }
             bases.append(curr_bases)
             curr_bases = {}
+            order += 1
 
         pecha.set_metadata(
             PechaMetaData(id=pecha.id, parser=self.name, bases=bases, **metadata)
