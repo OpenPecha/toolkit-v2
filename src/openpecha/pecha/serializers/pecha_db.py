@@ -29,7 +29,7 @@ class PechaDBSerializer(BaseSerializer):
             self.contents.append(self.chapter)
             self.chapter = []
 
-    def serialize(self, pecha_path: Path, source_type: str) -> str:
+    def serialize(self, pecha_path: Path, source_type: str):
         pecha_id = pecha_path.stem
         pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
         if source_type == "dharmanexus":

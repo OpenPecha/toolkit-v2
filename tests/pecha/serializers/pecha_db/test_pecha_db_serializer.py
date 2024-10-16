@@ -10,8 +10,10 @@ def test_pecha_db_serializer():
         output_path = Path(tmpdirname)
         serializer = PechaDBSerializer(output_path=output_path)
         pecha_path = Path("tests/pecha/serializers/pecha_db/data/IB1A4B480")
+        source_type = "dharmanexus"
         pecha_db_json_path, mapping_json_path = serializer.serialize(
-            pecha_path=pecha_path
+            pecha_path=pecha_path,
+            source_type=source_type,
         )
         assert read_json(pecha_db_json_path) == read_json(
             "tests/pecha/serializers/pecha_db/data/expected_pecha_db.json"
