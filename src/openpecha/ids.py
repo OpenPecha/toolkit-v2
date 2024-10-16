@@ -10,6 +10,10 @@ def get_id(prefix, length):
     return prefix + "".join(random.choices(uuid4().hex, k=length)).upper()
 
 
+def get_annotation_id():
+    return get_id("", length=8)
+
+
 def get_base_id():
     return get_id("", length=4)
 
