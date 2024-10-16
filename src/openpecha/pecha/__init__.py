@@ -10,7 +10,7 @@ from stam import Annotation, AnnotationStore, Offset, Selector
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo
-from openpecha.ids import get_initial_pecha_id, get_uuid
+from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
@@ -261,7 +261,7 @@ class Pecha:
         """
         This function sets the base layer of the pecha to a new text.
         """
-        base_name = base_name if base_name else get_uuid()[:4]
+        base_name = base_name if base_name else get_base_id()
         (self.base_path / f"{base_name}.txt").write_text(content)
 
         # add base to the attribute 'bases'
@@ -291,7 +291,7 @@ class Pecha:
 
         ann_store = AnnotationStore(id=self.id)
         ann_store_path = (
-            self.layer_path / base_name / f"{layer_type.value}-{get_uuid()[:4]}.json"
+            self.layer_path / base_name / f"{layer_type.value}-{get_base_id()}.json"
         )
         ann_store.set_filename(str(ann_store_path))
         ann_store.add_resource(
@@ -364,10 +364,17 @@ class Pecha:
                 prepared_ann_data.append(ann_datas[0])
             except:  # noqa
                 prepared_ann_data.append(
-                    {"id": get_uuid(), "set": ann_dataset.id(), "key": k, "value": v}
+                    {
+                        "id": get_annotation_id(),
+                        "set": ann_dataset.id(),
+                        "key": k,
+                        "value": v,
+                    }
                 )
 
-        ann_store.annotate(target=text_selector, data=prepared_ann_data, id=get_uuid())
+        ann_store.annotate(
+            target=text_selector, data=prepared_ann_data, id=get_annotation_id()
+        )
         return ann_store
 
     def set_metadata(self, pecha_metadata: PechaMetaData):

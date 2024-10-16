@@ -1,6 +1,6 @@
 from collections import defaultdict
 from enum import Enum
-from typing import Dict
+from typing import Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
@@ -49,7 +49,9 @@ class AlignmentMetaData(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     @classmethod
-    def from_dict(cls, metadata: Dict, alignment_id: str = None) -> "AlignmentMetaData":
+    def from_dict(
+        cls, metadata: Dict, alignment_id: Optional[str] = None
+    ) -> "AlignmentMetaData":
         segments_metadata: Dict[str, SegmentMetaData] = {}
         for segment_source_id, segment_metadata in metadata[
             "segments_metadata"
