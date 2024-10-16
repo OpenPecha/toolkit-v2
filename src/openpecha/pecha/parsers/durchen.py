@@ -14,6 +14,8 @@ class DurchenParser(BaseParser):
     def __init__(self):
         self.ann_regex = r"(\(\d+\) <.+?>)"
         self.pagination_regex = r"\d+-\d+"
+        self.base_text = ""
+        self.anns = []
 
     def get_base_text(self, text: str):
         text = re.sub(self.ann_regex, "", text)
@@ -35,11 +37,11 @@ class DurchenParser(BaseParser):
         # Split the text into chunks with anns regex
         chunks = re.split(self.ann_regex, input)
         prev_chunk = chunks[0]
-        anns = []
+        self.anns = []
         for chunk in chunks:
             if re.search(self.ann_regex, chunk):
                 ann = get_annotation(prev_chunk, chunk, char_walker)
-                anns.append(ann)
+                self.anns.append(ann)
             else:
                 clean_chunk = chunk.replace(":", "")
                 char_walker += len(clean_chunk)
@@ -48,11 +50,11 @@ class DurchenParser(BaseParser):
         # Create a pecha
         pecha = Pecha.create(output_path)
 
-        base_text = self.get_base_text(input)
-        basename = pecha.set_base(base_text)
+        self.base_text = self.get_base_text(input)
+        basename = pecha.set_base(self.base_text)
 
         layer, _ = pecha.add_layer(basename, LayerEnum.durchen)
-        for ann in anns:
+        for ann in self.anns:
             pecha.add_annotation(layer, ann, LayerEnum.durchen)
 
         # Set metadata
