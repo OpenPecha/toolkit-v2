@@ -1,4 +1,3 @@
-import json
 import re
 from pathlib import Path
 from typing import Dict, List, Union
@@ -10,6 +9,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.pecha.parsers import BaseParser
+from openpecha.utils import read_json
 
 
 class DurchenParser(BaseParser):
@@ -88,8 +88,7 @@ class DurchenParser(BaseParser):
         segment_layer.save()
         # Set metadata
         if isinstance(metadata, Path):
-            with open(metadata) as f:
-                metadata = json.load(f)
+            metadata = read_json(metadata)
 
         assert isinstance(metadata, dict)
         pecha.set_metadata(

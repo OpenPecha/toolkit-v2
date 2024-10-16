@@ -1,8 +1,8 @@
-import json
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.durchen import DurchenParser
+from openpecha.utils import read_json
 
 
 def test_durchen():
@@ -11,8 +11,7 @@ def test_durchen():
     pedurma_text = pedurmafile.read_text(encoding="utf-8")
 
     metadata_file = data / "metadata.json"
-    with open(metadata_file) as f:
-        metadata = json.load(f)
+    metadata = read_json(metadata_file)
 
     parser = DurchenParser()
 
