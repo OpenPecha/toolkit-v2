@@ -16,7 +16,6 @@ class DurchenParser(BaseParser):
         self.pagination_regex = r"\d+-\d+"
 
     def get_base_text(self, text: str):
-        text = re.sub(self.pagination_regex, "", text)
         text = re.sub(self.ann_regex, "", text)
         text = text.replace(":", "")
         return text
@@ -27,29 +26,36 @@ class DurchenParser(BaseParser):
         metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
+
+        # Remove pagination
+        input = re.sub(self.pagination_regex, "", input)
+        # Normalize newlines with #
+        input = input.replace("\n", "#")
+        char_walker = 0
+        # Split the text into chunks with anns regex
+        chunks = re.split(self.ann_regex, input)
+        prev_chunk = chunks[0]
+        anns = []
+        for chunk in chunks:
+            if re.search(self.ann_regex, chunk):
+                ann = get_annotation(prev_chunk, chunk, char_walker)
+                anns.append(ann)
+            else:
+                clean_chunk = chunk.replace(":", "")
+                char_walker += len(clean_chunk)
+            prev_chunk = chunk
+
+        # Create a pecha
         pecha = Pecha.create(output_path)
 
         base_text = self.get_base_text(input)
         basename = pecha.set_base(base_text)
 
         layer, _ = pecha.add_layer(basename, LayerEnum.durchen)
+        for ann in anns:
+            pecha.add_annotation(layer, ann, LayerEnum.durchen)
 
-        char_walker = 0
-        # Remove pagination
-        input = re.sub(self.pagination_regex, "", input)
-        # Normalize newlines with #
-        input = input.replace("\n", "#")
-        # Split the text into chunks (with anns)
-        chunks = re.split(self.ann_regex, input)
-        prev_chunk = chunks[0]
-        for chunk in chunks:
-            if re.search(self.ann_regex, chunk):
-                ann = get_annotation(prev_chunk, chunk, char_walker)
-                pecha.add_annotation(layer, ann, LayerEnum.durchen)
-            else:
-                clean_chunk = chunk.replace(":", "")
-                char_walker += len(clean_chunk)
-            prev_chunk = chunk
+        # Set metadata
 
         layer.save()
         return pecha
@@ -60,11 +66,22 @@ def get_annotation(prev_chunk: str, note_chunk: str, char_walker: int):
     start = char_walker - len(span_text)
     end = char_walker
 
-    ann = {"Durchen": {"start": start, "end": end}, "note": note_chunk}
+    ann = {LayerEnum.durchen.value: {"start": start, "end": end}, "note": note_chunk}
     return ann
 
 
 def get_span_text(prev_chunk: str, note_chunk: str):
+    """
+    Input: text chunk
+    Process: Extract span text where the syllable/words have variations
+             if ':' is present, extract the text after ':'
+             else extract the last syllable
+    Output: span text
+
+    Example:
+    Input: །དེ་བཞིན་ཉོན་མོངས་རྣམ་  Output: རྣམ་
+    Input: ཆོས་ཀྱི་དབྱིངས་སུ་བསྟོད་པ། :འཕགས་པ་འཇམ་ Output: འཕགས་པ་འཇམ་
+    """
     span_text = ""
     if "+" in note_chunk:
         return span_text
@@ -86,6 +103,9 @@ def get_span_text(prev_chunk: str, note_chunk: str):
 
 
 def get_syls(text: str):
+    """
+    Split the text into syllables
+    """
     tokenizer = ChunkTokenizer(text)
 
     tokens = tokenizer.tokenize()
