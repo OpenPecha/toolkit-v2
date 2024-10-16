@@ -2,6 +2,7 @@ import re
 
 from openpecha.ids import (
     get_alignment_id,
+    get_annotation_id,
     get_base_id,
     get_collection_id,
     get_diplomatic_id,
@@ -76,3 +77,8 @@ def test_get_collection_id():
     assert re.match(
         r"^C[0-9A-F]{8}$", collection_id
     ), f"Collection ID {collection_id} is not in the correct format"
+
+
+def test_get_annotation_id():
+    ann_id = get_annotation_id()
+    assert len(ann_id) == 8
