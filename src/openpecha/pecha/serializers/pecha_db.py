@@ -16,8 +16,8 @@ class PechaDBSerializer(BaseSerializer):
         self.chapter: List[str] = []
 
     def create_dharmanexus_content_list(self, pecha):
+        chapter_num = 1
         for _, layers in pecha.layers.items():
-            chapter_num = 1
             for ann_store in layers[LayerEnum.meaning_segment]:
                 for ann in list(ann_store):
                     segment_id = str(ann.data()[0])
