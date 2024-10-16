@@ -7,7 +7,7 @@ from openpecha.alignment.metadata import AlignmentRelationEnum, SegmentMetaData
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.pecha.parsers.chonjuk.plaintext import DummyParser
+from openpecha.pecha.parsers import DummyParser
 
 
 class PlainTextLineAlignedParser:

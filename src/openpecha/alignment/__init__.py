@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from openpecha.alignment.metadata import AlignmentMetaData
 from openpecha.config import ALIGNMENT_PATH, _mkdir
@@ -18,9 +18,9 @@ class Alignment:
     def __init__(
         self,
         metadata: AlignmentMetaData,
-        base_path: Path = None,
-        segment_pairs: Dict[str, Dict[str, str]] = None,
-        pechas: Dict[str, Pecha] = None,
+        base_path: Optional[Path] = None,
+        segment_pairs: Optional[Dict[str, Dict[str, str]]] = None,
+        pechas: Optional[Dict[str, Pecha]] = None,
     ):
         self.id = metadata.id
         self.base_path = (
@@ -31,7 +31,7 @@ class Alignment:
         self.pechas = pechas
 
     @classmethod
-    def from_path(cls, path: Path, pechas: Dict[str, Pecha] = None):
+    def from_path(cls, path: Path, pechas: Optional[Dict[str, Pecha]] = None):
         metadata_path = path / "metadata.json"
         with open(metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
@@ -156,10 +156,3 @@ class Alignment:
                     break
             segment_pair[pecha_id] = ann_data
         return segment_pair
-
-    def upload_update_with_github(self):
-        """upload files if first time"""
-        """ update files if already exist"""
-        repo_created = create_github_repo(self.id)
-        if repo_created:
-            upload_folder_to_github(self.id, self.base_path)

@@ -106,13 +106,3 @@ class ChonjukChapterParser(BaseParser):
         pecha.set_metadata(PechaMetaData(id=pecha.id, parser=self.name, **metadata))
         layer.save()
         return pecha
-
-
-class DummyParser(BaseParser):
-    def parse(
-        self,
-        input: str,
-        metadata: Union[Dict, Path],
-        output_path: Path = PECHAS_PATH,
-    ):
-        pass
