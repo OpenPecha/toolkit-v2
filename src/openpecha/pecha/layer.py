@@ -21,6 +21,7 @@ class LayerEnum(Enum):
     metadata = "Meta_Data"
     tsawa = "Tsawa"
     pagination = "Pagination"
+    durchen = "Durchen"
 
 
 class LayerGroupEnum(Enum):
@@ -43,6 +44,7 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
         LayerEnum.tsawa,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
+        LayerEnum.durchen,
     ]:
         return LayerGroupEnum.structure_type
 
@@ -66,6 +68,7 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
         LayerEnum.tsawa,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
+        LayerEnum.durchen,
     ]:
         return LayerCollectionEnum.structure_annotation
 
