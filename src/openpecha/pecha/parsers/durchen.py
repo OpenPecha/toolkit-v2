@@ -44,7 +44,7 @@ class DurchenParser(BaseParser):
         prev_chunk = chunks[0]
         for chunk in chunks:
             if re.search(self.ann_regex, chunk):
-                ann = get_durchen_annotation(prev_chunk, chunk, char_walker)
+                ann = get_annotation(prev_chunk, chunk, char_walker)
                 pecha.add_annotation(layer, ann, LayerEnum.durchen)
             else:
                 clean_chunk = chunk.replace(":", "")
@@ -55,39 +55,34 @@ class DurchenParser(BaseParser):
         return pecha
 
 
-def get_durchen_annotation(prev_chunk: str, note_chunk: str, char_walker: int):
-    default_option = get_default_option(prev_chunk, note_chunk)
-    start = char_walker - len(default_option)
+def get_annotation(prev_chunk: str, note_chunk: str, char_walker: int):
+    span_text = get_span_text(prev_chunk, note_chunk)
+    start = char_walker - len(span_text)
     end = char_walker
-    {
-        "chapter_number": "1",
-        "chapter_title": "བྱང་ཆུབ་སེམས་ཀྱི་ཕན་ཡོན་བཤད་པ།",
-        "Chapter": {"start": 145, "end": 446},
-    }
 
     ann = {"Durchen": {"start": start, "end": end}, "note": note_chunk}
     return ann
 
 
-def get_default_option(prev_chunk: str, note_chunk: str):
-    default_option = ""
+def get_span_text(prev_chunk: str, note_chunk: str):
+    span_text = ""
     if "+" in note_chunk:
-        return default_option
+        return span_text
     if ":" in prev_chunk:
         match = re.search(":.*", prev_chunk)
         if match:
-            default_option = match.group(
+            span_text = match.group(
                 0
             )  # Use group(0) to safely access the matched string
     else:
         syls = get_syls(prev_chunk)
         if syls:
-            default_option = syls[-1]
-            if default_option == "#":
-                default_option = syls[-2]
-    default_option = default_option.replace("#", "\n")
-    default_option = default_option.replace(":", "")
-    return default_option
+            span_text = syls[-1]
+            if span_text == "#":
+                span_text = syls[-2]
+    span_text = span_text.replace("#", "\n")
+    span_text = span_text.replace(":", "")
+    return span_text
 
 
 def get_syls(text: str):
