@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.pecha.parsers.chonjuk.plaintext import DummyParser
+from openpecha.pecha.parsers import DummyParser
 
 
 def test_create_instance():
@@ -14,6 +14,8 @@ def test_create_instance():
         metadata = json.load(f)
     pecha_metadata = PechaMetaData(parser=DummyParser().name, **metadata)
 
+    toolkit_version = pecha_metadata.toolkit_version
+    assert len((toolkit_version).split(".")) == 3
     assert isinstance(pecha_metadata, PechaMetaData)
 
 
@@ -27,6 +29,3 @@ def test_load():
 
     pecha_metadata = PechaMetaData(**metadata)
     assert isinstance(pecha_metadata, PechaMetaData)
-
-
-test_load()

@@ -19,3 +19,13 @@ class BaseParser(ABC):
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
         pass
+
+
+class DummyParser(BaseParser):
+    def parse(
+        self,
+        input: str,
+        metadata: Union[Dict, Path],
+        output_path: Path = PECHAS_PATH,
+    ):
+        pass

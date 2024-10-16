@@ -1,11 +1,11 @@
 import importlib
 import inspect
+import subprocess
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-import tomli
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from openpecha.ids import get_initial_pecha_id
@@ -81,7 +81,7 @@ class PechaMetaData(BaseModel):
     author: Optional[Union[List[str], Dict[str, str], str]] = None
     imported: Optional[datetime] = None
     source: Optional[str] = None
-    toolkit_version: Optional[str] = None
+    toolkit_version: str
     parser: str
     initial_creation_type: InitialCreationType
     language: Language
@@ -140,12 +140,32 @@ class PechaMetaData(BaseModel):
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
-        if "toolkit_version" not in values or values["toolkit_version"] is None:
-            with open("pyproject.toml", "rb") as f:
-                pyproject_data = tomli.load(f)
 
-            toolkit_version = pyproject_data["project"]["version"]
-            values["toolkit_version"] = toolkit_version
+        if "toolkit_version" not in values or values["toolkit_version"] is None:
+            try:
+                # Run the 'pip show openpecha' command
+                result = subprocess.run(
+                    ["pip", "show", "openpecha"],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                output = result.stdout
+
+                # Parse the output to find the version
+                for line in output.splitlines():
+                    if line.startswith("Version:"):
+                        toolkit_version = line.split(":", 1)[1].strip()
+                        values["toolkit_version"] = toolkit_version
+                        break
+                else:
+                    # If 'Version:' line is not found
+                    raise ValueError(
+                        "Version information not found in pip show output."
+                    )
+            except subprocess.CalledProcessError as e:
+                # Handle the case where 'pip show' fails
+                raise RuntimeError(f"Failed to run pip show: {e.stderr.strip()}") from e
         return values
 
     @model_validator(mode="before")

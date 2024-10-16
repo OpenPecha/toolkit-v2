@@ -11,7 +11,7 @@ from openpecha.ids import get_alignment_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum, LayerGroupEnum, get_layer_group
 from openpecha.pecha.metadata import KungsangMonlamMetaData
-from openpecha.pecha.parsers.chonjuk.plaintext import DummyParser
+from openpecha.pecha.parsers import DummyParser
 
 pecha_path = Path
 alignment_path = Path
