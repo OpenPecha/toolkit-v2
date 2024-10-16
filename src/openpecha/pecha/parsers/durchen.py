@@ -74,19 +74,18 @@ class DurchenParser(BaseParser):
         basename = pecha.set_base(self.base_text)
 
         # Add Durchen Layer
-        layer, _ = pecha.add_layer(basename, LayerEnum.durchen)
+        durchen_layer, _ = pecha.add_layer(basename, LayerEnum.durchen)
         for ann in self.durchen_anns:
-            pecha.add_annotation(layer, ann, LayerEnum.durchen)
+            pecha.add_annotation(durchen_layer, ann, LayerEnum.durchen)
 
-        layer.save()
+        durchen_layer.save()
 
-        del layer
         # Add Segment Layer
-        layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
+        segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
         for ann in self.meaning_segment_anns:
-            pecha.add_annotation(layer, ann, LayerEnum.meaning_segment)
+            pecha.add_annotation(segment_layer, ann, LayerEnum.meaning_segment)
 
-        layer.save()
+        segment_layer.save()
         # Set metadata
         if isinstance(metadata, Path):
             with open(metadata) as f:

@@ -59,6 +59,3 @@ def test_durchen():
             ann[LayerEnum.meaning_segment.value]["end"],
         )
         assert parser.base_text[start:end] == expected_segment
-
-
-test_durchen()
