@@ -8,6 +8,7 @@ class LayerCollectionEnum(Enum):
     root_commentory = "Root_Commentary"
     metadata = "Meta_Data"
     structure_annotation = "Structure_Annotation"
+    variation_annotation = "Variation_Annotation"
 
 
 class LayerEnum(Enum):
@@ -28,6 +29,7 @@ class LayerGroupEnum(Enum):
     structure_type = "Structure_Type"
     translation_segment = "Translation_Segment"
     associated_alignment = "Associated_Alignment"
+    spelling_variation = "Spelling_Variation"
 
 
 def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
@@ -44,9 +46,11 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
         LayerEnum.tsawa,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
-        LayerEnum.durchen,
     ]:
         return LayerGroupEnum.structure_type
+
+    if layer_type == LayerEnum.durchen:
+        return LayerGroupEnum.spelling_variation
 
     raise ValueError(f"Layer type {layer_type} has no defined LayerGroupEnum")
 
@@ -68,8 +72,10 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
         LayerEnum.tsawa,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
-        LayerEnum.durchen,
     ]:
         return LayerCollectionEnum.structure_annotation
+
+    if layer_type == LayerEnum.durchen:
+        return LayerCollectionEnum.variation_annotation
 
     raise ValueError(f"Layer type {layer_type} has no defined LayerCollectionEnum")
