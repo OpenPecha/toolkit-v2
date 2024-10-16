@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
@@ -9,10 +10,14 @@ def test_durchen():
     pedurmafile = data / "pedurma_hfml.txt"
     pedurma_text = pedurmafile.read_text(encoding="utf-8")
 
+    metadata_file = data / "metadata.json"
+    with open(metadata_file) as f:
+        metadata = json.load(f)
+
     parser = DurchenParser()
 
     output_path = Path(__file__).parent / "output"
-    parser.parse(pedurma_text, metadata={}, output_path=output_path)
+    parser.parse(pedurma_text, metadata=metadata, output_path=output_path)
 
     expected_base = (data / "expected_base.txt").read_text(encoding="utf-8")
     assert parser.base_text == expected_base

@@ -1,3 +1,4 @@
+import json
 import re
 from pathlib import Path
 from typing import Dict, List, Union
@@ -7,6 +8,7 @@ from botok.tokenizers.chunktokenizer import ChunkTokenizer
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -85,6 +87,15 @@ class DurchenParser(BaseParser):
             pecha.add_annotation(layer, ann, LayerEnum.meaning_segment)
 
         layer.save()
+        # Set metadata
+        if isinstance(metadata, Path):
+            with open(metadata) as f:
+                metadata = json.load(f)
+
+        assert isinstance(metadata, dict)
+        pecha.set_metadata(
+            PechaMetaData(id=pecha.id, parser=self.name, **metadata)
+        )  # noqa
 
         return pecha
 
