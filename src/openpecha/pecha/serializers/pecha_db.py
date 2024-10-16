@@ -13,21 +13,39 @@ class PechaDBSerializer(BaseSerializer):
         self.output_path = output_path
         self.contents: List[List[str]] = []
         self.mappings: Dict[str, List[int]] = {}
-        self.chapter: List[str] = []
+        self.chapter: Dict[int, List] = {}
+
+    def get_order_of_dharmanexus_base(self, pecha: Pecha):
+        """
+        For Dharmanexus, the order of the base is stored in the metadata
+        in the Pecha bases attribute.
+        """
+        chapter_dict = {}
+        for base_metadata in pecha.metadata.bases:
+            basename = next(iter(base_metadata.keys()))
+            base_order = base_metadata[basename].get("order")
+            if base_order:
+                chapter_dict[base_order] = basename
+
+        return chapter_dict
 
     def create_dharmanexus_content_list(self, pecha):
-        for _, layers in pecha.layers.items():
-            chapter_num = 1
-            for ann_store in layers[LayerEnum.meaning_segment]:
+        chapter_dict = self.get_order_of_dharmanexus_base(pecha)
+        for chapter_num in range(1, len(chapter_dict.keys()) + 1):
+            basename = chapter_dict[chapter_num]
+            self.chapter[chapter_num] = []
+            text_index = 1
+            for ann_store in pecha.layers[basename][LayerEnum.meaning_segment]:
                 for ann in list(ann_store):
                     segment_id = str(ann.data()[0])
                     segment_text = ann.text()[0]
-                    self.chapter.append(segment_text)
-                    text_index = len(self.chapter)
+                    self.chapter[chapter_num].append(segment_text)
                     self.mappings[segment_id] = [chapter_num, text_index]
-            chapter_num += 1
-            self.contents.append(self.chapter)
-            self.chapter = []
+                    text_index += 1
+
+        for chapter_num in range(1, len(self.chapter.keys()) + 1):
+            self.contents.append(self.chapter[chapter_num])
+        self.chapter = {}
 
     def serialize(self, pecha_path: Path, source_type: str):
         pecha_id = pecha_path.stem
