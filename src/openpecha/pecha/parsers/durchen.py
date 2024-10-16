@@ -15,7 +15,8 @@ class DurchenParser(BaseParser):
         self.ann_regex = r"(\(\d+\) <.+?>)"
         self.pagination_regex = r"\d+-\d+"
         self.base_text = ""
-        self.anns = []
+        self.durchen_anns = []
+        self.meaning_segment_anns = []
 
     def get_base_text(self, text: str):
         text = re.sub(self.ann_regex, "", text)
@@ -31,36 +32,60 @@ class DurchenParser(BaseParser):
 
         # Remove pagination
         input = re.sub(self.pagination_regex, "", input)
+        self.base_text = self.get_base_text(input)
+
         # Normalize newlines with #
         input = input.replace("\n", "#")
         char_walker = 0
         # Split the text into chunks with anns regex
         chunks = re.split(self.ann_regex, input)
         prev_chunk = chunks[0]
-        self.anns = []
+        self.durchen_anns = []
         for chunk in chunks:
             if re.search(self.ann_regex, chunk):
                 ann = get_annotation(prev_chunk, chunk, char_walker)
-                self.anns.append(ann)
+                self.durchen_anns.append(ann)
             else:
                 clean_chunk = chunk.replace(":", "")
                 char_walker += len(clean_chunk)
             prev_chunk = chunk
 
+        input = input.replace("#", "\n")
+
+        # Segment Annotation
+        char_walker = 0
+        self.meaning_segment_anns = []
+        for line in self.base_text.splitlines():
+            segment_ann = {
+                LayerEnum.meaning_segment.value: {
+                    "start": char_walker,
+                    "end": char_walker + len(line),
+                }
+            }
+            self.meaning_segment_anns.append(segment_ann)
+            char_walker += len(line)
+            char_walker += 1  # Add because of new line
+
         # Create a pecha
         pecha = Pecha.create(output_path)
 
-        input = input.replace("#", "\n")
-        self.base_text = self.get_base_text(input)
         basename = pecha.set_base(self.base_text)
 
+        # Add Durchen Layer
         layer, _ = pecha.add_layer(basename, LayerEnum.durchen)
-        for ann in self.anns:
+        for ann in self.durchen_anns:
             pecha.add_annotation(layer, ann, LayerEnum.durchen)
 
-        # Set metadata
+        layer.save()
+
+        del layer
+        # Add Segment Layer
+        layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
+        for ann in self.meaning_segment_anns:
+            pecha.add_annotation(layer, ann, LayerEnum.meaning_segment)
 
         layer.save()
+
         return pecha
 
 
