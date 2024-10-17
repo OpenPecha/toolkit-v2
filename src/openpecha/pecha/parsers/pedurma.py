@@ -12,12 +12,12 @@ from openpecha.pecha.parsers import BaseParser
 from openpecha.utils import read_json
 
 
-class DurchenParser(BaseParser):
+class PedurmaParser(BaseParser):
     def __init__(self):
         self.ann_regex = r"(\(\d+\) <.+?>)"
         self.pagination_regex = r"\d+-\d+"
         self.base_text = ""
-        self.durchen_anns = []
+        self.pedurma_anns = []
         self.meaning_segment_anns = []
 
     def get_base_text(self, text: str):
@@ -42,11 +42,11 @@ class DurchenParser(BaseParser):
         # Split the text into chunks with anns regex
         chunks = re.split(self.ann_regex, input)
         prev_chunk = chunks[0]
-        self.durchen_anns = []
+        self.pedurma_anns = []
         for chunk in chunks:
             if re.search(self.ann_regex, chunk):
                 ann = get_annotation(prev_chunk, chunk, char_walker)
-                self.durchen_anns.append(ann)
+                self.pedurma_anns.append(ann)
             else:
                 clean_chunk = chunk.replace(":", "")
                 char_walker += len(clean_chunk)
@@ -75,7 +75,7 @@ class DurchenParser(BaseParser):
 
         # Add Durchen Layer
         durchen_layer, _ = pecha.add_layer(basename, LayerEnum.durchen)
-        for ann in self.durchen_anns:
+        for ann in self.pedurma_anns:
             pecha.add_annotation(durchen_layer, ann, LayerEnum.durchen)
 
         durchen_layer.save()

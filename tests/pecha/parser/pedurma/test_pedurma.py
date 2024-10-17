@@ -2,11 +2,11 @@ import tempfile
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.durchen import DurchenParser
+from openpecha.pecha.parsers.pedurma import PedurmaParser
 from openpecha.utils import read_json
 
 
-def test_durchen():
+def test_pedurma():
     data = Path(__file__).parent / "data"
     pedurmafile = data / "pedurma_hfml.txt"
     pedurma_text = pedurmafile.read_text(encoding="utf-8")
@@ -14,7 +14,7 @@ def test_durchen():
     metadata_file = data / "metadata.json"
     metadata = read_json(metadata_file)
 
-    parser = DurchenParser()
+    parser = PedurmaParser()
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_path = Path(tmpdirname)
@@ -23,9 +23,9 @@ def test_durchen():
         expected_base = (data / "expected_base.txt").read_text(encoding="utf-8")
         assert parser.base_text == expected_base
 
-        # Checking extracted durchen annotations
+        # Checking extracted pedurma annotations
         expected_span_texts = ["༄༅། །", "འཕགས་པ་འཇམ་", "འདུད།", "རྣམ་"]
-        for ann, expected_span in zip(parser.durchen_anns, expected_span_texts):
+        for ann, expected_span in zip(parser.pedurma_anns, expected_span_texts):
             start, end = (
                 ann[LayerEnum.durchen.value]["start"],
                 ann[LayerEnum.durchen.value]["end"],
@@ -39,7 +39,7 @@ def test_durchen():
             "(5) <«སྣར་»«པེ་»རྣམས་>",
         ]
 
-        for ann, expected_note in zip(parser.durchen_anns, expected_ann_notes):
+        for ann, expected_note in zip(parser.pedurma_anns, expected_ann_notes):
             assert ann["note"] == expected_note
 
         # Checking extracted meaning segment annotations
