@@ -326,9 +326,9 @@ class Pecha:
             if not isinstance(ann_name, str):
                 raise ValueError("The annotation metadata key should be a string.")
 
-            if not isinstance(ann_value, (str, Dict)):
+            if not isinstance(ann_value, (str, int, Dict)):
                 raise ValueError(
-                    "The annotation value should be either a string or a Span Dictionary."
+                    "The annotation value should be either a string, int or a Span Dictionary."
                 )
 
     def add_annotation(
