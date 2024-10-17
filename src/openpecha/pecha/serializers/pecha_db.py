@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import Dict, List
 
@@ -74,6 +75,7 @@ class PechaDBSerializer(BaseSerializer):
             pecha_json["content"] = self.contents
             pecha_db_json_path = f"{self.output_path}/{pecha_id}.json"
             write_json(pecha_db_json_path, pecha_json)
+            return pecha_db_json_path
 
     def create_pedurma_content_list(self, pecha):
         self.contents = []
@@ -96,9 +98,11 @@ class PechaDBSerializer(BaseSerializer):
                     if durchen_start >= start and durchen_end <= end:
                         ann_data = next(durchen_ann.data())
                         note_ann = str(ann_data.value())
+                        # Remove numbering from the note ann Eg: (3) <«སྣར་»«པེ་»འཇམ་> -> <«སྣར་»«པེ་»འཇམ་>
+                        note_ann = re.sub(r"\(\d+\)\s", "", note_ann)
                         # Structure note ann with meaning segment
-                        segment_left_side = str(ann)[: durchen_start - start]
-                        segment_right_side = str(ann)[durchen_end - end :]
+                        segment_left_side = str(ann)[: durchen_end - start]
+                        segment_right_side = str(ann)[durchen_end - start :]
                         note_reprentation = f"<sup>*</sup> <i class='footnote'><b>{str(durchen_ann)}</b> {note_ann}</i>"
 
                         curr_content = (
