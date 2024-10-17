@@ -50,20 +50,56 @@ class PechaDBSerializer(BaseSerializer):
     def serialize(self, pecha_path: Path, source_type: str):
         pecha_id = pecha_path.stem
         pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
+        self.output_path.mkdir(parents=True, exist_ok=True)
+
+        pecha_json = {
+            "title": pecha.metadata.title,
+            "language": pecha.metadata.language.value,
+            "versionSource": " ",
+            "completestatus": "done",
+            "content": [],
+            "direction": "ltr",
+        }
+
         if source_type == "dharmanexus":
             self.create_dharmanexus_content_list(pecha)
-            pecha_json = {
-                "title": pecha.metadata.title,
-                "language": pecha.metadata.language.value,
-                "versionSource": " ",
-                "completestatus": "done",
-                "content": self.contents,
-                "direction": "ltr",
-            }
             pecha_db_json_path = f"{self.output_path}/{pecha_id}.json"
             mapping_path = f"{self.output_path}/{pecha_id}_mapping.json"
+            pecha_json["content"] = self.contents
             write_json(pecha_db_json_path, pecha_json)
             write_json(mapping_path, self.mappings)
             return pecha_db_json_path, mapping_path
         elif source_type == "pedurma":
-            pass
+            self.create_pedurma_content_list(pecha)
+            pecha_json["content"] = self.contents
+            pecha_db_json_path = f"{self.output_path}/{pecha_id}.json"
+            write_json(pecha_db_json_path, pecha_json)
+
+    def create_pedurma_content_list(self, pecha):
+        self.contents = []
+        for _, layer in pecha.layers.items():
+            curr_chapter = []
+            meaning_segment_layer = layer[LayerEnum.meaning_segment][0]
+            durchen_layer = layer[LayerEnum.durchen][0]
+            curr_content = ""
+            for ann in meaning_segment_layer:
+                meaning_segment = str(ann)
+                curr_content += meaning_segment
+                # Find if durchen ann is present in the segment
+                text_selection = next(ann.textselections())
+                start, end = text_selection.begin(), text_selection.end()
+                for durchen_ann in durchen_layer:
+                    durchen_text_selection = next(durchen_ann.textselections())
+                    durchen_start, durchen_end = (
+                        durchen_text_selection.begin(),
+                        durchen_text_selection.end(),
+                    )
+                    if durchen_start >= start and durchen_end <= end:
+                        ann_data = next(durchen_ann.data())
+                        note_ann = str(ann_data.value())
+                        curr_content += note_ann
+                        break
+                curr_chapter.append(curr_content)
+                curr_content = ""
+
+            self.contents.append(curr_chapter)
