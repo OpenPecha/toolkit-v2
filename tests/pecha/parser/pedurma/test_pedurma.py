@@ -2,11 +2,11 @@ import tempfile
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.durchen import DurchenParser
+from openpecha.pecha.parsers.pedurma import PedurmaParser
 from openpecha.utils import read_json
 
 
-def test_durchen():
+def test_pedurma():
     data = Path(__file__).parent / "data"
     pedurmafile = data / "pedurma_hfml.txt"
     pedurma_text = pedurmafile.read_text(encoding="utf-8")
@@ -14,7 +14,7 @@ def test_durchen():
     metadata_file = data / "metadata.json"
     metadata = read_json(metadata_file)
 
-    parser = DurchenParser()
+    parser = PedurmaParser()
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_path = Path(tmpdirname)

@@ -12,7 +12,7 @@ from openpecha.pecha.parsers import BaseParser
 from openpecha.utils import read_json
 
 
-class DurchenParser(BaseParser):
+class PedurmaParser(BaseParser):
     def __init__(self):
         self.ann_regex = r"(\(\d+\) <.+?>)"
         self.pagination_regex = r"\d+-\d+"
