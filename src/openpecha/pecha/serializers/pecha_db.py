@@ -81,13 +81,12 @@ class PechaDBSerializer(BaseSerializer):
             curr_chapter = []
             meaning_segment_layer = layer[LayerEnum.meaning_segment][0]
             durchen_layer = layer[LayerEnum.durchen][0]
-            curr_content = ""
             for ann in meaning_segment_layer:
                 meaning_segment = str(ann)
-                curr_content += meaning_segment
-                # Find if durchen ann is present in the segment
+                curr_content = meaning_segment
                 text_selection = next(ann.textselections())
                 start, end = text_selection.begin(), text_selection.end()
+                # Find if durchen ann is present in the segment
                 for durchen_ann in durchen_layer:
                     durchen_text_selection = next(durchen_ann.textselections())
                     durchen_start, durchen_end = (
@@ -97,7 +96,14 @@ class PechaDBSerializer(BaseSerializer):
                     if durchen_start >= start and durchen_end <= end:
                         ann_data = next(durchen_ann.data())
                         note_ann = str(ann_data.value())
-                        curr_content += note_ann
+                        # Structure note ann with meaning segment
+                        segment_left_side = str(ann)[: durchen_start - start]
+                        segment_right_side = str(ann)[durchen_end - end :]
+                        note_reprentation = f"<sup>*</sup> <i class='footnote'><b>{str(durchen_ann)}</b> {note_ann}</i>"
+
+                        curr_content = (
+                            segment_left_side + note_reprentation + segment_right_side
+                        )
                         break
                 curr_chapter.append(curr_content)
                 curr_content = ""
