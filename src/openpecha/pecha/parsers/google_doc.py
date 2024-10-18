@@ -47,20 +47,21 @@ class GoogleDocParser(BaseParser):
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
 
+        if isinstance(metadata, Path):
+            metadata = read_json(metadata)
+        assert isinstance(metadata, dict)
+        self.metadata = metadata
+
         if self.source_type == "root":
             input_text = input.read_text(encoding="utf-8")
             input_text = self.normalize_text(input_text)
             if input_text.startswith("\ufeff"):
                 input_text = input_text[1:]
+
             self.parse_root(input_text)
 
         elif self.source_type == "commentary":
             self.parse_commentary(input)
-
-        if isinstance(metadata, Path):
-            metadata = read_json(metadata)
-        assert isinstance(metadata, dict)
-        self.metadata = metadata
 
         pecha = self.create_pecha(LayerEnum.meaning_segment, output_path)
 
