@@ -103,7 +103,7 @@ class PechaDBSerializer(BaseSerializer):
                         # Structure note ann with meaning segment
                         segment_left_side = str(ann)[: durchen_end - start]
                         segment_right_side = str(ann)[durchen_end - start :]
-                        note_reprentation = f"<sup>*</sup> <i class='footnote'><b>{str(durchen_ann)}</b> {note_ann}</i>"
+                        note_reprentation = f"<sup class='footnote-marker'>*</sup> <i class='footnote'><b>{str(durchen_ann)}</b> {note_ann}</i>"
 
                         curr_content = (
                             segment_left_side + note_reprentation + segment_right_side
