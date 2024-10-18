@@ -125,12 +125,26 @@ class GoogleDocParser(BaseParser):
             if not segment:
                 continue
 
-            curr_segment_ann = {
-                LayerEnum.meaning_segment.value: {
-                    "start": char_count,
-                    "end": char_count + len(segment),
+            match = re.match(r"^([\d\-,]+)", segment)
+            if match:
+                root_idx_mapping = match.group(1)
+                segment = segment.replace(root_idx_mapping, "")
+                segment = segment.strip()
+                curr_segment_ann = {
+                    LayerEnum.meaning_segment.value: {
+                        "start": char_count,
+                        "end": char_count + len(segment),
+                    },
+                    "root_idx_mapping": root_idx_mapping,
                 }
-            }
+            else:
+
+                curr_segment_ann = {
+                    LayerEnum.meaning_segment.value: {
+                        "start": char_count,
+                        "end": char_count + len(segment),
+                    }
+                }
 
             self.anns.append(curr_segment_ann)
             base_texts.append(segment)
