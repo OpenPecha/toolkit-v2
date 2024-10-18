@@ -91,11 +91,29 @@ class PedurmaParser(BaseParser):
             metadata = read_json(metadata)
 
         assert isinstance(metadata, dict)
+        metadata = modify_metadata(metadata)
         pecha.set_metadata(
             PechaMetaData(id=pecha.id, parser=self.name, **metadata)
         )  # noqa
 
         return pecha
+
+
+def modify_metadata(metadata: Dict) -> Dict:
+    modified_metadata = {
+        k: v
+        for k, v in metadata.items()
+        if k not in ["title_bo", "alt_title_bo", "author_en", "author_bo"]
+    }
+    modified_metadata["title"] = {
+        "title_bo": metadata["title_bo"],
+        "alt_title_bo": metadata["alt_title_bo"],
+    }
+    modified_metadata["author"] = {
+        "author_en": metadata["author_en"],
+        "author_bo": metadata["author_bo"],
+    }
+    return modified_metadata
 
 
 def get_annotation(prev_chunk: str, note_chunk: str, char_walker: int):
