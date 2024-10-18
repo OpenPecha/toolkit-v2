@@ -46,5 +46,8 @@ def test_commentary_google_doc_parser():
 
     parser.parse(input, metadata, output_path)
 
+    expected_base = (data / "commentary/expected_base.txt").read_text(encoding="utf-8")
+    assert parser.base == expected_base
+
 
 test_commentary_google_doc_parser()

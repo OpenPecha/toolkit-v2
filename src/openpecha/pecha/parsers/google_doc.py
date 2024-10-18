@@ -150,9 +150,9 @@ class GoogleDocParser(BaseParser):
             self.anns.append(curr_segment_ann)
             base_texts.append(segment)
             char_count += len(segment)
-            char_count += 1  # for newline
+            char_count += 2  # for two newline
 
-        self.base = "\n".join(base_texts)
+        self.base = "\n\n".join(base_texts)
 
     def create_pecha(self, layer_type: LayerEnum, output_path: Path):
 
