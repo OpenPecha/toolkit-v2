@@ -48,9 +48,25 @@ class GoogleDocParser(BaseParser):
         if input.startswith("\ufeff"):
             input = input[1:]
 
+        if self.source_type == "root":
+            self.parse_root(input)
+
+        if isinstance(metadata, Path):
+            metadata = read_json(metadata)
+        assert isinstance(metadata, dict)
+        self.metadata = metadata
+
+        pecha = self.create_pecha(LayerEnum.meaning_segment, output_path)
+
+        return pecha
+
+    def parse_root(self, input: str):
+        """
+        Input: Normalized text
+        Prcess: Parse and record the root annotations and cleaned base text in self.anns, self.base
+        """
         char_count = 0
-        self.anns = []
-        base_text = []
+        base_texts = []
         for segment in input.split(self.root_segment_splitter):
             segment = segment.strip()
 
@@ -77,20 +93,10 @@ class GoogleDocParser(BaseParser):
                 }
 
             self.anns.append(curr_segment_ann)
-            base_text.append(segment)
+            base_texts.append(segment)
             char_count += len(segment)
             char_count += 1  # for newline
-
-        self.base = "\n".join(base_text)
-
-        if isinstance(metadata, Path):
-            metadata = read_json(metadata)
-        assert isinstance(metadata, dict)
-        self.metadata = metadata
-
-        pecha = self.create_pecha(LayerEnum.meaning_segment, output_path)
-
-        return pecha
+        self.base = "\n".join(base_texts)
 
     def create_pecha(self, layer_type: LayerEnum, output_path: Path):
 
