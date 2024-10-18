@@ -2,6 +2,8 @@ import re
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
+from docx import Document
+
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
@@ -13,8 +15,8 @@ from openpecha.utils import read_json
 class GoogleDocParser(BaseParser):
     def __init__(self, source_type: str, root_id: Optional[str] = None):
         self.source_type = source_type
-
         self.root_segment_splitter = "\n"
+        self.commentary_segment_splitter = "\n\n"
         self.anns: List[Dict] = []
         self.base = ""
         self.metadata: Dict = {}
@@ -40,16 +42,20 @@ class GoogleDocParser(BaseParser):
 
     def parse(
         self,
-        input: str,
+        input: Path,
         metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
-        input = self.normalize_text(input)
-        if input.startswith("\ufeff"):
-            input = input[1:]
 
         if self.source_type == "root":
-            self.parse_root(input)
+            input_text = input.read_text(encoding="utf-8")
+            input_text = self.normalize_text(input_text)
+            if input_text.startswith("\ufeff"):
+                input_text = input_text[1:]
+            self.parse_root(input_text)
+
+        elif self.source_type == "commentary":
+            self.parse_commentary(input)
 
         if isinstance(metadata, Path):
             metadata = read_json(metadata)
@@ -96,6 +102,41 @@ class GoogleDocParser(BaseParser):
             base_texts.append(segment)
             char_count += len(segment)
             char_count += 1  # for newline
+        self.base = "\n".join(base_texts)
+
+    def parse_commentary(self, input: Path):
+        """
+        Input: a docx file
+        process: -Parse and record the commentary annotations in self.anns,
+                 -Save the cleaned base text in self.base
+
+        """
+        doc = Document(input)
+        input_text = "\n".join([para.text for para in doc.paragraphs])
+
+        input_text = self.normalize_text(input_text)
+        if input_text.startswith("\ufeff"):
+            input_text = input_text[1:]
+
+        char_count = 0
+        base_texts = []
+        for segment in input_text.split(self.commentary_segment_splitter):
+            segment = segment.strip()
+            if not segment:
+                continue
+
+            curr_segment_ann = {
+                LayerEnum.meaning_segment.value: {
+                    "start": char_count,
+                    "end": char_count + len(segment),
+                }
+            }
+
+            self.anns.append(curr_segment_ann)
+            base_texts.append(segment)
+            char_count += len(segment)
+            char_count += 1  # for newline
+
         self.base = "\n".join(base_texts)
 
     def create_pecha(self, layer_type: LayerEnum, output_path: Path):

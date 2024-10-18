@@ -8,8 +8,8 @@ from openpecha.utils import read_json
 
 def test_root_google_doc_parser():
     data = Path(__file__).parent / "data"
-    input = (data / "dolma_21.txt").read_text(encoding="utf-8")
-    metadata = read_json(data / "metadata.json")
+    input = data / "root/dolma_21.txt"
+    metadata = read_json(data / "root/metadata.json")
 
     parser = GoogleDocParser(source_type="root")
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -17,7 +17,7 @@ def test_root_google_doc_parser():
 
         parser.parse(input, metadata, output_path)
 
-        expected_base = (data / "expected_base.txt").read_text(encoding="utf-8")
+        expected_base = (data / "root/expected_base.txt").read_text(encoding="utf-8")
         assert parser.base == expected_base
 
         expected_segments = [
@@ -33,3 +33,18 @@ def test_root_google_doc_parser():
                 ann[LayerEnum.meaning_segment.value]["end"],
             )
             assert parser.base[start:end] == seg
+
+
+def test_commentary_google_doc_parser():
+    data = Path(__file__).parent / "data"
+    input = data / "commentary/dolma_21.docx"
+    metadata = read_json(data / "commentary/metadata.json")
+
+    parser = GoogleDocParser(source_type="commentary")
+
+    output_path = Path(__file__).parent / "output"
+
+    parser.parse(input, metadata, output_path)
+
+
+test_commentary_google_doc_parser()
