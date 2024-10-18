@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, List, Optional, Union
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
@@ -11,9 +11,11 @@ from openpecha.utils import read_json
 
 
 class GoogleDocParser(BaseParser):
-    def __init__(self):
-        self.meaning_segment_splitter = "\n"
-        self.root_anns = []
+    def __init__(self, source_type: str, root_id: Optional[str] = None):
+        self.source_type = source_type
+
+        self.root_segment_splitter = "\n"
+        self.anns: List[Dict] = []
         self.root_base = ""
 
     def normalize_text(self, text: str):
@@ -46,9 +48,9 @@ class GoogleDocParser(BaseParser):
             input = input[1:]
 
         char_count = 0
-        self.root_anns = []
+        self.anns = []
         base_text = []
-        for segment in input.split(self.meaning_segment_splitter):
+        for segment in input.split(self.root_segment_splitter):
             segment = segment.strip()
 
             match = re.search(r"^(\d+)\.", segment)
@@ -73,7 +75,7 @@ class GoogleDocParser(BaseParser):
                     }
                 }
 
-            self.root_anns.append(curr_segment_ann)
+            self.anns.append(curr_segment_ann)
             base_text.append(segment)
             char_count += len(segment)
             char_count += 1  # for newline
@@ -84,7 +86,7 @@ class GoogleDocParser(BaseParser):
         self.root_base = "\n".join(base_text)
         basename = pecha.set_base(self.root_base)
         meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
-        for ann in self.root_anns:
+        for ann in self.anns:
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
 
         if isinstance(metadata, Path):

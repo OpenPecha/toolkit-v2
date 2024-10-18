@@ -11,7 +11,7 @@ def test_root_google_doc_parser():
     input = (data / "dolma_21.txt").read_text(encoding="utf-8")
     metadata = read_json(data / "metadata.json")
 
-    parser = GoogleDocParser()
+    parser = GoogleDocParser(source_type="root")
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_path = Path(tmpdirname)
 
@@ -27,7 +27,7 @@ def test_root_google_doc_parser():
             "ཕྱག་འཚལ་སྟོན་ཀའི་ཟླ་བ་ཀུན་ཏུ། །གང་བ་བརྒྱ་ནི་བརྩེགས་པའི་ཞལ་མ། །",
         ]
 
-        for ann, seg in zip(parser.root_anns, expected_segments):
+        for ann, seg in zip(parser.anns, expected_segments):
             start, end = (
                 ann[LayerEnum.meaning_segment.value]["start"],
                 ann[LayerEnum.meaning_segment.value]["end"],
