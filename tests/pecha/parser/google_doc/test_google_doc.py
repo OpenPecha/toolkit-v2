@@ -49,5 +49,17 @@ def test_commentary_google_doc_parser():
     expected_base = (data / "commentary/expected_base.txt").read_text(encoding="utf-8")
     assert parser.base == expected_base
 
+    expected_anns = [
+        {"Meaning_Segment": {"start": 0, "end": 68}},
+        {"Meaning_Segment": {"start": 70, "end": 232}},
+        {"Meaning_Segment": {"start": 234, "end": 297}, "root_idx_mapping": "1"},
+        {"Meaning_Segment": {"start": 299, "end": 557}, "root_idx_mapping": "2-3"},
+        {"Meaning_Segment": {"start": 559, "end": 945}, "root_idx_mapping": "2"},
+        {"Meaning_Segment": {"start": 947, "end": 1105}, "root_idx_mapping": "5,7"},
+        {"Meaning_Segment": {"start": 1107, "end": 1265}, "root_idx_mapping": "1-5,9"},
+    ]
+
+    assert parser.anns == expected_anns
+
 
 test_commentary_google_doc_parser()
