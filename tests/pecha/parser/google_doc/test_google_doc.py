@@ -18,7 +18,7 @@ def test_root_google_doc_parser():
         parser.parse(input, metadata, output_path)
 
         expected_base = (data / "expected_base.txt").read_text(encoding="utf-8")
-        assert parser.root_base == expected_base
+        assert parser.base == expected_base
 
         expected_segments = [
             "༄༅། །ཨོཾ་རྗེ་བཙུན་མ་འཕགས་མ་སྒྲོལ་མ་ལ་ཕྱག་འཚལ་ལོ། །",
@@ -32,4 +32,4 @@ def test_root_google_doc_parser():
                 ann[LayerEnum.meaning_segment.value]["start"],
                 ann[LayerEnum.meaning_segment.value]["end"],
             )
-            assert parser.root_base[start:end] == seg
+            assert parser.base[start:end] == seg

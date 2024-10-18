@@ -16,7 +16,8 @@ class GoogleDocParser(BaseParser):
 
         self.root_segment_splitter = "\n"
         self.anns: List[Dict] = []
-        self.root_base = ""
+        self.base = ""
+        self.metadata: Dict = {}
 
     def normalize_text(self, text: str):
         text = self.normalize_whitespaces(text)
@@ -80,21 +81,29 @@ class GoogleDocParser(BaseParser):
             char_count += len(segment)
             char_count += 1  # for newline
 
-        # Create pecha and add Meaning Segment Layer
-        pecha = Pecha.create(output_path)
-
-        self.root_base = "\n".join(base_text)
-        basename = pecha.set_base(self.root_base)
-        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
-        for ann in self.anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
+        self.base = "\n".join(base_text)
 
         if isinstance(metadata, Path):
             metadata = read_json(metadata)
         assert isinstance(metadata, dict)
+        self.metadata = metadata
 
-        pecha.set_metadata(PechaMetaData(id=pecha.id, parser=self.name, **metadata))
+        pecha = self.create_pecha(LayerEnum.meaning_segment, output_path)
 
-        meaning_segment_layer.save()
+        return pecha
+
+    def create_pecha(self, layer_type: LayerEnum, output_path: Path):
+
+        pecha = Pecha.create(output_path)
+        basename = pecha.set_base(self.base)
+        layer, _ = pecha.add_layer(basename, layer_type)
+        for ann in self.anns:
+            pecha.add_annotation(layer, ann, layer_type)
+
+        pecha.set_metadata(
+            PechaMetaData(id=pecha.id, parser=self.name, **self.metadata)
+        )
+
+        layer.save()
 
         return pecha
