@@ -27,6 +27,7 @@ dependencies = [
   "GitPython>=3.1.0, <4.0",
   "botok >= 0.8.12",
   "subprocess.run == 0.0.8",
+  "python-docx >= 1.1.2"
 
 ]
 

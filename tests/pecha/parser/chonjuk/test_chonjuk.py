@@ -2,7 +2,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.parsers.chonjuk.plaintext import ChonjukChapterParser
+from openpecha.pecha.parsers.chonjuk import ChonjukChapterParser
 
 
 class TestChonjukPlainTextParser:
