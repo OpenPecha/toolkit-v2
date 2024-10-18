@@ -40,7 +40,9 @@ def test_commentary_google_doc_parser():
     input = data / "commentary/dolma_21.docx"
     metadata = read_json(data / "commentary/metadata.json")
 
-    parser = GoogleDocParser(source_type="commentary")
+    parser = GoogleDocParser(
+        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+    )
 
     output_path = Path(__file__).parent / "output"
 

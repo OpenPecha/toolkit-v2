@@ -13,8 +13,9 @@ from openpecha.utils import read_json
 
 
 class GoogleDocParser(BaseParser):
-    def __init__(self, source_type: str, root_id: Optional[str] = None):
+    def __init__(self, source_type: str, root_path: Optional[str] = None):
         self.source_type = source_type
+        self.root_path = root_path
         self.root_segment_splitter = "\n"
         self.commentary_segment_splitter = "\n\n"
         self.anns: List[Dict] = []
@@ -47,8 +48,17 @@ class GoogleDocParser(BaseParser):
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
 
+        # Clean up class attributes
+        self.anns = []
+        self.base = ""
+
         if isinstance(metadata, Path):
             metadata = read_json(metadata)
+        if self.source_type == "commentary":
+            assert self.source_type is not None
+            assert isinstance(metadata, dict)
+            metadata["root_path"] = self.root_path
+
         assert isinstance(metadata, dict)
         self.metadata = metadata
 
