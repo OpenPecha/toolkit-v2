@@ -32,17 +32,30 @@ class PechaDBSerializer(BaseSerializer):
 
     def create_dharmanexus_content_list(self, pecha):
         chapter_dict = self.get_order_of_dharmanexus_base(pecha)
-        for chapter_num in range(1, len(chapter_dict.keys()) + 1):
-            basename = chapter_dict[chapter_num]
-            self.chapter[chapter_num] = []
-            text_index = 1
+        chapter_num = 1
+        self.chapter[chapter_num] = []
+        text_index = 1
+        for vol_num in range(1, len(chapter_dict.keys()) + 1):
+            basename = chapter_dict[vol_num]
+            if text_index == 101:
+                chapter_num += 1
+                text_index = 1
+                self.chapter[chapter_num] = []
             for ann_store in pecha.layers[basename][LayerEnum.meaning_segment]:
                 for ann in list(ann_store):
                     segment_id = str(ann.data()[0])
                     segment_text = ann.text()[0]
-                    self.chapter[chapter_num].append(segment_text)
-                    self.mappings[segment_id] = [chapter_num, text_index]
-                    text_index += 1
+                    if text_index == 101:
+                        chapter_num += 1
+                        text_index = 1
+                        self.chapter[chapter_num] = []
+                        self.chapter[chapter_num].append(segment_text)
+                        self.mappings[segment_id] = [chapter_num, text_index]
+                        text_index += 1
+                    else:
+                        self.chapter[chapter_num].append(segment_text)
+                        self.mappings[segment_id] = [chapter_num, text_index]
+                        text_index += 1
 
         for chapter_num in range(1, len(self.chapter.keys()) + 1):
             self.contents.append(self.chapter[chapter_num])
