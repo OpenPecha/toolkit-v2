@@ -100,6 +100,8 @@ class PechaDBSerializer(BaseSerializer):
                         note_ann = str(ann_data.value())
                         # Remove numbering from the note ann Eg: (3) <«སྣར་»«པེ་»འཇམ་> -> <«སྣར་»«པེ་»འཇམ་>
                         note_ann = re.sub(r"\(\d+\)\s", "", note_ann)
+                        # Remove the pointing bracket from note annotaion <«སྣར་»«པེ་»འཇམ་> -> «སྣར་»«པེ་»འཇམ་
+                        note_ann = re.sub(r"<|>", "", note_ann)
                         # Structure note ann with meaning segment
                         segment_left_side = meaning_segment[
                             : durchen_end - start + offset
