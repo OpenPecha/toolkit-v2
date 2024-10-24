@@ -21,6 +21,3 @@ def test_peydurma_pecha_db_serializer():
             Path(__file__).parent / "data/expected_pecha_db.json"
         )
         assert expected_pecha_json == pecha_json
-
-
-test_peydurma_pecha_db_serializer()
