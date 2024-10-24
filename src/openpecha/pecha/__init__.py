@@ -402,6 +402,21 @@ class Pecha:
         branch: Optional[str] = "main",
         is_private: bool = False,
     ):
+        def prepare_repo_description(title):
+            """
+            Input: title which can be string, List of string, or an dictionary
+            Return: a string, which will be used as repo description
+            """
+            if isinstance(title, str):
+                return title
+            if isinstance(title, list):
+                return ", ".join(title)
+
+            if isinstance(title, dict):
+                return ", ".join([f"{k}: {v}" for k, v in title.items()])
+
+            return title
+
         if not self.storage:
             self.storage = GithubStorage()
         if isinstance(self.storage, GithubStorage) and self.storage.is_git_repo(
@@ -412,7 +427,7 @@ class Pecha:
         else:
             self.storage.add_dir(
                 path=self.pecha_path,
-                description=self.metadata.title,
+                description=prepare_repo_description(self.metadata.title),
                 is_private=is_private,
                 branch=branch,
             )

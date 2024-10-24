@@ -131,7 +131,7 @@ class GithubStorage(Storage):
         return self._email
 
     def _init_local_repo(self, path: Path, remote_url: str):
-        repo = Repo.init(path)
+        repo = Repo.init(path, initial_branch="main")
         repo = setup_auth_for_new_repo(repo, self.org_name, self.token, remote_url)
         repo.config_writer().set_value("user", "name", self.username).release()
         repo.config_writer().set_value("user", "email", self.email).release()

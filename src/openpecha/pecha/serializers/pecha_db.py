@@ -98,9 +98,9 @@ class PechaDBSerializer(BaseSerializer):
             durchen_layer = layer[LayerEnum.durchen][0]
             for ann in meaning_segment_layer:
                 meaning_segment = str(ann)
-                curr_content = meaning_segment
                 text_selection = next(ann.textselections())
                 start, end = text_selection.begin(), text_selection.end()
+                offset = 0
                 # Find if durchen ann is present in the segment
                 for durchen_ann in durchen_layer:
                     durchen_text_selection = next(durchen_ann.textselections())
@@ -113,16 +113,22 @@ class PechaDBSerializer(BaseSerializer):
                         note_ann = str(ann_data.value())
                         # Remove numbering from the note ann Eg: (3) <«སྣར་»«པེ་»འཇམ་> -> <«སྣར་»«པེ་»འཇམ་>
                         note_ann = re.sub(r"\(\d+\)\s", "", note_ann)
+                        # Remove the pointing bracket from note annotaion <«སྣར་»«པེ་»འཇམ་> -> «སྣར་»«པེ་»འཇམ་
+                        note_ann = re.sub(r"<|>", "", note_ann)
                         # Structure note ann with meaning segment
-                        segment_left_side = str(ann)[: durchen_end - start]
-                        segment_right_side = str(ann)[durchen_end - start :]
-                        note_reprentation = f"<sup>*</sup> <i class='footnote'><b>{str(durchen_ann)}</b> {note_ann}</i>"
+                        segment_left_side = meaning_segment[
+                            : durchen_end - start + offset
+                        ]
+                        segment_right_side = meaning_segment[
+                            durchen_end - start + offset :
+                        ]
+                        note_reprentation = f"<sup class='footnote-marker'>*</sup><i class='footnote'><b>{str(durchen_ann)}</b>{note_ann}</i>"
 
-                        curr_content = (
+                        meaning_segment = (
                             segment_left_side + note_reprentation + segment_right_side
                         )
-                        break
-                curr_chapter.append(curr_content)
-                curr_content = ""
+                        offset += len(note_reprentation)
+
+                curr_chapter.append(meaning_segment)
 
             self.contents.append(curr_chapter)
