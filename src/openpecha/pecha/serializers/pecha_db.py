@@ -107,7 +107,7 @@ class PechaDBSerializer(BaseSerializer):
                             : durchen_end - start + offset
                         ]
                         segment_right_side = meaning_segment[
-                            durchen_end - start + offset :
+                            durchen_end - start + offset + 1 :
                         ]
                         note_reprentation = f"<sup class='footnote-marker'>*</sup><i class='footnote'><b>{str(durchen_ann)}</b>{note_ann}</i>"
 
