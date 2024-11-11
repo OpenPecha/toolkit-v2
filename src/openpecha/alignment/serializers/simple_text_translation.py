@@ -41,6 +41,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             "language": text_lang,
             "versionSource": text_source,
             "direction": text_direction,
+            "completestatus": "done",
         }
 
     def set_metadata_to_json(self, root_opf_path: Path, translation_opf_path: Path):
