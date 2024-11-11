@@ -83,11 +83,11 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         root_segment_layer = root_pecha.layers[root_base_name][
             LayerEnum.meaning_segment
         ][0]
-        root_segment_texts = self.get_texts_from_layer(root_segment_layer)
-
         translation_segment_layer = translation_pecha.layers[translation_base_name][
             LayerEnum.meaning_segment
         ][0]
+
+        root_segment_texts = self.get_texts_from_layer(root_segment_layer)
         translation_segment_texts = self.get_texts_from_layer(translation_segment_layer)
 
         # Fill segments to json
