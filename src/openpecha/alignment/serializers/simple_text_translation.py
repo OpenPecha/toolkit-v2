@@ -19,7 +19,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         }
         self.translation_json_format = {
             "categories": [
-                {"name": "Dummy Target Category", "enDesc": "", "enShortDesc": ""}
+                {"name": "Dummy Target Category", "heDesc": "", "heShortDesc": ""}
             ],
             "books": [],
         }
@@ -34,11 +34,12 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         text_title = (
             text_title if text_lang in ["bo", "en"] else f"{text_title}[{text_lang}]"
         )
+        text_source = pecha.metadata.source if pecha.metadata.source else ""
 
         return {
             "title": text_title,
             "language": text_lang,
-            "versionSource": pecha.metadata.source,
+            "versionSource": text_source,
             "direction": text_direction,
         }
 
