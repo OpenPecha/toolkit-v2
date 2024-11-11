@@ -29,24 +29,37 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         Extract only required metadata from root and translation opf and set it to json format
         """
         root_pecha = Pecha.from_path(root_opf_path)
-        root_text_direction = get_text_direction_with_lang(
-            root_pecha.metadata.language.value
+
+        root_text_lang = root_pecha.metadata.language.value
+        root_text_direction = get_text_direction_with_lang(root_text_lang)
+        root_text_title = root_pecha.metadata.title
+        root_text_title = (
+            root_text_title
+            if root_text_lang in ["bo", "en"]
+            else f"{root_text_title}[{root_text_lang}]"
         )
+
         required_root_pecha_metadatas = {
-            "title": root_pecha.metadata.title,
-            "language": root_pecha.metadata.language.value,
+            "title": root_text_title,
+            "language": root_text_lang,
             "versionSource": root_pecha.metadata.source,
             "direction": root_text_direction,
         }
         self.root_json_format["books"].append(required_root_pecha_metadatas)
 
         translation_pecha = Pecha.from_path(translation_opf_path)
-        translation_text_direction = get_text_direction_with_lang(
-            translation_pecha.metadata.language.value
+        translation_text_lang = translation_pecha.metadata.language.value
+        translation_text_direction = get_text_direction_with_lang(translation_text_lang)
+        translation_text_title = translation_pecha.metadata.title
+        translation_text_title = (
+            translation_text_title
+            if translation_text_lang in ["bo", "en"]
+            else f"{translation_text_title}[{translation_text_lang}]"
         )
+
         required_translation_pecha_metadatas = {
-            "title": translation_pecha.metadata.title,
-            "language": translation_pecha.metadata.language.value,
+            "title": translation_text_title,
+            "language": translation_text_lang,
             "versionSource": translation_pecha.metadata.source,
             "direction": translation_text_direction,
         }
