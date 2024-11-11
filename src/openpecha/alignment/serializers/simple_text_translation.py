@@ -13,13 +13,17 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
     def __init__(self):
         self.root_json_format = {
             "categories": [
-                {"name": "Dummy Source Category", "enDesc": "", "enShortDesc": ""}
+                {
+                    "name": "བོད་སྐད་ལ་ཕབ་བསྒྱུར་བྱེད་པའི་ཚོད་ལྟ།",
+                    "enDesc": "",
+                    "enShortDesc": "",
+                }
             ],
             "books": [],
         }
         self.translation_json_format = {
             "categories": [
-                {"name": "Dummy Target Category", "heDesc": "", "heShortDesc": ""}
+                {"name": "Test Translation", "heDesc": "", "heShortDesc": ""}
             ],
             "books": [],
         }
