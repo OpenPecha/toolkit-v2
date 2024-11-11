@@ -18,7 +18,9 @@ def _mkdir_if_not(path: Path):
 
 BASE_PATH = _mkdir_if_not(Path.home() / ".openpecha")
 PECHAS_PATH = _mkdir_if_not(BASE_PATH / "pechas")
-ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignment")
+ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignments")
+
+SERIALIZED_ALIGNMENT_JSON_PATH = _mkdir_if_not(BASE_PATH / "serialized_alignment_jsons")
 
 PECHA_DATA_ORG = "PechaData"
 
