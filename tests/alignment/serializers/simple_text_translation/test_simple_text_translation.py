@@ -9,7 +9,7 @@ def test_simple_text_translation():
     DATA_DIR = Path(__file__).parent / "data"
     root_opf = DATA_DIR / "bo/I72825E94"
     translation_opf = DATA_DIR / "zh/IAE4B5DFE"
-    OUTPUT_DIR = DATA_DIR / "output"
+    OUTPUT_DIR = Path(__file__).parent / "output"
 
     serializer = SimpleTextTranslationSerializer()
     serializer.serialize(root_opf, translation_opf, OUTPUT_DIR)
