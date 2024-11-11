@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from stam import AnnotationStore
+
 from openpecha.alignment.serializers import BaseAlignmentSerializer
 from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
@@ -44,6 +46,15 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             required_translation_pecha_metadatas
         )
 
+    def get_texts_from_layer(self, layer: AnnotationStore):
+        texts = []
+        for ann in layer:
+            text = str(ann)
+            text = "" if text == "\n" else text
+            text = text.replace("\n", "<br>")
+            texts.append(text)
+        return texts
+
     def fill_segments_to_json(self, root_opf_path: Path, translation_opf_path: Path):
         root_pecha = Pecha.from_path(root_opf_path)
         translation_pecha = Pecha.from_path(translation_opf_path)
@@ -56,25 +67,14 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         root_segment_layer = root_pecha.layers[root_base_name][
             LayerEnum.meaning_segment
         ][0]
-        root_segment_texts = []
-        for root_segment_ann in root_segment_layer:
-            root_segment_text = str(root_segment_ann)
-            root_segment_text = "" if root_segment_text == "\n" else root_segment_text
-            root_segment_texts.append(root_segment_text)
+        root_segment_texts = self.get_texts_from_layer(root_segment_layer)
 
         translation_segment_layer = translation_pecha.layers[translation_base_name][
             LayerEnum.meaning_segment
         ][0]
-        translation_segment_texts = []
-        for translation_segment_ann in translation_segment_layer:
-            translation_segment_text = str(translation_segment_ann)
-            translation_segment_text = (
-                "" if translation_segment_text == "\n" else translation_segment_text
-            )
-            translation_segment_texts.append(translation_segment_text)
+        translation_segment_texts = self.get_texts_from_layer(translation_segment_layer)
 
         # Fill segments to json
-
         self.root_json_format["books"][0]["content"] = [root_segment_texts]  # type: ignore
         self.translation_json_format["books"][0]["content"] = [  # type: ignore
             translation_segment_texts
