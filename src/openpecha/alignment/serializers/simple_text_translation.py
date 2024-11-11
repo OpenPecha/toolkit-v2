@@ -107,7 +107,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         root_opf: Path,
         translation_opf: Path,
         output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
-    ):
+    ) -> Path:
         self.set_metadata_to_json(root_opf, translation_opf)
         self.fill_segments_to_json(root_opf, translation_opf)
 
@@ -120,3 +120,4 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         }
 
         write_json(json_output_path, json_output)
+        return json_output_path
