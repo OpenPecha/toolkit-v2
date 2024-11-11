@@ -15,15 +15,15 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             "categories": [
                 {
                     "name": "བོད་སྐད་ལ་ཕབ་བསྒྱུར་བྱེད་པའི་ཚོད་ལྟ།",
-                    "enDesc": "",
-                    "enShortDesc": "",
+                    "heDesc": "",
+                    "heShortDesc": "",
                 }
             ],
             "books": [],
         }
         self.translation_json_format = {
             "categories": [
-                {"name": "Test Translation", "heDesc": "", "heShortDesc": ""}
+                {"name": "Test Translation", "enDesc": "", "enShortDesc": ""}
             ],
             "books": [],
         }
