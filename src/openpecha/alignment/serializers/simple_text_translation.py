@@ -6,7 +6,7 @@ from openpecha.alignment.serializers import BaseAlignmentSerializer
 from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.utils import write_json
+from openpecha.utils import get_text_direction_with_lang, write_json
 
 
 class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
@@ -29,20 +29,26 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         Extract only required metadata from root and translation opf and set it to json format
         """
         root_pecha = Pecha.from_path(root_opf_path)
+        root_text_direction = get_text_direction_with_lang(
+            root_pecha.metadata.language.value
+        )
         required_root_pecha_metadatas = {
             "title": root_pecha.metadata.title,
             "language": root_pecha.metadata.language.value,
             "versionSource": root_pecha.metadata.source,
-            "direction": "ltr",  # To be updated dynamically
+            "direction": root_text_direction,
         }
         self.root_json_format["books"].append(required_root_pecha_metadatas)
 
         translation_pecha = Pecha.from_path(translation_opf_path)
+        translation_text_direction = get_text_direction_with_lang(
+            translation_pecha.metadata.language.value
+        )
         required_translation_pecha_metadatas = {
             "title": translation_pecha.metadata.title,
             "language": translation_pecha.metadata.language.value,
             "versionSource": translation_pecha.metadata.source,
-            "direction": "ltr",  # To be updated dynamically
+            "direction": translation_text_direction,
         }
 
         self.translation_json_format["books"].append(
