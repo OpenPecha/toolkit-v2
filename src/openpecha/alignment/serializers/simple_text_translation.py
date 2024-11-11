@@ -19,9 +19,27 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         }
         self.translation_json_format = {
             "categories": [
-                {"name": "Dummy Source Category", "enDesc": "", "enShortDesc": ""}
+                {"name": "Dummy Target Category", "enDesc": "", "enShortDesc": ""}
             ],
             "books": [],
+        }
+
+    def extract_metadata(self, pecha: Pecha):
+        """
+        Extract metadata from opf
+        """
+        text_lang = pecha.metadata.language.value
+        text_direction = get_text_direction_with_lang(text_lang)
+        text_title = pecha.metadata.title
+        text_title = (
+            text_title if text_lang in ["bo", "en"] else f"{text_title}[{text_lang}]"
+        )
+
+        return {
+            "title": text_title,
+            "language": text_lang,
+            "versionSource": pecha.metadata.source,
+            "direction": text_direction,
         }
 
     def set_metadata_to_json(self, root_opf_path: Path, translation_opf_path: Path):
@@ -29,43 +47,11 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         Extract only required metadata from root and translation opf and set it to json format
         """
         root_pecha = Pecha.from_path(root_opf_path)
-
-        root_text_lang = root_pecha.metadata.language.value
-        root_text_direction = get_text_direction_with_lang(root_text_lang)
-        root_text_title = root_pecha.metadata.title
-        root_text_title = (
-            root_text_title
-            if root_text_lang in ["bo", "en"]
-            else f"{root_text_title}[{root_text_lang}]"
-        )
-
-        required_root_pecha_metadatas = {
-            "title": root_text_title,
-            "language": root_text_lang,
-            "versionSource": root_pecha.metadata.source,
-            "direction": root_text_direction,
-        }
-        self.root_json_format["books"].append(required_root_pecha_metadatas)
-
         translation_pecha = Pecha.from_path(translation_opf_path)
-        translation_text_lang = translation_pecha.metadata.language.value
-        translation_text_direction = get_text_direction_with_lang(translation_text_lang)
-        translation_text_title = translation_pecha.metadata.title
-        translation_text_title = (
-            translation_text_title
-            if translation_text_lang in ["bo", "en"]
-            else f"{translation_text_title}[{translation_text_lang}]"
-        )
 
-        required_translation_pecha_metadatas = {
-            "title": translation_text_title,
-            "language": translation_text_lang,
-            "versionSource": translation_pecha.metadata.source,
-            "direction": translation_text_direction,
-        }
-
+        self.root_json_format["books"].append(self.extract_metadata(root_pecha))
         self.translation_json_format["books"].append(
-            required_translation_pecha_metadatas
+            self.extract_metadata(translation_pecha)
         )
 
     def get_texts_from_layer(self, layer: AnnotationStore):
