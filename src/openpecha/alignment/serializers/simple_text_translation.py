@@ -54,19 +54,16 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             self.extract_metadata(translation_pecha)
         )
 
-    def get_texts_from_layer(self, layer: AnnotationStore):
+    @staticmethod
+    def get_texts_from_layer(layer: AnnotationStore):
         """
         Extract texts from layer
         1.If text is a newline, replace it with empty string
         2.Replace newline with <br>
         """
-        texts = []
-        for ann in layer:
-            text = str(ann)
-            text = "" if text == "\n" else text
-            text = text.replace("\n", "<br>")
-            texts.append(text)
-        return texts
+        return [
+            "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
+        ]
 
     def fill_segments_to_json(self, root_opf_path: Path, translation_opf_path: Path):
         """
@@ -79,8 +76,8 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         translation_pecha = Pecha.from_path(translation_opf_path)
 
         # Get one txt file from root and translation opf
-        root_base_name = list(root_pecha.bases.keys())[0]
-        translation_base_name = list(translation_pecha.bases.keys())[0]
+        root_base_name = next(iter(root_pecha.bases))
+        translation_base_name = next(iter(translation_pecha.bases))
 
         # Read meaning segments from root and translation opf
         root_segment_layer = root_pecha.layers[root_base_name][
