@@ -2,6 +2,7 @@ from pathlib import Path
 
 from openpecha.alignment.serializers.simple_text_commentary import (
     SimpleTextCommentarySerializer,
+    parse_root_idx_mapping_string,
 )
 
 
@@ -15,4 +16,19 @@ def test_simple_text_commentary_serializer():
     serializer.serialize(root_opf_path, commentary_opf_path, output_path)
 
 
-test_simple_text_commentary_serializer()
+def test_parse_root_idx_mapping():
+    input = "1"
+    expected_output = ["1"]
+    assert parse_root_idx_mapping_string(input) == expected_output
+
+    input = "1-3"
+    expected_output = ["1", "2", "3"]
+    assert parse_root_idx_mapping_string(input) == expected_output
+
+    input = "1,3"
+    expected_output = ["1", "3"]
+    assert parse_root_idx_mapping_string(input) == expected_output
+
+    input = "1-3,5"
+    expected_output = ["1", "2", "3", "5"]
+    assert parse_root_idx_mapping_string(input) == expected_output
