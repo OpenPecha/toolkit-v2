@@ -1,0 +1,20 @@
+{
+    "id": "IC2CB69CC",
+    "title": "རྫུན་མའི་བོད་ཡིག་གི་འགོ་བརྗོད།",
+    "author": null,
+    "imported": "2024-10-24T16:51:18.663052",
+    "source": null,
+    "toolkit_version": "0.0.1",
+    "parser": "plaintextparser",
+    "initial_creation_type": "json",
+    "language": "bo",
+    "source_metadata": {},
+    "bases": [
+    ],
+    "copyright": {
+      "status": "Unknown",
+      "notice": "",
+      "info_url": null
+    },
+    "licence": "Unknown"
+  }

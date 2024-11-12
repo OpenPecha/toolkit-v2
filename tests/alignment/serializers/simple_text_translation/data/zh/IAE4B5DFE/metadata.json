@@ -1,0 +1,31 @@
+{
+    "id": "IC2CB69CC",
+    "title": "Dummy Chinese Title[zh]",
+    "author": null,
+    "imported": "2024-10-24T16:51:18.663052",
+    "source": null,
+    "toolkit_version": "0.0.1",
+    "parser": "plaintextparser",
+    "initial_creation_type": "json",
+    "language": "zh",
+    "source_metadata": {},
+    "bases": [
+      {
+        "55FD": {
+          "source_metadata": {
+            "source_id": "BO_K01_D0001-2_H0001-2",
+            "total_segments": 25955,
+            "total_pages": 1008
+          },
+          "base_file": "55FD",
+          "order": 1
+        }
+      }
+    ],
+    "copyright": {
+      "status": "Unknown",
+      "notice": "",
+      "info_url": null
+    },
+    "licence": "Unknown"
+  }
