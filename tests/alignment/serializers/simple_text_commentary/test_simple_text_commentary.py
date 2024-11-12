@@ -1,9 +1,11 @@
+import tempfile
 from pathlib import Path
 
 from openpecha.alignment.serializers.simple_text_commentary import (
     SimpleTextCommentarySerializer,
     parse_root_idx_mapping_string,
 )
+from openpecha.utils import read_json
 
 
 def test_simple_text_commentary_serializer():
@@ -12,8 +14,14 @@ def test_simple_text_commentary_serializer():
     commentary_opf_path = DATA_DIR / "commentary" / "IBDF9A009"
 
     serializer = SimpleTextCommentarySerializer()
-    output_path = DATA_DIR / "output"
-    serializer.serialize(root_opf_path, commentary_opf_path, output_path)
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_path = Path(tmpdirname)
+        output_file = serializer.serialize(
+            root_opf_path, commentary_opf_path, output_path
+        )
+        expected_output_file = DATA_DIR / "expected_output.json"
+        assert read_json(output_file) == read_json(expected_output_file)
 
 
 def test_parse_root_idx_mapping():
