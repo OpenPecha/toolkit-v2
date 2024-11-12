@@ -134,7 +134,7 @@ class PechaDBSerializer(BaseSerializer):
             self.contents.append(curr_chapter)
 
 
-def chapterize_json_content(
+def chapterize_serialized_json(
     json_file: Path, output_path: Path, chapter_size: int = 200
 ):
     """
