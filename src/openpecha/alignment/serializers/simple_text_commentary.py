@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 from stam import AnnotationStore
 
@@ -89,10 +90,21 @@ class SimpleTextCommentarySerializer(BaseAlignmentSerializer):
         """
         text_with_mapping_ann = []
         for ann in layer:
-            if str(ann) == "\n":
-                text_with_mapping_ann.append("")
+            ann_data = {}
+            for data in ann:
+                ann_data[data.key().id()] = str(data.value())
+
+            ann_text = "" if str(ann) == "\n" else str(ann).replace("\n", "<br>")
+
+            if "root_idx_mapping" in ann_data:
+                related_root_indices = parse_root_idx_mapping_string(
+                    ann_data["root_idx_mapping"]
+                )
+                for related_root_idx in related_root_indices:
+                    mapping_ann = f"<{related_root_idx}>"
+                    text_with_mapping_ann.append(f"{mapping_ann}{ann_text}")
             else:
-                text_with_mapping_ann.append(str(ann).replace("\n", "<br>"))
+                text_with_mapping_ann.append(ann_text)
 
         return text_with_mapping_ann
 
@@ -148,3 +160,17 @@ class SimpleTextCommentarySerializer(BaseAlignmentSerializer):
 
         write_json(json_output_path, json_output)
         return json_output_path
+
+
+def parse_root_idx_mapping_string(root_idx_mapping: str) -> List[str]:
+    related_root_indices = []
+    for root_idx in root_idx_mapping.strip().split(","):
+        root_idx = root_idx.strip()
+        if "-" in root_idx:
+            start, end = root_idx.split("-")
+            related_root_indices.extend(
+                [str(i) for i in range(int(start), int(end) + 1)]
+            )
+        else:
+            related_root_indices.append(root_idx)
+    return related_root_indices
