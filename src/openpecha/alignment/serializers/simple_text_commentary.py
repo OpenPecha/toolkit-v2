@@ -15,7 +15,7 @@ class SimpleTextCommentarySerializer(BaseAlignmentSerializer):
         self.root_json_format = {
             "categories": [
                 {
-                    "name": "བོད་སྐད་ལ་ཕབ་བསྒྱུར་བྱེད་པའི་ཚོད་ལྟ།",
+                    "name": "བོད་སྐད་ལ་ཚོད་ལྟའི་འགྲེལ་བཤད་",
                     "heDesc": "",
                     "heShortDesc": "",
                 }
