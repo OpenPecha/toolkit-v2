@@ -27,7 +27,9 @@ dependencies = [
   "GitPython>=3.1.0, <4.0",
   "botok >= 0.8.12",
   "subprocess.run == 0.0.8",
-  "python-docx >= 1.1.2"
+  "python-docx >= 1.1.2",
+  "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
+  "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git"
 
 ]
 

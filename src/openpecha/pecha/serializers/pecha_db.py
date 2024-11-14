@@ -6,7 +6,7 @@ from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.serializers import BaseSerializer
-from openpecha.utils import write_json
+from openpecha.utils import read_json, write_json
 
 
 class PechaDBSerializer(BaseSerializer):
@@ -132,3 +132,27 @@ class PechaDBSerializer(BaseSerializer):
                 curr_chapter.append(meaning_segment)
 
             self.contents.append(curr_chapter)
+
+
+def chapterize_serialized_json(
+    json_file: Path, output_path: Path, chapter_size: int = 200
+):
+    """
+    Splits JSON content into chapters of fixed size and saves to a new file.
+    Input JSON must have structure: {"content": [[text1, text2, ...]]}.
+    Returns path to the output file.
+    """
+    data = read_json(json_file)
+    content_data = data["content"][0]
+
+    new_content = []
+    for i in range(0, len(content_data), chapter_size):
+        new_content.append(content_data[i : i + chapter_size])
+
+    data["content"] = new_content
+
+    output_path.mkdir(parents=True, exist_ok=True)
+    output_file = output_path / f"{json_file.stem}_chapterized.json"
+    write_json(output_file, data)
+
+    return output_file

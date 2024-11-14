@@ -185,3 +185,34 @@ def is_shad(text):
     if text in shads:
         return True
     return False
+
+
+"""
+PEDURMA PREPROCESSING
+"""
+
+
+def filter_pedurma_ann(text: str):
+    # remove <«སྣར་»«པེ་»བསྒྲུབ་པའི་> from text
+    text = re.sub(r"<[\u0F00-\u0FFF\s«»]+>", "", text)
+    # remove numbering (28) from text
+    text = re.sub(r"\(\d+\)", "", text)
+
+    return text
+
+
+def split_by_shad(text: str):
+    return text.split("།")
+
+
+def preprocess_pedurma_text(text: str):
+    from bo_sent_tokenizer import segment
+    from fast_antx.core import transfer
+
+    filtered_text = filter_pedurma_ann(text)
+    tokenized_text = segment(filtered_text, keep_non_bo_and_symbols=True)
+
+    annotations = [["note_transfer", r"(\(\d+\) <[\u0F00-\u0FFF\s«»]+>)"]]
+    preprocessed_text = transfer(text, annotations, tokenized_text, output="txt")
+
+    return preprocessed_text
