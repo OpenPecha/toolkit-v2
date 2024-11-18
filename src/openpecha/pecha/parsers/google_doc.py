@@ -20,6 +20,7 @@ class GoogleDocParser(BaseParser):
         self.root_segment_splitter = "\n"
         self.commentary_segment_splitter = "\n\n"
         self.meaning_segment_anns: List[Dict] = []
+        self.sapche_anns: List[Dict] = []
         self.base = ""
         self.metadata: Dict = {}
 
@@ -74,7 +75,7 @@ class GoogleDocParser(BaseParser):
         elif self.source_type == "commentary":
             self.parse_commentary(input)
 
-        pecha = self.create_pecha(LayerEnum.meaning_segment, output_path)
+        pecha = self.create_pecha(output_path)
 
         return pecha
 
@@ -116,8 +117,7 @@ class GoogleDocParser(BaseParser):
             char_count += 1  # for newline
         self.base = "\n".join(base_texts)
 
-    @staticmethod
-    def extract_sapche_annotation(input: Path) -> List[Tuple[int, int]]:
+    def parse_sapche_annotation(self, input: Path) -> List[Tuple[int, int]]:
         """
         Input: a docx file
         Process: Extract the sapche annotations (in Fusia/Pink color)
@@ -128,9 +128,17 @@ class GoogleDocParser(BaseParser):
         for para in doc.paragraphs:
             for run in para.runs:
                 if run.font.color.rgb == RGBColor(0xFF, 0x00, 0xFF):
-                    sapche_anns.append((char_count, char_count + len(run.text)))
+                    self.sapche_anns.append(
+                        {
+                            LayerEnum.sapche.value: {
+                                "start": char_count,
+                                "end": char_count + len(para.text),
+                            }
+                        }
+                    )
+                    sapche_anns.append((char_count, char_count + len(para.text)))
                     break
-            char_count += 1  # for newline
+            char_count += 1  # for newline to be saved later.
 
         return sapche_anns
 
@@ -141,6 +149,9 @@ class GoogleDocParser(BaseParser):
                  -Save the cleaned base text in self.base
 
         """
+        self.parse_sapche_annotation(input)
+
+        # Parse meaning segments
         doc = Document(input)
         input_text = "\n".join([para.text for para in doc.paragraphs])
 
@@ -183,18 +194,17 @@ class GoogleDocParser(BaseParser):
 
         self.base = "\n\n".join(base_texts)
 
-    def create_pecha(self, layer_type: LayerEnum, output_path: Path):
+    def create_pecha(self, output_path: Path):
 
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
-        layer, _ = pecha.add_layer(basename, layer_type)
+        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
         for ann in self.meaning_segment_anns:
-            pecha.add_annotation(layer, ann, layer_type)
+            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
+        meaning_segment_layer.save()
 
         pecha.set_metadata(
             PechaMetaData(id=pecha.id, parser=self.name, **self.metadata)
         )
-
-        layer.save()
 
         return pecha
