@@ -6,7 +6,7 @@ from openpecha.pecha.parsers.google_doc import GoogleDocParser
 from openpecha.utils import read_json
 
 
-def test_root_google_doc_parser():
+def test_parser_on_root_text():
     data = Path(__file__).parent / "data"
     input = data / "root/dolma_21.txt"
     metadata = read_json(data / "root/metadata.json")
@@ -35,7 +35,7 @@ def test_root_google_doc_parser():
             assert parser.base[start:end] == seg
 
 
-def test_commentary_google_doc_parser():
+def test_parser_on_commentary_text():
     data = Path(__file__).parent / "data"
     input = data / "commentary/dolma_21.docx"
     metadata = read_json(data / "commentary/metadata.json")
