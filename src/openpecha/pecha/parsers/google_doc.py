@@ -1,8 +1,9 @@
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from docx import Document
+from docx.shared import RGBColor
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
@@ -18,7 +19,7 @@ class GoogleDocParser(BaseParser):
         self.root_path = root_path
         self.root_segment_splitter = "\n"
         self.commentary_segment_splitter = "\n\n"
-        self.anns: List[Dict] = []
+        self.meaning_segment_anns: List[Dict] = []
         self.base = ""
         self.metadata: Dict = {}
 
@@ -49,7 +50,7 @@ class GoogleDocParser(BaseParser):
     ) -> Pecha:
 
         # Clean up class attributes
-        self.anns = []
+        self.meaning_segment_anns = []
         self.base = ""
 
         if isinstance(metadata, Path):
@@ -80,7 +81,7 @@ class GoogleDocParser(BaseParser):
     def parse_root(self, input: str):
         """
         Input: Normalized text
-        Prcess: Parse and record the root annotations and cleaned base text in self.anns, self.base
+        Prcess: Parse and record the root annotations and cleaned base text in self.meaning_segment_anns, self.base
         """
         char_count = 0
         base_texts = []
@@ -109,16 +110,34 @@ class GoogleDocParser(BaseParser):
                     }
                 }
 
-            self.anns.append(curr_segment_ann)
+            self.meaning_segment_anns.append(curr_segment_ann)
             base_texts.append(segment)
             char_count += len(segment)
             char_count += 1  # for newline
         self.base = "\n".join(base_texts)
 
+    @staticmethod
+    def extract_sapche_annotation(input: Path) -> List[Tuple[int, int]]:
+        """
+        Input: a docx file
+        Process: Extract the sapche annotations (in Fusia/Pink color)
+        """
+        doc = Document(input)
+        sapche_anns = []
+        char_count = 0
+        for para in doc.paragraphs:
+            for run in para.runs:
+                if run.font.color.rgb == RGBColor(0xFF, 0x00, 0xFF):
+                    sapche_anns.append((char_count, char_count + len(run.text)))
+                    break
+            char_count += 1  # for newline
+
+        return sapche_anns
+
     def parse_commentary(self, input: Path):
         """
         Input: a docx file
-        process: -Parse and record the commentary annotations in self.anns,
+        process: -Parse and record the commentary annotations in self.meaning_segment_anns,
                  -Save the cleaned base text in self.base
 
         """
@@ -157,7 +176,7 @@ class GoogleDocParser(BaseParser):
                     }
                 }
 
-            self.anns.append(curr_segment_ann)
+            self.meaning_segment_anns.append(curr_segment_ann)
             base_texts.append(segment)
             char_count += len(segment)
             char_count += 2  # for two newline
@@ -169,7 +188,7 @@ class GoogleDocParser(BaseParser):
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
         layer, _ = pecha.add_layer(basename, layer_type)
-        for ann in self.anns:
+        for ann in self.meaning_segment_anns:
             pecha.add_annotation(layer, ann, layer_type)
 
         pecha.set_metadata(

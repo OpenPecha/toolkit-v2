@@ -27,7 +27,7 @@ def test_parser_on_root_text():
             "ཕྱག་འཚལ་སྟོན་ཀའི་ཟླ་བ་ཀུན་ཏུ། །གང་བ་བརྒྱ་ནི་བརྩེགས་པའི་ཞལ་མ། །",
         ]
 
-        for ann, seg in zip(parser.anns, expected_segments):
+        for ann, seg in zip(parser.meaning_segment_anns, expected_segments):
             start, end = (
                 ann[LayerEnum.meaning_segment.value]["start"],
                 ann[LayerEnum.meaning_segment.value]["end"],
@@ -67,7 +67,7 @@ def test_parser_on_commentary_text():
             },
         ]
 
-        assert parser.anns == expected_anns
+        assert parser.meaning_segment_anns == expected_anns
 
         expected_segments = [
             "སྒྲོལ་མ་ཉེར་གཅིག་པའི་བསྟོད་འགྲེལ་འཕྲིན་ལས་ཆར་དུ་སྙིལ་བའི་སྤྲིན་ཕུང་།",
@@ -79,9 +79,27 @@ def test_parser_on_commentary_text():
             "སྐབས་འདིའི་འོད་ཟེར་ནི། འགྲེལ་པ་འགའ་ཞིག་ལས། ཕྱག་གཡས་པའི་མཐིལ་གྱི་འཁོར་ལོའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་དང་། གཞན་དག་སྐུའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་ས་བཞེད་པ་མི་འདྲ་ཡང་།",
         ]
 
-        for ann, expected_segment in zip(parser.anns, expected_segments):
+        for ann, expected_segment in zip(
+            parser.meaning_segment_anns, expected_segments
+        ):
             start, end = (
                 ann[LayerEnum.meaning_segment.value]["start"],
                 ann[LayerEnum.meaning_segment.value]["end"],
             )
             assert parser.base[start:end] == expected_segment
+
+
+def test_parser_on_commentary_with_sapche():
+    data = Path(__file__).parent / "data"
+    input = data / "commentary_with_sapche/རྡོ་རྗེ་གཅོད་པ་commentary.docx"
+    metadata = read_json(data / "commentary_with_sapche/metadata.json")
+
+    parser = GoogleDocParser(
+        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+    )
+    output_path = Path(__file__).parent / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
+    parser.parse(input, metadata, output_path)
+
+
+test_parser_on_commentary_with_sapche()
