@@ -264,8 +264,6 @@ class GoogleDocParser(BaseParser):
         basename = pecha.set_base(self.base)
         meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
         for ann in self.meaning_segment_anns:
-            if ann["Meaning_Segment"]["end"] > len(self.base):
-                ann["Meaning_Segment"]["end"] = len(self.base)
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
         meaning_segment_layer.save()
 
