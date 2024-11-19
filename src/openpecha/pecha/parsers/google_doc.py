@@ -142,14 +142,11 @@ class GoogleDocParser(BaseParser):
 
         return sapche_anns
 
-    def parse_commentary(self, input: Path):
+    def prepare_doc(self, input: Path):
         """
         Input: a docx file
-        process: -Parse and record the commentary annotations in self.meaning_segment_anns,
-                 -Save the cleaned base text in self.base
-
+        Process: Prepare the doc for parsing
         """
-
         # Parse meaning segments
         docs = Document(input)
 
@@ -212,11 +209,21 @@ class GoogleDocParser(BaseParser):
                 ].rstrip()
             formatted_docs.append({"text": doc_texts, "styles": formatted_doc_styles})
 
+        return formatted_docs
+
+    def parse_commentary(self, input: Path):
+        """
+        Input: a docx file
+        process: -Parse and record the commentary annotations in self.meaning_segment_anns,
+                 -Save the cleaned base text in self.base
+
+        """
+        formatted_docs = self.prepare_doc(input)
+
         char_count = 0
         base_texts = []
         for doc in formatted_docs:
             segment = doc["text"]
-            segment = segment.strip()
             if not segment:
                 continue
 
