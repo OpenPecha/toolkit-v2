@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Union
 
 from docx import Document
 from docx.shared import RGBColor
@@ -117,31 +117,6 @@ class GoogleDocParser(BaseParser):
             char_count += 1  # for newline
         self.base = "\n".join(base_texts)
 
-    def parse_sapche_annotation(self, input: Path) -> List[Tuple[int, int]]:
-        """
-        Input: a docx file
-        Process: Extract the sapche annotations (in Fusia/Pink color)
-        """
-        doc = Document(input)
-        sapche_anns = []
-        char_count = 0
-        for para in doc.paragraphs:
-            for run in para.runs:
-                if run.font.color.rgb == RGBColor(0xFF, 0x00, 0xFF):
-                    self.sapche_anns.append(
-                        {
-                            LayerEnum.sapche.value: {
-                                "start": char_count,
-                                "end": char_count + len(para.text),
-                            }
-                        }
-                    )
-                    sapche_anns.append((char_count, char_count + len(para.text)))
-                    break
-            char_count += 1  # for newline to be saved later.
-
-        return sapche_anns
-
     def prepare_doc(self, input: Path):
         """
         Input: a docx file
@@ -211,6 +186,53 @@ class GoogleDocParser(BaseParser):
 
         return formatted_docs
 
+    def add_commentary_meaning_ann(self, doc, char_count):
+        segment = doc["text"]
+        match = re.match(r"^([\d\-,]+) ", segment)
+        segment_with_no_ann = segment
+        if match:
+            root_idx_mapping = match.group(1)
+            segment = segment.replace(root_idx_mapping, "")
+            segment_with_no_ann = segment.strip()
+            curr_segment_ann = {
+                LayerEnum.meaning_segment.value: {
+                    "start": char_count,
+                    "end": char_count + len(segment_with_no_ann),
+                },
+                "root_idx_mapping": root_idx_mapping,
+            }
+        else:
+
+            curr_segment_ann = {
+                LayerEnum.meaning_segment.value: {
+                    "start": char_count,
+                    "end": char_count + len(segment),
+                }
+            }
+
+        self.meaning_segment_anns.append(curr_segment_ann)
+        return segment_with_no_ann
+
+    def add_sapche_ann(self, doc, char_count):
+
+        """
+        Input: a docx file
+        Process: Extract the sapche annotations (in Fusia/Pink color)
+        """
+
+        inner_char_count = 0
+        for style in doc["styles"]:
+            if style["style"].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
+                self.sapche_anns.append(
+                    {
+                        LayerEnum.sapche.value: {
+                            "start": char_count + inner_char_count,
+                            "end": char_count + inner_char_count + len(style["text"]),
+                        }
+                    }
+                )
+            inner_char_count += len(style["text"])
+
     def parse_commentary(self, input: Path):
         """
         Input: a docx file
@@ -227,30 +249,11 @@ class GoogleDocParser(BaseParser):
             if not segment:
                 continue
 
-            match = re.match(r"^([\d\-,]+)", segment)
-            if match:
-                root_idx_mapping = match.group(1)
-                segment = segment.replace(root_idx_mapping, "")
-                segment = segment.strip()
-                curr_segment_ann = {
-                    LayerEnum.meaning_segment.value: {
-                        "start": char_count,
-                        "end": char_count + len(segment),
-                    },
-                    "root_idx_mapping": root_idx_mapping,
-                }
-            else:
+            self.add_sapche_ann(doc, char_count)
+            segment_with_no_ann = self.add_commentary_meaning_ann(doc, char_count)
 
-                curr_segment_ann = {
-                    LayerEnum.meaning_segment.value: {
-                        "start": char_count,
-                        "end": char_count + len(segment),
-                    }
-                }
-
-            self.meaning_segment_anns.append(curr_segment_ann)
-            base_texts.append(segment)
-            char_count += len(segment)
+            base_texts.append(segment_with_no_ann)
+            char_count += len(segment_with_no_ann)
             char_count += 2  # for two newline
 
         self.base = "\n\n".join(base_texts)
@@ -261,6 +264,8 @@ class GoogleDocParser(BaseParser):
         basename = pecha.set_base(self.base)
         meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
         for ann in self.meaning_segment_anns:
+            if ann["Meaning_Segment"]["end"] > len(self.base):
+                ann["Meaning_Segment"]["end"] = len(self.base)
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
         meaning_segment_layer.save()
 

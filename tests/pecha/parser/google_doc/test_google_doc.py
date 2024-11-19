@@ -89,6 +89,9 @@ def test_parser_on_commentary_text():
             assert parser.base[start:end] == expected_segment
 
 
+test_parser_on_commentary_text()
+
+
 def test_parser_on_commentary_with_sapche():
     data = Path(__file__).parent / "data"
     input = data / "commentary_with_sapche/རྡོ་རྗེ་གཅོད་པ་commentary.docx"
