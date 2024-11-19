@@ -89,9 +89,6 @@ def test_parser_on_commentary_text():
             assert parser.base[start:end] == expected_segment
 
 
-test_parser_on_commentary_text()
-
-
 def test_parser_on_commentary_with_sapche():
     data = Path(__file__).parent / "data"
     input = data / "commentary_with_sapche/རྡོ་རྗེ་གཅོད་པ་commentary.docx"
@@ -103,3 +100,6 @@ def test_parser_on_commentary_with_sapche():
     output_path = Path(__file__).parent / "output"
     output_path.mkdir(parents=True, exist_ok=True)
     parser.parse(input, metadata, output_path)
+
+
+test_parser_on_commentary_with_sapche()

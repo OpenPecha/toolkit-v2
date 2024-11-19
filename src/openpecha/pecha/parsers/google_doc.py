@@ -122,67 +122,48 @@ class GoogleDocParser(BaseParser):
         Input: a docx file
         Process: Prepare the doc for parsing
         """
-        # Parse meaning segments
+
+        def format_paragraphs(paragraphs):
+            """
+            Formats paragraphs by combining text and styles into a structured format.
+            """
+            # Combine texts and strip whitespace
+            doc_texts = "\n".join([para["text"] for para in paragraphs]).strip()
+
+            # Collect and format styles
+            doc_styles = []
+            for para in paragraphs:
+                doc_styles.extend(para["styles"])
+
+            formatted_styles = []
+            for idx, style in enumerate(doc_styles):
+                text = style.text.lstrip() if idx == 0 else style.text
+                formatted_styles.append({"text": text, "style": style.font})
+
+            if formatted_styles:
+                formatted_styles[-1]["text"] = formatted_styles[-1]["text"].rstrip()
+
+            return {"text": doc_texts, "styles": formatted_styles}
+
+        # Parse the document
         docs = Document(input)
 
         formatted_docs = []
         last_doc_data: List[
             Dict
         ] = []  # Store doc data (text and styles) for each paragraph
+
         for doc in docs.paragraphs:
-            if doc.text == "":
-                # Add the doc texts separated by two newline
-                doc_texts = "\n".join([para["text"] for para in last_doc_data])
-                doc_texts = doc_texts.strip()
+            if doc.text.strip() == "":
+                if last_doc_data:
+                    formatted_docs.append(format_paragraphs(last_doc_data))
+                    last_doc_data = []
+            else:
+                last_doc_data.append({"text": doc.text.strip(), "styles": doc.runs})
 
-                # Add the doc styles separated by two newline
-                doc_styles = []
-                for para in last_doc_data:
-                    doc_styles.extend(para["styles"])
-
-                # Strip the text and style
-                formatted_doc_styles = []
-                for idx, style in enumerate(doc_styles):
-                    if idx == 0:
-                        formatted_doc_styles.append(
-                            {"text": style.text.lstrip(), "style": style.font}
-                        )
-                        continue
-                    formatted_doc_styles.append(
-                        {"text": style.text, "style": style.font}
-                    )
-                if formatted_doc_styles:
-                    formatted_doc_styles[-1]["text"] = formatted_doc_styles[-1][
-                        "text"
-                    ].rstrip()
-
-                formatted_docs.append(
-                    {"text": doc_texts, "styles": formatted_doc_styles}
-                )
-                last_doc_data = []
-                continue
-
-            last_doc_data.append({"text": doc.text.strip(), "styles": doc.runs})
-
+        # Handle remaining paragraphs after the loop
         if last_doc_data:
-            doc_texts = "\n".join([para["text"] for para in last_doc_data])
-            doc_texts = doc_texts.strip()
-            doc_styles = []
-            for para in last_doc_data:
-                doc_styles.extend(para["styles"])
-            formatted_doc_styles = []
-            for idx, style in enumerate(doc_styles):
-                if idx == 0:
-                    formatted_doc_styles.append(
-                        {"text": style.text.lstrip(), "style": style.font}
-                    )
-                    continue
-                formatted_doc_styles.append({"text": style.text, "style": style.font})
-            if formatted_doc_styles:
-                formatted_doc_styles[-1]["text"] = formatted_doc_styles[-1][
-                    "text"
-                ].rstrip()
-            formatted_docs.append({"text": doc_texts, "styles": formatted_doc_styles})
+            formatted_docs.append(format_paragraphs(last_doc_data))
 
         return formatted_docs
 
@@ -221,17 +202,19 @@ class GoogleDocParser(BaseParser):
         """
 
         inner_char_count = 0
-        for style in doc["styles"]:
-            if style["style"].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
+        for doc_style in doc["styles"]:
+            if doc_style["style"].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
                 self.sapche_anns.append(
                     {
                         LayerEnum.sapche.value: {
                             "start": char_count + inner_char_count,
-                            "end": char_count + inner_char_count + len(style["text"]),
+                            "end": char_count
+                            + inner_char_count
+                            + len(doc_style["text"]),
                         }
                     }
                 )
-            inner_char_count += len(style["text"])
+            inner_char_count += len(doc_style["text"])
 
     def parse_commentary(self, input: Path):
         """
