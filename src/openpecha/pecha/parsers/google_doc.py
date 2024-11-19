@@ -138,6 +138,7 @@ class GoogleDocParser(BaseParser):
             formatted_styles = []
             for idx, style in enumerate(doc_styles):
                 text = style.text.lstrip() if idx == 0 else style.text
+                text += "\n"
                 formatted_styles.append({"text": text, "style": style.font})
 
             if formatted_styles:
@@ -159,7 +160,7 @@ class GoogleDocParser(BaseParser):
                     formatted_docs.append(format_paragraphs(last_doc_data))
                     last_doc_data = []
             else:
-                last_doc_data.append({"text": doc.text.strip(), "styles": doc.runs})
+                last_doc_data.append({"text": doc.text, "styles": doc.runs})
 
         # Handle remaining paragraphs after the loop
         if last_doc_data:
@@ -232,8 +233,8 @@ class GoogleDocParser(BaseParser):
             if not segment:
                 continue
 
-            self.add_sapche_ann(doc, char_count)
             segment_with_no_ann = self.add_commentary_meaning_ann(doc, char_count)
+            self.add_sapche_ann(doc, char_count)
 
             base_texts.append(segment_with_no_ann)
             char_count += len(segment_with_no_ann)
