@@ -149,19 +149,73 @@ class GoogleDocParser(BaseParser):
                  -Save the cleaned base text in self.base
 
         """
-        self.parse_sapche_annotation(input)
 
         # Parse meaning segments
-        doc = Document(input)
-        input_text = "\n".join([para.text for para in doc.paragraphs])
+        docs = Document(input)
 
-        input_text = self.normalize_text(input_text)
-        if input_text.startswith("\ufeff"):
-            input_text = input_text[1:]
+        formatted_docs = []
+        last_doc_data: List[
+            Dict
+        ] = []  # Store doc data (text and styles) for each paragraph
+        for doc in docs.paragraphs:
+            if doc.text == "":
+                # Add the doc texts separated by two newline
+                doc_texts = "\n".join([para["text"] for para in last_doc_data])
+                doc_texts = doc_texts.strip()
+
+                # Add the doc styles separated by two newline
+                doc_styles = []
+                for para in last_doc_data:
+                    doc_styles.extend(para["styles"])
+
+                # Strip the text and style
+                formatted_doc_styles = []
+                for idx, style in enumerate(doc_styles):
+                    if idx == 0:
+                        formatted_doc_styles.append(
+                            {"text": style.text.lstrip(), "style": style.font}
+                        )
+                        continue
+                    formatted_doc_styles.append(
+                        {"text": style.text, "style": style.font}
+                    )
+                if formatted_doc_styles:
+                    formatted_doc_styles[-1]["text"] = formatted_doc_styles[-1][
+                        "text"
+                    ].rstrip()
+
+                formatted_docs.append(
+                    {"text": doc_texts, "styles": formatted_doc_styles}
+                )
+                last_doc_data = []
+                continue
+
+            last_doc_data.append({"text": doc.text, "styles": doc.runs})
+
+        if last_doc_data:
+            doc_texts = "\n".join([para["text"] for para in last_doc_data])
+            doc_texts = doc_texts.strip()
+            doc_styles = []
+            for para in last_doc_data:
+                doc_styles.extend(para["styles"])
+            formatted_doc_styles = []
+            for idx, style in enumerate(doc_styles):
+                if idx == 0:
+                    formatted_doc_styles.append(
+                        {"text": style.text.lstrip(), "style": style.font}
+                    )
+                    continue
+                formatted_doc_styles.append({"text": style.text, "style": style.font})
+            if formatted_doc_styles:
+                formatted_doc_styles[-1]["text"] = formatted_doc_styles[-1][
+                    "text"
+                ].rstrip()
+            formatted_docs.append({"text": doc_texts, "styles": formatted_doc_styles})
 
         char_count = 0
         base_texts = []
-        for segment in input_text.split(self.commentary_segment_splitter):
+        for doc in formatted_docs:
+            segment = doc["text"]
             segment = segment.strip()
             if not segment:
                 continue
