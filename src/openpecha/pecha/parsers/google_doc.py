@@ -162,7 +162,7 @@ class GoogleDocParser(BaseParser):
                 last_doc_data = []
                 continue
 
-            last_doc_data.append({"text": doc.text, "styles": doc.runs})
+            last_doc_data.append({"text": doc.text.strip(), "styles": doc.runs})
 
         if last_doc_data:
             doc_texts = "\n".join([para["text"] for para in last_doc_data])
