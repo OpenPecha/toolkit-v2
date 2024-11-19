@@ -100,6 +100,10 @@ def test_parser_on_commentary_with_sapche():
     output_path = Path(__file__).parent / "output"
     output_path.mkdir(parents=True, exist_ok=True)
     parser.parse(input, metadata, output_path)
+    expected_sapche_anns = [
+        {"Sapche": {"start": 102, "end": 171}},
+        {"Sapche": {"start": 257, "end": 324}},
+        {"Sapche": {"start": 488, "end": 569}},
+    ]
 
-
-test_parser_on_commentary_with_sapche()
+    assert parser.sapche_anns == expected_sapche_anns

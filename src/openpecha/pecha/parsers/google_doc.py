@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from docx import Document
 from docx.shared import RGBColor
@@ -19,10 +19,10 @@ class GoogleDocParser(BaseParser):
         self.root_path = root_path
         self.root_segment_splitter = "\n"
         self.commentary_segment_splitter = "\n\n"
-        self.meaning_segment_anns: List[Dict] = []
-        self.sapche_anns: List[Dict] = []
+        self.meaning_segment_anns: List[Dict[str, Any]] = []
+        self.sapche_anns: List[Dict[str, Any]] = []
         self.base = ""
-        self.metadata: Dict = {}
+        self.metadata: Dict[str, Any] = {}
 
     def normalize_text(self, text: str):
         text = self.normalize_whitespaces(text)
@@ -39,14 +39,14 @@ class GoogleDocParser(BaseParser):
     @staticmethod
     def normalize_newlines(text: str):
         """
-        If there are more than 2 newlines continously, it will replace it with 2 newlines.
+        If there are more than 2 newlines continuously, it will replace it with 2 newlines.
         """
         return re.sub(r"\n{3,}", "\n\n", text)
 
     def parse(
         self,
         input: Path,
-        metadata: Union[Dict, Path],
+        metadata: Union[Dict[str, Any], Path],
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
 
@@ -82,7 +82,7 @@ class GoogleDocParser(BaseParser):
     def parse_root(self, input: str):
         """
         Input: Normalized text
-        Prcess: Parse and record the root annotations and cleaned base text in self.meaning_segment_anns, self.base
+        Process: Parse and record the root annotations and cleaned base text in self.meaning_segment_anns, self.base
         """
         char_count = 0
         base_texts = []
@@ -123,7 +123,7 @@ class GoogleDocParser(BaseParser):
         Process: Prepare the doc for parsing
         """
 
-        def format_paragraphs(paragraphs):
+        def format_paragraphs(paragraphs: List[Dict[str, Any]]) -> Dict[str, Any]:
             """
             Formats paragraphs by combining text and styles into a structured format.
             """
@@ -131,15 +131,15 @@ class GoogleDocParser(BaseParser):
             doc_texts = "\n".join([para["text"] for para in paragraphs]).strip()
 
             # Collect and format styles
-            doc_styles = []
+            doc_styles: List[Dict[str, Any]] = []
             for para in paragraphs:
                 doc_styles.extend(para["styles"])
 
             formatted_styles = []
             for idx, style in enumerate(doc_styles):
-                text = style.text.lstrip() if idx == 0 else style.text
+                text = style.text.lstrip() if idx == 0 else style.text  # type: ignore
                 text += "\n"
-                formatted_styles.append({"text": text, "style": style.font})
+                formatted_styles.append({"text": text, "style": style.font})  # type: ignore
 
             if formatted_styles:
                 formatted_styles[-1]["text"] = formatted_styles[-1]["text"].rstrip()
@@ -150,9 +150,7 @@ class GoogleDocParser(BaseParser):
         docs = Document(input)
 
         formatted_docs = []
-        last_doc_data: List[
-            Dict
-        ] = []  # Store doc data (text and styles) for each paragraph
+        last_doc_data: List[Dict[str, Any]] = []
 
         for doc in docs.paragraphs:
             if doc.text.strip() == "":
@@ -168,7 +166,7 @@ class GoogleDocParser(BaseParser):
 
         return formatted_docs
 
-    def add_commentary_meaning_ann(self, doc, char_count):
+    def add_commentary_meaning_ann(self, doc: Dict[str, Any], char_count: int) -> str:
         segment = doc["text"]
         match = re.match(r"^([\d\-,]+) ", segment)
         segment_with_no_ann = segment
@@ -184,7 +182,6 @@ class GoogleDocParser(BaseParser):
                 "root_idx_mapping": root_idx_mapping,
             }
         else:
-
             curr_segment_ann = {
                 LayerEnum.meaning_segment.value: {
                     "start": char_count,
@@ -195,17 +192,16 @@ class GoogleDocParser(BaseParser):
         self.meaning_segment_anns.append(curr_segment_ann)
         return segment_with_no_ann
 
-    def add_sapche_ann(self, doc, char_count):
-
+    def add_sapche_ann(self, doc: Dict[str, Any], char_count: int):
         """
         Input: a docx file
-        Process: Extract the sapche annotations (in Fusia/Pink color)
+        Process: Extract the sapche annotations (in Fuchsia/Pink color)
         """
-
         inner_char_count = 0
+        sapche_anns: List[Dict[str, Any]] = []
         for doc_style in doc["styles"]:
             if doc_style["style"].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
-                self.sapche_anns.append(
+                sapche_anns.append(
                     {
                         LayerEnum.sapche.value: {
                             "start": char_count + inner_char_count,
@@ -217,12 +213,32 @@ class GoogleDocParser(BaseParser):
                 )
             inner_char_count += len(doc_style["text"])
 
+        formatted_anns: List[Dict[str, Any]] = []
+        last_ann: Optional[Dict[str, Any]] = None
+        for sapche_ann in sapche_anns:
+            if last_ann is None:
+                last_ann = sapche_ann
+                continue
+            if (
+                sapche_ann[LayerEnum.sapche.value]["start"]
+                != last_ann[LayerEnum.sapche.value]["end"]
+            ):
+                formatted_anns.append(last_ann)
+                last_ann = sapche_ann
+            else:
+                last_ann[LayerEnum.sapche.value]["end"] = sapche_ann[
+                    LayerEnum.sapche.value
+                ]["end"]
+
+        if last_ann:
+            formatted_anns.append(last_ann)
+        self.sapche_anns.extend(formatted_anns)
+
     def parse_commentary(self, input: Path):
         """
         Input: a docx file
-        process: -Parse and record the commentary annotations in self.meaning_segment_anns,
-                 -Save the cleaned base text in self.base
-
+        Process: - Parse and record the commentary annotations in self.meaning_segment_anns,
+                 - Save the cleaned base text in self.base
         """
         formatted_docs = self.prepare_doc(input)
 
@@ -238,12 +254,11 @@ class GoogleDocParser(BaseParser):
 
             base_texts.append(segment_with_no_ann)
             char_count += len(segment_with_no_ann)
-            char_count += 2  # for two newline
+            char_count += 2  # for two newlines
 
         self.base = "\n\n".join(base_texts)
 
-    def create_pecha(self, output_path: Path):
-
+    def create_pecha(self, output_path: Path) -> Pecha:
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
         meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
