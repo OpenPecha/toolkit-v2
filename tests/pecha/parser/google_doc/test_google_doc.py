@@ -107,3 +107,6 @@ def test_parser_on_commentary_with_sapche():
     ]
 
     assert parser.sapche_anns == expected_sapche_anns
+
+
+test_parser_on_commentary_with_sapche()

@@ -201,16 +201,32 @@ class GoogleDocParser(BaseParser):
         sapche_anns: List[Dict[str, Any]] = []
         for doc_style in doc["styles"]:
             if doc_style["style"].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
-                sapche_anns.append(
-                    {
-                        LayerEnum.sapche.value: {
-                            "start": char_count + inner_char_count,
-                            "end": char_count
-                            + inner_char_count
-                            + len(doc_style["text"]),
+                match = re.match(r"([\d\.]+)\s", doc_style["text"])
+                if match:
+                    sapche_number = match.group(1)
+                    doc_style["text"] = doc_style["text"].replace(sapche_number, "")
+                    start = char_count + inner_char_count + len(sapche_number) + 1
+                    end = start + len(doc_style["text"])
+                    sapche_anns.append(
+                        {
+                            LayerEnum.sapche.value: {
+                                "start": start,
+                                "end": end,
+                                "sapche_number": sapche_number,
+                            }
                         }
-                    }
-                )
+                    )
+                else:
+                    start = char_count + inner_char_count
+                    end = start + len(doc_style["text"])
+                    sapche_anns.append(
+                        {
+                            LayerEnum.sapche.value: {
+                                "start": start,
+                                "end": end,
+                            }
+                        }
+                    )
             inner_char_count += len(doc_style["text"])
 
         formatted_anns: List[Dict[str, Any]] = []
