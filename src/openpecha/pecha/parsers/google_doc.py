@@ -176,29 +176,35 @@ class GoogleDocParser(BaseParser):
         Input: a doc, char_diff
         Process: Update the doc deleting the characters with char_diff
         """
+
+        # Update the main text field
         doc["text"] = doc["text"][char_diff:]
-        count = 0
-        first_doc_style_texts = doc["styles"][0]["texts"]
-        doc_style_copy = doc["styles"][0]["styles"].copy()
-        for idx, text_chunk in enumerate(first_doc_style_texts):
 
-            if count >= char_diff:
-                doc["styles"][0]["styles"] = doc_style_copy[idx + 1 :]
-                doc["styles"][0]["texts"] = first_doc_style_texts[idx + 1 :]
+        # Extract the first style's texts and styles
+        styles = doc["styles"][0]
+        texts = styles["texts"]
+        style_meta = styles["styles"]
+
+        char_count = 0
+        for idx, text_chunk in enumerate(texts):
+
+            if char_count >= char_diff:
+                doc["styles"][0]["styles"] = style_meta[idx + 1 :]
+                doc["styles"][0]["texts"] = texts[idx + 1 :]
                 break
 
-            if count + len(text_chunk) == char_diff:
-                doc["styles"][0]["styles"] = doc_style_copy[idx + 1 :]
-                doc["styles"][0]["texts"] = first_doc_style_texts[idx + 1 :]
+            if char_count + len(text_chunk) == char_diff:
+                doc["styles"][0]["styles"] = style_meta[idx + 1 :]
+                doc["styles"][0]["texts"] = texts[idx + 1 :]
                 break
 
-            if count + len(text_chunk) > char_diff:
-                doc["styles"][0]["styles"] = doc_style_copy[idx:]
+            if char_count + len(text_chunk) > char_diff:
+                doc["styles"][0]["styles"] = style_meta[idx:]
                 doc["styles"][0]["texts"] = [
-                    text_chunk[char_diff - count :]
-                ] + first_doc_style_texts[idx + 1 :]
+                    text_chunk[char_diff - char_count :]
+                ] + texts[idx + 1 :]
                 break
-            count += len(text_chunk)
+            char_count += len(text_chunk)
 
         return doc
 
