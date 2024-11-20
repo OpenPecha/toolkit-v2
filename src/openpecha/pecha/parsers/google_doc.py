@@ -232,7 +232,6 @@ class GoogleDocParser(BaseParser):
                 }
             }
 
-        # self.meaning_segment_anns.append(curr_segment_ann)
         self.temp_state["meaning_segment"]["anns"].append(curr_segment_ann)  # type: ignore
         return doc
 
@@ -299,7 +298,6 @@ class GoogleDocParser(BaseParser):
 
         if last_ann:
             formatted_anns.append(last_ann)
-        # self.sapche_anns.extend(formatted_anns)
         self.temp_state["sapche"]["anns"].extend(formatted_anns)  # type: ignore
         updated_segment = "\n".join(
             ["".join(doc_style["texts"]) for doc_style in doc["styles"]]
@@ -347,11 +345,14 @@ class GoogleDocParser(BaseParser):
     def create_pecha(self, output_path: Path) -> Pecha:
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
+
+        # Add meaning_segment layer
         meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
         for ann in self.meaning_segment_anns:
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
         meaning_segment_layer.save()
 
+        # Add sapche layer
         sapche_layer, _ = pecha.add_layer(basename, LayerEnum.sapche)
         for ann in self.sapche_anns:
             pecha.add_annotation(sapche_layer, ann, LayerEnum.sapche)
