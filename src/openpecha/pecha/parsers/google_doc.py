@@ -174,11 +174,9 @@ class GoogleDocParser(BaseParser):
     def update_doc(doc: Dict[str, Any], char_diff: int):
         """
         Updates the document by removing characters up to the given char_diff.
-
         Args:
             doc (Dict[str, Any]): The document to update, containing text and styles.
             char_diff (int): The number of characters to remove from the beginning of the text.
-
         Returns:
             Dict[str, Any]: The updated document.
         """
@@ -192,7 +190,6 @@ class GoogleDocParser(BaseParser):
 
         char_count = 0
         for idx, text_chunk in enumerate(texts):
-
             if char_count >= char_diff or char_count + len(text_chunk) == char_diff:
                 doc["styles"][0]["styles"] = style_meta[idx + 1 :]
                 doc["styles"][0]["texts"] = texts[idx + 1 :]
@@ -237,8 +234,12 @@ class GoogleDocParser(BaseParser):
 
     def add_sapche_ann(self, doc: Dict[str, Any], char_count: int):
         """
-        Input: a docx file
-        Process: Extract the sapche annotations (in Fuchsia/Pink color)
+        Extract and process sapche annotations (in Fuchsia/Pink color) from the provided docx file structure.
+        Args:
+            doc (Dict[str, Any]): The document structure containing styles and text.
+            char_count (int): The initial character count for span calculation.
+        Returns:
+            str: The updated segment text after processing annotations.
         """
         inner_char_count = 0
         sapche_anns: List[Dict[str, Any]] = []
@@ -279,30 +280,40 @@ class GoogleDocParser(BaseParser):
                 inner_char_count += len(doc_style["texts"][idx])
             inner_char_count += 1  # for newline
 
-        formatted_anns: List[Dict[str, Any]] = []
-        last_ann: Optional[Dict[str, Any]] = None
-        for sapche_ann in sapche_anns:
-            if last_ann is None:
-                last_ann = sapche_ann
-                continue
-            if (
-                sapche_ann[LayerEnum.sapche.value]["start"]
-                != last_ann[LayerEnum.sapche.value]["end"]
-            ):
-                formatted_anns.append(last_ann)
-                last_ann = sapche_ann
-            else:
-                last_ann[LayerEnum.sapche.value]["end"] = sapche_ann[
-                    LayerEnum.sapche.value
-                ]["end"]
-
-        if last_ann:
-            formatted_anns.append(last_ann)
+        formatted_anns = self.merge_anns(sapche_anns, LayerEnum.sapche)
         self.temp_state["sapche"]["anns"].extend(formatted_anns)  # type: ignore
         updated_segment = "\n".join(
             ["".join(doc_style["texts"]) for doc_style in doc["styles"]]
         )
         return updated_segment
+
+    @staticmethod
+    def merge_anns(
+        anns: List[Dict[str, Any]], ann_layer: LayerEnum
+    ) -> List[Dict[str, Any]]:
+        """
+        Merge overlapping or consecutive sapche annotations.
+        Args:
+            annotations (List[Dict[str, Any]]): Eg: List of sapche annotations.
+
+        Returns:
+            List[Dict[str, Any]]: Merged annotations.
+        """
+        formatted_anns: List[Dict[str, Any]] = []
+        last_ann: Optional[Dict[str, Any]] = None
+        for ann in anns:
+            if last_ann is None:
+                last_ann = ann
+                continue
+            if ann[ann_layer.value]["start"] != last_ann[ann_layer.value]["end"]:
+                formatted_anns.append(last_ann)
+                last_ann = ann
+            else:
+                last_ann[ann_layer.value]["end"] = ann[ann_layer.value]["end"]
+
+        if last_ann:
+            formatted_anns.append(last_ann)
+        return formatted_anns
 
     def parse_commentary(self, input: Path):
         """
