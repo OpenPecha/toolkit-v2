@@ -249,7 +249,7 @@ class GoogleDocParser(BaseParser):
                         )
                         self.temp_state["sapche"]["char_diff"] += len(sapche_number)  # type: ignore
 
-                        start = char_count + inner_char_count + len(sapche_number) + 1
+                        start = char_count + inner_char_count
                         end = start + len(doc_style["texts"][idx])
                         sapche_anns.append(
                             {
@@ -272,6 +272,7 @@ class GoogleDocParser(BaseParser):
                             }
                         )
                 inner_char_count += len(doc_style["texts"][idx])
+            inner_char_count += 1  # for newline
 
         formatted_anns: List[Dict[str, Any]] = []
         last_ann: Optional[Dict[str, Any]] = None
