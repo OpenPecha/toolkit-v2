@@ -173,10 +173,15 @@ class GoogleDocParser(BaseParser):
     @staticmethod
     def update_doc(doc: Dict[str, Any], char_diff: int):
         """
-        Input: a doc, char_diff
-        Process: Update the doc deleting the characters with char_diff
-        """
+        Updates the document by removing characters up to the given char_diff.
 
+        Args:
+            doc (Dict[str, Any]): The document to update, containing text and styles.
+            char_diff (int): The number of characters to remove from the beginning of the text.
+
+        Returns:
+            Dict[str, Any]: The updated document.
+        """
         # Update the main text field
         doc["text"] = doc["text"][char_diff:]
 
@@ -188,12 +193,7 @@ class GoogleDocParser(BaseParser):
         char_count = 0
         for idx, text_chunk in enumerate(texts):
 
-            if char_count >= char_diff:
-                doc["styles"][0]["styles"] = style_meta[idx + 1 :]
-                doc["styles"][0]["texts"] = texts[idx + 1 :]
-                break
-
-            if char_count + len(text_chunk) == char_diff:
+            if char_count >= char_diff or char_count + len(text_chunk) == char_diff:
                 doc["styles"][0]["styles"] = style_meta[idx + 1 :]
                 doc["styles"][0]["texts"] = texts[idx + 1 :]
                 break
