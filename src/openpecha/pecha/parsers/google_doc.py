@@ -169,15 +169,15 @@ class GoogleDocParser(BaseParser):
     def add_commentary_meaning_ann(self, doc: Dict[str, Any], char_count: int) -> str:
         segment = doc["text"]
         match = re.match(r"^([\d\-,]+) ", segment)
-        segment_with_no_ann = segment
+        updated_segment = segment
         if match:
             root_idx_mapping = match.group(1)
             segment = segment.replace(root_idx_mapping, "")
-            segment_with_no_ann = segment.strip()
+            updated_segment = segment.strip()
             curr_segment_ann = {
                 LayerEnum.meaning_segment.value: {
                     "start": char_count,
-                    "end": char_count + len(segment_with_no_ann),
+                    "end": char_count + len(updated_segment),
                 },
                 "root_idx_mapping": root_idx_mapping,
             }
@@ -190,7 +190,7 @@ class GoogleDocParser(BaseParser):
             }
 
         self.meaning_segment_anns.append(curr_segment_ann)
-        return segment_with_no_ann
+        return updated_segment
 
     def add_sapche_ann(self, doc: Dict[str, Any], char_count: int):
         """
@@ -249,6 +249,8 @@ class GoogleDocParser(BaseParser):
         if last_ann:
             formatted_anns.append(last_ann)
         self.sapche_anns.extend(formatted_anns)
+        updated_segment = "".join([doc_style["text"] for doc_style in doc["styles"]])
+        return updated_segment
 
     def parse_commentary(self, input: Path):
         """
@@ -265,11 +267,11 @@ class GoogleDocParser(BaseParser):
             if not segment:
                 continue
 
-            segment_with_no_ann = self.add_commentary_meaning_ann(doc, char_count)
-            self.add_sapche_ann(doc, char_count)
+            updated_segment = self.add_commentary_meaning_ann(doc, char_count)
+            updated_segment = self.add_sapche_ann(doc, char_count)
 
-            base_texts.append(segment_with_no_ann)
-            char_count += len(segment_with_no_ann)
+            base_texts.append(updated_segment)
+            char_count += len(updated_segment)
             char_count += 2  # for two newlines
 
         self.base = "\n\n".join(base_texts)
