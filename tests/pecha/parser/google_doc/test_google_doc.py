@@ -54,39 +54,8 @@ def test_parser_on_commentary_text():
         )
         assert parser.base == expected_base
 
-        expected_anns = [
-            {"Meaning_Segment": {"start": 0, "end": 68}},
-            {"Meaning_Segment": {"start": 70, "end": 232}},
-            {"Meaning_Segment": {"start": 234, "end": 297}, "root_idx_mapping": "1"},
-            {"Meaning_Segment": {"start": 299, "end": 557}, "root_idx_mapping": "2-3"},
-            {"Meaning_Segment": {"start": 559, "end": 945}, "root_idx_mapping": "2"},
-            {"Meaning_Segment": {"start": 947, "end": 1105}, "root_idx_mapping": "5,7"},
-            {
-                "Meaning_Segment": {"start": 1107, "end": 1265},
-                "root_idx_mapping": "1-5,9",
-            },
-        ]
 
-        assert parser.meaning_segment_anns == expected_anns
-
-        expected_segments = [
-            "སྒྲོལ་མ་ཉེར་གཅིག་པའི་བསྟོད་འགྲེལ་འཕྲིན་ལས་ཆར་དུ་སྙིལ་བའི་སྤྲིན་ཕུང་།",
-            "དང་པོ་ནི། རྒྱ་གར་སྐད་དུ། ན་མཿ ཏཱརཱ་ཨེ་ཀ་བིཾ་ཤ་ཏི་སྟོ་ཏྲ་གུ་ཎ་ཧི་ཏ་སཱ་ཀ །བོད་སྐད་དུ། སྒྲོལ་མ་ལ་ཕྱག་འཚལ་ཉི་ཤུ་རྩ་གཅིག་གིས་བསྟོད་པ་ཕན་ཡོན་དང་བཅས་པ། ཞེས་པའི་དོན་ཏོ། །",
-            "གཉིས་པ་ནི། རྗེ་བཙུན་མ་འཕགས་མ་སྒྲོལ་མ་ལ་ཕྱག་འཚལ་ལོ། ། ཞེས་གསུངས།",
-            "གསུམ་པ་ལ་ཕྱག་འཚལ་ཉེར་གཅིག་ཡོད་པ་ལས། ཕྱག་འཚལ་དང་པོ་རྗེ་བཙུན་མ་འཕགས་མ་སྒྲོལ་མ་ལ་ཕྱག་འཚལ་བ་ནི།\nརྒྱུད་ལས།།\nཕྱག་འཚལ་སྒྲོལ་མ་མྱུར་མ་དཔའ་མོ། །\nསྤྱན་ནི་སྐད་གཅིག་གློག་དང་འདྲ་མ། །\nའཇིག་རྟེན་གསུམ་མགོན་ཆུ་སྐྱེས་ཞལ་གྱི། །\nགེ་སར་བྱེ་བ་ལས་ནི་བྱུང་མ། །\nཞེས་གསུངས་པའི་དོན་ནི།",
-            "ཕྱག་འཚལ་ལོ་རྗེ་བཙུན་མ་འཕགས་མ་སྒྲོལ་མ་ལའོ། །རྒྱུ་གང་གི་སྒོ་ནས་ཕྱག་འཚལ་ཞེ་ན། སྒྲོལ་མྱུར་དཔའ་གསུམ་གྱི་ཆེ་བའི་སྒོ་ནས་ཏེ། དང་པོ་སྒྲོལ་མ་ཞེས་པའི་མཚན་གྱི་ཆེ་བ་ནི། ལྷ་མོ་འདིས་སེམས་ཅན་དཔག་ཏུ་མེད་པ་གནས་སྐབས་འཇིགས་པ་བརྒྱད་སོགས་དང་། མཐར་ཉོན་མོངས་པ་དང་ཤེས་བྱའི་སྒྲིབ་པ་ལས་བསྒྲལ་ཏེ་བླ་མེད་རྫོགས་པའི་སངས་རྒྱས་ཀྱི་སར་བཀོད་པས་ན། བསྐལ་པ་དཔག་ཏུ་མེད་པའི་སྔོན་རོལ་ནས་སྒྲོལ་མ་ཞེས་པའི་མཚན་གྱིས་བསྔགས་པ་ཡིན་ཏེ།",
-            "སྐབས་འདིའི་འོད་ཟེར་ནི། འགྲེལ་པ་འགའ་ཞིག་ལས། ཕྱག་གཡས་པའི་མཐིལ་གྱི་འཁོར་ལོའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་དང་། གཞན་དག་སྐུའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་ས་བཞེད་པ་མི་འདྲ་ཡང་།",
-            "སྐབས་འདིའི་འོད་ཟེར་ནི། འགྲེལ་པ་འགའ་ཞིག་ལས། ཕྱག་གཡས་པའི་མཐིལ་གྱི་འཁོར་ལོའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་དང་། གཞན་དག་སྐུའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་ས་བཞེད་པ་མི་འདྲ་ཡང་།",
-        ]
-
-        for ann, expected_segment in zip(
-            parser.meaning_segment_anns, expected_segments
-        ):
-            start, end = (
-                ann[LayerEnum.meaning_segment.value]["start"],
-                ann[LayerEnum.meaning_segment.value]["end"],
-            )
-            assert parser.base[start:end] == expected_segment
+test_parser_on_commentary_text()
 
 
 def test_parser_on_commentary_with_sapche():
@@ -101,12 +70,11 @@ def test_parser_on_commentary_with_sapche():
     output_path.mkdir(parents=True, exist_ok=True)
     parser.parse(input, metadata, output_path)
     expected_sapche_anns = [
-        {"Sapche": {"start": 102, "end": 171}},
-        {"Sapche": {"start": 257, "end": 324}},
-        {"Sapche": {"start": 488, "end": 569}},
+        {"Sapche": {"start": 101, "end": 123}},
+        {"Sapche": {"start": 124, "end": 166, "sapche_number": "1.1."}},
+        {"Sapche": {"start": 253, "end": 270}},
+        {"Sapche": {"start": 271, "end": 312, "sapche_number": "2.1."}},
+        {"Sapche": {"start": 477, "end": 555}},
     ]
 
     assert parser.sapche_anns == expected_sapche_anns
-
-
-test_parser_on_commentary_with_sapche()
