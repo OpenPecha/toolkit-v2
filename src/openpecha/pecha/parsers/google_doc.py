@@ -346,6 +346,11 @@ class GoogleDocParser(BaseParser):
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
         meaning_segment_layer.save()
 
+        sapche_layer, _ = pecha.add_layer(basename, LayerEnum.sapche)
+        for ann in self.sapche_anns:
+            pecha.add_annotation(sapche_layer, ann, LayerEnum.sapche)
+        sapche_layer.save()
+
         pecha.set_metadata(
             PechaMetaData(id=pecha.id, parser=self.name, **self.metadata)
         )
