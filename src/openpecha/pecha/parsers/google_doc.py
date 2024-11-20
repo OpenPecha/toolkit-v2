@@ -170,13 +170,46 @@ class GoogleDocParser(BaseParser):
 
         return formatted_docs
 
-    def add_commentary_meaning_ann(self, doc: Dict[str, Any], char_count: int) -> str:
+    @staticmethod
+    def update_doc(doc: Dict[str, Any], char_diff: int):
+        """
+        Input: a doc, char_diff
+        Process: Update the doc deleting the characters with char_diff
+        """
+        doc["text"] = doc["text"][char_diff:]
+        count = 0
+        first_doc_style_texts = doc["styles"][0]["texts"]
+        doc_style_copy = doc["styles"][0]["styles"].copy()
+        for idx, text_chunk in enumerate(first_doc_style_texts):
+
+            if count >= char_diff:
+                doc["styles"][0]["styles"] = doc_style_copy[idx + 1 :]
+                doc["styles"][0]["texts"] = first_doc_style_texts[idx + 1 :]
+                break
+
+            if count + len(text_chunk) == char_diff:
+                doc["styles"][0]["styles"] = doc_style_copy[idx + 1 :]
+                doc["styles"][0]["texts"] = first_doc_style_texts[idx + 1 :]
+                break
+
+            if count + len(text_chunk) > char_diff:
+                doc["styles"][0]["styles"] = doc_style_copy[idx:]
+                doc["styles"][0]["texts"] = [
+                    text_chunk[char_diff - count :]
+                ] + first_doc_style_texts[idx + 1 :]
+                break
+            count += len(text_chunk)
+
+        return doc
+
+    def add_commentary_meaning_ann(self, doc: Dict[str, Any], char_count: int):
         segment = doc["text"]
         match = re.match(r"^([\d\-,]+) ", segment)
         updated_segment = segment
         if match:
             root_idx_mapping = match.group(1)
             segment = segment.replace(root_idx_mapping, "")
+            doc = self.update_doc(doc, len(root_idx_mapping))
             updated_segment = segment.strip()
             curr_segment_ann = {
                 LayerEnum.meaning_segment.value: {
@@ -195,7 +228,7 @@ class GoogleDocParser(BaseParser):
 
         # self.meaning_segment_anns.append(curr_segment_ann)
         self.temp_state["meaning_segment"]["anns"].append(curr_segment_ann)  # type: ignore
-        return updated_segment
+        return doc
 
     def add_sapche_ann(self, doc: Dict[str, Any], char_count: int):
         """
@@ -281,7 +314,7 @@ class GoogleDocParser(BaseParser):
             if not segment:
                 continue
 
-            updated_segment = self.add_commentary_meaning_ann(doc, char_count)
+            doc = self.add_commentary_meaning_ann(doc, char_count)
             updated_segment = self.add_sapche_ann(doc, char_count)
 
             # Updating the ann spans
@@ -292,11 +325,12 @@ class GoogleDocParser(BaseParser):
                 ] -= self.temp_state["sapche"]["char_diff"]
                 self.meaning_segment_anns.append(meaning_segment_ann)
 
+            self.sapche_anns.extend(self.temp_state["sapche"]["anns"])  # type: ignore
+
             self.temp_state = {
                 "meaning_segment": {"anns": [], "char_diff": 0},
                 "sapche": {"anns": [], "char_diff": 0},
             }
-
             base_texts.append(updated_segment)
             char_count += len(updated_segment)
             char_count += 2  # for two newlines
