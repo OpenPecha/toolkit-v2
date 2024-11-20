@@ -315,6 +315,24 @@ class GoogleDocParser(BaseParser):
             formatted_anns.append(last_ann)
         return formatted_anns
 
+    def update_ann_spans(self):
+        """
+        Update the spans of the meaning_segment and sapche annotations.
+        """
+        if self.temp_state["meaning_segment"]["anns"]:
+            meaning_segment_ann = self.temp_state["meaning_segment"]["anns"][0]  # type: ignore
+            meaning_segment_ann[LayerEnum.meaning_segment.value][
+                "end"
+            ] -= self.temp_state["sapche"]["char_diff"]
+            self.meaning_segment_anns.append(meaning_segment_ann)
+
+        self.sapche_anns.extend(self.temp_state["sapche"]["anns"])  # type: ignore
+
+        self.temp_state = {
+            "meaning_segment": {"anns": [], "char_diff": 0},
+            "sapche": {"anns": [], "char_diff": 0},
+        }
+
     def parse_commentary(self, input: Path):
         """
         Input: a docx file
@@ -333,20 +351,8 @@ class GoogleDocParser(BaseParser):
             doc = self.add_commentary_meaning_ann(doc, char_count)
             updated_segment = self.add_sapche_ann(doc, char_count)
 
-            # Updating the ann spans
-            if self.temp_state["meaning_segment"]["anns"]:
-                meaning_segment_ann = self.temp_state["meaning_segment"]["anns"][0]  # type: ignore
-                meaning_segment_ann[LayerEnum.meaning_segment.value][
-                    "end"
-                ] -= self.temp_state["sapche"]["char_diff"]
-                self.meaning_segment_anns.append(meaning_segment_ann)
+            self.update_ann_spans()
 
-            self.sapche_anns.extend(self.temp_state["sapche"]["anns"])  # type: ignore
-
-            self.temp_state = {
-                "meaning_segment": {"anns": [], "char_diff": 0},
-                "sapche": {"anns": [], "char_diff": 0},
-            }
             base_texts.append(updated_segment)
             char_count += len(updated_segment)
             char_count += 2  # for two newlines
