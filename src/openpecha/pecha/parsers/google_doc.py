@@ -21,6 +21,10 @@ class GoogleDocParser(BaseParser):
         self.commentary_segment_splitter = "\n\n"
         self.meaning_segment_anns: List[Dict[str, Any]] = []
         self.sapche_anns: List[Dict[str, Any]] = []
+        self.temp_state = {
+            "meaning_segment": {"anns": [], "char_diff": 0},
+            "sapche": {"anns": [], "char_diff": 0},
+        }
         self.base = ""
         self.metadata: Dict[str, Any] = {}
 
@@ -125,26 +129,26 @@ class GoogleDocParser(BaseParser):
 
         def format_paragraphs(paragraphs: List[Dict[str, Any]]) -> Dict[str, Any]:
             """
-            Formats paragraphs by combining text and styles into a structured format.
+            Paragraphs is a text with styles.
+            Each line in docx file is a paragraph.
+            We have to combine the text and the styles
             """
-            # Combine texts and strip whitespace
-            doc_texts = "\n".join([para["text"] for para in paragraphs]).strip()
-
-            # Collect and format styles
-            doc_styles: List[Dict[str, Any]] = []
+            formatted_paras = []
+            para_texts = []
             for para in paragraphs:
-                doc_styles.extend(para["styles"])
-
-            formatted_styles = []
-            for idx, style in enumerate(doc_styles):
-                text = style.text.lstrip() if idx == 0 else style.text  # type: ignore
-                text += "\n"
-                formatted_styles.append({"text": text, "style": style.font})  # type: ignore
-
-            if formatted_styles:
-                formatted_styles[-1]["text"] = formatted_styles[-1]["text"].rstrip()
-
-            return {"text": doc_texts, "styles": formatted_styles}
+                para_texts.append(para["text"].strip())
+                style_texts = []
+                styles = []
+                for para_style in para["styles"]:
+                    para_text = para_style.text
+                    style_texts.append(para_text)
+                    styles.append(para_style.font)
+                if style_texts:
+                    style_texts[0] = style_texts[0].lstrip()
+                    style_texts[-1] = style_texts[-1].rstrip()
+                formatted_paras.append({"texts": style_texts, "styles": styles})
+            res = {"text": "\n".join(para_texts), "styles": formatted_paras}
+            return res
 
         # Parse the document
         docs = Document(input)
@@ -189,7 +193,8 @@ class GoogleDocParser(BaseParser):
                 }
             }
 
-        self.meaning_segment_anns.append(curr_segment_ann)
+        # self.meaning_segment_anns.append(curr_segment_ann)
+        self.temp_state["meaning_segment"]["anns"].append(curr_segment_ann)  # type: ignore
         return updated_segment
 
     def add_sapche_ann(self, doc: Dict[str, Any], char_count: int):
@@ -200,34 +205,40 @@ class GoogleDocParser(BaseParser):
         inner_char_count = 0
         sapche_anns: List[Dict[str, Any]] = []
         for doc_style in doc["styles"]:
-            if doc_style["style"].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
-                match = re.match(r"([\d\.]+)\s", doc_style["text"])
-                if match:
-                    sapche_number = match.group(1)
-                    doc_style["text"] = doc_style["text"].replace(sapche_number, "")
-                    start = char_count + inner_char_count + len(sapche_number) + 1
-                    end = start + len(doc_style["text"])
-                    sapche_anns.append(
-                        {
-                            LayerEnum.sapche.value: {
-                                "start": start,
-                                "end": end,
-                                "sapche_number": sapche_number,
+            for idx in range(len(doc_style["texts"])):
+                if doc_style["styles"][idx].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
+                    match = re.match(r"([\d\.]+)\s", doc_style["texts"][idx])
+                    if match:
+                        # Extract sapche number and store the char length to update the previous ann spans
+                        sapche_number = match.group(1)
+                        doc_style["texts"][idx] = doc_style["texts"][idx].replace(
+                            sapche_number, ""
+                        )
+                        self.temp_state["sapche"]["char_diff"] += len(sapche_number)  # type: ignore
+
+                        start = char_count + inner_char_count + len(sapche_number) + 1
+                        end = start + len(doc_style["texts"][idx])
+                        sapche_anns.append(
+                            {
+                                LayerEnum.sapche.value: {
+                                    "start": start,
+                                    "end": end,
+                                    "sapche_number": sapche_number,
+                                }
                             }
-                        }
-                    )
-                else:
-                    start = char_count + inner_char_count
-                    end = start + len(doc_style["text"])
-                    sapche_anns.append(
-                        {
-                            LayerEnum.sapche.value: {
-                                "start": start,
-                                "end": end,
+                        )
+                    else:
+                        start = char_count + inner_char_count
+                        end = start + len(doc_style["texts"][idx])
+                        sapche_anns.append(
+                            {
+                                LayerEnum.sapche.value: {
+                                    "start": start,
+                                    "end": end,
+                                }
                             }
-                        }
-                    )
-            inner_char_count += len(doc_style["text"])
+                        )
+                inner_char_count += len(doc_style["texts"][idx])
 
         formatted_anns: List[Dict[str, Any]] = []
         last_ann: Optional[Dict[str, Any]] = None
@@ -248,8 +259,11 @@ class GoogleDocParser(BaseParser):
 
         if last_ann:
             formatted_anns.append(last_ann)
-        self.sapche_anns.extend(formatted_anns)
-        updated_segment = "".join([doc_style["text"] for doc_style in doc["styles"]])
+        # self.sapche_anns.extend(formatted_anns)
+        self.temp_state["sapche"]["anns"].extend(formatted_anns)  # type: ignore
+        updated_segment = "\n".join(
+            ["".join(doc_style["texts"]) for doc_style in doc["styles"]]
+        )
         return updated_segment
 
     def parse_commentary(self, input: Path):
@@ -269,6 +283,19 @@ class GoogleDocParser(BaseParser):
 
             updated_segment = self.add_commentary_meaning_ann(doc, char_count)
             updated_segment = self.add_sapche_ann(doc, char_count)
+
+            # Updating the ann spans
+            if self.temp_state["meaning_segment"]["anns"]:
+                meaning_segment_ann = self.temp_state["meaning_segment"]["anns"][0]  # type: ignore
+                meaning_segment_ann[LayerEnum.meaning_segment.value][
+                    "end"
+                ] -= self.temp_state["sapche"]["char_diff"]
+                self.meaning_segment_anns.append(meaning_segment_ann)
+
+            self.temp_state = {
+                "meaning_segment": {"anns": [], "char_diff": 0},
+                "sapche": {"anns": [], "char_diff": 0},
+            }
 
             base_texts.append(updated_segment)
             char_count += len(updated_segment)
