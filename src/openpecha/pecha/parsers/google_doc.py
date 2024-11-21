@@ -212,7 +212,7 @@ class GoogleDocParser(BaseParser):
         if match:
             root_idx_mapping = match.group(1)
             segment = segment.replace(root_idx_mapping, "")
-            doc = self.update_doc(doc, len(root_idx_mapping))
+            doc = self.update_doc(doc, len(root_idx_mapping) + 1)
             updated_segment = segment.strip()
             curr_segment_ann = {
                 LayerEnum.meaning_segment.value: {
