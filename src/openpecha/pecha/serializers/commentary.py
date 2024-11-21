@@ -1,5 +1,8 @@
 from pathlib import Path
 
+from openpecha.pecha import Pecha
+from openpecha.utils import get_text_direction_with_lang
+
 
 class CommentarySerializer:
     def __init__(self):
@@ -11,13 +14,26 @@ class CommentarySerializer:
         """
         Extract neccessary metadata from opf for serialization to json
         """
-        pass
+        pecha = Pecha.from_path(pecha_path)
+        pecha_metadata = pecha.metadata
+        title = pecha_metadata.title
+        lang = pecha_metadata.language
+        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
+        self.required_metadata = {
+            "title": title,
+            "language": pecha_metadata.language,
+            "versionSource": pecha_metadata.source if pecha_metadata.source else "",
+            "direction": get_text_direction_with_lang(pecha_metadata.language),
+            "completestatus": "done",
+        }
+        return self.required_metadata
 
     def set_metadata_to_json(self, pecha_path: Path):
         """
         Set extracted metadata to json format
         """
-        pass
+        self.extract_metadata(pecha_path)
+        self.books.append(self.required_metadata)
 
     def get_category(self, title: str):
         """
@@ -30,6 +46,7 @@ class CommentarySerializer:
         """
         Set the category format to self.category attribute
         """
+        self.get_category(self.required_metadata["title"])
         pass
 
     def get_sapche_anns(self, pecha_path: Path):
@@ -54,9 +71,7 @@ class CommentarySerializer:
         """
         Serialize the commentary pecha to json format
         """
-        self.extract_metadata(pecha_path)
         self.set_metadata_to_json(pecha_path)
-        self.get_category(title)
         self.set_category_to_json()
         self.get_sapche_anns(pecha_path)
         self.format_sapche_anns()
