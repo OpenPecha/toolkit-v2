@@ -259,11 +259,8 @@ class GoogleDocParser(BaseParser):
                         end = start + len(doc_style["texts"][idx])
                         sapche_anns.append(
                             {
-                                LayerEnum.sapche.value: {
-                                    "start": start,
-                                    "end": end,
-                                    "sapche_number": sapche_number,
-                                }
+                                LayerEnum.sapche.value: {"start": start, "end": end},
+                                "sapche_number": sapche_number,
                             }
                         )
                     else:
