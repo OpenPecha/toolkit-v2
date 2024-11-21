@@ -251,7 +251,7 @@ class GoogleDocParser(BaseParser):
                         # Extract sapche number and store the char length to update the previous ann spans
                         sapche_number = match.group(1)
                         doc_style["texts"][idx] = doc_style["texts"][idx].replace(
-                            sapche_number, ""
+                            f"{sapche_number} ", ""
                         )
                         self.temp_state["sapche"]["char_diff"] += len(sapche_number)  # type: ignore
 
