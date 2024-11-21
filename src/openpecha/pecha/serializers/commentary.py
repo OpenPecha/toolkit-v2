@@ -60,7 +60,12 @@ class CommentarySerializer:
         sapche_layer, _ = pecha.get_layer(basename, LayerEnum.sapche)
         for ann in sapche_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
-            self.sapche_anns.append({"start": start, "end": end})
+
+            # Get metadata of the annotation
+            ann_metadata = {}
+            for data in ann:
+                ann_metadata[data.key().id()] = str(data.value())
+            self.sapche_anns.append({"start": start, "end": end, "text": str(ann)})
 
         return self.sapche_anns
 
