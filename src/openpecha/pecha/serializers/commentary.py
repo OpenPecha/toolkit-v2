@@ -65,7 +65,13 @@ class CommentarySerializer:
             ann_metadata = {}
             for data in ann:
                 ann_metadata[data.key().id()] = str(data.value())
-            self.sapche_anns.append({"start": start, "end": end, "text": str(ann)})
+            self.sapche_anns.append(
+                {
+                    "Span": {"start": start, "end": end},
+                    "text": str(ann),
+                    "sapche_number": ann_metadata["sapche_number"],
+                }
+            )
 
         return self.sapche_anns
 
