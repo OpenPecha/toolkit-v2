@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
 from openpecha.utils import get_text_direction_with_lang
 
 
@@ -9,6 +10,7 @@ class CommentarySerializer:
         self.category = []
         self.books = []
         self.required_metadata = {}
+        self.sapche_anns = []
 
     def extract_metadata(self, pecha_path: Path):
         """
@@ -53,7 +55,14 @@ class CommentarySerializer:
         """
         Get the sapche annotations from the sapche layer
         """
-        pass
+        pecha = Pecha.from_path(pecha_path)
+        basename = next(pecha.base_path.rglob("*.txt")).stem
+        sapche_layer, _ = pecha.get_layer(basename, LayerEnum.sapche)
+        for ann in sapche_layer:
+            start, end = ann.offset().begin().value(), ann.offset().end().value()
+            self.sapche_anns.append({"start": start, "end": end})
+
+        return self.sapche_anns
 
     def format_sapche_anns(self):
         """

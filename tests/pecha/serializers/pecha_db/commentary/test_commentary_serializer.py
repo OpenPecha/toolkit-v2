@@ -8,4 +8,7 @@ def test_commentary_serializer():
     pecha_path = DATA_DIR / "I1E88FE81"
 
     serializer = CommentarySerializer()
-    serializer.serialize(pecha_path, source_type="commentary")
+    serializer.serialize(pecha_path, title="test")
+
+
+test_commentary_serializer()
