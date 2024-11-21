@@ -1,0 +1,184 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "I1E88FE81",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "1747",
+      "@include": "../../base/1747.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "Structure_Annotation",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "Structure_Type"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "root_idx_mapping"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "2E74E593",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Meaning_Segment"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "A3E26A6B",
+          "key": "root_idx_mapping",
+          "value": {
+            "@type": "String",
+            "value": "1"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "759EBAB8",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "1747",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 0
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 168
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "2E74E593",
+          "set": "Structure_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "8F934D3B",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "1747",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 168
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 250
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "A3E26A6B",
+          "set": "Structure_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "2E74E593",
+          "set": "Structure_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "5A3894B7",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "1747",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 252
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 313
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "2E74E593",
+          "set": "Structure_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "4D4F44F4",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "1747",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 313
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 474
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "2E74E593",
+          "set": "Structure_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "E7776CED",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "1747",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 476
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 554
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "2E74E593",
+          "set": "Structure_Annotation"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "I1E88FE81",
+  "title": "Dummy Title",
+  "author": "Dummy Author",
+  "imported": "2024-11-21T11:13:39.833858",
+  "source": "Dummy Source",
+  "toolkit_version": "0.0.1",
+  "parser": "GoogleDocParser",
+  "initial_creation_type": "ebook",
+  "language": "bo",
+  "source_metadata": {
+    "root_path": "opf_id/layers/basename/layer_file.json"
+  },
+  "bases": [],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}
