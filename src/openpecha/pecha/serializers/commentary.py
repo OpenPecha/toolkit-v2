@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
@@ -13,13 +13,17 @@ class CommentarySerializer:
         self.book_content = {}
         self.required_metadata = {}
         self.sapche_anns = []
+        self.meaning_segment_anns = []
 
-    def extract_metadata(self, pecha_path: Path):
+        self.pecha_path: Union[Path, None] = None
+        self.pecha: Union[Pecha, None] = None
+
+    def extract_metadata(self):
         """
         Extract neccessary metadata from opf for serialization to json
         """
-        pecha = Pecha.from_path(pecha_path)
-        pecha_metadata = pecha.metadata
+        assert self.pecha is not None, "Pecha object is not set"
+        pecha_metadata = self.pecha.metadata
         title = pecha_metadata.title
         lang = pecha_metadata.language
         title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
@@ -32,11 +36,11 @@ class CommentarySerializer:
         }
         return self.required_metadata
 
-    def set_metadata_to_json(self, pecha_path: Path):
+    def set_metadata_to_json(self):
         """
         Set extracted metadata to json format
         """
-        self.extract_metadata(pecha_path)
+        self.extract_metadata()
         self.book.append(self.required_metadata)
 
     def get_category(self, title: str):
@@ -53,16 +57,15 @@ class CommentarySerializer:
         self.get_category(self.required_metadata["title"])
         pass
 
-    def get_sapche_anns(self, pecha_path: Path):
+    def get_sapche_anns(self):
         """
         Get the sapche annotations from the sapche layer
         """
-        pecha = Pecha.from_path(pecha_path)
-        basename = next(pecha.base_path.rglob("*.txt")).stem
-        sapche_layer, _ = pecha.get_layer(basename, LayerEnum.sapche)
+        assert self.pecha is not None, "Pecha object is not set"
+        basename = next(self.pecha.base_path.rglob("*.txt")).stem
+        sapche_layer, _ = self.pecha.get_layer(basename, LayerEnum.sapche)
         for ann in sapche_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
-
             # Get metadata of the annotation
             ann_metadata = {}
             for data in ann:
@@ -77,12 +80,42 @@ class CommentarySerializer:
 
         return self.sapche_anns
 
-    def format_sapche_anns(self, pecha_path: Path):
+    def get_meaning_segment_anns(self):
+        """
+        Get the meaning segment annotations from the meaning segment layer
+        """
+        assert self.pecha is not None, "Pecha object is not set"
+        basename = next(self.pecha.base_path.rglob("*.txt")).stem
+        meaning_segment_layer, _ = self.pecha.get_layer(
+            basename, LayerEnum.meaning_segment
+        )
+        for ann in meaning_segment_layer:
+            start, end = ann.offset().begin().value(), ann.offset().end().value()
+            # Get metadata of the annotation
+            ann_metadata = {}
+            for data in ann:
+                ann_metadata[data.key().id()] = str(data.value())
+
+            curr_meaining_segment_ann = {
+                "Span": {"start": start, "end": end},
+                "text": str(ann),
+            }
+
+            if "root_idx_mapping" in ann_metadata:
+                curr_meaining_segment_ann["root_idx_mapping"] = ann_metadata[
+                    "root_idx_mapping"
+                ]
+
+            self.meaning_segment_anns.append(curr_meaining_segment_ann)
+
+        return self.meaning_segment_anns
+
+    def format_sapche_anns(self):
         """
         Format the sapche annotations to the required format(Tree like structure)
         """
-        self.get_sapche_anns(pecha_path)
-        self.get_text_related_to_sapche(pecha_path)
+        self.get_sapche_anns()
+        self.get_text_related_to_sapche()
 
         formatted_sapche_anns: Dict[str, Any] = {}
 
@@ -96,10 +129,11 @@ class CommentarySerializer:
 
         pass
 
-    def get_text_related_to_sapche(self, pecha_path: Path):
+    def get_text_related_to_sapche(self):
         """
         Get the text related to the sapche annotations from meaning segment layer
         """
+        self.get_meaning_segment_anns()
 
         num_of_sapches = len(self.sapche_anns)
         for idx, sapche_ann in enumerate(self.sapche_anns):
@@ -117,8 +151,11 @@ class CommentarySerializer:
         """
         Serialize the commentary pecha to json format
         """
-        self.set_metadata_to_json(pecha_path)
+        self.pecha_path = pecha_path
+        self.pecha = Pecha.from_path(pecha_path)
+
+        self.set_metadata_to_json()
         self.set_category_to_json()
-        self.format_sapche_anns(pecha_path)
+        self.format_sapche_anns()
         # serialize to json
         pass
