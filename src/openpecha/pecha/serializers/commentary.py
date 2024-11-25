@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any, Dict
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
@@ -8,7 +9,8 @@ from openpecha.utils import get_text_direction_with_lang
 class CommentarySerializer:
     def __init__(self):
         self.category = []
-        self.books = []
+        self.book = []
+        self.book_content = {}
         self.required_metadata = {}
         self.sapche_anns = []
 
@@ -35,7 +37,7 @@ class CommentarySerializer:
         Set extracted metadata to json format
         """
         self.extract_metadata(pecha_path)
-        self.books.append(self.required_metadata)
+        self.book.append(self.required_metadata)
 
     def get_category(self, title: str):
         """
@@ -75,10 +77,22 @@ class CommentarySerializer:
 
         return self.sapche_anns
 
-    def format_sapche_anns(self):
+    def format_sapche_anns(self, pecha_path: Path):
         """
         Format the sapche annotations to the required format
         """
+        self.get_sapche_anns(pecha_path)
+
+        tree: Dict[str, Any] = {}
+
+        for item in self.sapche_anns:
+            keys = item["sapche_number"].strip(".").split(".")
+            current = tree
+            for key in keys:
+                if key not in current:
+                    current[key] = {"children": {}, "title": item["text"]}
+                current = current[key]["children"]
+
         pass
 
     def get_text_related_to_sapche(self):
@@ -93,8 +107,6 @@ class CommentarySerializer:
         """
         self.set_metadata_to_json(pecha_path)
         self.set_category_to_json()
-        self.get_sapche_anns(pecha_path)
-        self.format_sapche_anns()
-        self.get_text_related_to_sapche()
+        self.format_sapche_anns(pecha_path)
         # serialize to json
         pass
