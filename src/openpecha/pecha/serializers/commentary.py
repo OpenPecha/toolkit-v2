@@ -123,11 +123,17 @@ class CommentarySerializer:
 
         for sapche_ann in self.sapche_anns:
             keys = sapche_ann["sapche_number"].strip(".").split(".")
-            curr_sapche_ann = formatted_sapche_anns
+            current = formatted_sapche_anns
             for key in keys:
-                if key not in curr_sapche_ann:
-                    curr_sapche_ann[key] = {"children": {}, "title": sapche_ann["text"]}
-                curr_sapche_ann = curr_sapche_ann[key]["children"]
+                if key not in current:
+                    current[key] = {
+                        "children": {},
+                        "title": sapche_ann["text"],
+                        "data": sapche_ann["meaning_segments"],
+                    }
+                current = current[key]["children"]
+
+        pass
 
     @staticmethod
     def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
