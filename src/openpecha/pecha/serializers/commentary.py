@@ -14,6 +14,7 @@ class CommentarySerializer:
         self.required_metadata = {}
         self.sapche_anns = []
         self.meaning_segment_anns = []
+        self.formatted_sapche_anns = {}
 
         self.pecha_path: Union[Path, None] = None
         self.pecha: Union[Pecha, None] = None
@@ -156,8 +157,8 @@ class CommentarySerializer:
                     }
                 current = current[key]["children"]
 
-        res = format_tree(formatted_sapche_anns)
-        return res
+        self.formatted_sapche_anns = format_tree(formatted_sapche_anns)
+        return self.formatted_sapche_anns
 
     @staticmethod
     def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
@@ -226,6 +227,5 @@ class CommentarySerializer:
 
         self.set_metadata_to_json()
         self.set_category_to_json()
-        self.format_sapche_anns()
-        # serialize to json
-        pass
+        formatted_sapche_ann = self.format_sapche_anns()
+        return formatted_sapche_ann
