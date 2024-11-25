@@ -137,13 +137,25 @@ class CommentarySerializer:
 
         num_of_sapches = len(self.sapche_anns)
         for idx, sapche_ann in enumerate(self.sapche_anns):
-            start = sapche_ann["Span"]["start"]  # noqa
-            end = sapche_ann["Span"]["end"]  # noqa
+            start = sapche_ann["Span"]["start"]
+            end = sapche_ann["Span"]["end"]
 
+            sapche_ann["meaning_segments"] = []
+            # If it is the last sapche annotation, get all the meaning segments after that annotation
             if idx == num_of_sapches - 1:
-                continue
+                for meaning_segment_ann in self.meaning_segment_anns:
+                    meaning_segment_end = meaning_segment_ann["Span"]["end"]
+                    if meaning_segment_end >= end:
+                        sapche_ann["meaning_segments"].append(meaning_segment_ann)
+                break
 
-            next_start = self.sapche_anns[idx + 1]["Span"]["start"]  # noqa
+            # Get all the meaning segments between the current  and next sapche annotation
+            next_start = self.sapche_anns[idx + 1]["Span"]["start"]
+            for meaning_segment_ann in self.meaning_segment_anns:
+                meaning_segment_start = meaning_segment_ann["Span"]["start"]
+                meaning_segment_end = meaning_segment_ann["Span"]["end"]
+                if meaning_segment_start >= start and meaning_segment_end <= next_start:
+                    sapche_ann["meaning_segments"].append(meaning_segment_ann)
 
         pass
 
