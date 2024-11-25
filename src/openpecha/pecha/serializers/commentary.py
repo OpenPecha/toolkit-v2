@@ -116,6 +116,29 @@ class CommentarySerializer:
         """
         Format the sapche annotations to the required format(Tree like structure)
         """
+
+        def format_tree(tree):
+            """
+            Format sapche ann which is in tree like structure to desired format
+            """
+            formatted_tree = {}
+
+            # Iterate over each key in the tree dictionary
+            for key, value in tree.items():
+                # Create a new dictionary for the current node with 'title' and 'data'
+                formatted_tree[value["title"]] = {
+                    "data": value["data"],
+                }
+
+                # If there are children, process each child and add them as separate keys
+                for child_key, child_value in value["children"].items():
+                    child_formatted = format_tree(
+                        {child_key: child_value}
+                    )  # Recursively format the child
+                    formatted_tree[value["title"]].update(child_formatted)
+
+            return formatted_tree
+
         self.get_sapche_anns()
         self.get_text_related_to_sapche()
 
@@ -133,7 +156,8 @@ class CommentarySerializer:
                     }
                 current = current[key]["children"]
 
-        pass
+        res = format_tree(formatted_sapche_anns)
+        return res
 
     @staticmethod
     def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
