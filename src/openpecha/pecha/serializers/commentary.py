@@ -129,6 +129,22 @@ class CommentarySerializer:
                     curr_sapche_ann[key] = {"children": {}, "title": sapche_ann["text"]}
                 curr_sapche_ann = curr_sapche_ann[key]["children"]
 
+    @staticmethod
+    def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
+        """
+        Format the commentary meaning segment annotation to the required format
+        Input: ann: meaning segment annotation
+        Required Format:
+        <a><b>Text, where a is chapter number, b is root mapping number,
+                    and Text is the meaning segment text
+
+                    If root mapping number is not available, then just return the text
+        Output Format: string
+        """
+        if "root_idx_mapping" in ann:
+            return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
+        return ann["text"].strip()
+
     def get_text_related_to_sapche(self):
         """
         Get the text related to the sapche annotations from meaning segment layer,
@@ -156,14 +172,20 @@ class CommentarySerializer:
 
                 # Check if it's the last sapche annotation and include all meaning segments after it
                 if next_start is None and meaning_segment_end >= end:
-                    sapche_ann["meaning_segments"].append(meaning_segment_ann)
+                    formatted_meaning_segment_ann = self.format_commentary_segment_ann(
+                        meaning_segment_ann
+                    )
+                    sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
                 if next_start is None:
                     continue
 
                 # Otherwise, include meaning segments between the current sapche and the next one
                 if meaning_segment_start >= start and meaning_segment_end <= next_start:
-                    sapche_ann["meaning_segments"].append(meaning_segment_ann)
+                    formatted_meaning_segment_ann = self.format_commentary_segment_ann(
+                        meaning_segment_ann
+                    )
+                    sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
     def serialize(self, pecha_path: Path, title: str):
         """
