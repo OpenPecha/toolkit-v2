@@ -79,26 +79,38 @@ class CommentarySerializer:
 
     def format_sapche_anns(self, pecha_path: Path):
         """
-        Format the sapche annotations to the required format
+        Format the sapche annotations to the required format(Tree like structure)
         """
         self.get_sapche_anns(pecha_path)
+        self.get_text_related_to_sapche(pecha_path)
 
-        tree: Dict[str, Any] = {}
+        formatted_sapche_anns: Dict[str, Any] = {}
 
-        for item in self.sapche_anns:
-            keys = item["sapche_number"].strip(".").split(".")
-            current = tree
+        for sapche_ann in self.sapche_anns:
+            keys = sapche_ann["sapche_number"].strip(".").split(".")
+            curr_sapche_ann = formatted_sapche_anns
             for key in keys:
-                if key not in current:
-                    current[key] = {"children": {}, "title": item["text"]}
-                current = current[key]["children"]
+                if key not in curr_sapche_ann:
+                    curr_sapche_ann[key] = {"children": {}, "title": sapche_ann["text"]}
+                curr_sapche_ann = curr_sapche_ann[key]["children"]
 
         pass
 
-    def get_text_related_to_sapche(self):
+    def get_text_related_to_sapche(self, pecha_path: Path):
         """
         Get the text related to the sapche annotations from meaning segment layer
         """
+
+        num_of_sapches = len(self.sapche_anns)
+        for idx, sapche_ann in enumerate(self.sapche_anns):
+            start = sapche_ann["Span"]["start"]  # noqa
+            end = sapche_ann["Span"]["end"]  # noqa
+
+            if idx == num_of_sapches - 1:
+                continue
+
+            next_start = self.sapche_anns[idx + 1]["Span"]["start"]  # noqa
+
         pass
 
     def serialize(self, pecha_path: Path, title: str):
