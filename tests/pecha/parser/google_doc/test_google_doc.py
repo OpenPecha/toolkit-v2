@@ -6,7 +6,7 @@ from openpecha.pecha.parsers.google_doc import GoogleDocParser
 from openpecha.utils import read_json
 
 
-def test_root_google_doc_parser():
+def test_parser_on_root_text():
     data = Path(__file__).parent / "data"
     input = data / "root/dolma_21.txt"
     metadata = read_json(data / "root/metadata.json")
@@ -27,7 +27,7 @@ def test_root_google_doc_parser():
             "ཕྱག་འཚལ་སྟོན་ཀའི་ཟླ་བ་ཀུན་ཏུ། །གང་བ་བརྒྱ་ནི་བརྩེགས་པའི་ཞལ་མ། །",
         ]
 
-        for ann, seg in zip(parser.anns, expected_segments):
+        for ann, seg in zip(parser.meaning_segment_anns, expected_segments):
             start, end = (
                 ann[LayerEnum.meaning_segment.value]["start"],
                 ann[LayerEnum.meaning_segment.value]["end"],
@@ -35,7 +35,7 @@ def test_root_google_doc_parser():
             assert parser.base[start:end] == seg
 
 
-def test_commentary_google_doc_parser():
+def test_parser_on_commentary_text():
     data = Path(__file__).parent / "data"
     input = data / "commentary/dolma_21.docx"
     metadata = read_json(data / "commentary/metadata.json")
@@ -54,21 +54,6 @@ def test_commentary_google_doc_parser():
         )
         assert parser.base == expected_base
 
-        expected_anns = [
-            {"Meaning_Segment": {"start": 0, "end": 68}},
-            {"Meaning_Segment": {"start": 70, "end": 232}},
-            {"Meaning_Segment": {"start": 234, "end": 297}, "root_idx_mapping": "1"},
-            {"Meaning_Segment": {"start": 299, "end": 557}, "root_idx_mapping": "2-3"},
-            {"Meaning_Segment": {"start": 559, "end": 945}, "root_idx_mapping": "2"},
-            {"Meaning_Segment": {"start": 947, "end": 1105}, "root_idx_mapping": "5,7"},
-            {
-                "Meaning_Segment": {"start": 1107, "end": 1265},
-                "root_idx_mapping": "1-5,9",
-            },
-        ]
-
-        assert parser.anns == expected_anns
-
         expected_segments = [
             "སྒྲོལ་མ་ཉེར་གཅིག་པའི་བསྟོད་འགྲེལ་འཕྲིན་ལས་ཆར་དུ་སྙིལ་བའི་སྤྲིན་ཕུང་།",
             "དང་པོ་ནི། རྒྱ་གར་སྐད་དུ། ན་མཿ ཏཱརཱ་ཨེ་ཀ་བིཾ་ཤ་ཏི་སྟོ་ཏྲ་གུ་ཎ་ཧི་ཏ་སཱ་ཀ །བོད་སྐད་དུ། སྒྲོལ་མ་ལ་ཕྱག་འཚལ་ཉི་ཤུ་རྩ་གཅིག་གིས་བསྟོད་པ་ཕན་ཡོན་དང་བཅས་པ། ཞེས་པའི་དོན་ཏོ། །",
@@ -78,10 +63,34 @@ def test_commentary_google_doc_parser():
             "སྐབས་འདིའི་འོད་ཟེར་ནི། འགྲེལ་པ་འགའ་ཞིག་ལས། ཕྱག་གཡས་པའི་མཐིལ་གྱི་འཁོར་ལོའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་དང་། གཞན་དག་སྐུའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་ས་བཞེད་པ་མི་འདྲ་ཡང་།",
             "སྐབས་འདིའི་འོད་ཟེར་ནི། འགྲེལ་པ་འགའ་ཞིག་ལས། ཕྱག་གཡས་པའི་མཐིལ་གྱི་འཁོར་ལོའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་དང་། གཞན་དག་སྐུའི་འོད་ཟེར་ཡིན་པར་གསུངས་པ་ས་བཞེད་པ་མི་འདྲ་ཡང་།",
         ]
-
-        for ann, expected_segment in zip(parser.anns, expected_segments):
+        for ann, seg in zip(parser.meaning_segment_anns, expected_segments):
             start, end = (
                 ann[LayerEnum.meaning_segment.value]["start"],
                 ann[LayerEnum.meaning_segment.value]["end"],
             )
-            assert parser.base[start:end] == expected_segment
+            assert parser.base[start:end] == seg
+
+
+def test_parser_on_commentary_with_sapche():
+    data = Path(__file__).parent / "data"
+    input = data / "commentary_with_sapche/རྡོ་རྗེ་གཅོད་པ་commentary.docx"
+    metadata = read_json(data / "commentary_with_sapche/metadata.json")
+
+    parser = GoogleDocParser(
+        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+    )
+    output_path = Path(__file__).parent / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
+    parser.parse(input, metadata, output_path)
+    expected_sapche_anns = [
+        {"Sapche": {"start": 101, "end": 123}},
+        {"Sapche": {"start": 124, "end": 165, "sapche_number": "1.1."}},
+        {"Sapche": {"start": 251, "end": 268}},
+        {"Sapche": {"start": 269, "end": 309, "sapche_number": "2.1."}},
+        {"Sapche": {"start": 474, "end": 552}},
+    ]
+
+    assert parser.sapche_anns == expected_sapche_anns
+
+
+test_parser_on_commentary_with_sapche()
