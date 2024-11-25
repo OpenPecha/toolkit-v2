@@ -59,7 +59,8 @@ class CommentarySerializer:
 
     def get_sapche_anns(self):
         """
-        Get the sapche annotations from the sapche layer
+        Get the sapche annotations from the sapche layer,
+        and store it in self.sapche_anns attribute
         """
         assert self.pecha is not None, "Pecha object is not set"
         basename = next(self.pecha.base_path.rglob("*.txt")).stem
@@ -82,7 +83,8 @@ class CommentarySerializer:
 
     def get_meaning_segment_anns(self):
         """
-        Get the meaning segment annotations from the meaning segment layer
+        Get the meaning segment annotations from the meaning segment layer,
+        and store it in self.meaning_segment_anns attribute
         """
         assert self.pecha is not None, "Pecha object is not set"
         basename = next(self.pecha.base_path.rglob("*.txt")).stem
@@ -127,11 +129,10 @@ class CommentarySerializer:
                     curr_sapche_ann[key] = {"children": {}, "title": sapche_ann["text"]}
                 curr_sapche_ann = curr_sapche_ann[key]["children"]
 
-        pass
-
     def get_text_related_to_sapche(self):
         """
-        Get the text related to the sapche annotations from meaning segment layer
+        Get the text related to the sapche annotations from meaning segment layer,
+        and add to 'meaning_segments' key of sapche annotations
         """
         self.get_meaning_segment_anns()
 
@@ -156,8 +157,6 @@ class CommentarySerializer:
                 meaning_segment_end = meaning_segment_ann["Span"]["end"]
                 if meaning_segment_start >= start and meaning_segment_end <= next_start:
                     sapche_ann["meaning_segments"].append(meaning_segment_ann)
-
-        pass
 
     def serialize(self, pecha_path: Path, title: str):
         """
