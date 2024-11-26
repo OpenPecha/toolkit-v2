@@ -84,9 +84,9 @@ def test_parser_on_commentary_with_sapche():
     parser.parse(input, metadata, output_path)
     expected_sapche_anns = [
         {"Sapche": {"start": 101, "end": 123}},
-        {"Sapche": {"start": 124, "end": 165, "sapche_number": "1.1."}},
+        {"Sapche": {"start": 124, "end": 165}, "sapche_number": "1.1."},
         {"Sapche": {"start": 251, "end": 268}},
-        {"Sapche": {"start": 269, "end": 309, "sapche_number": "2.1."}},
+        {"Sapche": {"start": 269, "end": 309}, "sapche_number": "2.1."},
         {"Sapche": {"start": 474, "end": 552}},
     ]
 
