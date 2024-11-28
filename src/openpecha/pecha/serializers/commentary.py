@@ -1,6 +1,9 @@
 from pathlib import Path
 from typing import Any, Dict, Union
 
+from pecha_org_tools.enums import TextType  # noqa
+from pecha_org_tools.extract import CategoryExtractor
+
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.utils import get_text_direction_with_lang
@@ -44,18 +47,19 @@ class CommentarySerializer:
         self.extract_metadata()
         self.book.append(self.required_metadata)
 
-    def get_category(self, title: str):
+    def get_category(self):
         """
         Input: title: Title of the pecha commentary which will be used to get the category format
         Process: Get the category format from the pecha.org categorizer package
         """
+        categorizer = CategoryExtractor()  # noqa
         pass
 
     def set_category_to_json(self):
         """
         Set the category format to self.category attribute
         """
-        self.get_category(self.required_metadata["title"])
+        self.get_category()
         pass
 
     def get_sapche_anns(self):
