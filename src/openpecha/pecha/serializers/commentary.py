@@ -13,9 +13,9 @@ class CommentarySerializer:
     def __init__(self):
         self.source_category = {}
         self.target_category = {}
-        self.book = []
-        self.book_content = {}
-        self.required_metadata = {}
+        self.source_book = []
+        self.target_book = []
+
         self.sapche_anns = []
         self.meaning_segment_anns = []
         self.formatted_sapche_anns = {}
@@ -29,24 +29,34 @@ class CommentarySerializer:
         """
         assert self.pecha is not None, "Pecha object is not set"
         pecha_metadata = self.pecha.metadata
-        title = pecha_metadata.title
-        lang = pecha_metadata.language
-        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
-        self.required_metadata = {
-            "title": title,
+        source_title = pecha_metadata.title["en"]
+        target_title = pecha_metadata.title["bo"]
+
+        source_metadata = {
+            "title": source_title,
+            "language": "en",
+            "versionSource": pecha_metadata.source if pecha_metadata.source else "",
+            "direction": get_text_direction_with_lang("en"),
+            "completestatus": "done",
+        }
+
+        target_metadata = {
+            "title": target_title,
             "language": pecha_metadata.language,
             "versionSource": pecha_metadata.source if pecha_metadata.source else "",
             "direction": get_text_direction_with_lang(pecha_metadata.language),
             "completestatus": "done",
         }
-        return self.required_metadata
+
+        return source_metadata, target_metadata
 
     def set_metadata_to_json(self):
         """
         Set extracted metadata to json format
         """
-        self.extract_metadata()
-        self.book.append(self.required_metadata)
+        source_metadata, target_metadata = self.extract_metadata()
+        self.source_book.append(source_metadata)
+        self.target_book.append(target_metadata)
 
     def get_category(self, category_name: str):
         """
@@ -271,9 +281,12 @@ class CommentarySerializer:
         self.set_metadata_to_json()
         self.set_category_to_json(category_name)
         formatted_sapche_ann = self.format_sapche_anns()
-        self.book[0]["content"] = formatted_sapche_ann
+
+        self.source_book[0]["content"] = {}
+        self.target_book[0]["content"] = formatted_sapche_ann
+
         serialized_json = {
-            "source": {"categories": self.source_category, "book": []},
-            "target": {"categories": self.target_category, "book": self.book},
+            "source": {"categories": self.source_category, "book": self.source_book},
+            "target": {"categories": self.target_category, "book": self.target_book},
         }
         return serialized_json
