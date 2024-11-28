@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from pecha_org_tools.enums import TextType  # noqa
+from pecha_org_tools.enums import TextType
 from pecha_org_tools.extract import CategoryExtractor
 
 from openpecha.pecha import Pecha
