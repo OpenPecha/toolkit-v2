@@ -42,7 +42,7 @@ class CommentarySerializer:
 
         target_metadata = {
             "title": target_title,
-            "language": pecha_metadata.language,
+            "language": pecha_metadata.language.value,
             "versionSource": pecha_metadata.source if pecha_metadata.source else "",
             "direction": get_text_direction_with_lang(pecha_metadata.language),
             "completestatus": "done",
