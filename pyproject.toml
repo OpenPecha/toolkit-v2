@@ -29,7 +29,8 @@ dependencies = [
   "subprocess.run == 0.0.8",
   "python-docx >= 1.1.2",
   "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
-  "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git"
+  "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
+  "pecha_org_tools @ git+https://github.com/OpenPecha/pecha_org_tools.git"
 
 ]
 
