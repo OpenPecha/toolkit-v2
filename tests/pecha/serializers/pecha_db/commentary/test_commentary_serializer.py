@@ -8,7 +8,7 @@ def test_commentary_serializer():
     pecha_path = DATA_DIR / "IC3797777"
 
     serializer = CommentarySerializer()
-    formatted_sapche_anns = serializer.serialize(pecha_path, title="test")
+    formatted_sapche_anns = serializer.serialize(pecha_path, "རྡོ་རྗེ་གཅོད་པ།")
     expected_formatted_sapche_anns = {
         "མདོའི་ལུས་ཀྱི་འགྲེལ་པ།": {
             "data": [],
@@ -29,3 +29,6 @@ def test_commentary_serializer():
         },
     }
     assert formatted_sapche_anns == expected_formatted_sapche_anns
+
+
+test_commentary_serializer()

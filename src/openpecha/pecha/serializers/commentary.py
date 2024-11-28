@@ -11,7 +11,8 @@ from openpecha.utils import get_text_direction_with_lang
 
 class CommentarySerializer:
     def __init__(self):
-        self.category = []
+        self.source_category = {}
+        self.target_category = {}
         self.book = []
         self.book_content = {}
         self.required_metadata = {}
@@ -47,19 +48,57 @@ class CommentarySerializer:
         self.extract_metadata()
         self.book.append(self.required_metadata)
 
-    def get_category(self):
+    def get_category(self, category_name: str):
         """
         Input: title: Title of the pecha commentary which will be used to get the category format
         Process: Get the category format from the pecha.org categorizer package
         """
-        categorizer = CategoryExtractor()  # noqa
-        pass
+        assert self.pecha is not None, "Pecha object is not set"
 
-    def set_category_to_json(self):
+        if isinstance(self.pecha.metadata.title, dict):
+            bo_title = self.pecha.metadata.title.get("bo", "")
+            en_title = self.pecha.metadata.title.get("en", "")
+
+        elif isinstance(self.pecha.metadata.title, list):
+            bo_title = self.pecha.metadata.title[0]
+            en_title = self.pecha.metadata.title[1]
+
+        else:
+            bo_title = self.pecha.metadata.title
+            en_title = self.pecha.metadata.title
+
+        heDesc = self.pecha.metadata.source_metadata.get("heDesc", "")
+        heShortDesc = self.pecha.metadata.source_metadata.get("heShortDesc", "")
+
+        enDesc = self.pecha.metadata.source_metadata.get("enDesc", "")
+        enShortDesc = self.pecha.metadata.source_metadata.get("enShortDesc", "")
+
+        pecha_metadata = {
+            "bo": {
+                "title": bo_title,
+                "heDesc": heDesc,
+                "heShortDesc": heShortDesc,
+            },
+            "en": {
+                "title": en_title,
+                "enDesc": enDesc,
+                "enShortDesc": enShortDesc,
+            },
+        }
+
+        categorizer = CategoryExtractor()
+        category_json = categorizer.get_category(
+            category_name, pecha_metadata, TextType.COMMENTARY
+        )
+        return category_json
+
+    def set_category_to_json(self, category_name: str):
         """
         Set the category format to self.category attribute
         """
-        self.get_category()
+        category_json = self.get_category(category_name)
+        self.source_category = category_json["en"]
+        self.target_category = category_json["bo"]
         pass
 
     def get_sapche_anns(self):
@@ -222,7 +261,7 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def serialize(self, pecha_path: Path, title: str):
+    def serialize(self, pecha_path: Path, category_name: str):
         """
         Serialize the commentary pecha to json format
         """
@@ -230,6 +269,11 @@ class CommentarySerializer:
         self.pecha = Pecha.from_path(pecha_path)
 
         self.set_metadata_to_json()
-        self.set_category_to_json()
+        self.set_category_to_json(category_name)
         formatted_sapche_ann = self.format_sapche_anns()
-        return formatted_sapche_ann
+        self.book[0]["content"] = formatted_sapche_ann
+        serialized_json = {
+            "source": {"categories": self.source_category, "book": []},
+            "target": {"categories": self.target_category, "book": self.book},
+        }
+        return serialized_json
