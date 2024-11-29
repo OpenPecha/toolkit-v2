@@ -73,7 +73,7 @@ def test_parser_on_commentary_text():
 
 def test_parser_on_commentary_with_sapche():
     data = Path(__file__).parent / "data"
-    input = data / "commentary_with_sapche/རྡོ་རྗེ་གཅོད་པ་commentary.docx"
+    input = data / "commentary_with_sapche/རྡོ་རྗེ་གཅོད་པ་_commentary.docx"
     metadata = read_json(data / "commentary_with_sapche/metadata.json")
 
     parser = GoogleDocParser(
@@ -83,11 +83,11 @@ def test_parser_on_commentary_with_sapche():
     output_path.mkdir(parents=True, exist_ok=True)
     parser.parse(input, metadata, output_path)
     expected_sapche_anns = [
-        {"Sapche": {"start": 101, "end": 123}},
-        {"Sapche": {"start": 124, "end": 165}, "sapche_number": "1.1."},
-        {"Sapche": {"start": 251, "end": 268}},
-        {"Sapche": {"start": 269, "end": 309}, "sapche_number": "2.1."},
-        {"Sapche": {"start": 474, "end": 552}},
+        {"Sapche": {"start": 102, "end": 124}, "sapche_number": "1."},
+        {"Sapche": {"start": 126, "end": 166}, "sapche_number": "1.1."},
+        {"Sapche": {"start": 252, "end": 283}, "sapche_number": "1.2."},
+        {"Sapche": {"start": 541, "end": 558}, "sapche_number": "2."},
+        {"Sapche": {"start": 560, "end": 560}, "sapche_number": "2.1."},
     ]
 
     assert parser.sapche_anns == expected_sapche_anns
