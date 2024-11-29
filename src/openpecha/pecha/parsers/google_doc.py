@@ -245,7 +245,7 @@ class GoogleDocParser(BaseParser):
         sapche_anns: List[Dict[str, Any]] = []
         for doc_style in doc["styles"]:
             for idx in range(len(doc_style["texts"])):
-                if doc_style["styles"][idx].color.rgb == RGBColor(0xFF, 0x00, 0xFF):
+                if doc_style["styles"][idx].color.rgb == RGBColor(0xFF, 0x00, 0x00):
                     match = re.match(r"([\d\.]+)\s", doc_style["texts"][idx])
                     if match:
                         # Extract sapche number and store the char length to update the previous ann spans
@@ -263,17 +263,18 @@ class GoogleDocParser(BaseParser):
                                 "sapche_number": sapche_number,
                             }
                         )
-                    else:
-                        start = char_count + inner_char_count
-                        end = start + len(doc_style["texts"][idx])
-                        sapche_anns.append(
-                            {
-                                LayerEnum.sapche.value: {
-                                    "start": start,
-                                    "end": end,
-                                }
-                            }
-                        )
+                    # If the sapche number is not needed, use the following code in future
+                    # else:
+                    #     start = char_count + inner_char_count
+                    #     end = start + len(doc_style["texts"][idx])
+                    #     sapche_anns.append(
+                    #         {
+                    #             LayerEnum.sapche.value: {
+                    #                 "start": start,
+                    #                 "end": end,
+                    #             }
+                    #         }
+                    #     )
                 inner_char_count += len(doc_style["texts"][idx])
             inner_char_count += 1  # for newline
 
