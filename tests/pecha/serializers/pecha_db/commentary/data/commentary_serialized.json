@@ -19,7 +19,12 @@
       {
         "name": "Vajra Cutter",
         "enDesc": "",
-        "enShortDesc": ""
+        "enShortDesc": "",
+        "base_text_titles": [
+          "Diamond Cutter Sutra"
+        ],
+        "base_text_mapping": "many_to_one",
+        "link": "Commentary"
       }
     ],
     "book": [
@@ -53,7 +58,12 @@
       {
         "name": "རྡོ་རྗེ་གཅོད་པ།",
         "heDesc": "",
-        "heShortDesc": ""
+        "heShortDesc": "",
+        "base_text_titles": [
+          "རྡོ་རྗེ་གཅོད་པ།"
+        ],
+        "base_text_mapping": "many_to_one",
+        "link": "Commentary"
       }
     ],
     "book": [

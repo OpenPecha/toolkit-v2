@@ -20,6 +20,8 @@ class CommentarySerializer:
         self.meaning_segment_anns = []
         self.formatted_sapche_anns = {}
 
+        self.bo_root_title: Union[str, None] = None
+        self.en_root_title: Union[str, None] = None
         self.pecha_path: Union[Path, None] = None
         self.pecha: Union[Pecha, None] = None
 
@@ -102,14 +104,36 @@ class CommentarySerializer:
         )
         return category_json
 
+    def modify_category(self, category_json: Dict[str, Any]):
+        """
+        Modify the category format to the required format for pecha.org commentary
+        """
+        last_bo_category = category_json["bo"][-1]
+        last_en_category = category_json["en"][-1]
+
+        last_bo_category["base_text_titles"] = [self.bo_root_title]
+        last_en_category["base_text_titles"] = [self.en_root_title]
+
+        last_bo_category["base_text_mapping"] = "many_to_one"
+        last_en_category["base_text_mapping"] = "many_to_one"
+
+        last_bo_category["link"] = "Commentary"
+        last_en_category["link"] = "Commentary"
+
+        category_json["bo"][-1] = last_bo_category
+        category_json["en"][-1] = last_en_category
+
+        return category_json
+
     def set_category_to_json(self, category_name: str):
         """
         Set the category format to self.category attribute
         """
         category_json = self.get_category(category_name)
+        category_json = self.modify_category(category_json)
+
         self.source_category = category_json["en"]
         self.target_category = category_json["bo"]
-        pass
 
     def get_sapche_anns(self):
         """
@@ -271,10 +295,19 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def serialize(self, pecha_path: Path, category_name: str):
+    def serialize(
+        self,
+        pecha_path: Path,
+        category_name: str,
+        bo_root_title: str,
+        en_root_title: str,
+    ):
         """
         Serialize the commentary pecha to json format
         """
+        self.bo_root_title = bo_root_title
+        self.en_root_title = en_root_title
+
         self.pecha_path = pecha_path
         self.pecha = Pecha.from_path(pecha_path)
 
