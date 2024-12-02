@@ -35,6 +35,3 @@ def test_commentary_serializer():
 
         expected_serialized_json = read_json(DATA_DIR / "commentary_serialized.json")
         assert serialized_json == expected_serialized_json
-
-
-test_commentary_serializer()
