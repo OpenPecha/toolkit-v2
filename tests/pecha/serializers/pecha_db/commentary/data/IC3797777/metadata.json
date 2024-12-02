@@ -1,14 +1,21 @@
 {
-  "id": "IC3797777",
-  "title": "Dummy Title",
-  "author": "Dummy Author",
-  "imported": "2024-11-21T15:37:01.183088",
-  "source": "Dummy Source",
+  "id": "I15BEA1DE",
+  "title": {
+    "bo": "རྡོ་རྗེ་གཅོད་པ།",
+    "en": "Vajra Cutter"
+  },
+  "author": "སྟོན་པ་བཅོམ་ལྡན་འདས།",
+  "imported": "2024-11-28T10:42:25.426868",
+  "source": "https://library.bdrc.io/show/bdr:WA1KG12670?tabs=bdr:MW3JT13747,bdr:W3JT13747",
   "toolkit_version": "0.0.1",
   "parser": "GoogleDocParser",
   "initial_creation_type": "ebook",
   "language": "bo",
   "source_metadata": {
+    "heDesc": "",
+    "heShortDesc": "",
+    "enDesc": "",
+    "enShortDesc": "",
     "root_path": "opf_id/layers/basename/layer_file.json"
   },
   "bases": [],

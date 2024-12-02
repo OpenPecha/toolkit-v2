@@ -1,0 +1,88 @@
+{
+  "source": {
+    "categories": [
+      {
+        "name": "The Buddha's Teachings",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Vajra Cutter",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Commentaries",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Vajra Cutter",
+        "enDesc": "",
+        "enShortDesc": ""
+      }
+    ],
+    "book": [
+      {
+        "title": "Vajra Cutter",
+        "language": "en",
+        "versionSource": "https://library.bdrc.io/show/bdr:WA1KG12670?tabs=bdr:MW3JT13747,bdr:W3JT13747",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": {}
+      }
+    ]
+  },
+  "target": {
+    "categories": [
+      {
+        "name": "སངས་རྒྱས་ཀྱི་བཀའ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "འགྲེལ་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      }
+    ],
+    "book": [
+      {
+        "title": "རྡོ་རྗེ་གཅོད་པ།",
+        "language": "bo",
+        "versionSource": "https://library.bdrc.io/show/bdr:WA1KG12670?tabs=bdr:MW3JT13747,bdr:W3JT13747",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": {
+          "མདོའི་ལུས་ཀྱི་འགྲེལ་པ།": {
+            "data": [],
+            "སངས་རྒྱས་ཀྱི་གདུང་རྒྱུན་མི་འཆད་པ་བསྟན་པ།": {
+              "data": [
+                "<1><1>རྒྱ་གར་སྐད་དུ། །ཨཱརྱ་བྷ་ག་བ་ཏཱི་པྲཛྙཱ་པཱ་ར་མི་ཏཱ་བཛྲ་ཙྪེ་དི་ཀཱ་ཡཱཿསཔྟ་དཱརྠ་ཊཱི་ཀཱ།"
+              ]
+            }
+          },
+          "ཚིག་གི་དོན་བཤད་པ།": {
+            "data": [],
+            "སངས་རྒྱས་ཀྱི་གདུང་རྒྱུན་མི་འཆད་པ་བསྟན་པ།": {
+              "data": [
+                "ཚིག་གི་དོན་བཤད་པ།\nསངས་རྒྱས་ཀྱི་གདུང་རྒྱུན་མི་འཆད་པ་བསྟན་པ།",
+                "མཚུངས་མེད་སངས་རྒྱས་ཆོས་རྣམས་སྐྱེད་མཛད་ལ། །\nགང་ཞིག་ཆོས་དབྱིངས་གསོ་བའི་མ་མ་སྟེ། །\nདབྱེ་དཀའི་རྡོ་རྗེ་གཞན་དོན་གྲུབ་གང་ཡིན། །\nགང་ཞིག་བཟུང་བས་འཕགས་ཀུན་སྐྱེད་པའམ་ཡིན། །"
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }
+}

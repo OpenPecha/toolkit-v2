@@ -1,31 +1,35 @@
 from pathlib import Path
+from unittest.mock import patch
 
 from openpecha.pecha.serializers.commentary import CommentarySerializer
+from openpecha.utils import read_json
 
 
 def test_commentary_serializer():
     DATA_DIR = Path(__file__).parent / "data"
     pecha_path = DATA_DIR / "IC3797777"
 
-    serializer = CommentarySerializer()
-    formatted_sapche_anns = serializer.serialize(pecha_path, title="test")
-    expected_formatted_sapche_anns = {
-        "མདོའི་ལུས་ཀྱི་འགྲེལ་པ།": {
-            "data": [],
-            "སངས་རྒྱས་ཀྱི་གདུང་རྒྱུན་མི་འཆད་པ་བསྟན་པ།": {
-                "data": [
-                    "<1><1>རྒྱ་གར་སྐད་དུ། །ཨཱརྱ་བྷ་ག་བ་ཏཱི་པྲཛྙཱ་པཱ་ར་མི་ཏཱ་བཛྲ་ཙྪེ་དི་ཀཱ་ཡཱཿསཔྟ་དཱརྠ་ཊཱི་ཀཱ།"
-                ]
-            },
-        },
-        "ཚིག་གི་དོན་བཤད་པ།": {
-            "data": [],
-            "སངས་རྒྱས་ཀྱི་གདུང་རྒྱུན་མི་འཆད་པ་བསྟན་པ།": {
-                "data": [
-                    "ཚིག་གི་དོན་བཤད་པ།\nསངས་རྒྱས་ཀྱི་གདུང་རྒྱུན་མི་འཆད་པ་བསྟན་པ།",
-                    "མཚུངས་མེད་སངས་རྒྱས་ཆོས་རྣམས་སྐྱེད་མཛད་ལ། །\nགང་ཞིག་ཆོས་དབྱིངས་གསོ་བའི་མ་མ་སྟེ། །\nདབྱེ་དཀའི་རྡོ་རྗེ་གཞན་དོན་གྲུབ་གང་ཡིན། །\nགང་ཞིག་བཟུང་བས་འཕགས་ཀུན་སྐྱེད་པའམ་ཡིན། །",
-                ]
-            },
-        },
-    }
-    assert formatted_sapche_anns == expected_formatted_sapche_anns
+    # Patch the `get_category` method in `CategoryExtractor` to return a custom value
+    with patch(
+        "pecha_org_tools.extract.CategoryExtractor.get_category"
+    ) as mock_get_category:
+        mock_get_category.return_value = {
+            "bo": [
+                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+            ],
+            "en": [
+                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+            ],
+        }
+
+        serializer = CommentarySerializer()
+        serialized_json = serializer.serialize(pecha_path, "རྡོ་རྗེ་གཅོད་པ།")
+
+        expected_serialized_json = read_json(DATA_DIR / "commentary_serialized.json")
+        assert serialized_json == expected_serialized_json
