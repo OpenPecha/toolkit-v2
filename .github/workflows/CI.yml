@@ -31,6 +31,7 @@ jobs:
     - name: Test with pytest
       env:
         GITHUB_TOKEN: "dummy value"
+        ANTHROPIC_API_KEY: "dummy value"
       run: PYTHONPATH=src pytest
 
     - name: Test Coverage
