@@ -37,4 +37,5 @@ jobs:
     - name: Test Coverage
       env:
           GITHUB_TOKEN: "dummy value"
+          ANTHROPIC_API_KEY: "dummy value"
       run: PYTHONPATH=src pytest --cov openpecha
