@@ -12,7 +12,9 @@ def test_commentary_serializer():
     # Patch the `get_category` method in `CategoryExtractor` to return a custom value
     with patch(
         "pecha_org_tools.extract.CategoryExtractor.get_category"
-    ) as mock_get_category:
+    ) as mock_get_category, patch(
+        "openpecha.pecha.serializers.commentary.CommentarySerializer.get_en_content_translation"
+    ) as mock_get_en_content:
         mock_get_category.return_value = {
             "bo": [
                 {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
@@ -26,6 +28,16 @@ def test_commentary_serializer():
                 {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
                 {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
             ],
+        }
+        mock_get_en_content.return_value = {
+            "Commentary on the Structure of the Sutra": {
+                "data": [],
+                "The Unbroken Lineage of Buddha's Teachings": {"data": []},
+            },
+            "Explanation of the Meaning of Words": {
+                "data": [],
+                "The Unbroken Lineage of Buddha's Teachings": {"data": []},
+            },
         }
 
         serializer = CommentarySerializer()

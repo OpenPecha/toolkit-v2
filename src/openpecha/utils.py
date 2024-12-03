@@ -2,6 +2,12 @@ import json
 import os
 from contextlib import contextmanager
 
+import anthropic
+
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+if not ANTHROPIC_API_KEY:
+    raise ValueError("Please set ANTHROPIC_API_KEY environment variable")
+
 
 @contextmanager
 def cwd(path):
@@ -62,3 +68,39 @@ def get_text_direction_with_lang(lang):
     else:
         # Default to LTR if language is unknown
         return "ltr"
+
+
+def get_claude_response(prompt: str):
+    # Initialize the client with your API key
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    # Create a message request
+    response = client.messages.create(
+        model="claude-3-5-sonnet-20240620",  # Specify the model version
+        max_tokens=1000,  # Set maximum tokens for the response
+        temperature=0,  # Adjust randomness of responses (0.0 for deterministic)
+        system="You are a helpful assistant.",  # System message for context
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    # Print the response content
+    return response.content[0].text
+
+
+def translate_bo_to_en(text: str):
+    prompt = f"""You are a professional translator specializing in Tibetan to English translation. Follow these strict guidelines:
+
+    1. Translate the Tibetan text with the highest linguistic accuracy
+    2. Preserve the original meaning and nuanced context
+    3. Use clear, natural English that sounds like a native speaker
+    4. If the text contains cultural or idiomatic expressions, provide a culturally appropriate equivalent
+    5. Avoid literal word-for-word translations
+    6. Return ONLY the English translation, with no additional commentary or explanation
+
+    Source Tibetan Text:
+    {text}
+
+    Translation:"""
+
+    response = get_claude_response(prompt)
+    return response.strip()

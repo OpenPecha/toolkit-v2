@@ -27,14 +27,27 @@
         "link": "Commentary"
       }
     ],
-    "book": [
+    "books": [
       {
         "title": "Vajra Cutter",
         "language": "en",
         "versionSource": "https://library.bdrc.io/show/bdr:WA1KG12670?tabs=bdr:MW3JT13747,bdr:W3JT13747",
         "direction": "ltr",
         "completestatus": "done",
-        "content": {}
+        "content": {
+          "Commentary on the Structure of the Sutra": {
+            "data": [],
+            "The Unbroken Lineage of Buddha's Teachings": {
+              "data": []
+            }
+          },
+          "Explanation of the Meaning of Words": {
+            "data": [],
+            "The Unbroken Lineage of Buddha's Teachings": {
+              "data": []
+            }
+          }
+        }
       }
     ]
   },
@@ -66,7 +79,7 @@
         "link": "Commentary"
       }
     ],
-    "book": [
+    "books": [
       {
         "title": "རྡོ་རྗེ་གཅོད་པ།",
         "language": "bo",
