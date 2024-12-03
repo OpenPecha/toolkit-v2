@@ -6,7 +6,7 @@ from pecha_org_tools.extract import CategoryExtractor
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.utils import get_text_direction_with_lang
+from openpecha.utils import get_text_direction_with_lang, translate_bo_to_en
 
 
 class CommentarySerializer:
@@ -295,6 +295,33 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
+    def get_en_content_translation(self, bo_content: Dict[str, Any]):
+        """
+        Get the literal english translation of the bo content complex structure
+        Eg: Input:> bo_content = {
+                    "བོད་": {"data": ["བོད་ནི་འཛམ་གླིང་གི་ས་ཆ་མཐོ་ཤོས་དང་ཆེས་ངོམས་ཅན་གྱི་ས་ཁུལ་ཞིག་ཡིན།"], "བོད་མི་": {"གཞི་གྲངས་": []},
+                    "སྨོན་ལམ་རིག་ནུས།་": {"data": [],"མཉེན་ཆས་སྒྱུར་ཞིབ་": {"data": []}}
+                    }
+
+            Output:> en_content = {
+                "Tibet":{"data":[], "Tibetans": {"data":[]},
+                "Monlam AI": {"data":[],"Machine Translation": {"data":[]}}
+            }
+
+        1. The keys are translated, except for the "data" key which is same.
+        2. The values of the "data" key in output should be empty list.
+        """
+        en_content: Dict[str, Any] = {}
+        for key, value in bo_content.items():
+            if key == "data":
+                en_content[key] = []
+                continue
+
+            en_key = translate_bo_to_en(key)
+            en_content[en_key] = self.get_en_content_translation(value)
+
+        return en_content
+
     def serialize(
         self,
         pecha_path: Path,
@@ -315,8 +342,9 @@ class CommentarySerializer:
         self.set_category_to_json(category_name)
         formatted_sapche_ann = self.format_sapche_anns()
 
-        self.source_book[0]["content"] = {}
         self.target_book[0]["content"] = formatted_sapche_ann
+        en_content = self.get_en_content_translation(formatted_sapche_ann)
+        self.source_book[0]["content"] = en_content
 
         serialized_json = {
             "source": {"categories": self.source_category, "book": self.source_book},
