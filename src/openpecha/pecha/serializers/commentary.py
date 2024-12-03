@@ -347,7 +347,7 @@ class CommentarySerializer:
         self.source_book[0]["content"] = en_content
 
         serialized_json = {
-            "source": {"categories": self.source_category, "book": self.source_book},
-            "target": {"categories": self.target_category, "book": self.target_book},
+            "source": {"categories": self.source_category, "books": self.source_book},
+            "target": {"categories": self.target_category, "books": self.target_book},
         }
         return serialized_json
