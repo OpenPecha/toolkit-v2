@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Dict, List, Union
 
 import openpyxl
 from docx import Document
@@ -24,7 +24,8 @@ class GoogleDocTranslationParser(BaseParser):
         """
         self.root_idx_regex = r"^\d+\.\s"
         self.source_path = source_path
-        self.bo_data: Dict[str, Any] = {}
+        self.anns: List[Dict] = []
+        self.base = ""
         self.metadata: Dict = {}
 
     def get_docx_content(self, input):
@@ -51,7 +52,7 @@ class GoogleDocTranslationParser(BaseParser):
                 clean_text = text[len(root_idx) :].strip()
                 content[
                     str(root_idx_int)
-                ] = clean_text  # Store root_idx as string in bo_content
+                ] = clean_text  # Store root_idx as string in extracted_text
         return content
 
     def extract_metadata_from_xlsx(self, input: Path):
@@ -82,13 +83,12 @@ class GoogleDocTranslationParser(BaseParser):
         metadata["language"] = input_lang
         return metadata
 
-    def parse_bo(self, input: Path):
+    def extract_root_idx(self, input: Path):
 
-        bo_content = self.extract_root_idx_from_doc(input)
-        bo_base = "\n".join(bo_content.values())
-        anns = []
+        extracted_text = self.extract_root_idx_from_doc(input)
+        self.base = "\n".join(extracted_text.values())
         count = 0
-        for root_idx, base in bo_content.items():
+        for root_idx, base in extracted_text.items():
             curr_ann = {
                 LayerEnum.root_segment.value: {
                     "start": count,
@@ -96,14 +96,9 @@ class GoogleDocTranslationParser(BaseParser):
                 },
                 "root_idx_mapping": root_idx,
             }
-            anns.append(curr_ann)
+            self.anns.append(curr_ann)
             count += len(base) + 1
 
-        self.bo_data["base"] = bo_base
-        self.bo_data["anns"] = anns
-        pass
-
-    def parse_bo_translation(self):
         pass
 
     def parse(
@@ -133,20 +128,18 @@ class GoogleDocTranslationParser(BaseParser):
         else:
             self.metadata = metadata
 
-        if not self.source_path:
-            self.parse_bo(input)
-            self.create_pecha(self.bo_data, output_path)
-        else:
-            self.parse_bo_translation()
+        self.extract_root_idx(input)
+        self.create_pecha(output_path)
+
         pass
 
-    def create_pecha(self, data: Dict, output_path: Path) -> Pecha:
+    def create_pecha(self, output_path: Path) -> Pecha:
         pecha = Pecha.create(output_path)
-        basename = pecha.set_base(data["base"])
+        basename = pecha.set_base(self.base)
 
         # Add meaning_segment layer
         meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.root_segment)
-        for ann in data["anns"]:
+        for ann in self.anns:
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.root_segment)
         meaning_segment_layer.save()
 
