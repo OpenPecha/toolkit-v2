@@ -1,18 +1,31 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, Union
+from typing import Any, Dict, Union
 
 import openpyxl
 from docx import Document
 
 from openpecha.config import PECHAS_PATH
+from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import PechaMetaData
+from openpecha.pecha.parsers import BaseParser
 
 
-class GoogleDocTranslationParser:
-    def __init__(self):
+class GoogleDocTranslationParser(BaseParser):
+    def __init__(self, source_path: Union[str, None] = None):
+        """
+        source_path: Normaly, Tibetan file is the source i.e other lang files are translated based
+                     on the tibetan file.
+                     If tibetan lang file, set to None by default.
+                     Else: source_path should be in this format=> pecha id / layer name.
+
+        """
         self.root_idx_regex = r"^\d+\.\s"
-        self.bo_data = {}
+        self.source_path = source_path
+        self.bo_data: Dict[str, Any] = {}
+        self.metadata: Dict = {}
 
     def get_docx_content(self, input):
         docs = Document(input)
@@ -77,7 +90,10 @@ class GoogleDocTranslationParser:
         count = 0
         for root_idx, base in bo_content.items():
             curr_ann = {
-                "Span": {"start": count, "end": count + len(base)},
+                LayerEnum.root_segment.value: {
+                    "start": count,
+                    "end": count + len(base),
+                },
                 "root_idx_mapping": root_idx,
             }
             anns.append(curr_ann)
@@ -93,8 +109,7 @@ class GoogleDocTranslationParser:
     def parse(
         self,
         input: Path,
-        metadata: Path,
-        source_path: Union[str, None] = None,
+        metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
     ):
         """
@@ -112,10 +127,33 @@ class GoogleDocTranslationParser:
             - Create OPF
 
         """
-        metadata = self.extract_metadata_from_xlsx(metadata)
-        if not source_path:
+        if isinstance(metadata, Path):
+            self.metadata = self.extract_metadata_from_xlsx(metadata)
+
+        else:
+            self.metadata = metadata
+
+        if not self.source_path:
             self.parse_bo(input)
-            self.bo_data["metadata"] = metadata
+            self.create_pecha(self.bo_data, output_path)
         else:
             self.parse_bo_translation()
         pass
+
+    def create_pecha(self, data: Dict, output_path: Path) -> Pecha:
+        pecha = Pecha.create(output_path)
+        basename = pecha.set_base(data["base"])
+
+        # Add meaning_segment layer
+        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.root_segment)
+        for ann in data["anns"]:
+            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.root_segment)
+        meaning_segment_layer.save()
+
+        pecha.set_metadata(
+            PechaMetaData(
+                id=pecha.id, parser="GoogleDocTranslationParser", **self.metadata
+            )
+        )
+
+        return pecha
