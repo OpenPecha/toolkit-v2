@@ -1,8 +1,9 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Union
 
+import openpyxl
 from docx import Document
 
 from openpecha.config import PECHAS_PATH
@@ -24,6 +25,31 @@ class GoogleDocTranslationParser:
             docs_texts.pop()
         return docs_texts
 
+    def extract_metadata_from_xlsx(self, input: Path):
+        # Load the workbook
+        workbook = openpyxl.load_workbook(input)
+
+        # Access the first sheet
+        sheet = workbook.active
+
+        # Initialize a dictionary to store metadata
+        metadata = {}
+
+        # Extract entries from the sheet
+        for row in sheet.iter_rows(
+            min_row=2, max_row=sheet.max_row, min_col=1, max_col=3, values_only=True
+        ):
+            key, bo_value, en_value = row
+
+            # Ensure key exists before adding to metadata
+            if key:
+                metadata[key] = {
+                    "BO": bo_value.strip() if bo_value else None,
+                    "EN": en_value.strip() if en_value else None,
+                }
+
+        return metadata
+
     def parse_bo(self, input: Path):
         docx_texts = self.get_docx_content(input)
         for text in docx_texts:
@@ -42,7 +68,7 @@ class GoogleDocTranslationParser:
     def parse(
         self,
         input: Path,
-        metadata: Union[Dict[str, Any], Path],
+        metadata: Path,
         source_path: Union[str, None] = None,
         output_path: Path = PECHAS_PATH,
     ):
@@ -61,6 +87,9 @@ class GoogleDocTranslationParser:
             - Create OPF
 
         """
+        metadata = self.extract_metadata_from_xlsx(metadata)
         if not source_path:
             self.parse_bo(input)
+        else:
+            self.parse_bo_translation()
         pass
