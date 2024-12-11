@@ -25,6 +25,22 @@ class GoogleDocTranslationParser:
             docs_texts.pop()
         return docs_texts
 
+    def extract_root_idx_from_doc(self, input):
+        docx_texts = self.get_docx_content(input)
+
+        content = OrderedDict()
+        for text in docx_texts:
+            match = re.match(self.root_idx_regex, text)
+            if match:
+                root_idx = match.group(0).strip()
+                root_idx_int = int(root_idx.replace(".", ""))  # This is an integer
+
+                clean_text = text[len(root_idx) :].strip()
+                content[
+                    str(root_idx_int)
+                ] = clean_text  # Store root_idx as string in bo_content
+        return content
+
     def extract_metadata_from_xlsx(self, input: Path):
         # Load the workbook
         workbook = openpyxl.load_workbook(input)
@@ -54,20 +70,8 @@ class GoogleDocTranslationParser:
         return metadata
 
     def parse_bo(self, input: Path):
-        docx_texts = self.get_docx_content(input)
 
-        bo_content = OrderedDict()
-        for text in docx_texts:
-            match = re.match(self.root_idx_regex, text)
-            if match:
-                root_idx = match.group(0).strip()
-                root_idx_int = int(root_idx.replace(".", ""))  # This is an integer
-
-                clean_text = text[len(root_idx) :].strip()
-                bo_content[
-                    str(root_idx_int)
-                ] = clean_text  # Store root_idx as string in bo_content
-
+        bo_content = self.extract_root_idx_from_doc(input)
         bo_base = "\n".join(bo_content.values())
         anns = []
         count = 0
@@ -111,7 +115,7 @@ class GoogleDocTranslationParser:
         metadata = self.extract_metadata_from_xlsx(metadata)
         if not source_path:
             self.parse_bo(input)
-            self.bo_metadata = metadata
+            self.bo_data["metadata"] = metadata
         else:
             self.parse_bo_translation()
         pass
