@@ -57,4 +57,29 @@ def test_en_google_doc_translation_parser():
     assert parser.anns == expected_anns
 
 
-test_en_google_doc_translation_parser()
+def test_zh_google_doc_translation_parser():
+    en_docx_file = DATA_DIR / "zh" / "Chinese aligned Root Text Translation.docx"
+    en_metadata = DATA_DIR / "zh" / "Chinese Root text Translation Metadata.xlsx"
+
+    parser = GoogleDocTranslationParser()
+    pecha = parser.parse(
+        input=en_docx_file,
+        metadata=en_metadata,
+        output_path=OUTPUT_DIR,
+    )
+
+    assert isinstance(pecha, Pecha)
+
+    assert (
+        parser.base
+        == "梵文：Āryavajracchedikā-prajñāpāramitā-nāma-mahāyāna-sūtra 藏文：圣般若波罗蜜多金刚经大乘经\n礼敬一切佛菩萨。\n如是我闻，一时：佛在舍卫国祇树给孤独园，与大比丘众千二百五十人俱，并诸菩萨摩诃萨众多。"
+    )
+    expected_anns = [
+        {"Chinese_Segment": {"start": 0, "end": 72}, "root_idx_mapping": "1"},
+        {"Chinese_Segment": {"start": 73, "end": 81}, "root_idx_mapping": "2"},
+        {"Chinese_Segment": {"start": 82, "end": 125}, "root_idx_mapping": "3"},
+    ]
+    assert parser.anns == expected_anns
+
+
+test_zh_google_doc_translation_parser()
