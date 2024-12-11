@@ -2,7 +2,7 @@ import tempfile
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.google_doc import GoogleDocParser
+from openpecha.pecha.parsers.google_doc.commentary import GoogleDocParser
 from openpecha.utils import read_json
 
 
