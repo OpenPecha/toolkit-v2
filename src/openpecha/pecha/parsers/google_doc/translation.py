@@ -9,7 +9,7 @@ from docx import Document
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import PechaMetaData
+from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -143,7 +143,10 @@ class GoogleDocTranslationParser(BaseParser):
 
         pecha.set_metadata(
             PechaMetaData(
-                id=pecha.id, parser="GoogleDocTranslationParser", **self.metadata
+                id=pecha.id,
+                parser="GoogleDocTranslationParser",
+                **self.metadata,
+                initial_creation_type=InitialCreationType.ebook
             )
         )
 

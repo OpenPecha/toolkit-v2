@@ -3,6 +3,7 @@ from pathlib import Path
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
 
 DATA_DIR = Path(__file__).parent / "data"
+OUTPUT_DIR = Path(__file__).parent / "output"
 
 
 def test_translation():
@@ -16,7 +17,7 @@ def test_translation():
     parser.parse(
         input=bo_docx_file,
         metadata=bo_metadata,
-        output_path=(DATA_DIR / "output"),
+        output_path=OUTPUT_DIR,
     )
     pass
 
