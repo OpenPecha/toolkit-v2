@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Union
+from typing import Dict, Union
 
 import openpyxl
 from docx import Document
@@ -48,6 +48,9 @@ class GoogleDocTranslationParser:
                     "EN": en_value.strip() if en_value else None,
                 }
 
+        language: Dict = metadata.get("language", {})
+        input_lang = next(value for value in language.values() if value)
+        metadata["language"] = input_lang
         return metadata
 
     def parse_bo(self, input: Path):
