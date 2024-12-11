@@ -14,7 +14,7 @@ def test_bo_google_doc_translation_parser():
     parser = GoogleDocTranslationParser()
     with tempfile.TemporaryDirectory() as tmpdirname:
         OUTPUT_DIR = Path(tmpdirname)
-        pecha = parser.parse(
+        pecha, _ = parser.parse(
             input=bo_docx_file,
             metadata=bo_metadata,
             output_path=OUTPUT_DIR,
@@ -42,7 +42,7 @@ def test_en_google_doc_translation_parser():
     with tempfile.TemporaryDirectory() as tmpdirname:
         OUTPUT_DIR = Path(tmpdirname)
 
-        pecha = parser.parse(
+        pecha, _ = parser.parse(
             input=en_docx_file,
             metadata=en_metadata,
             output_path=OUTPUT_DIR,
@@ -70,7 +70,7 @@ def test_zh_google_doc_translation_parser():
     with tempfile.TemporaryDirectory() as tmpdirname:
         OUTPUT_DIR = Path(tmpdirname)
 
-        pecha = parser.parse(
+        pecha, _ = parser.parse(
             input=en_docx_file,
             metadata=en_metadata,
             output_path=OUTPUT_DIR,

@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 
 import openpyxl
 from docx import Document
@@ -143,16 +143,16 @@ class GoogleDocTranslationParser(BaseParser):
             self.metadata = metadata
 
         self.extract_root_idx(input)
-        pecha = self.create_pecha(output_path)
-        return pecha
+        pecha, layer_path = self.create_pecha(output_path)
+        return pecha, layer_path
 
-    def create_pecha(self, output_path: Path) -> Pecha:
+    def create_pecha(self, output_path: Path) -> Tuple[Pecha, Path]:
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
 
         layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
         # Add meaning_segment layer
-        meaning_segment_layer, _ = pecha.add_layer(basename, layer_enum)
+        meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
         for ann in self.anns:
             pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
@@ -166,4 +166,10 @@ class GoogleDocTranslationParser(BaseParser):
             )
         )
 
-        return pecha
+        # Get layer path relative to Pecha Path
+        index = layer_path.parts.index(
+            pecha.id
+        )  # Find where the key starts in the parts
+        relative_layer_path = Path(*layer_path.parts[index:])
+
+        return (pecha, relative_layer_path)
