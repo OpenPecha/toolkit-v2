@@ -88,7 +88,7 @@ class GoogleDocTranslationParser(BaseParser):
         count = 0
         for root_idx, base in extracted_text.items():
             curr_ann = {
-                LayerEnum.root_segment.value: {
+                LayerEnum.tibetan_segment.value: {
                     "start": count,
                     "end": count + len(base),
                 },
@@ -136,9 +136,9 @@ class GoogleDocTranslationParser(BaseParser):
         basename = pecha.set_base(self.base)
 
         # Add meaning_segment layer
-        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.root_segment)
+        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.tibetan_segment)
         for ann in self.anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.root_segment)
+            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.tibetan_segment)
         meaning_segment_layer.save()
 
         pecha.set_metadata(
