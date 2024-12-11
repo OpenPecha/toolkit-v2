@@ -30,8 +30,9 @@ class GoogleDocTranslationParser:
             match = re.match(self.root_idx_regex, text)
             if match:
                 root_idx = match.group(0).strip()
-                clean_text = text[len(root_idx) :].strip()
                 root_idx_int = int(root_idx.replace(".", ""))
+
+                clean_text = text[len(root_idx) :].strip()
                 self.bo_content[root_idx_int] = clean_text
         pass
 
