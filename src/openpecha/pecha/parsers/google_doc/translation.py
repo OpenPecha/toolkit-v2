@@ -56,16 +56,10 @@ class GoogleDocTranslationParser(BaseParser):
         return content
 
     def extract_metadata_from_xlsx(self, input: Path):
-        # Load the workbook
         workbook = openpyxl.load_workbook(input)
-
-        # Access the first sheet
         sheet = workbook.active
 
-        # Initialize a dictionary to store metadata
         metadata = {}
-
-        # Extract entries from the sheet
         for row in sheet.iter_rows(
             min_row=2, max_row=sheet.max_row, min_col=1, max_col=3, values_only=True
         ):
@@ -73,10 +67,14 @@ class GoogleDocTranslationParser(BaseParser):
 
             # Ensure key exists before adding to metadata
             if key:
-                metadata[key] = {
-                    "BO": bo_value.strip() if bo_value else None,
-                    "EN": en_value.strip() if en_value else None,
-                }
+                entry = {}
+                if bo_value:
+                    entry["BO"] = bo_value.strip()
+                if en_value:
+                    entry["EN"] = en_value.strip()
+
+                if entry:
+                    metadata[key] = entry
 
         language: Dict = metadata.get("language", {})
         input_lang = next(value for value in language.values() if value)
