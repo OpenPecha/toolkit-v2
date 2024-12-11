@@ -31,14 +31,15 @@ class GoogleDocTranslationParser(BaseParser):
     @staticmethod
     def get_layer_enum_with_lang(lang: str):
         if lang == Language.english.value:
-            layer_enum = LayerEnum.english_segment
+            return LayerEnum.english_segment
 
         if lang == Language.tibetan.value:
-            layer_enum = LayerEnum.tibetan_segment
+            return LayerEnum.tibetan_segment
 
-        else:
-            assert f"Language not properly given in metadata path: {str(input)}."
-        return layer_enum
+        if lang == Language.chinese.value:
+            return LayerEnum.chinese_segment
+
+        assert f"Language not properly given in metadata path: {str(input)}."
 
     def get_docx_content(self, input):
         docs = Document(input)
@@ -94,7 +95,6 @@ class GoogleDocTranslationParser(BaseParser):
         return metadata
 
     def extract_root_idx(self, input: Path):
-
         extracted_text = self.extract_root_idx_from_doc(input)
         self.base = "\n".join(extracted_text.values())
         count = 0
