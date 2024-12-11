@@ -13,7 +13,7 @@ from openpecha.pecha.parsers import BaseParser
 from openpecha.utils import read_json
 
 
-class GoogleDocParser(BaseParser):
+class GoogleDocCommentaryParser(BaseParser):
     def __init__(self, source_type: str, root_path: Optional[str] = None):
         self.source_type = source_type
         self.root_path = root_path

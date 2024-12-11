@@ -2,7 +2,7 @@ import tempfile
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.google_doc.commentary import GoogleDocParser
+from openpecha.pecha.parsers.google_doc.commentary import GoogleDocCommentaryParser
 from openpecha.utils import read_json
 
 
@@ -11,7 +11,7 @@ def test_parser_on_root_text():
     input = data / "root/dolma_21.txt"
     metadata = read_json(data / "root/metadata.json")
 
-    parser = GoogleDocParser(source_type="root")
+    parser = GoogleDocCommentaryParser(source_type="root")
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_path = Path(tmpdirname)
 
@@ -40,7 +40,7 @@ def test_parser_on_commentary_text():
     input = data / "commentary/dolma_21.docx"
     metadata = read_json(data / "commentary/metadata.json")
 
-    parser = GoogleDocParser(
+    parser = GoogleDocCommentaryParser(
         source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
     )
 
@@ -76,7 +76,7 @@ def test_parser_on_commentary_with_sapche():
     input = data / "commentary_with_sapche/རྡོ་རྗེ་གཅོད་པ་_commentary.docx"
     metadata = read_json(data / "commentary_with_sapche/metadata.json")
 
-    parser = GoogleDocParser(
+    parser = GoogleDocCommentaryParser(
         source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
     )
     output_path = Path(__file__).parent / "output"
