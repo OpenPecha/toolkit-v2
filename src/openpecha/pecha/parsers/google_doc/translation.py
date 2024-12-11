@@ -97,8 +97,6 @@ class GoogleDocTranslationParser(BaseParser):
             self.anns.append(curr_ann)
             count += len(base) + 1
 
-        pass
-
     def parse(
         self,
         input: Path,
@@ -127,9 +125,8 @@ class GoogleDocTranslationParser(BaseParser):
             self.metadata = metadata
 
         self.extract_root_idx(input)
-        self.create_pecha(output_path)
-
-        pass
+        pecha = self.create_pecha(output_path)
+        return pecha
 
     def create_pecha(self, output_path: Path) -> Pecha:
         pecha = Pecha.create(output_path)
