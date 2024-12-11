@@ -38,7 +38,9 @@ def test_en_google_doc_translation_parser():
     en_docx_file = DATA_DIR / "en" / "English aligned Root Text Translation.docx"
     en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
 
-    parser = GoogleDocTranslationParser()
+    parser = GoogleDocTranslationParser(
+        source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
+    )
     with tempfile.TemporaryDirectory() as tmpdirname:
         OUTPUT_DIR = Path(tmpdirname)
 
@@ -66,7 +68,9 @@ def test_zh_google_doc_translation_parser():
     en_docx_file = DATA_DIR / "zh" / "Chinese aligned Root Text Translation.docx"
     en_metadata = DATA_DIR / "zh" / "Chinese Root text Translation Metadata.xlsx"
 
-    parser = GoogleDocTranslationParser()
+    parser = GoogleDocTranslationParser(
+        source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
+    )
     with tempfile.TemporaryDirectory() as tmpdirname:
         OUTPUT_DIR = Path(tmpdirname)
 

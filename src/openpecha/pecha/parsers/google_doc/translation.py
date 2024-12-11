@@ -142,6 +142,9 @@ class GoogleDocTranslationParser(BaseParser):
         else:
             self.metadata = metadata
 
+        if self.source_path:
+            self.metadata["source_path"] = self.source_path
+
         self.extract_root_idx(input)
         pecha, layer_path = self.create_pecha(output_path)
         return pecha, layer_path
