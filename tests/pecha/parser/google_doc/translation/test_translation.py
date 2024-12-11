@@ -7,12 +7,9 @@ DATA_DIR = Path(__file__).parent / "data"
 OUTPUT_DIR = Path(__file__).parent / "output"
 
 
-def test_google_doc_translation_parser():
+def test_bo_google_doc_translation_parser():
     bo_docx_file = DATA_DIR / "bo" / "Tibetan Root text Translation .docx"
     bo_metadata = DATA_DIR / "bo" / "Tibetan Root text Translation Metadata.xlsx"
-
-    en_docx_file = DATA_DIR / "English aligned Root Text Translation.docx"  # noqa
-    zh_docx_file = DATA_DIR / "Chinese aligned Root Text Translation.docx"  # noqa
 
     parser = GoogleDocTranslationParser()
     pecha = parser.parse(
@@ -33,3 +30,31 @@ def test_google_doc_translation_parser():
         {"Tibetan_Segment": {"start": 211, "end": 470}, "root_idx_mapping": "3"},
     ]
     assert parser.anns == expected_anns
+
+
+def test_en_google_doc_translation_parser():
+    en_docx_file = DATA_DIR / "en" / "English aligned Root Text Translation.docx"
+    en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
+
+    parser = GoogleDocTranslationParser()
+    pecha = parser.parse(
+        input=en_docx_file,
+        metadata=en_metadata,
+        output_path=OUTPUT_DIR,
+    )
+
+    assert isinstance(pecha, Pecha)
+
+    assert (
+        parser.base
+        == 'In Sanskrit: Āryavajracchedikā-prajñāpāramitā-nāma-mahāyāna-sūtra In Tibetan: The Noble Mahāyāna Sūtra "The Perfection of Wisdom that Cuts Like a Diamond"\nHomage to all Buddhas and Bodhisattvas.\nThus have I heard at one time: The Blessed One was dwelling in Śrāvastī, in the Jeta Grove, in Anāthapiṇḍada\'s park, together with a great assembly of 1,250 monks and a great number of bodhisattva mahāsattvas.'
+    )
+    expected_anns = [
+        {"English_Segment": {"start": 0, "end": 154}, "root_idx_mapping": "1"},
+        {"English_Segment": {"start": 155, "end": 194}, "root_idx_mapping": "2"},
+        {"English_Segment": {"start": 195, "end": 404}, "root_idx_mapping": "3"},
+    ]
+    assert parser.anns == expected_anns
+
+
+test_en_google_doc_translation_parser()

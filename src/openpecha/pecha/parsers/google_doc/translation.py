@@ -9,7 +9,7 @@ from docx import Document
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
+from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -27,6 +27,18 @@ class GoogleDocTranslationParser(BaseParser):
         self.anns: List[Dict] = []
         self.base = ""
         self.metadata: Dict = {}
+
+    @staticmethod
+    def get_layer_enum_with_lang(lang: str):
+        if lang == Language.english.value:
+            layer_enum = LayerEnum.english_segment
+
+        if lang == Language.tibetan.value:
+            layer_enum = LayerEnum.tibetan_segment
+
+        else:
+            assert f"Language not properly given in metadata path: {str(input)}."
+        return layer_enum
 
     def get_docx_content(self, input):
         docs = Document(input)
@@ -86,9 +98,12 @@ class GoogleDocTranslationParser(BaseParser):
         extracted_text = self.extract_root_idx_from_doc(input)
         self.base = "\n".join(extracted_text.values())
         count = 0
+
+        layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
+
         for root_idx, base in extracted_text.items():
             curr_ann = {
-                LayerEnum.tibetan_segment.value: {
+                layer_enum.value: {
                     "start": count,
                     "end": count + len(base),
                 },
@@ -132,10 +147,11 @@ class GoogleDocTranslationParser(BaseParser):
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
 
+        layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
         # Add meaning_segment layer
-        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.tibetan_segment)
+        meaning_segment_layer, _ = pecha.add_layer(basename, layer_enum)
         for ann in self.anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.tibetan_segment)
+            pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
 
         pecha.set_metadata(
@@ -143,7 +159,7 @@ class GoogleDocTranslationParser(BaseParser):
                 id=pecha.id,
                 parser="GoogleDocTranslationParser",
                 **self.metadata,
-                initial_creation_type=InitialCreationType.ebook
+                initial_creation_type=InitialCreationType.ebook,
             )
         )
 
