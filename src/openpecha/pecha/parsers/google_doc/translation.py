@@ -148,6 +148,42 @@ class GoogleDocTranslationParser(BaseParser):
         pecha, layer_path = self.create_pecha(output_path)
         return pecha, layer_path
 
+    def update_alignment_in_source_pecha(self, target_pecha_layer: str):
+        """
+        Mapping should be updated on source pecha, when translation pecha is created.
+        Such that 'translation_alignments' in the pecha metadata.
+        Input: source_pecha_layer contains the path to source layer.
+
+        Eg: "I3717024E/layers/345F/Tibetan_Segment-4C61.json"
+                -I3717024E -> Pecha id,
+                -345F -> Basename
+                -Tibetan_Segment-4C61.json -> Layer Name
+        """
+        assert isinstance(self.source_path, str)
+        source_pecha_layer = Path(self.source_path)
+        pecha_id = source_pecha_layer.parts[0]
+
+        pecha = Pecha.from_id(pecha_id=pecha_id)
+        pecha_metadata = pecha.metadata
+
+        new_translation_alignment = {
+            "source": self.source_path,
+            "target": target_pecha_layer,
+        }
+
+        if "translation_alignments" in pecha_metadata.source_metadata:
+            pecha_metadata.source_metadata["translation_alignments"].append(
+                new_translation_alignment
+            )
+        else:
+            pecha_metadata.source_metadata["translation_alignments"] = [
+                new_translation_alignment
+            ]
+        pecha.set_metadata(pecha_metadata=pecha_metadata)
+
+        # Update remote pecha
+        pecha.publish()
+
     def create_pecha(self, output_path: Path) -> Tuple[Pecha, Path]:
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
@@ -171,10 +207,10 @@ class GoogleDocTranslationParser(BaseParser):
         ]
 
         # Get layer path relative to Pecha Path
-        index = layer_path.parts.index(
-            pecha.id
-        )  # Find where the key starts in the parts
+        index = layer_path.parts.index(pecha.id)
         relative_layer_path = Path(*layer_path.parts[index:])
+
+        self.update_alignment_in_source_pecha(str(relative_layer_path))
 
         # Set source path in translation alignment
         if self.source_path:
