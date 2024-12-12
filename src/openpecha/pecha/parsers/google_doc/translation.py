@@ -144,9 +144,6 @@ class GoogleDocTranslationParser(BaseParser):
         else:
             self.metadata = metadata
 
-        if self.source_path:
-            self.metadata["source_path"] = self.source_path
-
         self.extract_root_idx(input)
         pecha, layer_path = self.create_pecha(output_path)
         return pecha, layer_path
@@ -173,6 +170,18 @@ class GoogleDocTranslationParser(BaseParser):
             }
         ]
 
+        # Get layer path relative to Pecha Path
+        index = layer_path.parts.index(
+            pecha.id
+        )  # Find where the key starts in the parts
+        relative_layer_path = Path(*layer_path.parts[index:])
+
+        # Set source path in translation alignment
+        if self.source_path:
+            self.metadata["translation_alignments"] = [
+                {"source": self.source_path, "target": str(relative_layer_path)}
+            ]
+
         pecha.set_metadata(
             PechaMetaData(
                 id=pecha.id,
@@ -182,11 +191,5 @@ class GoogleDocTranslationParser(BaseParser):
                 initial_creation_type=InitialCreationType.google_docx,
             )
         )
-
-        # Get layer path relative to Pecha Path
-        index = layer_path.parts.index(
-            pecha.id
-        )  # Find where the key starts in the parts
-        relative_layer_path = Path(*layer_path.parts[index:])
 
         return (pecha, relative_layer_path)
