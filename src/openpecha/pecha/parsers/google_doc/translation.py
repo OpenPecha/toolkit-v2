@@ -167,7 +167,7 @@ class GoogleDocTranslationParser(BaseParser):
                 id=pecha.id,
                 parser="GoogleDocTranslationParser",
                 **self.metadata,
-                initial_creation_type=InitialCreationType.ebook,
+                initial_creation_type=InitialCreationType.google_docx,
             )
         )
 
