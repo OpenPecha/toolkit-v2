@@ -210,7 +210,8 @@ class GoogleDocTranslationParser(BaseParser):
         index = layer_path.parts.index(pecha.id)
         relative_layer_path = Path(*layer_path.parts[index:])
 
-        self.update_alignment_in_source_pecha(str(relative_layer_path))
+        if self.source_path:
+            self.update_alignment_in_source_pecha(str(relative_layer_path))
 
         # Set source path in translation alignment
         if self.source_path:
