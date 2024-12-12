@@ -17,6 +17,7 @@ class InitialCreationType(Enum):
     input = "input"
     tmx = "tmx"
     json = "json"
+    google_docx = "google_docx"
 
 
 class Language(Enum):

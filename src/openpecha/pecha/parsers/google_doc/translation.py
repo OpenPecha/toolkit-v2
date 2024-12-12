@@ -95,6 +95,8 @@ class GoogleDocTranslationParser(BaseParser):
         language: Dict = metadata.get("language", {})
         input_lang = next(value for value in language.values() if value)
         metadata["language"] = input_lang
+
+        metadata["title"] = metadata["title_short"]
         return metadata
 
     def extract_root_idx(self, input: Path):
@@ -142,37 +144,89 @@ class GoogleDocTranslationParser(BaseParser):
         else:
             self.metadata = metadata
 
-        if self.source_path:
-            self.metadata["source_path"] = self.source_path
-
         self.extract_root_idx(input)
         pecha, layer_path = self.create_pecha(output_path)
         return pecha, layer_path
+
+    def update_alignment_in_source_pecha(self, target_pecha_layer: str):
+        """
+        Mapping should be updated on source pecha, when translation pecha is created.
+        Such that 'translation_alignments' in the pecha metadata.
+        Input: source_pecha_layer contains the path to source layer.
+
+        Eg: "I3717024E/layers/345F/Tibetan_Segment-4C61.json"
+                -I3717024E -> Pecha id,
+                -345F -> Basename
+                -Tibetan_Segment-4C61.json -> Layer Name
+        """
+        assert isinstance(self.source_path, str)
+        source_pecha_layer = Path(self.source_path)
+        pecha_id = source_pecha_layer.parts[0]
+
+        pecha = Pecha.from_id(pecha_id=pecha_id)
+        pecha_metadata = pecha.metadata
+
+        new_translation_alignment = {
+            "source": self.source_path,
+            "target": target_pecha_layer,
+        }
+
+        if "translation_alignments" in pecha_metadata.source_metadata:
+            pecha_metadata.source_metadata["translation_alignments"].append(
+                new_translation_alignment
+            )
+        else:
+            pecha_metadata.source_metadata["translation_alignments"] = [
+                new_translation_alignment
+            ]
+        pecha.set_metadata(pecha_metadata=pecha_metadata)
+
+        # Update remote pecha
+        pecha.publish()
 
     def create_pecha(self, output_path: Path) -> Tuple[Pecha, Path]:
         pecha = Pecha.create(output_path)
         basename = pecha.set_base(self.base)
 
         layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
+
         # Add meaning_segment layer
         meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
         for ann in self.anns:
             pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
 
+        # set base metadata
+        bases = [
+            {
+                basename: {
+                    "source_metadata": {"total_segments": len(self.anns)},
+                    "base_file": f"{basename}.txt",
+                }
+            }
+        ]
+
+        # Get layer path relative to Pecha Path
+        index = layer_path.parts.index(pecha.id)
+        relative_layer_path = Path(*layer_path.parts[index:])
+
+        if self.source_path:
+            self.update_alignment_in_source_pecha(str(relative_layer_path))
+
+        # Set source path in translation alignment
+        if self.source_path:
+            self.metadata["translation_alignments"] = [
+                {"source": self.source_path, "target": str(relative_layer_path)}
+            ]
+
         pecha.set_metadata(
             PechaMetaData(
                 id=pecha.id,
                 parser="GoogleDocTranslationParser",
                 **self.metadata,
-                initial_creation_type=InitialCreationType.ebook,
+                bases=bases,
+                initial_creation_type=InitialCreationType.google_docx,
             )
         )
-
-        # Get layer path relative to Pecha Path
-        index = layer_path.parts.index(
-            pecha.id
-        )  # Find where the key starts in the parts
-        relative_layer_path = Path(*layer_path.parts[index:])
 
         return (pecha, relative_layer_path)
