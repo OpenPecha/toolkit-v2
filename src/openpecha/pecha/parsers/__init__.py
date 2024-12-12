@@ -17,7 +17,7 @@ class BaseParser(ABC):
         input: Any,
         metadata: Union[Dict, Path],
         output_path: Path = PECHAS_PATH,
-    ) -> Pecha:
+    ):
         pass
 
 
