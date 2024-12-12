@@ -95,6 +95,8 @@ class GoogleDocTranslationParser(BaseParser):
         language: Dict = metadata.get("language", {})
         input_lang = next(value for value in language.values() if value)
         metadata["language"] = input_lang
+
+        metadata["title"] = metadata["title_short"]
         return metadata
 
     def extract_root_idx(self, input: Path):
