@@ -156,17 +156,29 @@ class GoogleDocTranslationParser(BaseParser):
         basename = pecha.set_base(self.base)
 
         layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
+
         # Add meaning_segment layer
         meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
         for ann in self.anns:
             pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
 
+        # set base metadata
+        bases = [
+            {
+                basename: {
+                    "source_metadata": {"total_segments": len(self.anns)},
+                    "base_file": f"{basename}.txt",
+                }
+            }
+        ]
+
         pecha.set_metadata(
             PechaMetaData(
                 id=pecha.id,
                 parser="GoogleDocTranslationParser",
                 **self.metadata,
+                bases=bases,
                 initial_creation_type=InitialCreationType.google_docx,
             )
         )
