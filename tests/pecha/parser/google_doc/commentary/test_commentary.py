@@ -7,8 +7,8 @@ from openpecha.utils import read_json
 
 def test_parser_on_commentary():
     data = Path(__file__).parent / "data"
-    input = data / "commentary/རྡོ་རྗེ་གཅོད་པ་_commentary.docx"
-    metadata = read_json(data / "commentary/metadata.json")
+    input = data / "རྡོ་རྗེ་གཅོད་པ་_commentary.docx"
+    metadata = read_json(data / "metadata.json")
 
     parser = GoogleDocCommentaryParser(
         source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
