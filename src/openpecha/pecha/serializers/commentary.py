@@ -234,7 +234,15 @@ class CommentarySerializer:
                     }
                 current = current[key]["children"]
 
-        self.prepared_content = format_tree(formatted_sapche_anns)
+        assert self.pecha is not None, "Pecha object is not set"
+        assert self.pecha.metadata is not None, "Pecha metadata is not set"
+
+        self.prepared_content = {
+            self.pecha.metadata.title["bo"]: {
+                "data": [],
+                **format_tree(formatted_sapche_anns),
+            }
+        }
         return self.prepared_content
 
     @staticmethod
@@ -310,6 +318,9 @@ class CommentarySerializer:
 
         self.pecha_path = pecha_path
         self.pecha = Pecha.from_path(pecha_path)
+
+        assert self.pecha is not None, "Pecha object is not set"
+        assert self.pecha.metadata is not None, "Pecha metadata is not set"
 
         self.set_metadata_to_json()
         self.set_category_to_json(category_name)
