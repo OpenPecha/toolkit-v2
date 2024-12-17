@@ -29,9 +29,7 @@ def test_commentary_serializer():
         }
 
         serializer = CommentarySerializer()
-        serialized_json = serializer.serialize(
-            pecha_path, "རྡོ་རྗེ་གཅོད་པ།", "རྡོ་རྗེ་གཅོད་པ།", "Diamond Cutter Sutra"
-        )
+        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "commentary_serialized.json")
         assert serialized_json == expected_serialized_json

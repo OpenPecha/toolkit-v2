@@ -124,11 +124,14 @@ class CommentarySerializer:
 
         return category_json
 
-    def set_category_to_json(self, category_name: str):
+    def set_category_to_json(self):
         """
         Set the category format to self.category attribute
         """
-        category_json = self.get_category(category_name)
+        assert self.pecha is not None, "Pecha object is not set"
+
+        title = self.pecha.metadata.title["bo"]
+        category_json = self.get_category(title)
         category_json = self.modify_category(category_json)
 
         self.source_category = category_json["en"]
@@ -302,7 +305,7 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def serialize(self, pecha_path: Path, category_name: str, root_title: str):
+    def serialize(self, pecha_path: Path, root_title: str):
         """
         Serialize the commentary pecha to json format
         """
@@ -315,7 +318,7 @@ class CommentarySerializer:
         assert self.pecha.metadata is not None, "Pecha metadata is not set"
 
         self.set_metadata_to_json()
-        self.set_category_to_json(category_name)
+        self.set_category_to_json()
         formatted_sapche_ann = self.prepare_content()
 
         self.source_book[0]["content"] = {}
