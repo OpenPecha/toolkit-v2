@@ -18,7 +18,7 @@ class CommentarySerializer:
 
         self.sapche_anns = []
         self.meaning_segment_anns = []
-        self.formatted_sapche_anns = {}
+        self.prepared_content = {}
 
         self.bo_root_title: Union[str, None] = None
         self.en_root_title: Union[str, None] = None
@@ -190,9 +190,9 @@ class CommentarySerializer:
 
         return self.meaning_segment_anns
 
-    def format_sapche_anns(self):
+    def prepare_content(self):
         """
-        Format the sapche annotations to the required format(Tree like structure)
+        Prepare content in the sapche annotations to the required format(Tree like structure)
         """
 
         def format_tree(tree):
@@ -234,8 +234,8 @@ class CommentarySerializer:
                     }
                 current = current[key]["children"]
 
-        self.formatted_sapche_anns = format_tree(formatted_sapche_anns)
-        return self.formatted_sapche_anns
+        self.prepared_content = format_tree(formatted_sapche_anns)
+        return self.prepared_content
 
     @staticmethod
     def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
@@ -313,7 +313,7 @@ class CommentarySerializer:
 
         self.set_metadata_to_json()
         self.set_category_to_json(category_name)
-        formatted_sapche_ann = self.format_sapche_anns()
+        formatted_sapche_ann = self.prepare_content()
 
         self.source_book[0]["content"] = {}
         self.target_book[0]["content"] = formatted_sapche_ann
