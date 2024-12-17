@@ -3,7 +3,6 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
-import openpyxl
 from docx import Document
 
 from openpecha.config import PECHAS_PATH
@@ -11,6 +10,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
+from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
 class GoogleDocTranslationParser(BaseParser):
@@ -68,37 +68,6 @@ class GoogleDocTranslationParser(BaseParser):
                 ] = clean_text  # Store root_idx as string in extracted_text
         return content
 
-    def extract_metadata_from_xlsx(self, input: Path):
-        workbook = openpyxl.load_workbook(input)
-        sheet = workbook.active
-
-        metadata = {}
-        # Iterate through rows, now including ZH column
-        for row in sheet.iter_rows(
-            min_row=2, max_row=sheet.max_row, min_col=1, max_col=4, values_only=True
-        ):
-            key, bo_value, en_value, zh_value = row
-
-            # Ensure key exists before adding to metadata
-            if key:
-                entry = {}
-                if bo_value:
-                    entry["BO"] = bo_value.strip()
-                if en_value:
-                    entry["EN"] = en_value.strip()
-                if zh_value:
-                    entry["ZH"] = zh_value.strip()
-
-                if entry:
-                    metadata[key] = entry
-
-        language: Dict = metadata.get("language", {})
-        input_lang = next(value for value in language.values() if value)
-        metadata["language"] = input_lang
-
-        metadata["title"] = metadata["title_short"]
-        return metadata
-
     def extract_root_idx(self, input: Path):
         extracted_text = self.extract_root_idx_from_doc(input)
         self.base = "\n".join(extracted_text.values())
@@ -139,7 +108,7 @@ class GoogleDocTranslationParser(BaseParser):
 
         """
         if isinstance(metadata, Path):
-            self.metadata = self.extract_metadata_from_xlsx(metadata)
+            self.metadata = extract_metadata_from_xlsx(metadata)
 
         else:
             self.metadata = metadata
