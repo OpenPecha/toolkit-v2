@@ -20,8 +20,7 @@ class CommentarySerializer:
         self.meaning_segment_anns = []
         self.prepared_content = {}
 
-        self.bo_root_title: Union[str, None] = None
-        self.en_root_title: Union[str, None] = None
+        self.root_title: Union[str, None] = None
         self.pecha_path: Union[Path, None] = None
         self.pecha: Union[Pecha, None] = None
 
@@ -111,8 +110,8 @@ class CommentarySerializer:
         last_bo_category = category_json["bo"][-1]
         last_en_category = category_json["en"][-1]
 
-        last_bo_category["base_text_titles"] = [self.bo_root_title]
-        last_en_category["base_text_titles"] = [self.en_root_title]
+        last_bo_category["base_text_titles"] = [self.root_title]
+        last_en_category["base_text_titles"] = [self.root_title]
 
         last_bo_category["base_text_mapping"] = "many_to_one"
         last_en_category["base_text_mapping"] = "many_to_one"
@@ -303,18 +302,11 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def serialize(
-        self,
-        pecha_path: Path,
-        category_name: str,
-        bo_root_title: str,
-        en_root_title: str,
-    ):
+    def serialize(self, pecha_path: Path, category_name: str, root_title: str):
         """
         Serialize the commentary pecha to json format
         """
-        self.bo_root_title = bo_root_title
-        self.en_root_title = en_root_title
+        self.root_title = root_title
 
         self.pecha_path = pecha_path
         self.pecha = Pecha.from_path(pecha_path)
