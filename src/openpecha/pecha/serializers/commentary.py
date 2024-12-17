@@ -6,6 +6,7 @@ from pecha_org_tools.extract import CategoryExtractor
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import Language
 from openpecha.utils import get_text_direction_with_lang
 
 
@@ -321,8 +322,12 @@ class CommentarySerializer:
         self.set_category_to_json()
         formatted_sapche_ann = self.prepare_content()
 
-        self.source_book[0]["content"] = {}
-        self.target_book[0]["content"] = formatted_sapche_ann
+        if self.pecha.metadata.language == Language.tibetan:
+            self.source_book[0]["content"] = {}
+            self.target_book[0]["content"] = formatted_sapche_ann
+        else:
+            self.source_book[0]["content"] = formatted_sapche_ann
+            self.target_book[0]["content"] = {}
 
         serialized_json = {
             "source": {"categories": self.source_category, "book": self.source_book},
