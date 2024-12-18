@@ -242,9 +242,16 @@ class CommentarySerializer:
         assert self.pecha is not None, "Pecha object is not set"
         assert self.pecha.metadata is not None, "Pecha metadata is not set"
 
+        lang = self.pecha.metadata.language.value
+        lang_lowercase = lang.lower()
+        lang_uppercase = lang.upper()
+
+        book_title = self.pecha.metadata.title.get(
+            lang_lowercase
+        ) or self.pecha.metadata.title.get(lang_uppercase)
+
         self.prepared_content = {
-            self.pecha.metadata.title.get("bo")
-            or self.pecha.metadata.title.get("BO"): {
+            book_title: {
                 "data": [],
                 **format_tree(formatted_sapche_anns),
             }
@@ -323,13 +330,12 @@ class CommentarySerializer:
 
         self.set_metadata_to_json()
         self.set_category_to_json()
-        formatted_sapche_ann = self.prepare_content()
 
         if self.pecha.metadata.language == Language.tibetan:
             self.source_book[0]["content"] = {}
-            self.target_book[0]["content"] = formatted_sapche_ann
+            self.target_book[0]["content"] = self.prepare_content()
         else:
-            self.source_book[0]["content"] = formatted_sapche_ann
+            self.source_book[0]["content"] = self.prepare_content()
             self.target_book[0]["content"] = {}
 
         serialized_json = {
