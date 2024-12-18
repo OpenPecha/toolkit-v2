@@ -66,7 +66,7 @@ def test_en_commentary_serializer():
 
 
 def test_zh_commentary_serializer():
-    pecha_path = DATA_DIR / "zh/IFA9B3A61"
+    pecha_path = DATA_DIR / "zh/I8BCEC781"
 
     # Patch the `get_category` method in `CategoryExtractor` to return a custom value
     with patch(

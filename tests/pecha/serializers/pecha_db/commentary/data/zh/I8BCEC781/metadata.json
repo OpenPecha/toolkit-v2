@@ -1,5 +1,5 @@
 {
-  "id": "IFA9B3A61",
+  "id": "I8BCEC781",
   "title": {
     "BO": "རྡོ་རྗེ་གཅོད་པ་རྒྱ་ནག་གི་ཡིག་གི་འགྲེལ་པ་དེབ། ༡",
     "EN": "Vajra Cutter Chinese Commentary Book 1",
@@ -9,7 +9,7 @@
     "BO": "སྟོན་པ་བཅོམ་ལྡན་འདས།",
     "ZH": "丹增楚杜"
   },
-  "imported": "2024-12-18T10:17:33.235814",
+  "imported": "2024-12-18T14:38:24.241744",
   "source": null,
   "toolkit_version": "0.0.1",
   "parser": "GoogleDocCommentaryParser",
