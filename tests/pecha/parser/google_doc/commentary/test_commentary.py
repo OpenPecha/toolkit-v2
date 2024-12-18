@@ -61,10 +61,10 @@ def test_parser_on_zh_commentary():
         parser.parse(input, metadata, output_path)
         expected_sapche_anns = [
             {"Sapche": {"start": 251, "end": 253}, "sapche_number": "1."},
-            {"Sapche": {"start": 316, "end": 316}, "sapche_number": "2."},
+            {"Sapche": {"start": 316, "end": 322}, "sapche_number": "2."},
             {"Sapche": {"start": 324, "end": 330}, "sapche_number": "2.1"},
-            {"Sapche": {"start": 397, "end": 397}, "sapche_number": "2.1.1"},
-            {"Sapche": {"start": 731, "end": 731}, "sapche_number": "3."},
+            {"Sapche": {"start": 397, "end": 403}, "sapche_number": "2.1.1"},
+            {"Sapche": {"start": 731, "end": 737}, "sapche_number": "3."},
         ]
 
         assert parser.sapche_anns == expected_sapche_anns
