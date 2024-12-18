@@ -41,3 +41,25 @@ def test_parser_on_en_commentary():
     ]
 
     assert parser.sapche_anns == expected_sapche_anns
+
+
+def test_parser_on_zh_commentary():
+    data = Path(__file__).parent / "data"
+    input = data / "zh/Chinese aligned Commentary Text 1.docx"
+    metadata = data / "zh/Chinese Commentary text Metadata 1.xlsx"
+
+    parser = GoogleDocCommentaryParser(
+        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+    )
+    output_path = data / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
+    parser.parse(input, metadata, output_path)
+    expected_sapche_anns = [
+        {"Sapche": {"start": 251, "end": 253}, "sapche_number": "1."},
+        {"Sapche": {"start": 316, "end": 316}, "sapche_number": "2."},
+        {"Sapche": {"start": 324, "end": 330}, "sapche_number": "2.1"},
+        {"Sapche": {"start": 397, "end": 397}, "sapche_number": "2.1.1"},
+        {"Sapche": {"start": 731, "end": 731}, "sapche_number": "3."},
+    ]
+
+    assert parser.sapche_anns == expected_sapche_anns
