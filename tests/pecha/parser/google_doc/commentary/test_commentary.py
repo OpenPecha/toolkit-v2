@@ -24,4 +24,20 @@ def test_parser_on_bo_commentary():
     assert parser.sapche_anns == expected_sapche_anns
 
 
-test_parser_on_bo_commentary()
+def test_parser_on_en_commentary():
+    data = Path(__file__).parent / "data"
+    input = data / "en/English aligned Commentary Text 2.docx"
+    metadata = data / "en/English Commentary text Metadata 2.xlsx"
+
+    parser = GoogleDocCommentaryParser(
+        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+    )
+    output_path = data / "output"
+    output_path.mkdir(parents=True, exist_ok=True)
+    parser.parse(input, metadata, output_path)
+    expected_sapche_anns = [
+        {"Sapche": {"start": 124, "end": 164}, "sapche_number": "1."},
+        {"Sapche": {"start": 166, "end": 238}, "sapche_number": "1.1."},
+    ]
+
+    assert parser.sapche_anns == expected_sapche_anns
