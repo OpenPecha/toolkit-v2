@@ -24,6 +24,9 @@ def test_parser_on_bo_commentary():
     assert parser.sapche_anns == expected_sapche_anns
 
 
+test_parser_on_bo_commentary()
+
+
 def test_parser_on_en_commentary():
     data = Path(__file__).parent / "data"
     input = data / "en/English aligned Commentary Text 2.docx"

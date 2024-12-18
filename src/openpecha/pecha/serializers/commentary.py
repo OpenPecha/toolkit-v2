@@ -31,8 +31,8 @@ class CommentarySerializer:
         """
         assert self.pecha is not None, "Pecha object is not set"
         pecha_metadata = self.pecha.metadata
-        source_title = pecha_metadata.title["en"]
-        target_title = pecha_metadata.title["bo"]
+        source_title = pecha_metadata.title.get("en") or pecha_metadata.title.get("EN")
+        target_title = pecha_metadata.title.get("bo") or pecha_metadata.title.get("BO")
 
         source_metadata = {
             "title": source_title,
@@ -131,7 +131,9 @@ class CommentarySerializer:
         """
         assert self.pecha is not None, "Pecha object is not set"
 
-        title = self.pecha.metadata.title["bo"]
+        title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
+            "BO"
+        )
         category_json = self.get_category(title)
         category_json = self.modify_category(category_json)
 
@@ -241,7 +243,8 @@ class CommentarySerializer:
         assert self.pecha.metadata is not None, "Pecha metadata is not set"
 
         self.prepared_content = {
-            self.pecha.metadata.title["bo"]: {
+            self.pecha.metadata.title.get("bo")
+            or self.pecha.metadata.title.get("BO"): {
                 "data": [],
                 **format_tree(formatted_sapche_anns),
             }

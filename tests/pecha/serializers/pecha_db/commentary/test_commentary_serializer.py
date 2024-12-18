@@ -4,10 +4,11 @@ from unittest.mock import patch
 from openpecha.pecha.serializers.commentary import CommentarySerializer
 from openpecha.utils import read_json
 
+DATA_DIR = Path(__file__).parent / "data"
 
-def test_commentary_serializer():
-    DATA_DIR = Path(__file__).parent / "data"
-    pecha_path = DATA_DIR / "IC3797777"
+
+def test_bo_commentary_serializer():
+    pecha_path = DATA_DIR / "bo/I0EB9B939"
 
     # Patch the `get_category` method in `CategoryExtractor` to return a custom value
     with patch(
@@ -31,8 +32,5 @@ def test_commentary_serializer():
         serializer = CommentarySerializer()
         serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
 
-        expected_serialized_json = read_json(DATA_DIR / "commentary_serialized.json")
+        expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
-
-
-test_commentary_serializer()
