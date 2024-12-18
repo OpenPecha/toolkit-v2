@@ -1,0 +1,36 @@
+{
+  "id": "IFA9B3A61",
+  "title": {
+    "BO": "རྡོ་རྗེ་གཅོད་པ་རྒྱ་ནག་གི་ཡིག་གི་འགྲེལ་པ་དེབ། ༡",
+    "EN": "Vajra Cutter Chinese Commentary Book 1",
+    "ZH": "中文对齐测试"
+  },
+  "author": {
+    "BO": "སྟོན་པ་བཅོམ་ལྡན་འདས།",
+    "ZH": "丹增楚杜"
+  },
+  "imported": "2024-12-18T10:17:33.235814",
+  "source": null,
+  "toolkit_version": "0.0.1",
+  "parser": "GoogleDocCommentaryParser",
+  "initial_creation_type": "google_docx",
+  "language": "zh",
+  "source_metadata": {
+    "title_short": {
+      "BO": "རྡོ་རྗེ་གཅོད་པ་རྒྱ་ནག་གི་ཡིག་གི་འགྲེལ་པ་དེབ། ༡",
+      "EN": "Vajra Cutter Chinese Commentary Book 1",
+      "ZH": "中文对齐测试"
+    },
+    "is_version_of": {
+      "BO": "ཚོད་ལྟ་དཔེ་དེབ་"
+    },
+    "root_path": "opf_id/layers/basename/layer_file.json"
+  },
+  "bases": [],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}
