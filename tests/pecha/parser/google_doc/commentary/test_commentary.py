@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 
 from openpecha.pecha.parsers.google_doc.commentary import GoogleDocCommentaryParser
@@ -11,17 +12,19 @@ def test_parser_on_bo_commentary():
     parser = GoogleDocCommentaryParser(
         source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
     )
-    output_path = data / "output"
-    output_path.mkdir(parents=True, exist_ok=True)
-    parser.parse(input, metadata, output_path)
-    expected_sapche_anns = [
-        {"Sapche": {"start": 102, "end": 124}, "sapche_number": "1."},
-        {"Sapche": {"start": 126, "end": 166}, "sapche_number": "1.1."},
-        {"Sapche": {"start": 2122, "end": 2153}, "sapche_number": "1.2."},
-        {"Sapche": {"start": 2816, "end": 2856}, "sapche_number": "1.3."},
-    ]
 
-    assert parser.sapche_anns == expected_sapche_anns
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_path = Path(tmpdirname)
+        output_path.mkdir(parents=True, exist_ok=True)
+        parser.parse(input, metadata, output_path)
+        expected_sapche_anns = [
+            {"Sapche": {"start": 102, "end": 124}, "sapche_number": "1."},
+            {"Sapche": {"start": 126, "end": 166}, "sapche_number": "1.1."},
+            {"Sapche": {"start": 2122, "end": 2153}, "sapche_number": "1.2."},
+            {"Sapche": {"start": 2816, "end": 2856}, "sapche_number": "1.3."},
+        ]
+
+        assert parser.sapche_anns == expected_sapche_anns
 
 
 def test_parser_on_en_commentary():
@@ -32,15 +35,16 @@ def test_parser_on_en_commentary():
     parser = GoogleDocCommentaryParser(
         source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
     )
-    output_path = data / "output"
-    output_path.mkdir(parents=True, exist_ok=True)
-    parser.parse(input, metadata, output_path)
-    expected_sapche_anns = [
-        {"Sapche": {"start": 124, "end": 164}, "sapche_number": "1."},
-        {"Sapche": {"start": 166, "end": 238}, "sapche_number": "1.1."},
-    ]
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_path = Path(tmpdirname)
+        output_path.mkdir(parents=True, exist_ok=True)
+        parser.parse(input, metadata, output_path)
+        expected_sapche_anns = [
+            {"Sapche": {"start": 124, "end": 164}, "sapche_number": "1."},
+            {"Sapche": {"start": 166, "end": 238}, "sapche_number": "1.1."},
+        ]
 
-    assert parser.sapche_anns == expected_sapche_anns
+        assert parser.sapche_anns == expected_sapche_anns
 
 
 def test_parser_on_zh_commentary():
@@ -51,15 +55,16 @@ def test_parser_on_zh_commentary():
     parser = GoogleDocCommentaryParser(
         source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
     )
-    output_path = data / "output"
-    output_path.mkdir(parents=True, exist_ok=True)
-    parser.parse(input, metadata, output_path)
-    expected_sapche_anns = [
-        {"Sapche": {"start": 251, "end": 253}, "sapche_number": "1."},
-        {"Sapche": {"start": 316, "end": 316}, "sapche_number": "2."},
-        {"Sapche": {"start": 324, "end": 330}, "sapche_number": "2.1"},
-        {"Sapche": {"start": 397, "end": 397}, "sapche_number": "2.1.1"},
-        {"Sapche": {"start": 731, "end": 731}, "sapche_number": "3."},
-    ]
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        output_path = Path(tmpdirname)
+        output_path.mkdir(parents=True, exist_ok=True)
+        parser.parse(input, metadata, output_path)
+        expected_sapche_anns = [
+            {"Sapche": {"start": 251, "end": 253}, "sapche_number": "1."},
+            {"Sapche": {"start": 316, "end": 316}, "sapche_number": "2."},
+            {"Sapche": {"start": 324, "end": 330}, "sapche_number": "2.1"},
+            {"Sapche": {"start": 397, "end": 397}, "sapche_number": "2.1.1"},
+            {"Sapche": {"start": 731, "end": 731}, "sapche_number": "3."},
+        ]
 
-    assert parser.sapche_anns == expected_sapche_anns
+        assert parser.sapche_anns == expected_sapche_anns
