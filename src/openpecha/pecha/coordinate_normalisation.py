@@ -1,8 +1,8 @@
+import os
 from openpecha.pecha import StamPecha
-from pathlib import Path
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.utils import write_json
+
 
 
 class CoordinateNormalisation():
@@ -55,8 +55,8 @@ class CoordinateNormalisation():
             dict_data={
                 "segmentation_transfered": [
                     {
-                        "source": f"{self.source_pecha_path}/layers/{self.source_base_name}/{self.source_layer_name}",
-                        "transfered": f"{self.target_pecha_path}/layers/{self.target_base_name}/{self.source_layer_name}"
+                        "source": os.path.relpath(f"{self.source_pecha_path}/layers/{self.source_base_name}/{self.source_layer_name}"),
+                        "transfered": os.path.relpath(f"{self.target_pecha_path}/layers/{self.target_base_name}/{self.source_layer_name}")
                     }
                 ]
             }
@@ -177,8 +177,8 @@ class CoordinateNormalisation():
             dict_data={
                 "pecha_display_segment_alignments": [
                     {
-                        "pecha_display": segment_path.as_posix(), 
-                        "translation": f"{self.translation_pecha_id}/layers/{self.translation_base_name}/{self.translation_layer_name}" 
+                        "pecha_display": os.path.relpath(f"{self.target_pecha_id}/layers/{self.target_base_name}/{self.target_layer_name}"), 
+                        "translation": os.path.relpath(segment_path.as_posix()), 
                     }
                 ]
             }

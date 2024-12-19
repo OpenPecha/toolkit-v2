@@ -30,14 +30,10 @@ def test_coordinate_normalization():
         coordinate_normalisation.normalise_coordinate()
         target_metadata_update = mock_update_metadata.call_args_list[0][1]["dict_data"]
         translation_metadata_update = mock_update_metadata.call_args_list[-1][1]["dict_data"]
-        pecha_display_alignment_segment_layer_path = translation_metadata_update["pecha_display_segment_alignments"][0]["pecha_display"]
+        pecha_display_alignment_segment_layer_path = translation_metadata_update["pecha_display_segment_alignments"][0]["translation"]
         transfered_layer_path = target_metadata_update["segmentation_transfered"][0]["transfered"]
         assert Path(pecha_display_alignment_segment_layer_path).exists()
         assert Path(transfered_layer_path).exists()
         assert json.dumps(coordinate_normalisation.alignment_data) == json.dumps(expected_alignment_data)
         shutil.os.remove(Path(transfered_layer_path))
         shutil.os.remove(Path(pecha_display_alignment_segment_layer_path))
-
-
-test_coordinate_normalization()
-
