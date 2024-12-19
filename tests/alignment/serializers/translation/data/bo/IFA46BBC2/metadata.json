@@ -1,0 +1,35 @@
+{
+  "id": "IFA46BBC2",
+  "title": "Tibetan Root pecha display segmented",
+  "author": "test",
+  "imported": "2024-12-12T15:19:27.378145",
+  "source": null,
+  "toolkit_version": "0.0.1",
+  "parser": "GoogleDocTranslationParser",
+  "initial_creation_type": "google_docx",
+  "language": "bo",
+  "source_metadata": {
+    "segmentation_transfered": [
+      {
+        "source": "tests/pecha/coordinate_normalisation/data/IAEB27E9F/layers/275D/Tibetan_Segment-E855.json",
+        "transfered": "tests/pecha/coordinate_normalisation/data/IFA46BBC2/layers/4665/Tibetan_Segment-E855.json"
+      }
+    ]
+  },
+  "bases": [
+    {
+      "4665": {
+        "source_metadata": {
+          "total_segments": 29
+        },
+        "base_file": "4665.txt"
+      }
+    }
+  ],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}
