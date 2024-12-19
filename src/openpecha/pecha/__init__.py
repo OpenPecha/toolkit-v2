@@ -326,7 +326,7 @@ class Pecha:
             if not isinstance(ann_name, str):
                 raise ValueError("The annotation metadata key should be a string.")
 
-            if not isinstance(ann_value, (str, int, Dict)):
+            if not isinstance(ann_value, (str, int, List, Dict)):
                 raise ValueError(
                     "The annotation value should be either a string, int or a Span Dictionary."
                 )
