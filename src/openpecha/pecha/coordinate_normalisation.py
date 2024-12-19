@@ -30,11 +30,11 @@ class CoordinateNormalisation:
         """
         pecha = Pecha.from_path(pecha_path)
         pecha_metadata = pecha.metadata
-        dict_key = dict_data.keys()
+        dict_key = list(dict_data.keys())[0]
         if dict_key in pecha_metadata.source_metadata:
-            pecha_metadata.source_metadata[dict_key].append(dict_data.value())
+            pecha_metadata.source_metadata[dict_key].append(dict_data[dict_key])
         else:
-            pecha_metadata.source_metadata = dict_data
+            pecha_metadata.source_metadata[dict_key] = dict_data[dict_key]
         pecha.set_metadata(pecha_metadata=pecha_metadata)
 
         pecha.publish()
