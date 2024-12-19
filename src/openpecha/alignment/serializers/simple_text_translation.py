@@ -67,7 +67,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def set_content(self, root_opf_path: Path, translation_opf_path: Path):
+    def set_root_content(self, root_opf_path: Path):
         """
         Processes:
         1. Get the first txt file from root and translation opf
@@ -75,25 +75,26 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
         root_pecha = Pecha.from_path(root_opf_path)
-        translation_pecha = Pecha.from_path(translation_opf_path)
-
-        # Get one txt file from root and translation opf
         root_base_name = next(iter(root_pecha.bases))
-        translation_base_name = next(iter(translation_pecha.bases))
-
-        # Read meaning segments from root and translation opf
         root_segment_layer = root_pecha.layers[root_base_name][
             LayerEnum.meaning_segment
         ][0]
+        root_segment_texts = self.get_texts_from_layer(root_segment_layer)
+        self.root_json["books"][0]["content"] = [root_segment_texts]  # type: ignore
+
+    def set_translation_content(self, translation_opf_path: Path):
+        """
+        Processes:
+        1. Get the first txt file from root and translation opf
+        2. Read meaning layer from the base txt file from each opfs
+        3. Read segment texts and fill it to 'content' attribute in json formats
+        """
+        translation_pecha = Pecha.from_path(translation_opf_path)
+        translation_base_name = next(iter(translation_pecha.bases))
         translation_segment_layer = translation_pecha.layers[translation_base_name][
             LayerEnum.meaning_segment
         ][0]
-
-        root_segment_texts = self.get_texts_from_layer(root_segment_layer)
         translation_segment_texts = self.get_texts_from_layer(translation_segment_layer)
-
-        # Fill segments to json
-        self.root_json["books"][0]["content"] = [root_segment_texts]  # type: ignore
         self.translation_json["books"][0]["content"] = [  # type: ignore
             translation_segment_texts
         ]
@@ -107,7 +108,8 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         self.set_root_metadata(root_opf)
         self.set_translation_metadata(translation_opf)
 
-        self.set_content(root_opf, translation_opf)
+        self.set_root_content(root_opf)
+        self.set_translation_content(translation_opf)
 
         # Write json to file
         json_output_path = output_path / "alignment.json"
