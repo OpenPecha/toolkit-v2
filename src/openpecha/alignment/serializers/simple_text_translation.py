@@ -11,7 +11,7 @@ from openpecha.utils import get_text_direction_with_lang, write_json
 
 class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
     def __init__(self):
-        self.root_json_format = {
+        self.root_json = {
             "categories": [
                 {
                     "name": "བོད་སྐད་ལ་ཕབ་བསྒྱུར་བྱེད་པའི་ཚོད་ལྟ།",
@@ -21,7 +21,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             ],
             "books": [],
         }
-        self.translation_json_format = {
+        self.translation_json = {
             "categories": [
                 {"name": "Test Translation", "enDesc": "", "enShortDesc": ""}
             ],
@@ -30,7 +30,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
 
     def extract_metadata(self, pecha: Pecha):
         """
-        Extract metadata from opf
+        Extract required metadata from opf
         """
         text_lang = pecha.metadata.language.value
         text_direction = get_text_direction_with_lang(text_lang)
@@ -49,20 +49,12 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         }
 
     def set_root_metadata(self, root_opf_path: Path):
-        """
-        Extract only required metadata from root opf and set it to json format
-        """
         root_pecha = Pecha.from_path(root_opf_path)
-        self.root_json_format["books"].append(self.extract_metadata(root_pecha))
+        self.root_json["books"].append(self.extract_metadata(root_pecha))
 
     def set_translation_metadata(self, translation_opf_path: Path):
-        """
-        Extract only required metadata from translation opf and set it to json format
-        """
         translation_pecha = Pecha.from_path(translation_opf_path)
-        self.translation_json_format["books"].append(
-            self.extract_metadata(translation_pecha)
-        )
+        self.translation_json["books"].append(self.extract_metadata(translation_pecha))
 
     @staticmethod
     def get_texts_from_layer(layer: AnnotationStore):
@@ -101,8 +93,8 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         translation_segment_texts = self.get_texts_from_layer(translation_segment_layer)
 
         # Fill segments to json
-        self.root_json_format["books"][0]["content"] = [root_segment_texts]  # type: ignore
-        self.translation_json_format["books"][0]["content"] = [  # type: ignore
+        self.root_json["books"][0]["content"] = [root_segment_texts]  # type: ignore
+        self.translation_json["books"][0]["content"] = [  # type: ignore
             translation_segment_texts
         ]
 
@@ -121,8 +113,8 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         json_output_path = output_path / "alignment.json"
         _mkdir_if_not(output_path)
         json_output = {
-            "source": self.translation_json_format,
-            "target": self.root_json_format,
+            "source": self.translation_json,
+            "target": self.root_json,
         }
 
         write_json(json_output_path, json_output)
