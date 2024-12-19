@@ -48,7 +48,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             "completestatus": "done",
         }
 
-    def set_metadata_to_json(self, root_opf_path: Path, translation_opf_path: Path):
+    def set_metadata(self, root_opf_path: Path, translation_opf_path: Path):
         """
         Extract only required metadata from root and translation opf and set it to json format
         """
@@ -71,7 +71,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def fill_segments_to_json(self, root_opf_path: Path, translation_opf_path: Path):
+    def set_content(self, root_opf_path: Path, translation_opf_path: Path):
         """
         Processes:
         1. Get the first txt file from root and translation opf
@@ -108,8 +108,8 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         translation_opf: Path,
         output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
     ) -> Path:
-        self.set_metadata_to_json(root_opf, translation_opf)
-        self.fill_segments_to_json(root_opf, translation_opf)
+        self.set_metadata(root_opf, translation_opf)
+        self.set_content(root_opf, translation_opf)
 
         # Write json to file
         json_output_path = output_path / "alignment.json"
