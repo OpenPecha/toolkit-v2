@@ -1,0 +1,28 @@
+{
+  "id": "IAEB27E9F",
+  "title": "Tibetan Root native segmented",
+  "author": "test",
+  "imported": "2024-12-12T15:19:27.539672",
+  "source": null,
+  "toolkit_version": "0.0.1",
+  "parser": "GoogleDocTranslationParser",
+  "initial_creation_type": "google_docx",
+  "language": "bo",
+  "source_metadata": {},
+  "bases": [
+    {
+      "275D": {
+        "source_metadata": {
+          "total_segments": 19
+        },
+        "base_file": "275D.txt"
+      }
+    }
+  ],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}
