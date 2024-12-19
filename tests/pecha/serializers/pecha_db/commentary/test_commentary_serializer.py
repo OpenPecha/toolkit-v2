@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from openpecha.pecha.serializers.commentary import CommentarySerializer
-from openpecha.utils import read_json, write_json
+from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -12,9 +12,9 @@ def test_bo_commentary_serializer():
 
     # Patch the `get_category` method in `CategoryExtractor` to return a custom value
     with patch(
-        "pecha_org_tools.extract.CategoryExtractor.get_category"
+        "openpecha.pecha.serializers.commentary.CategoryExtractor.get_category"
     ) as mock_get_category, patch(
-        "pecha_org_tools.translation.get_en_content_translation"
+        "openpecha.pecha.serializers.commentary.get_en_content_translation"
     ) as mock_get_en_translation:
         mock_get_category.return_value = {
             "bo": [
@@ -46,7 +46,6 @@ def test_bo_commentary_serializer():
         serializer = CommentarySerializer()
         serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
 
-        write_json("bo_commentary_serialized.json", serialized_json)
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
@@ -56,9 +55,9 @@ def test_en_commentary_serializer():
 
     # Patch the `get_category` method in `CategoryExtractor` to return a custom value
     with patch(
-        "pecha_org_tools.extract.CategoryExtractor.get_category"
+        "openpecha.pecha.serializers.commentary.CategoryExtractor.get_category"
     ) as mock_get_category, patch(
-        "pecha_org_tools.translation.get_bo_content_translation"
+        "openpecha.pecha.serializers.commentary.get_en_content_translation"
     ) as mock_get_bo_translation:
         mock_get_category.return_value = {
             "bo": [
@@ -94,9 +93,9 @@ def test_zh_commentary_serializer():
 
     # Patch the `get_category` method in `CategoryExtractor` to return a custom value
     with patch(
-        "pecha_org_tools.extract.CategoryExtractor.get_category"
+        "openpecha.pecha.serializers.commentary.CategoryExtractor.get_category"
     ) as mock_get_category, patch(
-        "pecha_org_tools.translation.get_bo_content_translation"
+        "openpecha.pecha.serializers.commentary.get_en_content_translation"
     ) as mock_get_bo_translation:
         mock_get_category.return_value = {
             "bo": [
