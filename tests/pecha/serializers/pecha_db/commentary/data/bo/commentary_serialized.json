@@ -34,7 +34,23 @@
         "versionSource": "",
         "direction": "ltr",
         "completestatus": "done",
-        "content": {}
+        "content": {
+          "Vajra Cutter Tibetan Commentary Book 2": {
+            "data": [],
+            "Commentary on the Structure of the Sutra": {
+              "data": [],
+              "Demonstrating the Unbroken Lineage of the Buddha": {
+                "data": []
+              },
+              "Demonstrating the Characteristics of Diligent Application": {
+                "data": []
+              },
+              "Demonstrating the Basis of the Characteristics of Intense Application": {
+                "data": []
+              }
+            }
+          }
+        }
       }
     ]
   },
