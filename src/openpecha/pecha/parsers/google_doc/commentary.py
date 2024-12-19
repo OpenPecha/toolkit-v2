@@ -8,9 +8,9 @@ from docx.shared import RGBColor
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import PechaMetaData
+from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
-from openpecha.utils import read_json
+from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
 class GoogleDocCommentaryParser(BaseParser):
@@ -59,7 +59,7 @@ class GoogleDocCommentaryParser(BaseParser):
         self.base = ""
 
         if isinstance(metadata, Path):
-            metadata = read_json(metadata)
+            metadata = extract_metadata_from_xlsx(metadata)
         if self.source_type == "commentary":
             assert self.source_type is not None
             assert isinstance(metadata, dict)
@@ -374,7 +374,12 @@ class GoogleDocCommentaryParser(BaseParser):
         sapche_layer.save()
 
         pecha.set_metadata(
-            PechaMetaData(id=pecha.id, parser=self.name, **self.metadata)
+            PechaMetaData(
+                id=pecha.id,
+                parser=self.name,
+                initial_creation_type=InitialCreationType.google_docx,
+                **self.metadata,
+            )
         )
 
         return pecha

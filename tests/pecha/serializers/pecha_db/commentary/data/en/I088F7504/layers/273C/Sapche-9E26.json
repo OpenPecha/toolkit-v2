@@ -1,0 +1,120 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "I088F7504",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "273C",
+      "@include": "../../base/273C.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "Structure_Annotation",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "sapche_number"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "Structure_Type"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "7C41E7C4",
+          "key": "sapche_number",
+          "value": {
+            "@type": "String",
+            "value": "1."
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "F6254FC6",
+          "key": "Structure_Type",
+          "value": {
+            "@type": "String",
+            "value": "Sapche"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "4B3AB696",
+          "key": "sapche_number",
+          "value": {
+            "@type": "String",
+            "value": "1.1."
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "E99A008B",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "273C",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 124
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 164
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "7C41E7C4",
+          "set": "Structure_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "F6254FC6",
+          "set": "Structure_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "3038C491",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "273C",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 166
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 238
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "4B3AB696",
+          "set": "Structure_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "F6254FC6",
+          "set": "Structure_Annotation"
+        }
+      ]
+    }
+  ]
+}

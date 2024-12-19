@@ -3,9 +3,14 @@ from typing import Any, Dict, Union
 
 from pecha_org_tools.enums import TextType
 from pecha_org_tools.extract import CategoryExtractor
+from pecha_org_tools.translation import (
+    get_bo_content_translation,
+    get_en_content_translation,
+)
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import Language
 from openpecha.utils import get_text_direction_with_lang
 
 
@@ -18,10 +23,9 @@ class CommentarySerializer:
 
         self.sapche_anns = []
         self.meaning_segment_anns = []
-        self.formatted_sapche_anns = {}
+        self.prepared_content = {}
 
-        self.bo_root_title: Union[str, None] = None
-        self.en_root_title: Union[str, None] = None
+        self.root_title: Union[str, None] = None
         self.pecha_path: Union[Path, None] = None
         self.pecha: Union[Pecha, None] = None
 
@@ -31,8 +35,8 @@ class CommentarySerializer:
         """
         assert self.pecha is not None, "Pecha object is not set"
         pecha_metadata = self.pecha.metadata
-        source_title = pecha_metadata.title["en"]
-        target_title = pecha_metadata.title["bo"]
+        source_title = pecha_metadata.title.get("en") or pecha_metadata.title.get("EN")
+        target_title = pecha_metadata.title.get("bo") or pecha_metadata.title.get("BO")
 
         source_metadata = {
             "title": source_title,
@@ -111,8 +115,8 @@ class CommentarySerializer:
         last_bo_category = category_json["bo"][-1]
         last_en_category = category_json["en"][-1]
 
-        last_bo_category["base_text_titles"] = [self.bo_root_title]
-        last_en_category["base_text_titles"] = [self.en_root_title]
+        last_bo_category["base_text_titles"] = [self.root_title]
+        last_en_category["base_text_titles"] = [self.root_title]
 
         last_bo_category["base_text_mapping"] = "many_to_one"
         last_en_category["base_text_mapping"] = "many_to_one"
@@ -125,11 +129,16 @@ class CommentarySerializer:
 
         return category_json
 
-    def set_category_to_json(self, category_name: str):
+    def set_category_to_json(self):
         """
         Set the category format to self.category attribute
         """
-        category_json = self.get_category(category_name)
+        assert self.pecha is not None, "Pecha object is not set"
+
+        title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
+            "BO"
+        )
+        category_json = self.get_category(title)
         category_json = self.modify_category(category_json)
 
         self.source_category = category_json["en"]
@@ -190,9 +199,9 @@ class CommentarySerializer:
 
         return self.meaning_segment_anns
 
-    def format_sapche_anns(self):
+    def prepare_content(self):
         """
-        Format the sapche annotations to the required format(Tree like structure)
+        Prepare content in the sapche annotations to the required format(Tree like structure)
         """
 
         def format_tree(tree):
@@ -234,8 +243,11 @@ class CommentarySerializer:
                     }
                 current = current[key]["children"]
 
-        self.formatted_sapche_anns = format_tree(formatted_sapche_anns)
-        return self.formatted_sapche_anns
+        assert self.pecha is not None, "Pecha object is not set"
+        assert self.pecha.metadata is not None, "Pecha metadata is not set"
+
+        self.prepared_content = format_tree(formatted_sapche_anns)
+        return self.prepared_content
 
     @staticmethod
     def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
@@ -295,28 +307,69 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def serialize(
-        self,
-        pecha_path: Path,
-        category_name: str,
-        bo_root_title: str,
-        en_root_title: str,
-    ):
+    def fill_json_content(self):
+        """
+        Fill the source and target content to the json format
+        """
+        self.prepare_content()
+
+        assert self.pecha is not None, "Pecha object is not set"
+        assert self.pecha.metadata is not None, "Pecha metadata is not set"
+
+        bo_title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
+            "BO"
+        )
+
+        pecha_lang = self.pecha.metadata.language
+
+        if pecha_lang == Language.tibetan:
+            pecha_lang = Language.english
+
+        pecha_lang_lowercase = pecha_lang.value.lower()
+        pecha_lang_uppercase = pecha_lang.value.upper()
+
+        other_title = self.pecha.metadata.title.get(
+            pecha_lang_lowercase
+        ) or self.pecha.metadata.title.get(pecha_lang_uppercase)
+
+        if self.pecha.metadata.language == Language.tibetan:
+            self.source_book[0]["content"] = {
+                other_title: {
+                    "data": [],
+                    **get_en_content_translation(self.prepared_content),
+                }
+            }
+            self.target_book[0]["content"] = {
+                bo_title: {"data": [], **self.prepared_content}
+            }
+
+        else:
+            self.source_book[0]["content"] = {
+                other_title: {"data": [], **self.prepared_content}
+            }
+            self.target_book[0]["content"] = {
+                bo_title: {
+                    "data": [],
+                    **get_bo_content_translation(self.prepared_content),
+                }
+            }
+
+    def serialize(self, pecha_path: Path, root_title: str):
         """
         Serialize the commentary pecha to json format
         """
-        self.bo_root_title = bo_root_title
-        self.en_root_title = en_root_title
+        self.root_title = root_title
 
         self.pecha_path = pecha_path
         self.pecha = Pecha.from_path(pecha_path)
 
-        self.set_metadata_to_json()
-        self.set_category_to_json(category_name)
-        formatted_sapche_ann = self.format_sapche_anns()
+        assert self.pecha is not None, "Pecha object is not set"
+        assert self.pecha.metadata is not None, "Pecha metadata is not set"
 
-        self.source_book[0]["content"] = {}
-        self.target_book[0]["content"] = formatted_sapche_ann
+        self.set_metadata_to_json()
+        self.set_category_to_json()
+
+        self.fill_json_content()
 
         serialized_json = {
             "source": {"categories": self.source_category, "book": self.source_book},
