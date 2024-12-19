@@ -3,6 +3,10 @@ from typing import Any, Dict, Union
 
 from pecha_org_tools.enums import TextType
 from pecha_org_tools.extract import CategoryExtractor
+from pecha_org_tools.translation import (
+    get_bo_content_translation,
+    get_en_content_translation,
+)
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
@@ -242,20 +246,7 @@ class CommentarySerializer:
         assert self.pecha is not None, "Pecha object is not set"
         assert self.pecha.metadata is not None, "Pecha metadata is not set"
 
-        lang = self.pecha.metadata.language.value
-        lang_lowercase = lang.lower()
-        lang_uppercase = lang.upper()
-
-        book_title = self.pecha.metadata.title.get(
-            lang_lowercase
-        ) or self.pecha.metadata.title.get(lang_uppercase)
-
-        self.prepared_content = {
-            book_title: {
-                "data": [],
-                **format_tree(formatted_sapche_anns),
-            }
-        }
+        self.prepared_content = format_tree(formatted_sapche_anns)
         return self.prepared_content
 
     @staticmethod
@@ -316,6 +307,53 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
+    def fill_json_content(self):
+        """
+        Fill the source and target content to the json format
+        """
+        self.prepare_content()
+
+        assert self.pecha is not None, "Pecha object is not set"
+        assert self.pecha.metadata is not None, "Pecha metadata is not set"
+
+        bo_title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
+            "BO"
+        )
+
+        pecha_lang = self.pecha.metadata.language
+
+        if pecha_lang == Language.tibetan:
+            pecha_lang = Language.english
+
+        pecha_lang_lowercase = pecha_lang.value.lower()
+        pecha_lang_uppercase = pecha_lang.value.upper()
+
+        other_title = self.pecha.metadata.title.get(
+            pecha_lang_lowercase
+        ) or self.pecha.metadata.title.get(pecha_lang_uppercase)
+
+        if self.pecha.metadata.language == Language.tibetan:
+            self.source_book[0]["content"] = {
+                other_title: {
+                    "data": [],
+                    **get_en_content_translation(self.prepared_content),
+                }
+            }
+            self.target_book[0]["content"] = {
+                bo_title: {"data": [], **self.prepared_content}
+            }
+
+        else:
+            self.source_book[0]["content"] = {
+                other_title: {"data": [], **self.prepared_content}
+            }
+            self.target_book[0]["content"] = {
+                bo_title: {
+                    "data": [],
+                    **get_bo_content_translation(self.prepared_content),
+                }
+            }
+
     def serialize(self, pecha_path: Path, root_title: str):
         """
         Serialize the commentary pecha to json format
@@ -331,12 +369,7 @@ class CommentarySerializer:
         self.set_metadata_to_json()
         self.set_category_to_json()
 
-        if self.pecha.metadata.language == Language.tibetan:
-            self.source_book[0]["content"] = {}
-            self.target_book[0]["content"] = self.prepare_content()
-        else:
-            self.source_book[0]["content"] = self.prepare_content()
-            self.target_book[0]["content"] = {}
+        self.fill_json_content()
 
         serialized_json = {
             "source": {"categories": self.source_category, "book": self.source_book},
