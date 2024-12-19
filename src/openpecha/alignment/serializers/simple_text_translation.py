@@ -48,14 +48,18 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             "completestatus": "done",
         }
 
-    def set_metadata(self, root_opf_path: Path, translation_opf_path: Path):
+    def set_root_metadata(self, root_opf_path: Path):
         """
-        Extract only required metadata from root and translation opf and set it to json format
+        Extract only required metadata from root opf and set it to json format
         """
         root_pecha = Pecha.from_path(root_opf_path)
-        translation_pecha = Pecha.from_path(translation_opf_path)
-
         self.root_json_format["books"].append(self.extract_metadata(root_pecha))
+
+    def set_translation_metadata(self, translation_opf_path: Path):
+        """
+        Extract only required metadata from translation opf and set it to json format
+        """
+        translation_pecha = Pecha.from_path(translation_opf_path)
         self.translation_json_format["books"].append(
             self.extract_metadata(translation_pecha)
         )
@@ -108,7 +112,9 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         translation_opf: Path,
         output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
     ) -> Path:
-        self.set_metadata(root_opf, translation_opf)
+        self.set_root_metadata(root_opf)
+        self.set_translation_metadata(translation_opf)
+
         self.set_content(root_opf, translation_opf)
 
         # Write json to file
