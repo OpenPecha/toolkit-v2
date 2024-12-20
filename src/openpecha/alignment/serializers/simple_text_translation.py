@@ -94,7 +94,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             file=pecha.layer_path.joinpath(base_name, layer_name).as_posix()
         )
         segment_texts = self.get_texts_from_layer(segment_layer)
-        self.root_json["books"][0]["content"] = [segment_texts]  # type: ignore
+        self.translation_json["books"][0]["content"] = [segment_texts]  # type: ignore
 
     def get_pecha_display_aligment(self, translation_opf: Path):
         """
