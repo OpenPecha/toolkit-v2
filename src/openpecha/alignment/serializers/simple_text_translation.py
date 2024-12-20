@@ -34,8 +34,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         Set pecha category both in english and tibetan in the JSON output.
         """
         category_extractor = CategoryExtractor()
-        pecha_metadata: Dict = {}
-        categories = category_extractor.get_category(category, pecha_metadata)
+        categories = category_extractor.get_category(category)
         self.root_json["categories"] = categories["bo"]
         self.translation_json["categories"] = categories["en"]
 

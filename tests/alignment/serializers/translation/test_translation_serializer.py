@@ -14,7 +14,7 @@ class TestSimpleTextTranslationSerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
-            "openpecha.pecha.serializers.commentary.CategoryExtractor.get_category",
+            "openpecha.alignment.serializers.simple_text_translation.CategoryExtractor.get_category",
             return_value={
                 "bo": [
                     {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
@@ -48,6 +48,3 @@ class TestSimpleTextTranslationSerializer(TestCase):
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
-
-
-TestSimpleTextTranslationSerializer().test_translation_serializer()

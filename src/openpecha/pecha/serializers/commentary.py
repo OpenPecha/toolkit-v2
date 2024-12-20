@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from pecha_org_tools.enums import TextType
 from pecha_org_tools.extract import CategoryExtractor
 from pecha_org_tools.translation import (
     get_bo_content_translation,
@@ -69,43 +68,9 @@ class CommentarySerializer:
         Input: title: Title of the pecha commentary which will be used to get the category format
         Process: Get the category format from the pecha.org categorizer package
         """
-        assert self.pecha is not None, "Pecha object is not set"
-
-        if isinstance(self.pecha.metadata.title, dict):
-            bo_title = self.pecha.metadata.title.get("bo", "")
-            en_title = self.pecha.metadata.title.get("en", "")
-
-        elif isinstance(self.pecha.metadata.title, list):
-            bo_title = self.pecha.metadata.title[0]
-            en_title = self.pecha.metadata.title[1]
-
-        else:
-            bo_title = self.pecha.metadata.title
-            en_title = self.pecha.metadata.title
-
-        heDesc = self.pecha.metadata.source_metadata.get("heDesc", "")
-        heShortDesc = self.pecha.metadata.source_metadata.get("heShortDesc", "")
-
-        enDesc = self.pecha.metadata.source_metadata.get("enDesc", "")
-        enShortDesc = self.pecha.metadata.source_metadata.get("enShortDesc", "")
-
-        pecha_metadata = {
-            "bo": {
-                "title": bo_title,
-                "heDesc": heDesc,
-                "heShortDesc": heShortDesc,
-            },
-            "en": {
-                "title": en_title,
-                "enDesc": enDesc,
-                "enShortDesc": enShortDesc,
-            },
-        }
 
         categorizer = CategoryExtractor()
-        category_json = categorizer.get_category(
-            category_name, pecha_metadata, TextType.COMMENTARY
-        )
+        category_json = categorizer.get_category(category_name)
         return category_json
 
     def modify_category(self, category_json: Dict[str, Any]):
