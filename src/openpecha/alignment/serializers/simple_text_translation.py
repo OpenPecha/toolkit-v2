@@ -106,8 +106,8 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
                 self.root_basename, self.root_layername
             ).as_posix()
         )
-        segment_texts = self.get_texts_from_layer(segment_layer)
-        self.root_json["books"][0]["content"] = [segment_texts]
+        segments = self.get_texts_from_layer(segment_layer)
+        self.root_json["books"][0]["content"] = [segments]
 
     def set_translation_content(self):
         """
@@ -119,14 +119,36 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         assert isinstance(
             self.translation_opf_path, Path
         ), "Translation opf path is not set for 'set_translation_content'"
-        pecha = Pecha.from_path(self.translation_opf_path)
-        segment_layer = AnnotationStore(
-            file=pecha.layer_path.joinpath(
+
+        translation_pecha = Pecha.from_path(self.translation_opf_path)
+        translation_segment_layer = AnnotationStore(
+            file=translation_pecha.layer_path.joinpath(
                 self.translation_basename, self.translation_layername
             ).as_posix()
         )
-        segment_texts = self.get_texts_from_layer(segment_layer)
-        self.translation_json["books"][0]["content"] = [segment_texts]
+
+        segments: Dict[int, List[str]] = {}
+        for ann in translation_segment_layer:
+            ann_data = {}
+            for data in ann:
+                ann_data[str(data.key().id())] = data.value().get()
+            if "alignment_mapping" in ann_data:
+                for map in ann_data["alignment_mapping"]:
+                    root_map = map[0]
+                    if root_map in segments:
+                        segments[root_map].append(str(ann))
+                    else:
+                        segments[root_map] = [str(ann)]
+
+        max_root_idx = max(segments.keys())
+        translation_segments = []
+        for root_idx in range(1, max_root_idx + 1):
+            if root_idx in segments:
+                translation_segments.append("".join(segments[root_idx]))
+            else:
+                translation_segments.append("")
+
+        self.translation_json["books"][0]["content"] = [translation_segments]
 
     def get_pecha_display_aligment(self):
         """
