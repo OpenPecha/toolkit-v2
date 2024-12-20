@@ -1,6 +1,9 @@
 {
   "id": "IFA46BBC2",
-  "title": "Tibetan Root pecha display segmented",
+  "title": {
+    "BO": "རྡོ་རྗེ་གཅོད་པ་",
+    "EN": "Vajra Cutter"
+  },
   "author": "test",
   "imported": "2024-12-12T15:19:27.378145",
   "source": null,

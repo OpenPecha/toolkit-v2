@@ -25,8 +25,8 @@
     "books": [
       {
         "title": {
-          "BO": "ཚོད་ལྟ་དཔེ་དེབ་",
-          "EN": "English aligned test"
+          "BO": "རྡོ་རྗེ་གཅོད་པ་",
+          "EN": "Vajra Cutter"
         },
         "language": "en",
         "versionSource": "",
@@ -83,7 +83,10 @@
     ],
     "books": [
       {
-        "title": "Tibetan Root pecha display segmented",
+        "title": {
+            "BO": "རྡོ་རྗེ་གཅོད་པ་",
+            "EN": "Vajra Cutter"
+          },
         "language": "bo",
         "versionSource": "",
         "direction": "ltr",

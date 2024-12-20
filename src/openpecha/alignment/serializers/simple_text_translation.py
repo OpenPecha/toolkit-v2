@@ -51,10 +51,16 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         }
 
     def set_root_metadata(self, root_opf_path: Path):
+        """
+        Set tibetan text metadata to root json
+        """
         root_pecha = Pecha.from_path(root_opf_path)
         self.root_json["books"].append(self.extract_metadata(root_pecha))
 
     def set_translation_metadata(self, translation_opf_path: Path):
+        """
+        Set English, Chinese, etc. text metadata to translation json
+        """
         translation_pecha = Pecha.from_path(translation_opf_path)
         self.translation_json["books"].append(self.extract_metadata(translation_pecha))
 
