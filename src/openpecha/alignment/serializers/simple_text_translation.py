@@ -1,5 +1,7 @@
 from pathlib import Path
+from typing import Dict, List
 
+from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.alignment.serializers import BaseAlignmentSerializer
@@ -10,22 +12,23 @@ from openpecha.utils import get_text_direction_with_lang, write_json
 
 class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
     def __init__(self):
-        self.root_json = {
-            "categories": [
-                {
-                    "name": "བོད་སྐད་ལ་ཕབ་བསྒྱུར་བྱེད་པའི་ཚོད་ལྟ།",
-                    "heDesc": "",
-                    "heShortDesc": "",
-                }
-            ],
+        self.root_json: Dict[str, List] = {
+            "categories": [],
             "books": [],
         }
-        self.translation_json = {
-            "categories": [
-                {"name": "Test Translation", "enDesc": "", "enShortDesc": ""}
-            ],
+        self.translation_json: Dict[str, List] = {
+            "categories": [],
             "books": [],
         }
+
+    def set_pecha_category(self, category: str):
+        """
+        Set pecha category both in english and tibetan in the JSON output.
+        """
+        category_extractor = CategoryExtractor()
+        categories = category_extractor.get_category(category)
+        self.root_json["categories"] = categories["bo"]
+        self.translation_json["categories"] = categories["en"]
 
     def extract_metadata(self, pecha: Pecha):
         """
@@ -78,7 +81,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             file=pecha.layer_path.joinpath(base_name, layer_name).as_posix()
         )
         segment_texts = self.get_texts_from_layer(segment_layer)
-        self.root_json["books"][0]["content"] = [segment_texts]  # type: ignore
+        self.root_json["books"][0]["content"] = [segment_texts]
 
     def set_translation_content(
         self, translation_opf_path: Path, base_name: str, layer_name: str
@@ -94,7 +97,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             file=pecha.layer_path.joinpath(base_name, layer_name).as_posix()
         )
         segment_texts = self.get_texts_from_layer(segment_layer)
-        self.translation_json["books"][0]["content"] = [segment_texts]  # type: ignore
+        self.translation_json["books"][0]["content"] = [segment_texts]
 
     def get_pecha_display_aligment(self, translation_opf: Path):
         """
@@ -118,6 +121,10 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             translation_layername,
         )
 
+    def get_pecha_title(self, pecha_path: Path):
+        pecha = Pecha.from_path(pecha_path)
+        return pecha.metadata.title
+
     def serialize(
         self,
         root_opf: Path,
@@ -127,6 +134,10 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         self.set_root_metadata(root_opf)
         self.set_translation_metadata(translation_opf)
 
+        pecha_title = self.get_pecha_title(root_opf)
+        self.set_pecha_category(pecha_title)
+
+        # Get the root and translation layer to serialize the layer(STAM) to JSON
         (root_basename, root_layername), (
             translation_basename,
             translation_layername,

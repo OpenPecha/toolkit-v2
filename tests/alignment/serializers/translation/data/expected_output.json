@@ -2,7 +2,22 @@
   "source": {
     "categories": [
       {
-        "name": "Test Translation",
+        "name": "The Buddha's Teachings",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Vajra Cutter",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Commentaries",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Vajra Cutter",
         "enDesc": "",
         "enShortDesc": ""
       }
@@ -46,7 +61,22 @@
   "target": {
     "categories": [
       {
-        "name": "བོད་སྐད་ལ་ཕབ་བསྒྱུར་བྱེད་པའི་ཚོད་ལྟ།",
+        "name": "སངས་རྒྱས་ཀྱི་བཀའ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "འགྲེལ་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "རྡོ་རྗེ་གཅོད་པ།",
         "heDesc": "",
         "heShortDesc": ""
       }
