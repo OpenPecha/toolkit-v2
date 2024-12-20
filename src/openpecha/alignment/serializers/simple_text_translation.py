@@ -34,19 +34,17 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         """
         Extract required metadata from opf
         """
-        text_lang = pecha.metadata.language.value
-        text_direction = get_text_direction_with_lang(text_lang)
-        text_title = pecha.metadata.title
-        text_title = (
-            text_title if text_lang in ["bo", "en"] else f"{text_title}[{text_lang}]"
-        )
-        text_source = pecha.metadata.source if pecha.metadata.source else ""
+        lang = pecha.metadata.language.value
+        direction = get_text_direction_with_lang(lang)
+        title = pecha.metadata.title
+        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
+        source = pecha.metadata.source if pecha.metadata.source else ""
 
         return {
-            "title": text_title,
-            "language": text_lang,
-            "versionSource": text_source,
-            "direction": text_direction,
+            "title": title,
+            "language": lang,
+            "versionSource": source,
+            "direction": direction,
             "completestatus": "done",
         }
 
