@@ -37,6 +37,8 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         lang = pecha.metadata.language.value
         direction = get_text_direction_with_lang(lang)
         title = pecha.metadata.title
+        if isinstance(title, dict):
+            title = title.get(lang.lower()) or title.get(lang.upper())
         title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
         source = pecha.metadata.source if pecha.metadata.source else ""
 
@@ -127,7 +129,12 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
 
     def get_pecha_title(self, pecha_path: Path):
         pecha = Pecha.from_path(pecha_path)
-        return pecha.metadata.title
+        lang = pecha.metadata.language.value
+        title = pecha.metadata.title
+        if isinstance(title, dict):
+            title = title.get(lang.lower()) or title.get(lang.upper())
+
+        return title
 
     def serialize(
         self,

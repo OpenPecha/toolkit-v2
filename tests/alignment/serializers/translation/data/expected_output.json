@@ -24,10 +24,7 @@
     ],
     "books": [
       {
-        "title": {
-          "BO": "རྡོ་རྗེ་གཅོད་པ་",
-          "EN": "Vajra Cutter"
-        },
+        "title": "Vajra Cutter",
         "language": "en",
         "versionSource": "",
         "direction": "ltr",
@@ -83,10 +80,7 @@
     ],
     "books": [
       {
-        "title": {
-            "BO": "རྡོ་རྗེ་གཅོད་པ་",
-            "EN": "Vajra Cutter"
-          },
+        "title":"རྡོ་རྗེ་གཅོད་པ་",
         "language": "bo",
         "versionSource": "",
         "direction": "ltr",
