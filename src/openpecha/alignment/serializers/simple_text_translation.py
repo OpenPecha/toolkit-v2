@@ -5,7 +5,6 @@ from stam import AnnotationStore
 from openpecha.alignment.serializers import BaseAlignmentSerializer
 from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
 from openpecha.utils import get_text_direction_with_lang, write_json
 
 
@@ -67,37 +66,57 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def set_root_content(self, root_opf_path: Path):
+    def set_root_content(self, root_opf_path: Path, base_name: str, layer_name: str):
         """
         Processes:
         1. Get the first txt file from root and translation opf
         2. Read meaning layer from the base txt file from each opfs
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
-        root_pecha = Pecha.from_path(root_opf_path)
-        root_base_name = next(iter(root_pecha.bases))
-        root_segment_layer = root_pecha.layers[root_base_name][
-            LayerEnum.meaning_segment
-        ][0]
-        root_segment_texts = self.get_texts_from_layer(root_segment_layer)
-        self.root_json["books"][0]["content"] = [root_segment_texts]  # type: ignore
+        pecha = Pecha.from_path(root_opf_path)
+        segment_layer = AnnotationStore(
+            file=pecha.layer_path.joinpath(base_name, layer_name).as_posix()
+        )
+        segment_texts = self.get_texts_from_layer(segment_layer)
+        self.root_json["books"][0]["content"] = [segment_texts]  # type: ignore
 
-    def set_translation_content(self, translation_opf_path: Path):
+    def set_translation_content(
+        self, translation_opf_path: Path, base_name: str, layer_name: str
+    ):
         """
         Processes:
         1. Get the first txt file from root and translation opf
         2. Read meaning layer from the base txt file from each opfs
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
-        translation_pecha = Pecha.from_path(translation_opf_path)
-        translation_base_name = next(iter(translation_pecha.bases))
-        translation_segment_layer = translation_pecha.layers[translation_base_name][
-            LayerEnum.meaning_segment
+        pecha = Pecha.from_path(translation_opf_path)
+        segment_layer = AnnotationStore(
+            file=pecha.layer_path.joinpath(base_name, layer_name).as_posix()
+        )
+        segment_texts = self.get_texts_from_layer(segment_layer)
+        self.root_json["books"][0]["content"] = [segment_texts]  # type: ignore
+
+    def get_pecha_display_aligment(self, translation_opf: Path):
+        """
+        Get the source and target layer from the translation opf
+        """
+        pecha = Pecha.from_path(translation_opf)
+        pecha_display_alignment = pecha.metadata.source_metadata[
+            "pecha_display_segment_alignments"
         ][0]
-        translation_segment_texts = self.get_texts_from_layer(translation_segment_layer)
-        self.translation_json["books"][0]["content"] = [  # type: ignore
-            translation_segment_texts
-        ]
+        root_layer_path = pecha_display_alignment["pecha_display"]
+        translation_layer_path = pecha_display_alignment["translation"]
+
+        root_basename = root_layer_path.split("/")[-2]
+        translation_basename = translation_layer_path.split("/")[-2]
+
+        root_layername = root_layer_path.split("/")[-1]
+        translation_layername = translation_layer_path.split("/")[-1]
+
+        return (root_basename, root_layername), (
+            translation_basename,
+            translation_layername,
+        )
 
     def serialize(
         self,
@@ -108,8 +127,15 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         self.set_root_metadata(root_opf)
         self.set_translation_metadata(translation_opf)
 
-        self.set_root_content(root_opf)
-        self.set_translation_content(translation_opf)
+        (root_basename, root_layername), (
+            translation_basename,
+            translation_layername,
+        ) = self.get_pecha_display_aligment(translation_opf)
+
+        self.set_root_content(root_opf, root_basename, root_layername)
+        self.set_translation_content(
+            translation_opf, translation_basename, translation_layername
+        )
 
         # Write json to file
         json_output_path = output_path / "alignment.json"
