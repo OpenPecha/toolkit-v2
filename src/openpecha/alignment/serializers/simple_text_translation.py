@@ -167,19 +167,22 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
         self.root_opf_path = root_opf_path
         self.translation_opf_path = translation_opf_path
 
+        # Extract metadata from opf and set to JSON
         self.set_root_metadata()
         self.set_translation_metadata()
 
+        # Get pecha category from pecha_org_tools package and set to JSON
         pecha_title = self.get_pecha_title(self.root_opf_path)
         self.set_pecha_category(pecha_title)
 
         # Get the root and translation layer to serialize the layer(STAM) to JSON
         self.get_pecha_display_aligment()
 
+        # Set the content for source and target and set it to JSON
         self.set_root_content()
         self.set_translation_content()
 
-        # Write json to file
+        # Write the JSON to the output path
         json_output_path = output_path / "alignment.json"
         _mkdir_if_not(output_path)
         json_output = {
