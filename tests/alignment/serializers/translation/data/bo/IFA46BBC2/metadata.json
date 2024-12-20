@@ -11,8 +11,8 @@
   "source_metadata": {
     "segmentation_transfered": [
       {
-        "source": "tests/pecha/coordinate_normalisation/data/IAEB27E9F/layers/275D/Tibetan_Segment-E855.json",
-        "transfered": "tests/pecha/coordinate_normalisation/data/IFA46BBC2/layers/4665/Tibetan_Segment-E855.json"
+        "source": "IAEB27E9F/layers/275D/Tibetan_Segment-E855.json",
+        "transfered": "IFA46BBC2/layers/4665/Tibetan_Segment-E855.json"
       }
     ]
   },

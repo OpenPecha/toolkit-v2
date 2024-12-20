@@ -41,7 +41,7 @@
     "pecha_display_segment_alignments": [
       {
         "pecha_display": "IFA46BBC2/layers/4665/Tibetan_Segment-4D29.json",
-        "translation": "tests/pecha/coordinate_normalisation/data/I6EA29D09/layers/564C/Pecha_Display_Alignment_Segment-891D.json"
+        "translation": "I6EA29D09/layers/564C/Pecha_Display_Alignment_Segment-891D.json"
       }
     ]
   },
