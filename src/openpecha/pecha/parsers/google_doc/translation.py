@@ -22,7 +22,7 @@ class GoogleDocTranslationParser(BaseParser):
                      Else: source_path should be in this format=> pecha id / layer name.
 
         """
-        self.root_idx_regex = r"^\d+\.\s"
+        self.root_idx_regex = r"^\d+\."
         self.source_path = source_path
         self.anns: List[Dict] = []
         self.base = ""
@@ -70,21 +70,27 @@ class GoogleDocTranslationParser(BaseParser):
 
     def extract_root_idx(self, input: Path):
         extracted_text = self.extract_root_idx_from_doc(input)
-        self.base = "\n".join(extracted_text.values())
-        count = 0
+        extracted_segments = list(extracted_text.values())
+        extracted_segments = [segment for segment in extracted_segments if segment]
+
+        self.base = "\n".join(extracted_segments)
 
         layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
 
-        for root_idx, base in extracted_text.items():
+        count = 0
+        for root_idx, segment in extracted_text.items():
             curr_ann = {
                 layer_enum.value: {
                     "start": count,
-                    "end": count + len(base),
+                    "end": count + len(segment),
                 },
                 "root_idx_mapping": root_idx,
             }
             self.anns.append(curr_ann)
-            count += len(base) + 1
+            count += len(segment)
+
+            if segment and count + 1 < len(self.base):
+                count += 1
 
     def parse(
         self,
