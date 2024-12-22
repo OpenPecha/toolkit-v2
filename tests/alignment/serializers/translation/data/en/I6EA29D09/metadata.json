@@ -1,0 +1,64 @@
+{
+  "id": "I6EA29D09",
+  "title": {
+    "BO": "རྡོ་རྗེ་གཅོད་པ་",
+    "EN": "Vajra Cutter"
+  },
+  "author": {
+    "BO": "སྟོན་པ་བཅོམ་ལྡན་འདས།",
+    "EN": "Buddha"
+  },
+  "imported": "2024-12-17T11:10:01.590495",
+  "source": null,
+  "toolkit_version": "0.0.1",
+  "parser": "GoogleDocTranslationParser",
+  "initial_creation_type": "google_docx",
+  "language": "en",
+  "source_metadata": {
+    "title_short": {
+      "BO": "ཚོད་ལྟ་དཔེ་དེབ་",
+      "EN": "English aligned test"
+    },
+    "title_long_clean": {
+      "BO": "འཕགས་པ་ཤེས་རབ་ཀྱི་ཕ་རོལ་ཏུ་ཕྱིན་པ་རྡོ་རྗེ་གཅོད་པ་ཞེས་བྱ་བ།",
+      "EN": "Test Root English aligned with Tibetan"
+    },
+    "title_alt_1": {
+      "BO": "འཕགས་པ་ཤེས་རབ་ཀྱི་ཕ་རོལད་ཏུ་ཕྱིནད་པ་རྡོ་རྗེ་གཅོད་པ་ཞེས་བྱ་བ་ཐེག་པ་ཆེན་པོའི་མདོ།"
+    },
+    "title_alt_2": {
+      "BO": "རྡོ་རྗེ་སུམ་བརྒྱ་པའམ་རྡོ་རྗེ་གཅོད་པ།"
+    },
+    "is_version_of": {
+      "BO": "ཚོད་ལྟ་དཔེ་དེབ་"
+    },
+    "translation_alignments": [
+      {
+        "source": "I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json",
+        "target": "I6EA29D09/layers/564C/English_Segment-9F9B.json"
+      }
+    ],
+    "pecha_display_segment_alignments": [
+      {
+        "pecha_display": "IFA46BBC2/layers/4665/Tibetan_Segment-4D29.json",
+        "translation": "I6EA29D09/layers/564C/Pecha_Display_Alignment_Segment-891D.json"
+      }
+    ]
+  },
+  "bases": [
+    {
+      "564C": {
+        "source_metadata": {
+          "total_segments": 19
+        },
+        "base_file": "564C.txt"
+      }
+    }
+  ],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}

@@ -178,13 +178,15 @@ class StamPecha:
                     self.base_path.relative_to(self.parent) / f"{target_base_name}.txt"
                 )
                 target_layer_fn = self.layers_path / target_base_name / layer_fn
-                layer.add_resource(id=target_base_name, filename=str(target_base_fn))
+                layer.set_filename(str(target_layer_fn))
+                layer.add_resource(
+                    id=target_base_name,
+                    filename=f"../../base/{target_base_fn.stem}.txt",
+                )
                 source_resouce = layer.resource(source_base_name)
                 target_resource = layer.resource(target_base_name)
                 layer = self.change_resource(source_resouce, target_resource, layer)
-                layer_json_string = layer.to_json_string()
-                layer_json_string = layer_json_string.replace("null,", "")
-                target_layer_fn.write_text(layer_json_string)
+                layer.save()
 
 
 class Pecha:
