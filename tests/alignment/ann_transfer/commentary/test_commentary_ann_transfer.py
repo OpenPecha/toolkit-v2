@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from openpecha.pecha.coordinate_normalisation import CoordinateNormalisation
+from openpecha.alignment.ann_transfer import CoordinateNormalisation
 
 DATA_DIR = Path(__file__).parent / "data"
 

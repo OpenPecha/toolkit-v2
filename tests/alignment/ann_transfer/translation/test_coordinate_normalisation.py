@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from unittest.mock import patch
 
-from openpecha.pecha.coordinate_normalisation import CoordinateNormalisation
+from openpecha.alignment.ann_transfer import CoordinateNormalisation
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -21,7 +21,7 @@ expected_alignment_data = read_json(
 
 def test_coordinate_normalization():
     with patch(
-        "openpecha.pecha.coordinate_normalisation.CoordinateNormalisation.update_metadata"
+        "openpecha.alignment.ann_transfer.CoordinateNormalisation.update_metadata"
     ) as mock_update_metadata:
         coordinate_normalisation = CoordinateNormalisation(source, target, translation)
         coordinate_normalisation.normalise_coordinate()
