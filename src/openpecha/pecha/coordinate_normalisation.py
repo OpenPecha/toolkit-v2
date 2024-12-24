@@ -1,6 +1,8 @@
 import os
 from typing import Dict
 
+from stam import AnnotationStore
+
 from openpecha.pecha import Pecha, StamPecha
 from openpecha.pecha.layer import LayerEnum
 
@@ -80,12 +82,27 @@ class CoordinateNormalisation:
         translation_layer = translation_pecha.get_layers(self.translation_base_name)
         self.translation_layer_name = next(translation_layer)[0]
 
+    @staticmethod
+    def get_root_anns(layer: AnnotationStore):
+        """
+        Get the root annotation from the given root layer(STAM)
+        """
+        anns = {}
+        for ann in layer:
+            start, end = ann.offset().begin().value(), ann.offset().end().value()
+            ann_metadata = {}
+            for data in ann:
+                ann_metadata[data.key().id()] = str(data.value())
+            anns[int(ann_metadata["root_idx_mapping"])] = {
+                "Span": {"start": start, "end": end},
+                "text": str(ann),
+            }
+        return anns
+
     def get_transfered_layer_anns(self):
         """
         Get the annotations of the transfered layer from the target Pecha.
         """
-        anns = {}
-
         target_pecha = StamPecha(self.target_pecha_path)
         self.target_layer = target_pecha.get_layers(self.target_base_name)
         tranfered_layer = next(
@@ -98,23 +115,12 @@ class CoordinateNormalisation:
         )
         assert tranfered_layer, "tranfered layer not found in the target pecha."
 
-        for ann in tranfered_layer[1]:
-            start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {}
-            for data in ann:
-                ann_metadata[data.key().id()] = str(data.value())
-            anns[int(ann_metadata["root_idx_mapping"])] = {
-                "Span": {"start": start, "end": end},
-                "text": str(ann),
-            }
-        return anns
+        return self.get_root_anns(tranfered_layer[1])
 
     def get_display_layer_anns(self):
         """
         Get the annotations of the display layer from the target Pecha.
         """
-        anns = {}
-
         target_pecha = StamPecha(self.target_pecha_path)
         self.target_layer = target_pecha.get_layers(self.target_base_name)
         display_layer = next(
@@ -127,16 +133,7 @@ class CoordinateNormalisation:
         )
         assert display_layer, "Display layer not found in the target pecha."
 
-        for ann in display_layer[1]:
-            start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {}
-            for data in ann:
-                ann_metadata[data.key().id()] = str(data.value())
-            anns[int(ann_metadata["root_idx_mapping"])] = {
-                "Span": {"start": start, "end": end},
-                "text": str(ann),
-            }
-        return anns
+        return self.get_root_anns(display_layer[1])
 
     def normalise_coordinate(self):
         """
