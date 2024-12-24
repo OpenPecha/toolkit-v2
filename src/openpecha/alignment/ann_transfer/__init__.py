@@ -1,5 +1,6 @@
 import os
-from typing import Dict
+from pathlib import Path
+from typing import Dict, Generator, Union
 
 from stam import AnnotationStore
 
@@ -8,24 +9,24 @@ from openpecha.pecha.layer import LayerEnum
 
 
 class AlignmentAnnTransfer:
-    def __init__(self, source=dict, target=dict):
-        self.source_pecha_path = source.get("source_pecha_path")
-        self.target_pecha_path = target.get("target_pecha_path")
-        self.source_base_name = source.get("source_base_name")
-        self.target_base_name = target.get("target_base_name")
+    def __init__(self, source: Dict, target: Dict):
+        self.source_pecha_path: Path = source["source_pecha_path"]
+        self.target_pecha_path: Path = target["target_pecha_path"]
+        self.source_base_name: str = source["source_base_name"]
+        self.target_base_name: str = target["target_base_name"]
 
-        self.source_pecha_id = self.source_pecha_path.name
-        self.target_pecha_id = self.target_pecha_path.name
+        self.source_pecha_id: str = self.source_pecha_path.name
+        self.target_pecha_id: str = self.target_pecha_path.name
 
-        self.target_layer = None
-        self.source_layer = None
-        self.target_layer_name = None
-        self.source_layer_name = None
+        self.target_layer: Union[Generator, None] = None
+        self.source_layer: Union[Generator, None] = None
+        self.target_layer_name: Union[str, None] = None
+        self.source_layer_name: Union[str, None] = None
 
-        self.alignment_data = {}
+        self.alignment_data: Dict = {}
         self.transfer_layer()
 
-    def update_metadata(self, pecha_path, dict_data):
+    def update_metadata(self, pecha_path: Path, dict_data: Dict):
         """
         Updates the source metadata of the pecha with the given data.
         """
@@ -98,6 +99,8 @@ class AlignmentAnnTransfer:
         """
         Get the annotations of the transfered layer from the target Pecha.
         """
+        assert self.target_layer is not None, "Target layer is not set."
+
         target_pecha = StamPecha(self.target_pecha_path)
         self.target_layer = target_pecha.get_layers(self.target_base_name)
         tranfered_layer = next(
@@ -116,6 +119,7 @@ class AlignmentAnnTransfer:
         """
         Get the annotations of the display layer from the target Pecha.
         """
+        assert self.target_layer is not None, "Target layer is not set."
         target_pecha = StamPecha(self.target_pecha_path)
         self.target_layer = target_pecha.get_layers(self.target_base_name)
         display_layer = next(
