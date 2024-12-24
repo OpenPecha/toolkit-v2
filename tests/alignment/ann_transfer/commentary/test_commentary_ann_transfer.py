@@ -1,7 +1,5 @@
 from pathlib import Path
 
-from openpecha.alignment.ann_transfer import AlignmentAnnTransfer
-
 DATA_DIR = Path(__file__).parent / "data"
 
 source = {"source_pecha_path": DATA_DIR / "P2/IA6ED8F68", "source_base_name": "CCF2"}
@@ -11,8 +9,3 @@ commentary = {
     "translation_pecha_path": DATA_DIR / "P3/IBB99C5E4",
     "translation_base_name": "E3E4",
 }
-
-
-if __name__ == "__main__":
-    coordinate_normalisation = AlignmentAnnTransfer(source, target, commentary)
-    coordinate_normalisation.normalise_coordinate()

@@ -8,21 +8,20 @@ from openpecha.pecha.layer import LayerEnum
 
 
 class AlignmentAnnTransfer:
-    def __init__(self, source=dict, target=dict, translation=dict):
+    def __init__(self, source=dict, target=dict):
         self.source_pecha_path = source.get("source_pecha_path")
         self.target_pecha_path = target.get("target_pecha_path")
         self.source_base_name = source.get("source_base_name")
         self.target_base_name = target.get("target_base_name")
-        self.translation_pecha_path = translation.get("translation_pecha_path")
-        self.translation_base_name = translation.get("translation_base_name")
+
         self.source_pecha_id = self.source_pecha_path.name
         self.target_pecha_id = self.target_pecha_path.name
-        self.translation_pecha_id = self.translation_pecha_path.name
+
         self.target_layer = None
         self.source_layer = None
         self.target_layer_name = None
         self.source_layer_name = None
-        self.translation_layer_name = None
+
         self.alignment_data = {}
         self.transfer_layer()
 
@@ -78,10 +77,6 @@ class AlignmentAnnTransfer:
         if self.target_layer:
             self.target_layer_name = next(self.target_layer)[0]
 
-        translation_pecha = StamPecha(self.translation_pecha_path)
-        translation_layer = translation_pecha.get_layers(self.translation_base_name)
-        self.translation_layer_name = next(translation_layer)[0]
-
     @staticmethod
     def get_root_anns(layer: AnnotationStore):
         """
@@ -135,18 +130,6 @@ class AlignmentAnnTransfer:
 
         return self.get_root_anns(display_layer[1])
 
-    def normalise_coordinate(self):
-        """
-        Normalises the coordinate of the translation layer based on the display layer.
-        """
-        display_layer_ann = self.get_display_layer_anns()
-        transfered_layer_ann = self.get_transfered_layer_anns()
-        transfered_to_display_map = self.map_display_to_transfer(
-            display_layer_ann, transfered_layer_ann
-        )
-        self.create_display_translation_alignment_layer(transfered_to_display_map)
-        self.write_layer()
-
     def map_display_to_transfer(self, display_layer_ann, transfer_layer_ann):
         """
         Maps display layer annotations to transfer layer annotations based on span overlap.
@@ -176,73 +159,3 @@ class AlignmentAnnTransfer:
                     )
         sorted_mapping = dict(sorted(transfered_to_display_map.items()))
         return sorted_mapping
-
-    def create_display_translation_alignment_layer(self, transfered_to_display):
-        """
-        Creates a dictionary of display and translation alignment layer annotations.
-        """
-        curr_ann = {}
-        translation_layer_ann = {}
-        translation_pecha = StamPecha(self.translation_pecha_path)
-        self.translation_layer = translation_pecha.get_layers(
-            self.translation_base_name
-        )
-        for layer in self.translation_layer:
-            for ann in layer[1]:
-                start, end = ann.offset().begin().value(), ann.offset().end().value()
-                ann_metadata = {}
-                for data in ann:
-                    ann_metadata[data.key().id()] = str(data.value())
-                curr_ann[int(ann_metadata["root_idx_mapping"])] = {
-                    "Span": {"start": start, "end": end},
-                }
-                translation_layer_ann.update(curr_ann)
-                curr_ann = {}
-
-        for alignment_key, display_info in transfered_to_display.items():
-            start, end = (
-                translation_layer_ann[alignment_key]["Span"]["start"],
-                translation_layer_ann[alignment_key]["Span"]["end"],
-            )
-            curr_ann[alignment_key] = {
-                "Span": {"start": start, "end": end},
-                "alignment_mapping": display_info,
-            }
-            self.alignment_data.update(curr_ann)
-            curr_ann = {}
-
-    def write_layer(self):
-        """
-        Writes the alignment data to the translation pecha layer.
-        """
-        pecha = Pecha(
-            pecha_id=self.translation_pecha_id, pecha_path=self.translation_pecha_path
-        )
-        segment, segment_path = pecha.add_layer(
-            self.translation_base_name, LayerEnum.pecha_display_alignment_segment
-        )
-        for root_id, info in self.alignment_data.items():
-            alignment_info = info["alignment_mapping"]
-            segment_ann = {
-                LayerEnum.pecha_display_alignment_segment.value: info["Span"],
-                "root_idx_mapping": root_id,
-                "alignment_mapping": alignment_info,
-            }
-            pecha.add_annotation(
-                segment, segment_ann, LayerEnum.pecha_display_alignment_segment
-            )
-        segment.save()
-
-        self.update_metadata(
-            pecha_path=self.translation_pecha_path,
-            dict_data={
-                "pecha_display_segment_alignments": [
-                    {
-                        "pecha_display": os.path.relpath(
-                            f"{self.target_pecha_id}/layers/{self.target_base_name}/{self.target_layer_name}"
-                        ),
-                        "translation": os.path.relpath(segment_path.as_posix()),
-                    }
-                ]
-            },
-        )
