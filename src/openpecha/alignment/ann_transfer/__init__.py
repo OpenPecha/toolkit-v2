@@ -18,8 +18,8 @@ class AlignmentAnnTransfer:
         self.source_pecha_id: str = self.source_pecha_path.name
         self.target_pecha_id: str = self.target_pecha_path.name
 
-        self.target_layer: Union[Generator, None] = None
-        self.source_layer: Union[Generator, None] = None
+        self.target_layers: Union[Generator, None] = None
+        self.source_layers: Union[Generator, None] = None
         self.target_layer_name: Union[str, None] = None
         self.source_layer_name: Union[str, None] = None
 
@@ -47,8 +47,8 @@ class AlignmentAnnTransfer:
         """
         target_pecha = StamPecha(self.target_pecha_path)
         source_pecha = StamPecha(self.source_pecha_path)
-        self.target_layer = target_pecha.get_layers(self.target_base_name)
-        self.source_layer = source_pecha.get_layers(self.source_base_name)
+        self.target_layers = target_pecha.get_layers(self.target_base_name)
+        self.source_layers = source_pecha.get_layers(self.source_base_name)
         self.get_layer_name()
         target_pecha.merge_pecha(
             source_pecha, self.source_base_name, self.target_base_name
@@ -73,10 +73,10 @@ class AlignmentAnnTransfer:
         """
         Get layer name from source and target pecha and translation pecha.
         """
-        if self.source_layer:
-            self.source_layer_name = next(self.source_layer)[0]
-        if self.target_layer:
-            self.target_layer_name = next(self.target_layer)[0]
+        if self.source_layers:
+            self.source_layer_name = next(self.source_layers)[0]
+        if self.target_layers:
+            self.target_layer_name = next(self.target_layers)[0]
 
     @staticmethod
     def get_root_anns(layer: AnnotationStore):
@@ -99,14 +99,14 @@ class AlignmentAnnTransfer:
         """
         Get the annotations of the transfered layer from the target Pecha.
         """
-        assert self.target_layer is not None, "Target layer is not set."
+        assert self.target_layers is not None, "Target layer is not set."
 
         target_pecha = StamPecha(self.target_pecha_path)
-        self.target_layer = target_pecha.get_layers(self.target_base_name)
+        self.target_layers = target_pecha.get_layers(self.target_base_name)
         tranfered_layer = next(
             (
                 layer
-                for layer in self.target_layer
+                for layer in self.target_layers
                 if layer[0] == self.source_layer_name
             ),
             None,
@@ -119,13 +119,13 @@ class AlignmentAnnTransfer:
         """
         Get the annotations of the display layer from the target Pecha.
         """
-        assert self.target_layer is not None, "Target layer is not set."
+        assert self.target_layers is not None, "Target layer is not set."
         target_pecha = StamPecha(self.target_pecha_path)
-        self.target_layer = target_pecha.get_layers(self.target_base_name)
+        self.target_layers = target_pecha.get_layers(self.target_base_name)
         display_layer = next(
             (
                 layer
-                for layer in self.target_layer
+                for layer in self.target_layers
                 if layer[0] != self.source_layer_name
             ),
             None,
