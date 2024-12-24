@@ -27,9 +27,11 @@ def test_coordinate_normalization():
             source, target, translation
         )
         coordinate_normalisation.normalise_coordinate()
-        target_metadata_update = mock_update_metadata.call_args_list[0][1]["dict_data"]
+        target_metadata_update = mock_update_metadata.call_args_list[0][1][
+            "new_metadata"
+        ]
         translation_metadata_update = mock_update_metadata.call_args_list[-1][1][
-            "dict_data"
+            "new_metadata"
         ]
         pecha_display_alignment_segment_layer_path = translation_metadata_update[
             "pecha_display_segment_alignments"

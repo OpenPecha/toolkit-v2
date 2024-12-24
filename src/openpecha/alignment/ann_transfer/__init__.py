@@ -26,17 +26,17 @@ class AlignmentAnnTransfer:
         self.alignment_data: Dict = {}
         self.transfer_layer()
 
-    def update_metadata(self, pecha_path: Path, dict_data: Dict):
+    def update_metadata(self, pecha_path: Path, new_metadata: Dict):
         """
         Updates the source metadata of the pecha with the given data.
         """
         pecha = Pecha.from_path(pecha_path)
         pecha_metadata = pecha.metadata
-        dict_key = list(dict_data.keys())[0]
-        if dict_key in pecha_metadata.source_metadata:
-            pecha_metadata.source_metadata[dict_key].append(dict_data[dict_key])
+        field_name = list(new_metadata.keys())[0]
+        if field_name in pecha_metadata.source_metadata:
+            pecha_metadata.source_metadata[field_name].append(new_metadata[field_name])
         else:
-            pecha_metadata.source_metadata[dict_key] = dict_data[dict_key]
+            pecha_metadata.source_metadata[field_name] = new_metadata[field_name]
         pecha.set_metadata(pecha_metadata=pecha_metadata)
 
         pecha.publish()
@@ -55,7 +55,7 @@ class AlignmentAnnTransfer:
         )
         self.update_metadata(
             pecha_path=self.target_pecha_path,
-            dict_data={
+            new_metadata={
                 "segmentation_transfered": [
                     {
                         "source": os.path.relpath(

@@ -87,7 +87,7 @@ class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
 
         self.update_metadata(
             pecha_path=self.translation_pecha_path,
-            dict_data={
+            new_metadata={
                 "pecha_display_segment_alignments": [
                     {
                         "pecha_display": os.path.relpath(
