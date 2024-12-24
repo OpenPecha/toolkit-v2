@@ -26,7 +26,7 @@ class CoordinateNormalisation:
 
     def update_metadata(self, pecha_path, dict_data):
         """
-        Updates the metadata of the pecha with the given data.
+        Updates the source metadata of the pecha with the given data.
         """
         pecha = Pecha.from_path(pecha_path)
         pecha_metadata = pecha.metadata
@@ -68,6 +68,9 @@ class CoordinateNormalisation:
         )
 
     def get_layer_name(self):
+        """
+        Get layer name from source and target pecha and translation pecha.
+        """
         if self.source_layer:
             self.source_layer_name = next(self.source_layer)[0]
         if self.target_layer:
