@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+from typing import Dict, Union
 
 from openpecha.alignment.ann_transfer import AlignmentAnnTransfer
 from openpecha.pecha import Pecha, StamPecha
@@ -6,14 +8,14 @@ from openpecha.pecha.layer import LayerEnum
 
 
 class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
-    def __init__(self, source=dict, target=dict, translation=dict):
+    def __init__(self, source: Dict, target: Dict, translation: Dict):
         super().__init__(source, target)
 
-        self.translation_pecha_path = translation.get("translation_pecha_path")
-        self.translation_base_name = translation.get("translation_base_name")
+        self.translation_pecha_path: Path = translation["translation_pecha_path"]
+        self.translation_base_name = translation["translation_base_name"]
 
-        self.translation_pecha_id = self.translation_pecha_path.name
-        self.translation_layer_name = None
+        self.translation_pecha_id: str = self.translation_pecha_path.name
+        self.translation_layer_name: Union[str, None] = None
 
     def normalise_coordinate(self):
         """
