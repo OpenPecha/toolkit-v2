@@ -7,7 +7,7 @@ from openpecha.pecha import Pecha, StamPecha
 from openpecha.pecha.layer import LayerEnum
 
 
-class CoordinateNormalisation:
+class AlignmentAnnTransfer:
     def __init__(self, source=dict, target=dict, translation=dict):
         self.source_pecha_path = source.get("source_pecha_path")
         self.target_pecha_path = target.get("target_pecha_path")
