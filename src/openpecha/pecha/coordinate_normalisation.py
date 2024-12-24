@@ -40,6 +40,9 @@ class CoordinateNormalisation:
         pecha.publish()
 
     def transfer_layer(self):
+        """
+        Transfer the annotation layer from source to target pecha with give basename.
+        """
         target_pecha = StamPecha(self.target_pecha_path)
         source_pecha = StamPecha(self.source_pecha_path)
         self.target_layer = target_pecha.get_layers(self.target_base_name)
@@ -66,15 +69,13 @@ class CoordinateNormalisation:
 
     def get_layer_name(self):
         if self.source_layer:
-            for layer in self.source_layer:
-                self.source_layer_name = layer[0]
+            self.source_layer_name = next(self.source_layer)[0]
         if self.target_layer:
-            for layer in self.target_layer:
-                self.target_layer_name = layer[0]
+            self.target_layer_name = next(self.target_layer)[0]
+
         translation_pecha = StamPecha(self.translation_pecha_path)
         translation_layer = translation_pecha.get_layers(self.translation_base_name)
-        for layer in translation_layer:
-            self.translation_layer_name = layer[0]
+        self.translation_layer_name = next(translation_layer)[0]
 
     def normalise_coordinate(self):
         """
