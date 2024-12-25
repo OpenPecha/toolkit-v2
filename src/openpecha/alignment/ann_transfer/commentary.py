@@ -38,18 +38,25 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
         commentary_pecha = StamPecha(self.commentary_pecha_path)
         self.commentary_layer = commentary_pecha.get_layers(self.commentary_base_name)
         for layer in self.commentary_layer:
+            if not layer[0].startswith(LayerEnum.meaning_segment.value):
+                continue
+
             for ann in layer[1]:
                 start, end = ann.offset().begin().value(), ann.offset().end().value()
                 ann_metadata = {}
                 for data in ann:
                     ann_metadata[data.key().id()] = str(data.value())
-                curr_ann[int(ann_metadata["root_idx_mapping"])] = {
-                    "Span": {"start": start, "end": end},
-                }
-                commentary_layer_ann.update(curr_ann)
-                curr_ann = {}
+                if "root_idx_mapping" in ann_metadata:
+
+                    curr_ann[ann_metadata["root_idx_mapping"]] = {
+                        "Span": {"start": start, "end": end},
+                    }
+                    commentary_layer_ann.update(curr_ann)
+                    curr_ann = {}
 
         for alignment_key, display_info in transfered_to_display.items():
+            if alignment_key not in commentary_layer_ann:
+                continue
             start, end = (
                 commentary_layer_ann[alignment_key]["Span"]["start"],
                 commentary_layer_ann[alignment_key]["Span"]["end"],
