@@ -67,9 +67,7 @@ class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
         """
         Writes the alignment data to the translation pecha layer.
         """
-        pecha = Pecha(
-            pecha_id=self.translation_pecha_id, pecha_path=self.translation_pecha_path
-        )
+        pecha = Pecha.from_path(self.translation_pecha_path)
         segment, segment_path = pecha.add_layer(
             self.translation_base_name, LayerEnum.pecha_display_alignment_segment
         )
