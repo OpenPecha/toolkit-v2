@@ -26,7 +26,7 @@ def test_coordinate_normalization():
         coordinate_normalisation = TranslationAlignmentAnnTransfer(
             source, target, translation
         )
-        coordinate_normalisation.normalise_coordinate()
+        coordinate_normalisation.transfer_annotation()
         target_metadata_update = mock_update_metadata.call_args_list[0][1][
             "new_metadata"
         ]
