@@ -81,20 +81,24 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
         Writes the alignment data to the commentary pecha layer.
         """
         pecha = Pecha.from_path(self.commentary_pecha_path)
-        segment, segment_path = pecha.add_layer(
+        segment_layer, segment_path = pecha.add_layer(
             self.commentary_base_name, LayerEnum.pecha_display_alignment_segment
         )
-        for root_id, info in self.alignment_data.items():  # type: ignore[attr-defined]
-            alignment_info = info["alignment_mapping"]
-            segment_ann = {
-                LayerEnum.pecha_display_alignment_segment.value: info["Span"],
-                "root_idx_mapping": root_id,
-                "alignment_mapping": alignment_info,
-            }
+        for alignment_ann in self.alignment_data:
+            segment_ann = {}
+            segment_ann[
+                LayerEnum.pecha_display_alignment_segment.value
+            ] = alignment_ann["Span"]
+            if "root_idx_mapping" in alignment_ann:
+                segment_ann["root_idx_mapping"] = alignment_ann["root_idx_mapping"]
+
+            if "alignment_mapping" in alignment_ann:
+                segment_ann["alignment_mapping"] = alignment_ann["alignment_mapping"]
+
             pecha.add_annotation(
-                segment, segment_ann, LayerEnum.pecha_display_alignment_segment
+                segment_layer, segment_ann, LayerEnum.pecha_display_alignment_segment
             )
-        segment.save()
+        segment_layer.save()
 
         self.update_metadata(
             pecha_path=self.commentary_pecha_path,
