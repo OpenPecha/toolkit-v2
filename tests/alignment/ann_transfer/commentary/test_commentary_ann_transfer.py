@@ -22,5 +22,16 @@ def test_alignment_ann_transfer(mock_update_metadata):
     ann_transfer = CommentaryAlignmentAnnTransfer(source, target, commentary)
     ann_transfer.transfer_annotation()
 
+    assert ann_transfer.source_transfered_layer_path is not None
+    assert ann_transfer.pecha_display_aligned_layer_path is not None
 
-test_alignment_ann_transfer()
+    assert (
+        ann_transfer.source_transfered_layer_path.exists()
+    ), "The source_transfered_layer_path does not exist"
+    assert (
+        ann_transfer.pecha_display_aligned_layer_path.exists()
+    ), "The pecha_display_aligned_layer_path does not exist"
+
+    # Clean up
+    ann_transfer.source_transfered_layer_path.unlink()
+    ann_transfer.pecha_display_aligned_layer_path.unlink()

@@ -23,6 +23,8 @@ class AlignmentAnnTransfer:
         self.target_layer_name: Union[str, None] = None
         self.source_layer_name: Union[str, None] = None
 
+        self.source_transfered_layer_path: Union[Path, None] = None
+
         self.transfer_layer()
 
     def update_metadata(self, pecha_path: Path, new_metadata: Dict):
@@ -66,6 +68,9 @@ class AlignmentAnnTransfer:
                     }
                 ]
             },
+        )
+        self.source_transfered_layer_path = Path(
+            f"{self.target_pecha_path}/layers/{self.target_base_name}/{self.source_layer_name}"
         )
 
     def get_layer_name(self):

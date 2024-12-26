@@ -18,6 +18,8 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
         self.commentary_pecha_id: str = self.commentary_pecha_path.name
         self.commentary_layer_name: Union[str, None] = None
 
+        self.pecha_display_aligned_layer_path: Union[Path, None] = None
+
         self.alignment_data: List = []
 
     def transfer_annotation(self):
@@ -113,3 +115,4 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
                 ]
             },
         )
+        self.pecha_display_aligned_layer_path = segment_path
