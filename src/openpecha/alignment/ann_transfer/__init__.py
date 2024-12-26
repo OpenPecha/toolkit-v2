@@ -23,7 +23,6 @@ class AlignmentAnnTransfer:
         self.target_layer_name: Union[str, None] = None
         self.source_layer_name: Union[str, None] = None
 
-        self.alignment_data: Dict = {}
         self.transfer_layer()
 
     def update_metadata(self, pecha_path: Path, new_metadata: Dict):

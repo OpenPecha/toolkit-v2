@@ -17,6 +17,8 @@ class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
         self.translation_pecha_id: str = self.translation_pecha_path.name
         self.translation_layer_name: Union[str, None] = None
 
+        self.alignment_data: Dict = {}
+
     def transfer_annotation(self):
         """
         Normalises the coordinate of the translation layer based on the display layer.
