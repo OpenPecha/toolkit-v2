@@ -30,8 +30,9 @@ dependencies = [
   "python-docx >= 1.1.2",
   "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
   "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
-  "pecha_org_tools @ git+https://github.com/OpenPecha/pecha_org_tools.git"
-
+  "pecha_org_tools @ git+https://github.com/OpenPecha/pecha_org_tools.git",
+  "google-auth-httplib2 >= 0.2.0",
+  "google-api-python-client >= 2.156.0"
 ]
 
 [project.optional-dependencies]
