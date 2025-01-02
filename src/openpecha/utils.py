@@ -1,6 +1,7 @@
 import json
 import os
 from contextlib import contextmanager
+from typing import List
 
 
 @contextmanager
@@ -62,3 +63,23 @@ def get_text_direction_with_lang(lang):
     else:
         # Default to LTR if language is unknown
         return "ltr"
+
+
+def parse_root_mapping(root_mapping) -> List[int]:
+    """
+    Parse the root_mapping into List of Integers.
+    Examples:>
+    Input: 1  Output: [1]
+    Input: 1,2,3,4,5 Output: [1,2,3,4,5]
+    Input: 1-3  Output: [1,2,3]
+    Input: 1-3,5-7 Output: [1,2,3,5,6,7]
+    """
+    root_mapping = root_mapping.replace(" ", "").strip()
+    root_mapping_list = []
+    for mapping in root_mapping.split(","):
+        if "-" in mapping:
+            start, end = mapping.split("-")
+            root_mapping_list.extend(list(range(int(start), int(end) + 1)))
+        else:
+            root_mapping_list.append(int(mapping))
+    return root_mapping_list
