@@ -9,7 +9,7 @@ from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
 
 
-tempdir = tempfile.TemporaryDirectory(delete=False)
+tempdir = tempfile.TemporaryDirectory()
 OUTPUT_DIR = Path(tempdir.name)
 
 
