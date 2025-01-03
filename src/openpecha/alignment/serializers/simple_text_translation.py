@@ -171,8 +171,10 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
                 self.translation_opf_path, Path
             ), "Translation opf path is not set"
 
-            root_layer_path = next(self.root_opf_path.rglob("*.json"))
-            translation_layer_path = next(self.translation_opf_path.rglob("*.json"))
+            root_layer_path = next(self.root_opf_path.rglob("*.json")).as_posix()
+            translation_layer_path = next(
+                self.translation_opf_path.rglob("*.json")
+            ).as_posix()
 
         self.root_basename = root_layer_path.split("/")[-2]
         self.translation_basename = translation_layer_path.split("/")[-2]
