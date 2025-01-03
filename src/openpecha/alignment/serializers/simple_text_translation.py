@@ -10,7 +10,7 @@ from openpecha.pecha import Pecha
 from openpecha.utils import get_text_direction_with_lang, write_json
 
 
-class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
+class TextTranslationSerializer(BaseAlignmentSerializer):
     def __init__(self):
         self.root_json: Dict[str, List] = {
             "categories": [],

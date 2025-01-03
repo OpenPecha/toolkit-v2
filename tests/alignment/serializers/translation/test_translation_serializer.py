@@ -3,14 +3,14 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.alignment.serializers.simple_text_translation import (
-    SimpleTextTranslationSerializer,
+    TextTranslationSerializer,
 )
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
 
 
-class TestSimpleTextTranslationSerializer(TestCase):
+class TestTextTranslationSerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
@@ -39,7 +39,7 @@ class TestSimpleTextTranslationSerializer(TestCase):
         with tempfile.TemporaryDirectory() as tmpdirname:
             output_dir = Path(tmpdirname)
 
-            serializer = SimpleTextTranslationSerializer()
+            serializer = TextTranslationSerializer()
             json_output = serializer.serialize(root_opf, translation_opf, output_dir)
 
             expected_json_path = DATA_DIR / "expected_output.json"
