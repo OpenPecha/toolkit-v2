@@ -32,8 +32,8 @@ class TestTextTranslationSerializer(TestCase):
         self.mock_get_category = self.patcher.start()
 
     def test_translation_serializer(self):
-        root_opf = DATA_DIR / "bo/IE60BBDE9"
-        translation_opf = DATA_DIR / "en/I62E00D79"
+        root_opf = DATA_DIR / "bo/IE60BBDE8"
+        translation_opf = DATA_DIR / "en/I62E00D78"
         with tempfile.TemporaryDirectory() as tmpdirname:
             output_dir = Path(tmpdirname)
 
