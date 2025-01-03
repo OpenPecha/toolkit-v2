@@ -14,11 +14,12 @@ class GoogleDocAndSheetsDownloader:
         self,
         google_docs_link: Optional[str] = None,
         google_sheets_link: Optional[str] = None,
+        credentials_path: Optional[str] = GOOGLE_API_CRENDENTIALS_PATH,
         output_dir: Union[str, Path] = PECHAS_PATH,
     ):  
         self.output_dir = Path(output_dir)
         self.credentials = service_account.Credentials.from_service_account_file(
-            GOOGLE_API_CRENDENTIALS_PATH,
+            credentials_path,
             scopes=["https://www.googleapis.com/auth/drive.readonly"],
         )
         self.drive_service = build("drive", "v3", credentials=self.credentials)
