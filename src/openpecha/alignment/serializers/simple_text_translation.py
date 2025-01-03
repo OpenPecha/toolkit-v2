@@ -159,7 +159,7 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
             self.translation_opf_path, Path
         ), "Translation opf path is not set for 'get_pecha_display_aligment'"
         pecha = Pecha.from_path(self.translation_opf_path)
-        if "pecha_display_segment_alignments":
+        if "pecha_display_segment_alignments" in pecha.metadata.source_metadata:
             pecha_display_alignment = pecha.metadata.source_metadata[
                 "pecha_display_segment_alignments"
             ][0]
