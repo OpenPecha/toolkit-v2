@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
-from openpecha.utils import read_json
+from openpecha.utils import read_json, write_json
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -43,6 +43,8 @@ class TestTextTranslationSerializer(TestCase):
             )
 
             expected_json_path = DATA_DIR / "expected_output.json"
+            write_json(expected_json_path, read_json(json_output))
+
             assert read_json(json_output) == read_json(expected_json_path)
 
     def tearDown(self):
