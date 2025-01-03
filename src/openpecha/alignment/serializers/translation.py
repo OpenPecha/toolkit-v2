@@ -149,7 +149,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
 
         self.translation_json["books"][0]["content"] = [translation_segments]
 
-    def get_pecha_display_aligment(self):
+    def get_root_and_translation_layer(self):
         """
         Get the root layer and translation layer to serialize the layer(STAM) to JSON
         1.First it checks if the 'pecha_display_segment_alignments' contains in the metadata (from translation opf)
@@ -157,7 +157,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         """
         assert isinstance(
             self.translation_opf_path, Path
-        ), "Translation opf path is not set for 'get_pecha_display_aligment'"
+        ), "Translation opf path is not set for 'get_root_and_translation_layer'"
         pecha = Pecha.from_path(self.translation_opf_path)
         if "pecha_display_segment_alignments" in pecha.metadata.source_metadata:
             pecha_display_alignment = pecha.metadata.source_metadata[
@@ -196,6 +196,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         root_opf_path: Path,
         translation_opf_path: Path,
         output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
+        is_pecha_display: bool = True,
     ) -> Path:
 
         self.root_opf_path = root_opf_path
@@ -210,7 +211,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self.set_pecha_category(pecha_title)
 
         # Get the root and translation layer to serialize the layer(STAM) to JSON
-        self.get_pecha_display_aligment()
+        self.get_root_and_translation_layer()
 
         # Set the content for source and target and set it to JSON
         self.set_root_content()
