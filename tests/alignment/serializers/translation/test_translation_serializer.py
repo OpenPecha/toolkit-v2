@@ -2,9 +2,7 @@ import tempfile
 from pathlib import Path
 from unittest import TestCase, mock
 
-from openpecha.alignment.serializers.simple_text_translation import (
-    TextTranslationSerializer,
-)
+from openpecha.alignment.serializers.translation import TextTranslationSerializer
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -14,7 +12,7 @@ class TestTextTranslationSerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
-            "openpecha.alignment.serializers.simple_text_translation.CategoryExtractor.get_category",
+            "openpecha.alignment.serializers.translation.CategoryExtractor.get_category",
             return_value={
                 "bo": [
                     {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
