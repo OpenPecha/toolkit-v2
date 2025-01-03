@@ -151,17 +151,28 @@ class SimpleTextTranslationSerializer(BaseAlignmentSerializer):
 
     def get_pecha_display_aligment(self):
         """
-        Get the source and target layer from the translation opf
+        Get the root layer and translation layer to serialize the layer(STAM) to JSON
+        1.First it checks if the 'pecha_display_segment_alignments' contains in the metadata (from translation opf)
+        2.Select the first meaning segment layer found in each of the opf
         """
         assert isinstance(
             self.translation_opf_path, Path
         ), "Translation opf path is not set for 'get_pecha_display_aligment'"
         pecha = Pecha.from_path(self.translation_opf_path)
-        pecha_display_alignment = pecha.metadata.source_metadata[
-            "pecha_display_segment_alignments"
-        ][0]
-        root_layer_path = pecha_display_alignment["pecha_display"]
-        translation_layer_path = pecha_display_alignment["translation"]
+        if "pecha_display_segment_alignments":
+            pecha_display_alignment = pecha.metadata.source_metadata[
+                "pecha_display_segment_alignments"
+            ][0]
+            root_layer_path = pecha_display_alignment["pecha_display"]
+            translation_layer_path = pecha_display_alignment["translation"]
+        else:
+            assert isinstance(self.root_opf_path, Path), "Root opf path is not set"
+            assert isinstance(
+                self.translation_opf_path, Path
+            ), "Translation opf path is not set"
+
+            root_layer_path = next(self.root_opf_path.rglob("*.json"))
+            translation_layer_path = next(self.translation_opf_path.rglob("*.json"))
 
         self.root_basename = root_layer_path.split("/")[-2]
         self.translation_basename = translation_layer_path.split("/")[-2]
