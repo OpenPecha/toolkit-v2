@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+from uuid import uuid4
 from pathlib import Path
 
 from github import Github
@@ -130,3 +131,48 @@ def clone_repo(
         return target_path
     except subprocess.CalledProcessError as e:
         raise GithubCloneError(f"Failed to clone {repo_name}. Error: {e}")
+    
+
+def get_bumped_tag(repo):
+    try:
+        latest_release_tag = repo.get_latest_release().tag_name
+    except Exception:
+        return "v0.1"
+
+    tag_number = float(latest_release_tag[1:])
+    bump_tag_number = round(tag_number + 0.1, 1)
+    return f"v{bump_tag_number}"
+
+
+def upload_assets(release, tag_name=None, asset_paths=[]):
+    if not tag_name:
+        tag_name = release.tag_name
+    download_url = ""
+    for asset_path in asset_paths:
+        asset = release.upload_asset(str(asset_path))
+        download_url = asset.browser_download_url
+        print(f"[INFO] Uploaded asset {asset_path}")
+    return download_url
+
+def create_release(
+    repo_name,
+    prerelease=False,
+    asset_paths=[],
+    org=None,
+    token=None,
+):
+    repo = get_github_repo(repo_name, org, token)
+    if prerelease:
+        bumped_tag = uuid4().hex
+        message = "Pre-release for download"
+    else:
+        bumped_tag = get_bumped_tag(repo)
+        message = "Official Release"
+    new_release = repo.create_git_release(
+        bumped_tag, bumped_tag, message, prerelease=prerelease
+    )
+    print(f"[INFO] Created release {bumped_tag} for {repo_name}")
+    asset_download_url = upload_assets(
+        new_release, tag_name=bumped_tag, asset_paths=asset_paths
+    )
+    return asset_download_url

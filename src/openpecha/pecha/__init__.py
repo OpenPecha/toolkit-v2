@@ -1,4 +1,5 @@
 import json
+import shutil
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple, Union
@@ -9,7 +10,7 @@ from stam import Annotation, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
-from openpecha.github_utils import clone_repo
+from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
@@ -401,6 +402,8 @@ class Pecha:
 
     def publish(
         self,
+        asset_path: Optional[Path] = None,
+        asset_name: Optional[str] = "source_data",
         branch: Optional[str] = "main",
         is_private: bool = False,
     ):
@@ -433,3 +436,16 @@ class Pecha:
                 is_private=is_private,
                 branch=branch,
             )
+        asset_paths = []
+        if asset_path:
+            repo_name = self.id
+            shutil.make_archive(asset_path.parent / asset_name, "zip", asset_path)
+            asset_paths.append(f"{asset_path.parent / asset_name}.zip")
+            create_release(
+                repo_name,
+                prerelease=False,
+                asset_paths=asset_paths,
+                org=self.storage.org_name,
+                token=self.storage.token,
+            )
+            (asset_path.parent / f"{asset_name}.zip").unlink()
