@@ -18,6 +18,7 @@ class GoogleDocAndSheetsDownloader:
         output_dir: Union[str, Path] = PECHAS_PATH,
     ):  
         self.output_dir = Path(output_dir)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.credentials = service_account.Credentials.from_service_account_file(
             credentials_path,
             scopes=["https://www.googleapis.com/auth/drive.readonly"],
