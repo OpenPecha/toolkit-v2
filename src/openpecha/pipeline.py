@@ -1,7 +1,10 @@
+import shutil
 from pathlib import Path
 from typing import Dict, List, Union
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
+from openpecha.config import INPUT_DATA_PATH
+from openpecha.ids import get_uuid
 from openpecha.pecha.parsers.google_doc.google_api import GoogleDocAndSheetsDownloader
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
 
@@ -42,11 +45,12 @@ def root_text_pipeline(root_links: Dict, source_path: Union[str, None] = None):
     root_docx_url, root_sheet_url = root_links["docx"], root_links["sheet"]
 
     # Download
+    temp_download_path = INPUT_DATA_PATH / get_uuid()
     root_downloader = GoogleDocAndSheetsDownloader(
         google_docs_link=root_docx_url,
         google_sheets_link=root_sheet_url,
         credentials_path="cred.json",
-        output_dir=Path("./root"),
+        output_dir=Path(temp_download_path),
     )
 
     # Parse
@@ -55,7 +59,11 @@ def root_text_pipeline(root_links: Dict, source_path: Union[str, None] = None):
     root_pecha, root_layer_path = parse_root(
         root_downloader.docx_path, root_downloader.sheets_path, source_path
     )
-    root_pecha.publish(asset_path=Path("./root"), asset_name="google_docx")
+    root_pecha.publish(asset_path=Path(temp_download_path), asset_name="google_docx")
+
+    # Clean up
+    shutil.rmtree(temp_download_path)
+
     return root_pecha, root_layer_path
 
 
