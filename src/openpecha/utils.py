@@ -1,7 +1,13 @@
 import json
 import os
+import csv
+import shutil
+from git import Repo
 from contextlib import contextmanager
 from typing import List
+from openpecha.github_utils import clone_repo
+from openpecha.config import PECHAS_PATH
+from openpecha.storages import commit_and_push
 
 
 @contextmanager
@@ -83,3 +89,24 @@ def parse_root_mapping(root_mapping) -> List[int]:
         else:
             root_mapping_list.append(int(mapping))
     return root_mapping_list
+
+def read_csv(file_path):
+    with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        rows = list(reader)  
+    return rows
+
+def write_csv(file_path, data):
+    with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerows(data)
+
+def update_catalog(new_row):
+    catalog_path = clone_repo("catalog", PECHAS_PATH)
+    csv_path = catalog_path / "catalog.csv"
+    catalog_csv = read_csv(csv_path)
+    catalog_csv.append(new_row)
+    write_csv(csv_path, catalog_csv)
+    commit_and_push(Repo(catalog_path), message="Update catalog", branch="main")
+    shutil.rmtree(catalog_path)
+

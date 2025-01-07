@@ -449,3 +449,15 @@ class Pecha:
                 token=self.storage.token,
             )
             (asset_path.parent / f"{asset_name}.zip").unlink()
+        
+    
+        row = [
+            self.id, 
+            self.metadata.title, 
+            self.metadata.author, 
+            self.metadata.source_id,
+            self.metadata.language,
+            self.metadata.creation_date,
+            self.metadata.update_date,
+        ]
+        utils.update_catalog(row)
