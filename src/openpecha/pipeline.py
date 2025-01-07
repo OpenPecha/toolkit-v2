@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
-from openpecha.config import INPUT_DATA_PATH, PECHAS_PATH
+from openpecha.config import INPUT_DATA_PATH, JSON_OUTPUT_PATH, PECHAS_PATH
 from openpecha.ids import get_uuid
 from openpecha.pecha.parsers.google_doc.google_api import GoogleDocAndSheetsDownloader
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
@@ -23,7 +23,9 @@ def parse_root(docx_file: Path, metadata: Path, source_path: Union[str, None] = 
     return pecha, layer_path
 
 
-def serialize_translation(bo_pecha_path: Path, en_pecha_path: Path):
+def serialize_translation(
+    bo_pecha_path: Path, en_pecha_path: Path, json_output_path: Path
+):
     """
     Serialize the root opf and translation opf to JSON
     """
@@ -31,7 +33,7 @@ def serialize_translation(bo_pecha_path: Path, en_pecha_path: Path):
     json_output_path = serializer.serialize(
         root_opf_path=bo_pecha_path,
         translation_opf_path=en_pecha_path,
-        output_path=Path("json_output"),
+        output_path=json_output_path,
         is_pecha_display=False,
     )
     return json_output_path
@@ -67,7 +69,9 @@ def root_text_pipeline(root_links: Dict, source_path: Union[str, None] = None):
 
 
 def translation_pipeline(
-    bo_links: Dict, translation_links: Union[List[Dict], Dict, None] = None
+    bo_links: Dict,
+    translation_links: Union[List[Dict], Dict, None] = None,
+    output_path: Path = JSON_OUTPUT_PATH,
 ):
     """
     Input:
@@ -86,7 +90,9 @@ def translation_pipeline(
         translation_pecha, _ = root_text_pipeline(
             translation_links, str(root_layer_path)
         )
-        serialize_translation(root_pecha.pecha_path, translation_pecha.pecha_path)
+        serialize_translation(
+            root_pecha.pecha_path, translation_pecha.pecha_path, output_path
+        )
         shutil.rmtree(translation_pecha.pecha_path)
 
     elif isinstance(translation_links, List):
@@ -94,7 +100,9 @@ def translation_pipeline(
             translation_pecha, _ = root_text_pipeline(
                 translation_link, str(root_layer_path)
             )
-            serialize_translation(root_pecha.pecha_path, translation_pecha.pecha_path)
+            serialize_translation(
+                root_pecha.pecha_path, translation_pecha.pecha_path, output_path
+            )
             shutil.rmtree(translation_pecha.pecha_path)
 
     else:

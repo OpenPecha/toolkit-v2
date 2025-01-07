@@ -233,7 +233,8 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self.set_translation_content(is_pecha_display)
 
         # Write the JSON to the output path
-        json_output_path = output_path / "alignment.json"
+        json_fname = f"{pecha_title}_{Pecha.from_path(self.translation_opf_path).metadata.language.value}.json"
+        json_output_path = output_path / json_fname
         _mkdir_if_not(output_path)
         json_output = {
             "source": self.translation_json,

@@ -22,8 +22,10 @@ GOOGLE_API_CRENDENTIALS_PATH = (
 
 BASE_PATH = _mkdir_if_not(Path.home() / ".openpecha")
 PECHAS_PATH = _mkdir_if_not(BASE_PATH / "pechas")
-INPUT_DATA_PATH = _mkdir_if_not(BASE_PATH / "input_data")
 ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignments")
+
+INPUT_DATA_PATH = _mkdir_if_not(BASE_PATH / "input_data")
+JSON_OUTPUT_PATH = _mkdir_if_not(BASE_PATH / "pechadb_json_output")
 
 SERIALIZED_ALIGNMENT_JSON_PATH = _mkdir_if_not(BASE_PATH / "serialized_alignment_jsons")
 
