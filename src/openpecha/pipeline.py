@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
-from openpecha.config import INPUT_DATA_PATH
+from openpecha.config import INPUT_DATA_PATH, PECHAS_PATH
 from openpecha.ids import get_uuid
 from openpecha.pecha.parsers.google_doc.google_api import GoogleDocAndSheetsDownloader
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
@@ -17,9 +17,8 @@ def parse_root(docx_file: Path, metadata: Path, source_path: Union[str, None] = 
         ii) Root text's translation(need source_path arg i.e root text's layer path)
     """
     parser = GoogleDocTranslationParser(source_path)
-    output_dir = Path("output")
     pecha, layer_path = parser.parse(
-        input=docx_file, metadata=metadata, output_path=output_dir
+        input=docx_file, metadata=metadata, output_path=PECHAS_PATH
     )
     return pecha, layer_path
 
@@ -88,6 +87,7 @@ def translation_pipeline(
             translation_links, str(root_layer_path)
         )
         serialize_translation(root_pecha.pecha_path, translation_pecha.pecha_path)
+        shutil.rmtree(translation_pecha.pecha_path)
 
     elif isinstance(translation_links, List):
         for translation_link in translation_links:
@@ -95,7 +95,11 @@ def translation_pipeline(
                 translation_link, str(root_layer_path)
             )
             serialize_translation(root_pecha.pecha_path, translation_pecha.pecha_path)
+            shutil.rmtree(translation_pecha.pecha_path)
 
     else:
         # Update serialize_translation to handle this case
         pass
+
+    # Clean up
+    shutil.rmtree(root_pecha.pecha_path)
