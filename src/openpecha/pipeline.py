@@ -37,36 +37,36 @@ def serialize_translation(bo_pecha_path: Path, en_pecha_path: Path):
     return json_output_path
 
 
-def main(bo_links: Dict, en_links: Dict):
+def translation_pipeline(bo_links: Dict, en_links: Dict):
 
-    bo_docx_link, bo_sheet_link = bo_links["docx"], bo_links["sheet"]
-    en_docx_link, en_sheet_link = en_links["docx"], en_links["sheet"]
+    bo_docx_url, bo_sheet_url = bo_links["docx"], bo_links["sheet"]
+    en_docx_url, en_sheet_url = en_links["docx"], en_links["sheet"]
 
     # Download
-    bo_google_obj = GoogleDocAndSheetsDownloader(
-        google_docs_link=bo_docx_link,
-        google_sheets_link=bo_sheet_link,
+    bo_downloader = GoogleDocAndSheetsDownloader(
+        google_docs_link=bo_docx_url,
+        google_sheets_link=bo_sheet_url,
         credentials_path="cred.json",
         output_dir=Path("./bo"),
     )
-    en_google_obj = GoogleDocAndSheetsDownloader(
-        google_docs_link=en_docx_link,
-        google_sheets_link=en_sheet_link,
+    en_downloader = GoogleDocAndSheetsDownloader(
+        google_docs_link=en_docx_url,
+        google_sheets_link=en_sheet_url,
         credentials_path="cred.json",
         output_dir=Path("./en"),
     )
 
     # Parse
-    assert bo_google_obj.docx_path is not None
-    assert en_google_obj.docx_path is not None
+    assert bo_downloader.docx_path is not None
+    assert en_downloader.docx_path is not None
 
     bo_pecha, bo_layer_path = parse_translation(
-        bo_google_obj.docx_path, bo_google_obj.sheets_path
+        bo_downloader.docx_path, bo_downloader.sheets_path
     )
     bo_pecha.publish(asset_path=Path("./bo"), asset_name="google_docx")
     en_pecha, _ = parse_translation(
-        docx_file=en_google_obj.docx_path,
-        metadata=en_google_obj.sheets_path,
+        docx_file=en_downloader.docx_path,
+        metadata=en_downloader.sheets_path,
         source_path=bo_layer_path.as_posix(),
     )
     en_pecha.publish(asset_path=Path("./en"), asset_name="google_docx")
