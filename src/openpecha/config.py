@@ -15,7 +15,10 @@ def _mkdir_if_not(path: Path):
         path.mkdir(exist_ok=True, parents=True)
     return path
 
-GOOGLE_API_CRENDENTIALS_PATH = Path("~/.gcloud/google_docs_and_sheets.json").expanduser()
+
+GOOGLE_API_CRENDENTIALS_PATH = (
+    Path("~/.gcloud/google_docs_and_sheets.json").expanduser().as_posix()
+)
 
 BASE_PATH = _mkdir_if_not(Path.home() / ".openpecha")
 PECHAS_PATH = _mkdir_if_not(BASE_PATH / "pechas")

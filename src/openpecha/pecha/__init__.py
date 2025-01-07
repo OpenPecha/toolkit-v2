@@ -15,7 +15,7 @@ from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, 
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.storages import GithubStorage, Storage, commit_and_push
+from openpecha.storages import GithubStorage, commit_and_push
 
 BASE_NAME = str
 layer_type = str
@@ -197,7 +197,7 @@ class Pecha:
         self.metadata = self.load_metadata()
         self.bases = self.load_bases()
         self.layers = self.load_layers()
-        self.storage: Optional[Storage] = None
+        self.storage: Optional[GithubStorage] = None
 
     @classmethod
     def from_id(cls, pecha_id: str):
@@ -439,8 +439,10 @@ class Pecha:
         asset_paths = []
         if asset_path:
             repo_name = self.id
-            shutil.make_archive(asset_path.parent / asset_name, "zip", asset_path)
-            asset_paths.append(f"{asset_path.parent / asset_name}.zip")
+            assert asset_name is not None, "asset_name should be provided."
+            archieve_path = asset_path.parent / asset_name
+            shutil.make_archive(str(archieve_path), "zip", asset_path)
+            asset_paths.append(f"{str(archieve_path)}.zip")
             create_release(
                 repo_name,
                 prerelease=False,
