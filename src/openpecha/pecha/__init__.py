@@ -455,9 +455,9 @@ class Pecha:
             self.id, 
             self.metadata.title, 
             self.metadata.author, 
-            self.metadata.source_id,
-            self.metadata.language,
-            self.metadata.creation_date,
-            self.metadata.update_date,
+            self.metadata.source,
+            self.metadata.language.value,
+            self.metadata.initial_creation_type.value,
+            self.metadata.imported
         ]
-        utils.update_catalog(row)
+        utils.update_catalog(row, "opf_catalog.csv")

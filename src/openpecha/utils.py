@@ -90,22 +90,22 @@ def parse_root_mapping(root_mapping) -> List[int]:
             root_mapping_list.append(int(mapping))
     return root_mapping_list
 
-def read_csv(file_path):
+def read_csv(file_path) -> List[List[str]]:
     with open(file_path, mode='r', newline='', encoding='utf-8') as file:
         reader = csv.reader(file)
         rows = list(reader)  
     return rows
 
-def write_csv(file_path, data):
+def write_csv(file_path, data) -> None:
     with open(file_path, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerows(data)
 
-def update_catalog(new_row):
+def update_catalog(row: List[str], filename: str) -> None:
     catalog_path = clone_repo("catalog", PECHAS_PATH)
-    csv_path = catalog_path / "catalog.csv"
+    csv_path = catalog_path / filename
     catalog_csv = read_csv(csv_path)
-    catalog_csv.append(new_row)
+    catalog_csv.append(row)
     write_csv(csv_path, catalog_csv)
     commit_and_push(Repo(catalog_path), message="Update catalog", branch="main")
     shutil.rmtree(catalog_path)
