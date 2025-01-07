@@ -1,14 +1,12 @@
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, List, Union
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
 from openpecha.pecha.parsers.google_doc.google_api import GoogleDocAndSheetsDownloader
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
 
 
-def parse_translation(
-    docx_file: Path, metadata: Path, source_path: Union[str, None] = None
-):
+def parse_root(docx_file: Path, metadata: Path, source_path: Union[str, None] = None):
     """
     Parse translation from google docx and google sheet(metadata)
     There are two types
@@ -37,40 +35,59 @@ def serialize_translation(bo_pecha_path: Path, en_pecha_path: Path):
     return json_output_path
 
 
-def translation_pipeline(bo_links: Dict, en_links: Dict):
-
-    bo_docx_url, bo_sheet_url = bo_links["docx"], bo_links["sheet"]
-    en_docx_url, en_sheet_url = en_links["docx"], en_links["sheet"]
+def root_text_pipeline(root_links: Dict, source_path: Union[str, None] = None):
+    """
+    This is to download, parse and serialize the root text
+    """
+    root_docx_url, root_sheet_url = root_links["docx"], root_links["sheet"]
 
     # Download
-    bo_downloader = GoogleDocAndSheetsDownloader(
-        google_docs_link=bo_docx_url,
-        google_sheets_link=bo_sheet_url,
+    root_downloader = GoogleDocAndSheetsDownloader(
+        google_docs_link=root_docx_url,
+        google_sheets_link=root_sheet_url,
         credentials_path="cred.json",
-        output_dir=Path("./bo"),
-    )
-    en_downloader = GoogleDocAndSheetsDownloader(
-        google_docs_link=en_docx_url,
-        google_sheets_link=en_sheet_url,
-        credentials_path="cred.json",
-        output_dir=Path("./en"),
+        output_dir=Path("./root"),
     )
 
     # Parse
-    assert bo_downloader.docx_path is not None
-    assert en_downloader.docx_path is not None
+    assert root_downloader.docx_path is not None
 
-    bo_pecha, bo_layer_path = parse_translation(
-        bo_downloader.docx_path, bo_downloader.sheets_path
+    root_pecha, root_layer_path = parse_root(
+        root_downloader.docx_path, root_downloader.sheets_path, source_path
     )
-    bo_pecha.publish(asset_path=Path("./bo"), asset_name="google_docx")
-    en_pecha, _ = parse_translation(
-        docx_file=en_downloader.docx_path,
-        metadata=en_downloader.sheets_path,
-        source_path=bo_layer_path.as_posix(),
-    )
-    en_pecha.publish(asset_path=Path("./en"), asset_name="google_docx")
+    root_pecha.publish(asset_path=Path("./root"), asset_name="google_docx")
+    return root_pecha, root_layer_path
 
-    # Serialize
-    json_output_path = serialize_translation(bo_pecha.pecha_path, en_pecha.pecha_path)
-    return json_output_path
+
+def translation_pipeline(
+    bo_links: Dict, translation_links: Union[List[Dict], Dict, None] = None
+):
+    """
+    Input:
+    bo_links: Contains the google docx link and google sheet link of the Tibetan root text
+    translation_links: Contains the google docx link and google sheet link of the translation text
+        This could be a of three types
+        i) List of Dict: contains links of more than one translation text
+        ii) Dict: contains links of one translation text
+        iii) None: If there is no translation text
+    """
+    # Root text pipeline
+    root_pecha, root_layer_path = root_text_pipeline(bo_links)
+
+    # Translation text pipeline
+    if isinstance(translation_links, Dict):
+        translation_pecha, _ = root_text_pipeline(
+            translation_links, str(root_layer_path)
+        )
+        serialize_translation(root_pecha.pecha_path, translation_pecha.pecha_path)
+
+    elif isinstance(translation_links, List):
+        for translation_link in translation_links:
+            translation_pecha, _ = root_text_pipeline(
+                translation_link, str(root_layer_path)
+            )
+            serialize_translation(root_pecha.pecha_path, translation_pecha.pecha_path)
+
+    else:
+        # Update serialize_translation to handle this case
+        pass
