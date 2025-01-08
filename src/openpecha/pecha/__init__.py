@@ -428,7 +428,7 @@ class Pecha:
             self.pecha_path
         ):
             repo = setup_local_repo(Repo(self.pecha_path))
-            commit_and_push(repo=local_repo, message="Pecha update", branch=branch)
+            commit_and_push(repo=repo, message="Pecha update", branch=branch)
         else:
             self.storage.add_dir(
                 path=self.pecha_path,
