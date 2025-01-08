@@ -15,16 +15,16 @@ class GoogleDocAndSheetsDownloader:
         self,
         google_docs_link: Optional[str] = None,
         google_sheets_link: Optional[str] = None,
-        credentials: Optional[str] = GOOGLE_API_CRENDENTIALS_PATH,
+        credentials_path: Optional[Union[str, Path]] = GOOGLE_API_CRENDENTIALS_PATH,
         output_dir: Union[str, Path] = PECHAS_PATH,
     ):  
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        if isinstance(credentials, str):
+        if isinstance(credentials_path, str):
             try:
                 # Attempt to load credentials from a JSON string
-                credentials_info = json.loads(credentials)
+                credentials_info = json.loads(credentials_path)
                 self.credentials = service_account.Credentials.from_service_account_info(
                     credentials_info,
                     scopes=["https://www.googleapis.com/auth/drive.readonly"],
@@ -32,11 +32,17 @@ class GoogleDocAndSheetsDownloader:
             except json.JSONDecodeError:
                 # If it's not a valid JSON string, assume it's a file path
                 self.credentials = service_account.Credentials.from_service_account_file(
-                    credentials,
+                    credentials_path,
                     scopes=["https://www.googleapis.com/auth/drive.readonly"],
                 )
+        elif isinstance(credentials_path, Path):  # Handle Path object
+            self.credentials = service_account.Credentials.from_service_account_file(
+                credentials_path,
+                scopes=["https://www.googleapis.com/auth/drive.readonly"],
+            )
         else:
-            raise ValueError("Invalid credentials type. Expected credentials JSON String.")
+            raise ValueError("Invalid credentials_path type. Expected str or Path.")
+        
         self.drive_service = build("drive", "v3", credentials=self.credentials)
 
         if google_docs_link is not None:
