@@ -8,6 +8,7 @@ from typing import List
 from openpecha.github_utils import clone_repo
 from openpecha.config import PECHAS_PATH
 from openpecha.storages import commit_and_push
+from openpecha.storages import setup_local_repo
 
 
 @contextmanager
@@ -107,6 +108,22 @@ def update_catalog(row: List[str], filename: str) -> None:
     catalog_csv = read_csv(csv_path)
     catalog_csv.append(row)
     write_csv(csv_path, catalog_csv)
-    commit_and_push(Repo(catalog_path), message="Update catalog", branch="main")
+
+     # Setup repository before committing
+    repo = Repo(catalog_path)
+    org = os.getenv("PECHA_DATA_GITHUB_ORG")
+    token = os.getenv("GITHUB_TOKEN")
+    username = os.getenv("GITHUB_USERNAME")
+    email = os.getenv("GITHUB_EMAIL")
+
+    repo = setup_local_repo(
+        repo=repo,
+        org=org,
+        token=token,
+        username=username,
+        email=email
+    )
+
+    commit_and_push(repo, message="Update catalog", branch="main")
     shutil.rmtree(catalog_path)
 

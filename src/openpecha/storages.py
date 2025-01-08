@@ -147,6 +147,13 @@ class GithubStorage(Storage):
             description=description,
         )
         return remote_repo_url
+    
+    def setup_local_repo(self, repo, org, token, username, email):
+        """Sets up a local Git repository with authentication and user identity."""
+        repo = setup_auth_for_old_repo(repo, org, token)
+        repo.config_writer().set_value("user", "name", username).release()
+        repo.config_writer().set_value("user", "email", email).release()
+        return repo
 
     def is_git_repo(self, path):
         try:
