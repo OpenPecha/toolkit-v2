@@ -137,3 +137,4 @@ dmypy.json
 playground/
 .vscode
 **/.DS_Store
+.codegpt
