@@ -1,6 +1,5 @@
 import importlib
 import inspect
-import subprocess
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
@@ -141,32 +140,20 @@ class PechaMetaData(BaseModel):
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
-
         if "toolkit_version" not in values or values["toolkit_version"] is None:
             try:
-                # Run the 'pip show openpecha' command
-                result = subprocess.run(
-                    ["pip", "show", "openpecha"],
-                    capture_output=True,
-                    text=True,
-                    check=True,
-                )
-                output = result.stdout
+                from importlib.metadata import version, PackageNotFoundError
 
-                # Parse the output to find the version
-                for line in output.splitlines():
-                    if line.startswith("Version:"):
-                        toolkit_version = line.split(":", 1)[1].strip()
-                        values["toolkit_version"] = toolkit_version
-                        break
-                else:
-                    # If 'Version:' line is not found
-                    raise ValueError(
-                        "Version information not found in pip show output."
-                    )
-            except subprocess.CalledProcessError as e:
-                # Handle the case where 'pip show' fails
-                raise RuntimeError(f"Failed to run pip show: {e.stderr.strip()}") from e
+                # Fetch the version of the package directly
+                toolkit_version = version("openpecha")
+                values["toolkit_version"] = toolkit_version
+            except PackageNotFoundError as e:
+                # Handle the case where the package is not installed
+                raise RuntimeError("Package 'openpecha' not found.") from e
+            except Exception as e:
+                # Handle unexpected exceptions
+                raise RuntimeError(f"Error fetching toolkit version: {str(e)}") from e
+
         return values
 
     @model_validator(mode="before")

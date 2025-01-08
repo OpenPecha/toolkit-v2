@@ -21,7 +21,7 @@ def test_create_instance():
 
 def test_load():
     """
-    Creata an instance of PechaMetaData from a processed metadata file.
+    Create an instance of PechaMetaData from a processed metadata file.
     """
     file = Path(__file__).parent / "data" / "pecha_metadata.json"
     with open(file) as f:
@@ -29,3 +29,12 @@ def test_load():
 
     pecha_metadata = PechaMetaData(**metadata)
     assert isinstance(pecha_metadata, PechaMetaData)
+
+def test_toolkit_version():
+    """Test when toolkit_version is provided in input"""
+    file = Path(__file__).parent / "data" / "input_metadata.json"
+    with open(file) as f:
+        metadata = json.load(f)
+
+    pecha_metadata = PechaMetaData(parser=DummyParser().name, **metadata)
+    assert pecha_metadata.toolkit_version == "0.0.1"
