@@ -455,7 +455,7 @@ class Pecha:
             self.id, 
             self.metadata.title, 
             self.metadata.author, 
-            self.metadata.source,
+            self.metadata.source_metadata.get("id", ""),
             self.metadata.language.value,
             self.metadata.initial_creation_type.value,
             self.metadata.imported
