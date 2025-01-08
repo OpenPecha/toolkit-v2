@@ -58,8 +58,13 @@ def setup_auth_for_old_repo(repo, org, token):
     repo.remote().set_url(auth_remote_url)
     return repo
 
-def setup_local_repo(repo, org, token, username, email):
+def setup_local_repo(repo):
     """Sets up a local Git repository with authentication and user identity."""
+    org = os.getenv("PECHA_DATA_GITHUB_ORG")
+    token = os.getenv("GITHUB_TOKEN")
+    username = os.getenv("GITHUB_USERNAME")
+    email = os.getenv("GITHUB_EMAIL")
+
     repo = setup_auth_for_old_repo(repo, org, token)
     repo.config_writer().set_value("user", "name", username).release()
     repo.config_writer().set_value("user", "email", email).release()

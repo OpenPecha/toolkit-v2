@@ -15,7 +15,7 @@ from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, 
 from openpecha.pecha.blupdate import update_layer
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.storages import GithubStorage, Storage, commit_and_push
+from openpecha.storages import GithubStorage, Storage, commit_and_push, setup_local_repo
 
 BASE_NAME = str
 layer_type = str
@@ -427,7 +427,7 @@ class Pecha:
         if isinstance(self.storage, GithubStorage) and self.storage.is_git_repo(
             self.pecha_path
         ):
-            local_repo = Repo(self.pecha_path)
+            repo = setup_local_repo(Repo(self.pecha_path))
             commit_and_push(repo=local_repo, message="Pecha update", branch=branch)
         else:
             self.storage.add_dir(

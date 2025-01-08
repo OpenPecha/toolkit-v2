@@ -108,21 +108,8 @@ def update_catalog(row: List[str], filename: str) -> None:
     catalog_csv = read_csv(csv_path)
     catalog_csv.append(row)
     write_csv(csv_path, catalog_csv)
-
-     # Setup repository before committing
-    repo = Repo(catalog_path)
-    org = os.getenv("PECHA_DATA_GITHUB_ORG")
-    token = os.getenv("GITHUB_TOKEN")
-    username = os.getenv("GITHUB_USERNAME")
-    email = os.getenv("GITHUB_EMAIL")
-
-    repo = setup_local_repo(
-        repo=repo,
-        org=org,
-        token=token,
-        username=username,
-        email=email
-    )
+    
+    repo = setup_local_repo(Repo(catalog_path))
 
     commit_and_push(repo, message="Update catalog", branch="main")
     shutil.rmtree(catalog_path)
