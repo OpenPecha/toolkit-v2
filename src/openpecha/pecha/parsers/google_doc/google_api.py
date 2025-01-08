@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from urllib.parse import urlparse
 from typing import Optional, Union
@@ -14,15 +15,28 @@ class GoogleDocAndSheetsDownloader:
         self,
         google_docs_link: Optional[str] = None,
         google_sheets_link: Optional[str] = None,
-        credentials_path: Optional[str] = GOOGLE_API_CRENDENTIALS_PATH,
+        credentials: Optional[str] = GOOGLE_API_CRENDENTIALS_PATH,
         output_dir: Union[str, Path] = PECHAS_PATH,
     ):  
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.credentials = service_account.Credentials.from_service_account_file(
-            credentials_path,
-            scopes=["https://www.googleapis.com/auth/drive.readonly"],
-        )
+
+        if isinstance(credentials, str):
+            try:
+                # Attempt to load credentials from a JSON string
+                credentials_info = json.loads(credentials)
+                self.credentials = service_account.Credentials.from_service_account_info(
+                    credentials_info,
+                    scopes=["https://www.googleapis.com/auth/drive.readonly"],
+                )
+            except json.JSONDecodeError:
+                # If it's not a valid JSON string, assume it's a file path
+                self.credentials = service_account.Credentials.from_service_account_file(
+                    credentials,
+                    scopes=["https://www.googleapis.com/auth/drive.readonly"],
+                )
+        else:
+            raise ValueError("Invalid credentials type. Expected credentials JSON String.")
         self.drive_service = build("drive", "v3", credentials=self.credentials)
 
         if google_docs_link is not None:
