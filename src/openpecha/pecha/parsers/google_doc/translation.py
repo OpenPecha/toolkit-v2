@@ -66,12 +66,22 @@ class GoogleDocTranslationParser(BaseParser):
         # Ignore the first element, as it is considered the title
         return texts[1:]
 
+    def remove_unwanted_annotations(self, text: List[str]):
+        """
+        Remove annotations.(Mostly annotations not needed or parser not build for it yet)
+        """
+        # Remove foot note annotations
+        text = [re.sub(r"\[\d+\]", "", line) for line in text]
+        return text
+
     def extract_root_idx_from_doc(self, input: Path):
         if input.name.endswith(".docx"):
             docx_texts = self.get_docx_content(input)
 
         else:
             docx_texts = self.get_txt_content(input)
+
+        docx_texts = self.remove_unwanted_annotations(docx_texts)
 
         content = OrderedDict()
         for text in docx_texts:
