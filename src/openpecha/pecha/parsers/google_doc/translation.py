@@ -52,8 +52,26 @@ class GoogleDocTranslationParser(BaseParser):
             docs_texts.pop()
         return docs_texts
 
-    def extract_root_idx_from_doc(self, input):
-        docx_texts = self.get_docx_content(input)
+    def get_txt_content(self, input):
+        # Read the text content from the input file
+        text = input.read_text(encoding="utf-8")
+
+        # Remove the Byte Order Mark (BOM) if present
+        if text.startswith("\ufeff"):
+            text = text[1:]
+
+        # Split the text into lines, strip whitespace, and ignore empty lines
+        texts = [line.strip() for line in text.splitlines() if line.strip()]
+
+        # Ignore the first element, as it is considered the title
+        return texts[1:]
+
+    def extract_root_idx_from_doc(self, input: Path):
+        if input.name.endswith(".docx"):
+            docx_texts = self.get_docx_content(input)
+
+        else:
+            docx_texts = self.get_txt_content(input)
 
         content = OrderedDict()
         for text in docx_texts:
