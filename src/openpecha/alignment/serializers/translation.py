@@ -7,7 +7,7 @@ from stam import AnnotationStore
 from openpecha.alignment.serializers import BaseAlignmentSerializer
 from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
-from openpecha.utils import get_text_direction_with_lang, write_json
+from openpecha.utils import chunk_strings, get_text_direction_with_lang, write_json
 
 
 class TextTranslationSerializer(BaseAlignmentSerializer):
@@ -106,7 +106,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             ).as_posix()
         )
         segments = self.get_texts_from_layer(segment_layer)
-        self.root_json["books"][0]["content"] = [segments]
+        self.root_json["books"][0]["content"] = chunk_strings(segments)
 
     def set_translation_content(self, is_pecha_display: bool):
         """
@@ -153,7 +153,9 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             else:
                 translation_segments.append("")
 
-        self.translation_json["books"][0]["content"] = [translation_segments]
+        self.translation_json["books"][0]["content"] = chunk_strings(
+            translation_segments
+        )
 
     def get_root_and_translation_layer(self):
         """

@@ -83,3 +83,17 @@ def parse_root_mapping(root_mapping) -> List[int]:
         else:
             root_mapping_list.append(int(mapping))
     return root_mapping_list
+
+
+def chunk_strings(strings, chunk_size=100):
+    """
+    Splits a list of strings into smaller lists of at most chunk_size elements each.
+
+    Args:
+    strings (list of str): The list of strings to be chunked.
+    chunk_size (int): The maximum size of each chunk.
+
+    Returns:
+    list of list of str: A list of lists, where each inner list contains up to chunk_size elements.
+    """
+    return [strings[i : i + chunk_size] for i in range(0, len(strings), chunk_size)]
