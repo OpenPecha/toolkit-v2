@@ -1,11 +1,8 @@
-import shutil
 from pathlib import Path
 from typing import Dict, List, Union
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
-from openpecha.config import INPUT_DATA_PATH, JSON_OUTPUT_PATH, PECHAS_PATH
-from openpecha.ids import get_uuid
-from openpecha.pecha.parsers.google_doc.google_api import GoogleDocAndSheetsDownloader
+from openpecha.config import JSON_OUTPUT_PATH, PECHAS_PATH
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
 
 
@@ -41,73 +38,56 @@ def serialize_translation(
 
 def root_text_pipeline(root_links: Dict, source_path: Union[str, None] = None):
     """
-    This is to download, parse and serialize the root text
+    This is to parse and and publish the root text
     """
-    root_docx_url, root_sheet_url = root_links["docx"], root_links["sheet"]
-
-    # Download
-    temp_download_path = INPUT_DATA_PATH / get_uuid()
-    root_downloader = GoogleDocAndSheetsDownloader(
-        google_docs_link=root_docx_url,
-        google_sheets_link=root_sheet_url,
-        credentials_path="cred.json",
-        output_dir=Path(temp_download_path),
+    root_docx_path, root_sheet_path = Path(root_links["docx"]), Path(
+        root_links["sheet"]
     )
-
-    # Parse
-    assert root_downloader.docx_path is not None
 
     root_pecha, root_layer_path = parse_root(
-        root_downloader.docx_path, root_downloader.sheets_path, source_path
+        root_docx_path, root_sheet_path, source_path
     )
-    root_pecha.publish(asset_path=Path(temp_download_path), asset_name="google_docx")
-
-    # Clean up
-    shutil.rmtree(temp_download_path)
+    asset_path = root_docx_path.parent
+    root_pecha.publish(asset_path=Path(asset_path), asset_name="google_docx")
 
     return root_pecha, root_layer_path
 
 
 def translation_pipeline(
-    bo_links: Dict,
-    translation_links: Union[List[Dict], Dict, None] = None,
+    bo_paths: Dict,
+    translation_paths: Union[List[Dict], Dict, None] = None,
     output_path: Path = JSON_OUTPUT_PATH,
 ):
     """
     Input:
-    bo_links: Contains the google docx link and google sheet link of the Tibetan root text
-    translation_links: Contains the google docx link and google sheet link of the translation text
+    bo_paths: Contains the google docx path and google sheet pathof the Tibetan root text
+    translation_paths: Contains the google docx path and google sheet pathof the translation text
         This could be a of three types
         i) List of Dict: contains links of more than one translation text
         ii) Dict: contains links of one translation text
         iii) None: If there is no translation text
     """
     # Root text pipeline
-    root_pecha, root_layer_path = root_text_pipeline(bo_links)
+    root_pecha, root_layer_path = root_text_pipeline(bo_paths)
 
     # Translation text pipeline
-    if isinstance(translation_links, Dict):
+    if isinstance(translation_paths, Dict):
         translation_pecha, _ = root_text_pipeline(
-            translation_links, str(root_layer_path)
+            translation_paths, str(root_layer_path)
         )
         serialize_translation(
             root_pecha.pecha_path, translation_pecha.pecha_path, output_path
         )
-        shutil.rmtree(translation_pecha.pecha_path)
 
-    elif isinstance(translation_links, List):
-        for translation_link in translation_links:
+    elif isinstance(translation_paths, List):
+        for translation_path in translation_paths:
             translation_pecha, _ = root_text_pipeline(
-                translation_link, str(root_layer_path)
+                translation_path, str(root_layer_path)
             )
             serialize_translation(
                 root_pecha.pecha_path, translation_pecha.pecha_path, output_path
             )
-            shutil.rmtree(translation_pecha.pecha_path)
 
     else:
         # Update serialize_translation to handle this case
         pass
-
-    # Clean up
-    shutil.rmtree(root_pecha.pecha_path)
