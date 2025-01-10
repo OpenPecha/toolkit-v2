@@ -43,13 +43,14 @@ class GoogleDocTranslationParser(BaseParser):
 
     def get_docx_content(self, input):
         docs = Document(input)
-        docs_texts = [para.text.strip() for para in docs.paragraphs]
-        # Ignore the first element, it is title
-        docs_texts = docs_texts[1:]
+        docs_texts = [
+            para.text.strip() for para in docs.paragraphs if para.text.strip()
+        ]
 
-        # If last element is empty, remove it
-        if docs_texts and not docs_texts[-1]:
-            docs_texts.pop()
+        # Remove the Byte Order Mark (BOM) if present
+        if docs_texts[0].startswith("\ufeff"):
+            docs_texts[0] = docs_texts[0][1:]
+
         return docs_texts
 
     def get_txt_content(self, input):
@@ -63,8 +64,7 @@ class GoogleDocTranslationParser(BaseParser):
         # Split the text into lines, strip whitespace, and ignore empty lines
         texts = [line.strip() for line in text.splitlines() if line.strip()]
 
-        # Ignore the first element, as it is considered the title
-        return texts[1:]
+        return texts
 
     def remove_unwanted_annotations(self, text: List[str]):
         """
