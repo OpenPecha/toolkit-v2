@@ -1,6 +1,9 @@
 from pathlib import Path
 from typing import Dict, List, Union
 
+from pecha_uploader.config import Destination_url
+from pecha_uploader.pipeline import upload_root
+
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
 from openpecha.config import JSON_OUTPUT_PATH, PECHAS_PATH
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
@@ -57,6 +60,7 @@ def translation_pipeline(
     bo_paths: Dict,
     translation_paths: Union[List[Dict], Dict, None] = None,
     output_path: Path = JSON_OUTPUT_PATH,
+    destination_url: Destination_url = Destination_url.STAGING,
 ):
     """
     Input:
@@ -75,18 +79,20 @@ def translation_pipeline(
         translation_pecha, _ = root_text_pipeline(
             translation_paths, str(root_layer_path)
         )
-        serialize_translation(
+        json_file = serialize_translation(
             root_pecha.pecha_path, translation_pecha.pecha_path, output_path
         )
+        upload_root(json_file, destination_url)
 
     elif isinstance(translation_paths, List):
         for translation_path in translation_paths:
             translation_pecha, _ = root_text_pipeline(
                 translation_path, str(root_layer_path)
             )
-            serialize_translation(
+            json_file = serialize_translation(
                 root_pecha.pecha_path, translation_pecha.pecha_path, output_path
             )
+            upload_root(json_file, destination_url)
 
     else:
         # Update serialize_translation to handle this case
