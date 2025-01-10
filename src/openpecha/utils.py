@@ -1,7 +1,13 @@
 import json
 import os
+import csv
+import shutil
+from git import Repo
 from contextlib import contextmanager
 from typing import List
+from openpecha.github_utils import clone_repo
+from openpecha.config import PECHAS_PATH
+from openpecha.storages import commit_and_push
 
 
 @contextmanager
@@ -97,3 +103,24 @@ def chunk_strings(strings, chunk_size=100):
     list of list of str: A list of lists, where each inner list contains up to chunk_size elements.
     """
     return [strings[i : i + chunk_size] for i in range(0, len(strings), chunk_size)]
+
+def read_csv(file_path) -> List[List[str]]:
+    with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        rows = list(reader)  
+    return rows
+
+def write_csv(file_path, data) -> None:
+    with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        writer.writerows(data)
+
+def update_catalog(row: List[str], filename: str) -> None:
+    catalog_path = clone_repo("catalog", PECHAS_PATH)
+    csv_path = catalog_path / filename
+    catalog_csv = read_csv(csv_path)
+    catalog_csv.append(row)
+    write_csv(csv_path, catalog_csv)
+    commit_and_push(Repo(catalog_path), message="Update catalog", branch="main")
+    shutil.rmtree(catalog_path)
+
