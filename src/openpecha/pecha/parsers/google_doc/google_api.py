@@ -1,98 +1,90 @@
+import io
+import pickle
 from pathlib import Path
+from typing import Optional
 from urllib.parse import urlparse
-from typing import Optional, Union
 
-from google.oauth2 import service_account
+from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
-from openpecha.config import PECHAS_PATH, GOOGLE_API_CRENDENTIALS_PATH
+
+from openpecha.config import GOOGLE_API_CRENDENTIALS_PATH, GOOGLE_API_TOKEN_PATH
 
 
 class GoogleDocAndSheetsDownloader:
     def __init__(
         self,
-        google_docs_link: Optional[str] = None,
-        google_sheets_link: Optional[str] = None,
-        credentials_path: Optional[str] = GOOGLE_API_CRENDENTIALS_PATH,
-        output_dir: Union[str, Path] = PECHAS_PATH,
-    ):  
-        self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        self.credentials = service_account.Credentials.from_service_account_file(
-            credentials_path,
-            scopes=["https://www.googleapis.com/auth/drive.readonly"],
-        )
-        self.drive_service = build("drive", "v3", credentials=self.credentials)
+        credential_path: str = GOOGLE_API_CRENDENTIALS_PATH,
+    ):
+        self.credential_path = credential_path
+        self.token = self.authenticate()
 
-        if google_docs_link is not None:
-            google_docs_id = self.get_id_from_link(google_docs_link)
-            self.docx_path = self.get_google_docs(google_docs_id)
+    def authenticate(self):
+        """
+        Authenticate the user using the credentail json file.
+        If not authenticated, it will open a browser to authenticate the user.And save the token in the token.pickle file.
 
-        if google_sheets_link is not None:
-            google_sheets_id = self.get_id_from_link(google_sheets_link)
-            self.sheets_path = self.get_google_sheets(google_sheets_id)
+        If yes, it will load the token from the token.pickle file.
+        """
+        SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
+        creds = None
+        if GOOGLE_API_TOKEN_PATH.exists():
+            with open(GOOGLE_API_TOKEN_PATH, "rb") as token:
+                creds = pickle.load(token)
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    self.credential_path, SCOPES
+                )
+                creds = flow.run_local_server(port=0)
+            with open(GOOGLE_API_TOKEN_PATH, "wb") as token:
+                pickle.dump(creds, token)
 
-    def get_id_from_link(self, link: str) -> str:
-        parsed_url = urlparse(link)
-        path_segments = parsed_url.path.split('/')
+        self.token = creds
+
+    def get_id_from_link(self, link: str) -> Optional[str]:
+        """
+        Input: link to a Google Doc or Google sheet Document.
+        Output:  Document ID.
+        """
+        parsed_link = urlparse(link)
+        segments = parsed_link.path.split("/")
         try:
-            d_index = path_segments.index('d')
-            doc_id = path_segments[d_index + 1]
-            if not doc_id:
+            index = segments.index("d")
+            id = segments[index + 1]
+            if not id:
                 raise ValueError("Document ID is empty.")
-            return doc_id
-        except (ValueError, IndexError) as e:
-            raise ValueError(f"Invalid Google Docs link format: {link}") from e
+            return id
+        except Exception as e:
+            raise ValueError(f"[Invalid link]:[{link}]{str(e)}")
 
-
-
-    def get_google_docs(self, google_docs_id: str) -> Optional[Path]:
+    def get_google_docs(self, file_link: str, output_path: Path):
+        file_id = self.get_id_from_link(file_link)
         try:
-            file_metadata = self.drive_service.files().get(
-                fileId=google_docs_id, fields="name"
-            ).execute()
-            document_title = file_metadata.get("name", "untitled_document")
-            docx_path = self.output_dir / f"{document_title}.docx"
-
-            mime_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            request = self.drive_service.files().export_media(
-                fileId=google_docs_id, mimeType=mime_type
+            service = build("drive", "v3", credentials=self.token)
+            request = service.files().export_media(
+                fileId=file_id,
+                mimeType="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                supportsAllDrives=True,
             )
-            with docx_path.open("wb") as fh:
-                downloader = MediaIoBaseDownload(fh, request)
-                done = False
-                while not done:
-                    _, done = downloader.next_chunk()
-            return docx_path
+            fh = io.BytesIO()
+            downloader = MediaIoBaseDownload(fh, request)
+            done = False
+            while done is False:
+                status, done = downloader.next_chunk()
+                print(f"Download {int(status.progress() * 100)}%.")
 
-        except HttpError as error:
-            print(f"An error occurred: {error}")
-            return None
+            fh.seek(0)
+            with open(output_path, "wb") as f:
+                f.write(fh.read())
 
+            return output_path
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
     def get_google_sheets(self, google_sheets_id: str):
-        try:
-            # Get the sheet metadata to obtain the title
-            file_metadata = self.drive_service.files().get(
-                fileId=google_sheets_id, fields="name"
-            ).execute()
-            sheet_title = file_metadata.get("name", "untitled_sheet")
-            sheet_path = self.output_dir / f"{sheet_title}.xlsx"
-            # Prepare the export request
-            mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            request = self.drive_service.files().export_media(
-                fileId=google_sheets_id, mimeType=mime_type
-            )
-            # Download the file
-            with sheet_path.open("wb") as fh:
-                downloader = MediaIoBaseDownload(fh, request)
-                done = False
-                while not done:
-                    _, done = downloader.next_chunk()
-
-            return sheet_path
-        except HttpError as error:
-            print(f"An error occurred: {error}")
-            return None
+        pass
