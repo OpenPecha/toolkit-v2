@@ -62,7 +62,7 @@ class GoogleDocAndSheetsDownloader:
         except Exception as e:
             raise ValueError(f"[Invalid link]:[{link}]{str(e)}")
 
-    def get_google_docs(self, file_link: str, output_path: Path):
+    def get_google_docx(self, file_link: str, output_path: Path):
         file_id = self.get_id_from_link(file_link)
         try:
             service = build("drive", "v3", credentials=self.token)
@@ -75,8 +75,7 @@ class GoogleDocAndSheetsDownloader:
             downloader = MediaIoBaseDownload(fh, request)
             done = False
             while done is False:
-                status, done = downloader.next_chunk()
-                print(f"Download {int(status.progress() * 100)}%.")
+                _, done = downloader.next_chunk()
 
             fh.seek(0)
             with open(output_path, "wb") as f:
@@ -86,5 +85,25 @@ class GoogleDocAndSheetsDownloader:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def get_google_sheets(self, google_sheets_id: str):
-        pass
+    def get_google_sheet(self, file_link: str, output_path: Path):
+        file_id = self.get_id_from_link(file_link)
+        try:
+            service = build("drive", "v3", credentials=self.token)
+            request = service.files().export_media(
+                fileId=file_id,
+                mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                supportsAllDrives=True,
+            )
+            fh = io.BytesIO()
+            downloader = MediaIoBaseDownload(fh, request)
+            done = False
+            while done is False:
+                _, done = downloader.next_chunk()
+
+            fh.seek(0)
+            with open(output_path, "wb") as f:
+                f.write(fh.read())
+
+            return output_path
+        except Exception as e:
+            print(f"An error occurred: {e}")
