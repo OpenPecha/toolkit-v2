@@ -34,7 +34,7 @@ def extract_metadata_from_xlsx(input: Path):
 
     metadata["title"] = metadata["title_short"]
 
-    if isinstance(metadata["source"], dict):
+    if "source" in metadata and isinstance(metadata["source"], dict):
         metadata["source"] = list(metadata["source"].values())[0]
 
     return metadata
