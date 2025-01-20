@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from openpecha.alignment.ann_transfer.translation import TranslationAlignmentAnnTransfer
+from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -34,7 +35,7 @@ def test_coordinate_normalization():
             "new_metadata"
         ]
         pecha_display_alignment_segment_layer_path = translation_metadata_update[
-            "pecha_display_alignments"
+            AlignmentEnum.pecha_display_alignments.value
         ][0]["translation"]
         transfered_layer_path = target_metadata_update["segmentation_transfered"][0][
             "transfered"

@@ -5,6 +5,7 @@ from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.alignment.serializers import BaseAlignmentSerializer
+from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
 from openpecha.utils import chunk_strings, get_text_direction_with_lang, write_json
@@ -166,8 +167,8 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         root_pecha = Pecha.from_path(self.root_opf_path)
         translation_pecha = Pecha.from_path(self.translation_opf_path)
         if is_pecha_display:
-            assert "pecha_display_alignments" in translation_pecha.metadata.source_metadata, f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            pecha_display_alignments = translation_pecha.metadata.source_metadata["pecha_display_alignments"]
+            assert AlignmentEnum.pecha_display_alignments.value in translation_pecha.metadata.source_metadata, f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
+            pecha_display_alignments = translation_pecha.metadata.source_metadata[AlignmentEnum.pecha_display_alignments.value]
             for alignment in pecha_display_alignments:
                 root_basename, root_layer = alignment["pecha_display"].split("/")[-2], alignment["pecha_display"].split("/")[-1]
                 translation_basename, translation_layer = alignment["translation"].split("/")[-2], alignment["translation"].split("/")[-1]
