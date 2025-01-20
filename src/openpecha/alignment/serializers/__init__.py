@@ -16,6 +16,5 @@ class BaseAlignmentSerializer(ABC):
         self,
         root_opf: Path,
         translation_opf: Path,
-        output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
-    ) -> Path:
+    ) -> Dict:
         pass

@@ -1,4 +1,3 @@
-import tempfile
 from pathlib import Path
 from unittest import TestCase, mock
 
@@ -34,16 +33,12 @@ class TestTextTranslationSerializer(TestCase):
     def test_translation_serializer(self):
         root_opf = DATA_DIR / "bo/IE60BBDE8"
         translation_opf = DATA_DIR / "en/I62E00D78"
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            output_dir = Path(tmpdirname)
 
-            serializer = TextTranslationSerializer()
-            json_output = serializer.serialize(
-                root_opf, translation_opf, output_dir, False
-            )
+        serializer = TextTranslationSerializer()
+        json_output = serializer.serialize(root_opf, translation_opf, False)
 
-            expected_json_path = DATA_DIR / "expected_output.json"
-            assert read_json(json_output) == read_json(expected_json_path)
+        expected_json_path = DATA_DIR / "expected_output.json"
+        assert json_output == read_json(expected_json_path)
 
     def tearDown(self):
         # Stop the patch

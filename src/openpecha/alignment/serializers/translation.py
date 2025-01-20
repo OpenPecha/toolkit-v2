@@ -6,9 +6,8 @@ from stam import AnnotationStore
 
 from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.alignment.serializers import BaseAlignmentSerializer
-from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
-from openpecha.utils import chunk_strings, get_text_direction_with_lang, write_json
+from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 
 class TextTranslationSerializer(BaseAlignmentSerializer):
@@ -236,9 +235,8 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self,
         root_opf_path: Path,
         translation_opf_path: Path,
-        output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
         is_pecha_display: bool = True,
-    ) -> Path:
+    ) -> Dict:
 
         self.root_opf_path = root_opf_path
         self.translation_opf_path = translation_opf_path
@@ -258,15 +256,9 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self.set_root_content()
         self.set_translation_content(is_pecha_display)
 
-        # Write the JSON to the output path
-        translation_pecha_title = self.get_pecha_title(self.translation_opf_path)
-        json_fname = f"{pecha_title}_{translation_pecha_title}.json"
-        json_output_path = output_path / json_fname
-        _mkdir_if_not(output_path)
         json_output = {
             "source": self.translation_json,
             "target": self.root_json,
         }
 
-        write_json(json_output_path, json_output)
-        return json_output_path
+        return json_output
