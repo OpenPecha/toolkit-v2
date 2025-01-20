@@ -166,7 +166,18 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         root_pecha = Pecha.from_path(self.root_opf_path)
         translation_pecha = Pecha.from_path(self.translation_opf_path)
         if is_pecha_display:
-            pass 
+            assert "pecha_display_segment_alignments" in translation_pecha.metadata.source_metadata, f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
+            pecha_display_alignments = translation_pecha.metadata.source_metadata["pecha_display_segment_alignments"]
+            for alignment in pecha_display_alignments:
+                root_basename, root_layer = alignment["pecha_display"].split("/")[-2], alignment["pecha_display"].split("/")[-1]
+                translation_basename, translation_layer = alignment["translation"].split("/")[-2], alignment["translation"].split("/")[-1]
+                if root_pecha.get_layer_by_filename(root_basename, root_layer) and translation_pecha.get_layer_by_filename(translation_basename, translation_layer):
+                    self.root_basename = root_basename
+                    self.translation_basename = translation_basename
+                    self.root_layername = root_layer
+                    self.translation_layername = translation_layer
+                    break
+            assert f"No proper pecha display alignment found in Root: {root_pecha.id} and translation:{translation_pecha.id} to serialize"
         else:
             assert "translation_alignments" in translation_pecha.metadata.source_metadata, f"translation alignment not present to serialize in translation Pecha {translation_pecha.id}"
             translation_alignments = translation_pecha.metadata.source_metadata["translation_alignments"]
