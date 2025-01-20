@@ -387,9 +387,12 @@ class Pecha:
 
         return self.metadata
 
-    def get_layer(self, basefile_name: str, annotation_type: LayerEnum):
-        dir_to_search = self.layer_path / basefile_name
-        ann_store_files = list(dir_to_search.glob(f"{annotation_type.value}*.json"))
+    def get_layer_by_ann_type(self, base_name: str, layer_type: LayerEnum):
+        """
+        Get layers by annotation type i.e Chapter, Sabche, Segment,...
+        """
+        dir_to_search = self.layer_path / base_name
+        ann_store_files = list(dir_to_search.glob(f"{layer_type.value}*.json"))
 
         annotation_stores = [
             AnnotationStore(file=str(annotation_file))
@@ -399,6 +402,16 @@ class Pecha:
         if len(annotation_stores) == 1:
             return annotation_stores[0], ann_store_files[0]
         return annotation_stores, ann_store_files
+    
+    def get_layer_by_filename(self, base_name: str, filename: str)->AnnotationStore:
+        """
+        Get layer by filename i.e basename and layer file name
+        """
+        layer_file = self.layer_path / base_name / filename
+        if layer_file.exists():
+            return AnnotationStore(file=str(layer_file))
+        else:
+            return None 
 
     def publish(
         self,
