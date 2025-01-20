@@ -1,13 +1,12 @@
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from stam import AnnotationStore
 
 from openpecha.alignment.serializers import BaseAlignmentSerializer
-from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.utils import get_text_direction_with_lang, write_json
+from openpecha.utils import get_text_direction_with_lang
 
 
 class SimpleTextCommentarySerializer(BaseAlignmentSerializer):
@@ -145,21 +144,16 @@ class SimpleTextCommentarySerializer(BaseAlignmentSerializer):
         self,
         root_opf: Path,
         commentary_opf: Path,
-        output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
-    ) -> Path:
+    ) -> Dict:
         self.set_metadata_to_json(root_opf, commentary_opf)
         self.fill_segments_to_json(root_opf, commentary_opf)
 
-        # Write json to file
-        json_output_path = output_path / "alignment.json"
-        _mkdir_if_not(output_path)
         json_output = {
             "source": self.commentary_json_format,
             "target": self.root_json_format,
         }
 
-        write_json(json_output_path, json_output)
-        return json_output_path
+        return json_output
 
 
 def parse_root_idx_mapping_string(root_idx_mapping: str) -> List[str]:
