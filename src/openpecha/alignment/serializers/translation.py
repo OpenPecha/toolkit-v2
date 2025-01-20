@@ -160,14 +160,14 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
     def get_root_and_translation_layer(self, is_pecha_display: bool):
         """
         Get the root layer and translation layer to serialize the layer(STAM) to JSON
-        1.First it checks if the 'pecha_display_segment_alignments' contains in the metadata (from translation opf)
+        1.First it checks if the 'pecha_display_alignments' contains in the metadata (from translation opf)
         2.Select the first meaning segment layer found in each of the opf
         """
         root_pecha = Pecha.from_path(self.root_opf_path)
         translation_pecha = Pecha.from_path(self.translation_opf_path)
         if is_pecha_display:
-            assert "pecha_display_segment_alignments" in translation_pecha.metadata.source_metadata, f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            pecha_display_alignments = translation_pecha.metadata.source_metadata["pecha_display_segment_alignments"]
+            assert "pecha_display_alignments" in translation_pecha.metadata.source_metadata, f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
+            pecha_display_alignments = translation_pecha.metadata.source_metadata["pecha_display_alignments"]
             for alignment in pecha_display_alignments:
                 root_basename, root_layer = alignment["pecha_display"].split("/")[-2], alignment["pecha_display"].split("/")[-1]
                 translation_basename, translation_layer = alignment["translation"].split("/")[-2], alignment["translation"].split("/")[-1]

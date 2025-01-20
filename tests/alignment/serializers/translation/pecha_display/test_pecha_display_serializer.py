@@ -46,9 +46,3 @@ class TestTextTranslationSerializer(TestCase):
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
-
-
-serializer = TestTextTranslationSerializer()
-serializer.setUp()
-serializer.test_translation_serializer()
-serializer.tearDown()

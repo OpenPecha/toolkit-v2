@@ -105,7 +105,7 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
         self.update_metadata(
             pecha_path=self.commentary_pecha_path,
             new_metadata={
-                "pecha_display_segment_alignments": [
+                "pecha_display_alignments": [
                     {
                         "pecha_display": os.path.relpath(
                             f"{self.target_pecha_id}/layers/{self.target_base_name}/{self.target_layer_name}"
