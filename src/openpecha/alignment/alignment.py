@@ -1,5 +1,10 @@
 from enum import Enum
 
+
 class AlignmentEnum(Enum):
-    translation_alignment = "Translation_Alignment"
+    """
+    This Enum values are used to specify the type of alignment in metadata.json
+    """
+
+    translation_alignment = "translation_alignments"
     pecha_display_alignments = "pecha_display_alignments"

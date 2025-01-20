@@ -1,11 +1,11 @@
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
-from openpecha.alignment.serializers import BaseAlignmentSerializer
 from openpecha.alignment.alignment import AlignmentEnum
+from openpecha.alignment.serializers import BaseAlignmentSerializer
 from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
 from openpecha.utils import chunk_strings, get_text_direction_with_lang, write_json
@@ -21,14 +21,14 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "categories": [],
             "books": [],
         }
-        self.root_opf_path: Union[Path, None] = None
-        self.translation_opf_path: Union[Path, None] = None
+        self.root_opf_path: Path
+        self.translation_opf_path: Path
 
-        self.root_basename: Union[str, None] = None
-        self.translation_basename: Union[str, None] = None
+        self.root_basename: str
+        self.translation_basename: str
 
-        self.root_layername: Union[str, None] = None
-        self.translation_layername: Union[str, None] = None
+        self.root_layername: str
+        self.translation_layername: str
 
     def set_pecha_category(self, category: str):
         """
@@ -167,12 +167,27 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         root_pecha = Pecha.from_path(self.root_opf_path)
         translation_pecha = Pecha.from_path(self.translation_opf_path)
         if is_pecha_display:
-            assert AlignmentEnum.pecha_display_alignments.value in translation_pecha.metadata.source_metadata, f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            pecha_display_alignments = translation_pecha.metadata.source_metadata[AlignmentEnum.pecha_display_alignments.value]
+            assert (
+                AlignmentEnum.pecha_display_alignments.value
+                in translation_pecha.metadata.source_metadata
+            ), f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
+            pecha_display_alignments = translation_pecha.metadata.source_metadata[
+                AlignmentEnum.pecha_display_alignments.value
+            ]
             for alignment in pecha_display_alignments:
-                root_basename, root_layer = alignment["pecha_display"].split("/")[-2], alignment["pecha_display"].split("/")[-1]
-                translation_basename, translation_layer = alignment["translation"].split("/")[-2], alignment["translation"].split("/")[-1]
-                if root_pecha.get_layer_by_filename(root_basename, root_layer) and translation_pecha.get_layer_by_filename(translation_basename, translation_layer):
+                root_basename, root_layer = (
+                    alignment["pecha_display"].split("/")[-2],
+                    alignment["pecha_display"].split("/")[-1],
+                )
+                translation_basename, translation_layer = (
+                    alignment["translation"].split("/")[-2],
+                    alignment["translation"].split("/")[-1],
+                )
+                if root_pecha.get_layer_by_filename(
+                    root_basename, root_layer
+                ) and translation_pecha.get_layer_by_filename(
+                    translation_basename, translation_layer
+                ):
                     self.root_basename = root_basename
                     self.translation_basename = translation_basename
                     self.root_layername = root_layer
@@ -180,19 +195,33 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                     break
             assert f"No proper pecha display alignment found in Root: {root_pecha.id} and translation:{translation_pecha.id} to serialize"
         else:
-            assert "translation_alignments" in translation_pecha.metadata.source_metadata, f"translation alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            translation_alignments = translation_pecha.metadata.source_metadata["translation_alignments"]
+            assert (
+                AlignmentEnum.translation_alignment.value
+                in translation_pecha.metadata.source_metadata
+            ), f"translation alignment not present to serialize in translation Pecha {translation_pecha.id}"
+            translation_alignments = translation_pecha.metadata.source_metadata[
+                AlignmentEnum.translation_alignment.value
+            ]
             for alignment in translation_alignments:
-                root_basename, root_layer = alignment["source"].split("/")[-2], alignment["source"].split("/")[-1]
-                translation_basename, translation_layer = alignment["target"].split("/")[-2], alignment["target"].split("/")[-1]
-                if root_pecha.get_layer_by_filename(root_basename, root_layer) and translation_pecha.get_layer_by_filename(translation_basename, translation_layer):
+                root_basename, root_layer = (
+                    alignment["source"].split("/")[-2],
+                    alignment["source"].split("/")[-1],
+                )
+                translation_basename, translation_layer = (
+                    alignment["target"].split("/")[-2],
+                    alignment["target"].split("/")[-1],
+                )
+                if root_pecha.get_layer_by_filename(
+                    root_basename, root_layer
+                ) and translation_pecha.get_layer_by_filename(
+                    translation_basename, translation_layer
+                ):
                     self.root_basename = root_basename
                     self.translation_basename = translation_basename
                     self.root_layername = root_layer
                     self.translation_layername = translation_layer
-                    break 
+                    break
             assert f"No proper translation alignment found in Root: {root_pecha.id} and translation:{translation_pecha.id} to serialize"
-
 
     def get_pecha_title(self, pecha_path: Path):
         pecha = Pecha.from_path(pecha_path)

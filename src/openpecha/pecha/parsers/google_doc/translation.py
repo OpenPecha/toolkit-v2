@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple, Union
 
 from docx import Document
 
+from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
@@ -174,14 +175,14 @@ class GoogleDocTranslationParser(BaseParser):
             "target": target_pecha_layer,
         }
 
-        if "translation_alignments" in pecha_metadata.source_metadata:
-            pecha_metadata.source_metadata["translation_alignments"].append(
-                new_translation_alignment
-            )
+        if AlignmentEnum.translation_alignment.value in pecha_metadata.source_metadata:
+            pecha_metadata.source_metadata[
+                AlignmentEnum.translation_alignment.value
+            ].append(new_translation_alignment)
         else:
-            pecha_metadata.source_metadata["translation_alignments"] = [
-                new_translation_alignment
-            ]
+            pecha_metadata.source_metadata[
+                AlignmentEnum.translation_alignment.value
+            ] = [new_translation_alignment]
         pecha.set_metadata(pecha_metadata=pecha_metadata)
 
         # Update remote pecha
@@ -218,7 +219,7 @@ class GoogleDocTranslationParser(BaseParser):
 
         # Set source path in translation alignment
         if self.source_path:
-            self.metadata["translation_alignments"] = [
+            self.metadata[AlignmentEnum.translation_alignment.value] = [
                 {"source": self.source_path, "target": str(relative_layer_path)}
             ]
 
