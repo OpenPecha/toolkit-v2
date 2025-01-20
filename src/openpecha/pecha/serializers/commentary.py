@@ -116,7 +116,7 @@ class CommentarySerializer:
         """
         assert self.pecha is not None, "Pecha object is not set"
         basename = next(self.pecha.base_path.rglob("*.txt")).stem
-        sapche_layer, _ = self.pecha.get_layer(basename, LayerEnum.sapche)
+        sapche_layer, _ = self.pecha.get_layer_by_ann_type(basename, LayerEnum.sapche)
         for ann in sapche_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
             # Get metadata of the annotation
@@ -140,7 +140,7 @@ class CommentarySerializer:
         """
         assert self.pecha is not None, "Pecha object is not set"
         basename = next(self.pecha.base_path.rglob("*.txt")).stem
-        meaning_segment_layer, _ = self.pecha.get_layer(
+        meaning_segment_layer, _ = self.pecha.get_layer_by_ann_type(
             basename, LayerEnum.meaning_segment
         )
         for ann in meaning_segment_layer:

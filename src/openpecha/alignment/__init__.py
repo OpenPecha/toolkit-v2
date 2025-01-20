@@ -110,7 +110,7 @@ class Alignment:
             """get root segment annotation"""
             base_file = self.metadata.segments_metadata[pecha_id].base
             ann_type = self.metadata.segments_metadata[pecha_id].type
-            pecha_ann_store, _ = self.pechas[pecha_id].get_layer(base_file, ann_type)
+            pecha_ann_store, _ = self.pechas[pecha_id].get_layer_by_ann_type(base_file, ann_type)
 
             """ get chapter annotation"""
             chapter_ann_type = LayerEnum.chapter

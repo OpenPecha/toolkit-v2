@@ -1,13 +1,13 @@
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
+from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.alignment.serializers import BaseAlignmentSerializer
-from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH, _mkdir_if_not
 from openpecha.pecha import Pecha
-from openpecha.utils import chunk_strings, get_text_direction_with_lang, write_json
+from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 
 class TextTranslationSerializer(BaseAlignmentSerializer):
@@ -20,14 +20,14 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "categories": [],
             "books": [],
         }
-        self.root_opf_path: Union[Path, None] = None
-        self.translation_opf_path: Union[Path, None] = None
+        self.root_opf_path: Path
+        self.translation_opf_path: Path
 
-        self.root_basename: Union[str, None] = None
-        self.translation_basename: Union[str, None] = None
+        self.root_basename: str
+        self.translation_basename: str
 
-        self.root_layername: Union[str, None] = None
-        self.translation_layername: Union[str, None] = None
+        self.root_layername: str
+        self.translation_layername: str
 
     def set_pecha_category(self, category: str):
         """
@@ -157,47 +157,70 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             translation_segments
         )
 
-    def get_root_and_translation_layer(self):
+    def get_root_and_translation_layer(self, is_pecha_display: bool):
         """
         Get the root layer and translation layer to serialize the layer(STAM) to JSON
-        1.First it checks if the 'pecha_display_segment_alignments' contains in the metadata (from translation opf)
+        1.First it checks if the 'pecha_display_alignments' contains in the metadata (from translation opf)
         2.Select the first meaning segment layer found in each of the opf
         """
-        assert isinstance(
-            self.translation_opf_path, Path
-        ), "Translation opf path is not set for 'get_root_and_translation_layer'"
-        pecha = Pecha.from_path(self.translation_opf_path)
-        if "pecha_display_segment_alignments" in pecha.metadata.source_metadata:
-            pecha_display_alignment = pecha.metadata.source_metadata[
-                "pecha_display_segment_alignments"
-            ][0]
-            root_layer_path = pecha_display_alignment["pecha_display"]
-            translation_layer_path = pecha_display_alignment["translation"]
+        root_pecha = Pecha.from_path(self.root_opf_path)
+        translation_pecha = Pecha.from_path(self.translation_opf_path)
+        if is_pecha_display:
+            assert (
+                AlignmentEnum.pecha_display_alignments.value
+                in translation_pecha.metadata.source_metadata
+            ), f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
+            pecha_display_alignments = translation_pecha.metadata.source_metadata[
+                AlignmentEnum.pecha_display_alignments.value
+            ]
+            for alignment in pecha_display_alignments:
+                root_basename, root_layer = (
+                    alignment["pecha_display"].split("/")[-2],
+                    alignment["pecha_display"].split("/")[-1],
+                )
+                translation_basename, translation_layer = (
+                    alignment["translation"].split("/")[-2],
+                    alignment["translation"].split("/")[-1],
+                )
+                if root_pecha.get_layer_by_filename(
+                    root_basename, root_layer
+                ) and translation_pecha.get_layer_by_filename(
+                    translation_basename, translation_layer
+                ):
+                    self.root_basename = root_basename
+                    self.translation_basename = translation_basename
+                    self.root_layername = root_layer
+                    self.translation_layername = translation_layer
+                    break
+            assert f"No proper pecha display alignment found in Root: {root_pecha.id} and translation:{translation_pecha.id} to serialize"
         else:
-            assert isinstance(self.root_opf_path, Path), "Root opf path is not set"
-            assert isinstance(
-                self.translation_opf_path, Path
-            ), "Translation opf path is not set"
-
-            root_jsons = list(self.root_opf_path.rglob("*.json"))
-            root_layer_path = next(
-                root_json
-                for root_json in root_jsons
-                if root_json.name != "metadata.json"
-            ).as_posix()
-
-            translation_jsons = list(self.translation_opf_path.rglob("*.json"))
-            translation_layer_path = next(
-                translation_json
-                for translation_json in translation_jsons
-                if translation_json.name != "metadata.json"
-            ).as_posix()
-
-        self.root_basename = root_layer_path.split("/")[-2]
-        self.translation_basename = translation_layer_path.split("/")[-2]
-
-        self.root_layername = root_layer_path.split("/")[-1]
-        self.translation_layername = translation_layer_path.split("/")[-1]
+            assert (
+                AlignmentEnum.translation_alignment.value
+                in translation_pecha.metadata.source_metadata
+            ), f"translation alignment not present to serialize in translation Pecha {translation_pecha.id}"
+            translation_alignments = translation_pecha.metadata.source_metadata[
+                AlignmentEnum.translation_alignment.value
+            ]
+            for alignment in translation_alignments:
+                root_basename, root_layer = (
+                    alignment["source"].split("/")[-2],
+                    alignment["source"].split("/")[-1],
+                )
+                translation_basename, translation_layer = (
+                    alignment["target"].split("/")[-2],
+                    alignment["target"].split("/")[-1],
+                )
+                if root_pecha.get_layer_by_filename(
+                    root_basename, root_layer
+                ) and translation_pecha.get_layer_by_filename(
+                    translation_basename, translation_layer
+                ):
+                    self.root_basename = root_basename
+                    self.translation_basename = translation_basename
+                    self.root_layername = root_layer
+                    self.translation_layername = translation_layer
+                    break
+            assert f"No proper translation alignment found in Root: {root_pecha.id} and translation:{translation_pecha.id} to serialize"
 
     def get_pecha_title(self, pecha_path: Path):
         pecha = Pecha.from_path(pecha_path)
@@ -212,9 +235,8 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self,
         root_opf_path: Path,
         translation_opf_path: Path,
-        output_path: Path = SERIALIZED_ALIGNMENT_JSON_PATH,
         is_pecha_display: bool = True,
-    ) -> Path:
+    ) -> Dict:
 
         self.root_opf_path = root_opf_path
         self.translation_opf_path = translation_opf_path
@@ -228,21 +250,15 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self.set_pecha_category(pecha_title)
 
         # Get the root and translation layer to serialize the layer(STAM) to JSON
-        self.get_root_and_translation_layer()
+        self.get_root_and_translation_layer(is_pecha_display)
 
         # Set the content for source and target and set it to JSON
         self.set_root_content()
         self.set_translation_content(is_pecha_display)
 
-        # Write the JSON to the output path
-        translation_pecha_title = self.get_pecha_title(self.translation_opf_path)
-        json_fname = f"{pecha_title}_{translation_pecha_title}.json"
-        json_output_path = output_path / json_fname
-        _mkdir_if_not(output_path)
         json_output = {
             "source": self.translation_json,
             "target": self.root_json,
         }
 
-        write_json(json_output_path, json_output)
-        return json_output_path
+        return json_output
