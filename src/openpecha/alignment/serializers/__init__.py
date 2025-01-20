@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Union
-
-from openpecha.config import SERIALIZED_ALIGNMENT_JSON_PATH
-from openpecha.pecha import Pecha
+from typing import Dict
 
 
 class BaseAlignmentSerializer(ABC):
