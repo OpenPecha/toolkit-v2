@@ -122,9 +122,9 @@ class StamPecha:
         target_base = self.get_base(target_base_name)
         source_base = source_pecha.get_base(source_base_name)
 
-        for _, layer in source_pecha.get_layer(source_base_name):
+        for _, layer in source_pecha.get_layers(source_base_name):
             updated_anns = get_updated_layer_anns(source_base_name, source_base, target_base, layer)
-            
+            # Write the updated anns to the updated annotation
 
 class Pecha:
     def __init__(self, pecha_id: str, pecha_path: Path) -> None:
@@ -195,6 +195,12 @@ class Pecha:
             ann_enum = LayerEnum(layer_file.stem.split("-")[0])
             layers[base_name][ann_enum].append(AnnotationStore(file=str(layer_file)))
         return layers
+    
+    def get_base(self, base_name) -> str:
+        """
+        This function returns the base layer of the pecha.
+        """
+        return (self.base_path / f"{base_name}.txt").read_text()
 
     def set_base(self, content: str, base_name=None):
         """
@@ -322,6 +328,34 @@ class Pecha:
             json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)
 
         return self.metadata
+    
+    def get_layers(
+        self, base_name, from_cache=False
+    ) -> Generator[Tuple[str, AnnotationStore], None, None]:
+        """
+        This function returns the layers of the pecha.
+
+        Args:
+            base_name (str): The base name to identify specific layers.
+
+        Returns:
+            Generator[AnnotationStore, None, None]: Yields instances of `AnnotationStore` as they are read from directory files.
+        """
+
+        for layer_fn in (self.layers_path / base_name).iterdir():
+            rel_layer_fn = layer_fn.relative_to(self.parent)
+            if from_cache:
+                store = self.layers[base_name].get(rel_layer_fn.name)
+            else:
+                store = None
+
+            if store:
+                yield layer_fn.name, store
+            else:
+                with utils.cwd(self.parent):
+                    store = AnnotationStore(file=str(rel_layer_fn))
+                self.layers[base_name][rel_layer_fn.name] = store
+                yield layer_fn.name, store
 
     def get_layer_by_ann_type(self, base_name: str, layer_type: LayerEnum):
         """
@@ -412,3 +446,26 @@ class Pecha:
             self.metadata.imported
         ]
         utils.update_catalog(row, "opf_catalog.csv")
+
+
+    def merge_pecha(
+        self,
+        source_pecha: "Pecha",
+        source_base_name: str,
+        target_base_name: str,
+    ):
+        """
+        This function merges the layers of the source pecha into the current pecha.
+
+        Args:
+            source_pecha_path (Union[Path, str]): The path of the source pecha.
+            source_base_name (str): The base name of the source pecha.
+            target_base_name (str): The base name of the target (current) pecha.
+        """
+
+        target_base = self.get_base(target_base_name)
+        source_base = source_pecha.get_base(source_base_name)
+
+        for _, layer in source_pecha.get_layers(source_base_name):
+            updated_anns = get_updated_layer_anns(source_base_name, source_base, target_base, layer)
+            # Write the updated anns to the updated annotation

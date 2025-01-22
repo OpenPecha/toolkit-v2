@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from openpecha.pecha import StamPecha
+from openpecha.pecha import Pecha
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def temp_data(tmp_path):
 
 
 def test_pecha_base_update(temp_data):
-    pecha = StamPecha(path=temp_data / "P0001")
+    pecha = Pecha.from_path(path=temp_data / "P0001")
     base_name = "0001"
     new_base = "00123456789"
     old_layers = list(pecha.get_layers(base_name))
@@ -45,8 +45,8 @@ def test_pecha_merge(temp_data):
     source_base_name = "0002"
     target_base_name = "0001"
 
-    source_pecha = StamPecha(source_pecha_path)
-    target_pecha = StamPecha(target_pecha_path)
+    source_pecha = Pecha.from_path(source_pecha_path)
+    target_pecha = Pecha.from_path(target_pecha_path)
 
     source_base = source_pecha.get_base(source_base_name)
     target_base = target_pecha.get_base(target_base_name)
@@ -55,7 +55,7 @@ def test_pecha_merge(temp_data):
     target_pre_merge_n_layers = len(list(target_pecha.get_layers(target_base_name)))
     source_n_layers = len(list(source_pecha.get_layers(source_base_name)))
 
-    pecha = StamPecha(source_pecha_path)
+    pecha = Pecha.from_path(source_pecha_path)
     target_pecha.merge_pecha(pecha, source_base_name, target_base_name)
 
     target_post_merge_n_layers = len(list(target_pecha.get_layers(target_base_name)))
