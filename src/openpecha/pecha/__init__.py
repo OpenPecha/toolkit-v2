@@ -6,7 +6,7 @@ from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
 from git import Repo
-from stam import Annotation, AnnotationStore, Offset, Selector
+from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
@@ -341,6 +341,14 @@ class Pecha:
         ]
         utils.update_catalog(row, "opf_catalog.csv")
 
+    @staticmethod
+    def map_stam_ann_data(ann_data: AnnotationData) -> Dict:
+        key = str(ann_data.key().id())
+        value = ann_data.value().get()
+        id = ann_data.id()
+        dataset_id = ann_data.dataset().id()
+        return {"id": id, "key": key, "value": value, "set": dataset_id}
+
     def merge_pecha(
         self,
         source_pecha: "Pecha",
@@ -369,11 +377,12 @@ class Pecha:
             resource = next(layer.resources())
             for ann in updated_anns:
                 start, end = ann["span"][0], ann["span"][1]
+                ann_data = [self.map_stam_ann_data(data) for data in ann["ann_data"]]
                 layer.annotate(
                     id=ann["id"],
                     target=Selector.textselector(resource, Offset.simple(start, end)),
-                    data=ann["ann_data"],
+                    data=ann_data,
                 )
             layer_output_path = self.layer_path / target_base_name / layer_name
-            layer.set_filename(layer_output_path)
+            layer.set_filename(layer_output_path.as_posix())
             layer.save()
