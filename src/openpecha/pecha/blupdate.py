@@ -1,7 +1,8 @@
 import math
 
 import diff_match_patch as dmp_module
-from stam import AnnotationStore, Offset, Selector
+from diff_match_patch import diff_match_patch
+from stam import AnnotationStore
 
 
 class Blupdate:
@@ -183,34 +184,33 @@ class Blupdate:
             return self.get_updated_with_dmp(srcblcoord, cctvforcoord[0])
 
 
-def update_layer(base_name, old_base, new_base: str, layer: AnnotationStore):
-    resource = layer.resource(base_name)
-    blupdate = Blupdate(old_base, new_base)
+def get_updated_layer_anns(old_base, new_base: str, layer: AnnotationStore):
+    """
+    1.Read all the annotations in layer
+    2.Compute the updated coordinate of ann based on new  base
+    3.Return the updated annotations
+    """
+    dmp = diff_match_patch()
+    diffs = dmp.diff_main(old_base, new_base)
+    updated_anns = []
     for ann in layer.annotations():
         old_begin = ann.offset().begin().value()
         old_end = ann.offset().end().value()
 
-        new_begin = blupdate.get_updated_coord(old_begin)
-        new_end = blupdate.get_updated_coord(old_end)
+        new_begin = dmp.diff_xIndex(diffs, old_begin)
+        new_end = dmp.diff_xIndex(diffs, old_end)
 
-        if new_begin == -1 or new_end == -1:
-            continue
+        if new_begin >= len(new_base):
+            new_begin = len(new_base) - 1
 
-        begin_shift = new_begin - old_begin
-        end_shift = new_end - old_end
+        if new_end >= len(new_base):
+            new_end = len(new_base) - 1
 
         ann_id = ann.id()
-        new_begin_cursor = ann.offset().begin().shift(begin_shift)
-        new_end_cursor = ann.offset().end().shift(end_shift)
-        new_offset = Offset(new_begin_cursor, new_end_cursor)
         ann_data = list(ann.data())
 
-        layer.remove(ann)
-
-        layer.annotate(
-            id=ann_id,
-            target=Selector.textselector(resource, new_offset),
-            data=ann_data,
+        updated_anns.append(
+            {"id": ann_id, "span": (new_begin, new_end), "ann_data": ann_data}
         )
 
-    return layer
+    return updated_anns

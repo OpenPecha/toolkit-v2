@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 from unittest.mock import patch
 
-from openpecha.alignment.ann_transfer.translation import TranslationAlignmentAnnTransfer
 from openpecha.alignment.alignment import AlignmentEnum
+from openpecha.alignment.ann_transfer.translation import TranslationAlignmentAnnTransfer
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"

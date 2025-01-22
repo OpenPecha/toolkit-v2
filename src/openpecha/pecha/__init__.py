@@ -6,188 +6,19 @@ from typing import Dict, Generator, List, Optional, Tuple, Union
 
 import stam
 from git import Repo
-from stam import Annotation, AnnotationStore, Offset, Selector
+from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
-from openpecha.pecha.blupdate import update_layer
+from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
 BASE_NAME = str
 layer_type = str
-
-
-class StamPecha:
-    def __init__(self, path: Union[Path, str]):
-        path = Path(path)
-        self.run_checks(path)
-        self.path: Path = path.resolve()
-        self.parent: Path = self.path.parent
-        self.pecha_id: str = self.path.name
-        self.layers: Dict[BASE_NAME, Dict[layer_type, AnnotationStore]] = defaultdict(
-            dict
-        )
-
-    @staticmethod
-    def run_checks(path: Path):
-        """
-        This function checks if the pecha path is valid or not.
-        """
-        if not path.exists():
-            raise FileNotFoundError(f"{path} does not exist.")
-        if not path.is_dir():
-            raise NotADirectoryError(f"{path} is not a directory.")
-
-        if not (path / "base").exists():
-            raise FileNotFoundError(f"{path} does not have a base layer.")
-
-        if not (path / "layers").exists():
-            raise FileNotFoundError(f"{path} does not have any layers.")
-
-    @property
-    def base_path(self) -> Path:
-        return self.path / "base"
-
-    @property
-    def layers_path(self) -> Path:
-        return self.path / "layers"
-
-    def get_base(self, base_name) -> str:
-        """
-        This function returns the base layer of the pecha.
-        """
-        return (self.base_path / f"{base_name}.txt").read_text()
-
-    def set_base(self, base_name, content) -> None:
-        """
-        This function sets the base layer of the pecha to a new text.
-        """
-        (self.base_path / f"{base_name}.txt").write_text(content)
-
-    def get_layers(
-        self, base_name, from_cache=False
-    ) -> Generator[Tuple[str, AnnotationStore], None, None]:
-        """
-        This function returns the layers of the pecha.
-
-        Args:
-            base_name (str): The base name to identify specific layers.
-
-        Returns:
-            Generator[AnnotationStore, None, None]: Yields instances of `AnnotationStore` as they are read from directory files.
-        """
-
-        for layer_fn in (self.layers_path / base_name).iterdir():
-            rel_layer_fn = layer_fn.relative_to(self.parent)
-            if from_cache:
-                store = self.layers[base_name].get(rel_layer_fn.name)
-            else:
-                store = None
-
-            if store:
-                yield layer_fn.name, store
-            else:
-                with utils.cwd(self.parent):
-                    store = AnnotationStore(file=str(rel_layer_fn))
-                self.layers[base_name][rel_layer_fn.name] = store
-                yield layer_fn.name, store
-
-    def get_layer(self, base_name, layer_type):
-        """
-        This function returns a specific layer of the pecha.
-        """
-        if not self.layers[base_name]:
-            self.get_layers(base_name)
-        return self.layers[base_name][layer_type]
-
-    def update_base(self, base_name, new_base, save=True):
-        """
-        This function updates the base layer of the pecha to a new text. It will recompute the existing layers into the new base layer.
-        """
-        for _, layer in self.get_layers(base_name):
-            old_base = layer.resource(base_name).text()
-            update_layer(base_name, old_base, new_base, layer)
-            if save:
-                with utils.cwd(self.parent):
-                    layer.save()
-        if save:
-            self.set_base(base_name, new_base)
-
-    @staticmethod
-    def change_resource(
-        source_resource: stam.TextResource,
-        target_resource: stam.TextResource,
-        layer: stam.AnnotationStore,
-    ) -> stam.AnnotationStore:
-        """
-        Update all annotations referencing to `source` to `target` resource.
-
-        Args:
-            source_resource(stam.Resource): source resource
-            target_resource(stam.Resource): target resource
-            layer(stam.AnnotationStore): layer to be edited
-
-        Retuns:
-            layer(stam.AnnotationStore): edited layer
-        """
-        for ann in layer.annotations():
-            ann_id = ann.id()
-            offset = ann.offset()
-            data = list(ann.data())
-
-            layer.remove(ann, strict=True)
-
-            layer.annotate(
-                id=ann_id,
-                target=Selector.textselector(target_resource, offset),
-                data=data,
-            )
-
-        layer.remove(source_resource, strict=True)
-
-        return layer
-
-    def merge_pecha(
-        self,
-        source_pecha: "StamPecha",
-        source_base_name: str,
-        target_base_name: str,
-    ):
-        """
-        This function merges the layers of the source pecha into the current pecha.
-
-        Args:
-            source_pecha_path (Union[Path, str]): The path of the source pecha.
-            source_base_name (str): The base name of the source pecha.
-            target_base_name (str): The base name of the target (current) pecha.
-        """
-
-        target_base = self.get_base(target_base_name)
-
-        source_pecha.update_base(source_base_name, target_base, save=False)
-
-        for layer_fn, layer in source_pecha.get_layers(
-            source_base_name, from_cache=True
-        ):
-
-            with utils.cwd(self.parent):
-                target_base_fn = (
-                    self.base_path.relative_to(self.parent) / f"{target_base_name}.txt"
-                )
-                target_layer_fn = self.layers_path / target_base_name / layer_fn
-                layer.set_filename(str(target_layer_fn))
-                layer.add_resource(
-                    id=target_base_name,
-                    filename=f"../../base/{target_base_fn.stem}.txt",
-                )
-                source_resouce = layer.resource(source_base_name)
-                target_resource = layer.resource(target_base_name)
-                layer = self.change_resource(source_resouce, target_resource, layer)
-                layer.save()
 
 
 class Pecha:
@@ -259,6 +90,12 @@ class Pecha:
             ann_enum = LayerEnum(layer_file.stem.split("-")[0])
             layers[base_name][ann_enum].append(AnnotationStore(file=str(layer_file)))
         return layers
+
+    def get_base(self, base_name) -> str:
+        """
+        This function returns the base layer of the pecha.
+        """
+        return (self.base_path / f"{base_name}.txt").read_text()
 
     def set_base(self, content: str, base_name=None):
         """
@@ -387,6 +224,34 @@ class Pecha:
 
         return self.metadata
 
+    def get_layers(
+        self, base_name, from_cache=False
+    ) -> Generator[Tuple[str, AnnotationStore], None, None]:
+        """
+        This function returns the layers of the pecha.
+
+        Args:
+            base_name (str): The base name to identify specific layers.
+
+        Returns:
+            Generator[AnnotationStore, None, None]: Yields instances of `AnnotationStore` as they are read from directory files.
+        """
+
+        for layer_fn in (self.layer_path / base_name).iterdir():
+            rel_layer_fn = layer_fn.relative_to(self.pecha_path.parent)
+            if from_cache:
+                store = self.layers[base_name].get(rel_layer_fn.name)
+            else:
+                store = None
+
+            if store:
+                yield layer_fn.name, store
+            else:
+                with utils.cwd(self.pecha_path.parent):
+                    store = AnnotationStore(file=str(rel_layer_fn))
+                self.layers[base_name][rel_layer_fn.name] = store
+                yield layer_fn.name, store
+
     def get_layer_by_ann_type(self, base_name: str, layer_type: LayerEnum):
         """
         Get layers by annotation type i.e Chapter, Sabche, Segment,...
@@ -402,8 +267,8 @@ class Pecha:
         if len(annotation_stores) == 1:
             return annotation_stores[0], ann_store_files[0]
         return annotation_stores, ann_store_files
-    
-    def get_layer_by_filename(self, base_name: str, filename: str)->AnnotationStore:
+
+    def get_layer_by_filename(self, base_name: str, filename: str) -> AnnotationStore:
         """
         Get layer by filename i.e basename and layer file name
         """
@@ -411,7 +276,7 @@ class Pecha:
         if layer_file.exists():
             return AnnotationStore(file=str(layer_file))
         else:
-            return None 
+            return None
 
     def publish(
         self,
@@ -464,15 +329,58 @@ class Pecha:
                 token=self.storage.token,
             )
             (asset_path.parent / f"{asset_name}.zip").unlink()
-        
-    
+
         row = [
-            self.id, 
-            self.metadata.title, 
-            self.metadata.author, 
+            self.id,
+            self.metadata.title,
+            self.metadata.author,
             self.metadata.source_metadata.get("id", ""),
             self.metadata.language.value,
             self.metadata.initial_creation_type.value,
-            self.metadata.imported
+            self.metadata.imported,
         ]
         utils.update_catalog(row, "opf_catalog.csv")
+
+    @staticmethod
+    def map_stam_ann_data(ann_data: AnnotationData) -> Dict:
+        key = str(ann_data.key().id())
+        value = ann_data.value().get()
+        id = ann_data.id()
+        dataset_id = ann_data.dataset().id()
+        return {"id": id, "key": key, "value": value, "set": dataset_id}
+
+    def merge_pecha(
+        self,
+        source_pecha: "Pecha",
+        source_base_name: str,
+        target_base_name: str,
+    ):
+        """
+        This function merges the layers of the source pecha into the current pecha.
+
+        Args:
+            source_pecha_path (Union[Path, str]): The path of the source pecha.
+            source_base_name (str): The base name of the source pecha.
+            target_base_name (str): The base name of the target (current) pecha.
+        """
+
+        target_base = self.get_base(target_base_name)
+        source_base = source_pecha.get_base(source_base_name)
+
+        for layer_name, layer in source_pecha.get_layers(source_base_name):
+            updated_anns = get_updated_layer_anns(source_base, target_base, layer)
+            layer, _ = self.add_layer(
+                target_base_name, LayerEnum(layer_name.split("-")[0])
+            )
+            resource = next(layer.resources())
+            for ann in updated_anns:
+                start, end = ann["span"][0], ann["span"][1]
+                ann_data = [self.map_stam_ann_data(data) for data in ann["ann_data"]]
+                layer.annotate(
+                    id=ann["id"],
+                    target=Selector.textselector(resource, Offset.simple(start, end)),
+                    data=ann_data,
+                )
+            layer_output_path = self.layer_path / target_base_name / layer_name
+            layer.set_filename(layer_output_path.as_posix())
+            layer.save()
