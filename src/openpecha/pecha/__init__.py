@@ -12,7 +12,7 @@ from openpecha import utils
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
-from openpecha.pecha.blupdate import update_layer
+from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
@@ -104,53 +104,6 @@ class StamPecha:
             self.get_layers(base_name)
         return self.layers[base_name][layer_type]
 
-    def update_base(self, base_name, new_base, save=True):
-        """
-        This function updates the base layer of the pecha to a new text. It will recompute the existing layers into the new base layer.
-        """
-        for _, layer in self.get_layers(base_name):
-            old_base = layer.resource(base_name).text()
-            update_layer(base_name, old_base, new_base, layer)
-            if save:
-                with utils.cwd(self.parent):
-                    layer.save()
-        if save:
-            self.set_base(base_name, new_base)
-
-    @staticmethod
-    def change_resource(
-        source_resource: stam.TextResource,
-        target_resource: stam.TextResource,
-        layer: stam.AnnotationStore,
-    ) -> stam.AnnotationStore:
-        """
-        Update all annotations referencing to `source` to `target` resource.
-
-        Args:
-            source_resource(stam.Resource): source resource
-            target_resource(stam.Resource): target resource
-            layer(stam.AnnotationStore): layer to be edited
-
-        Retuns:
-            layer(stam.AnnotationStore): edited layer
-        """
-        for ann in layer.annotations():
-            ann_id = ann.id()
-            offset = ann.offset()
-            data = list(ann.data())
-
-            layer.remove(ann, strict=True)
-
-            layer.annotate(
-                id=ann_id,
-                target=Selector.textselector(target_resource, offset),
-                data=data,
-            )
-
-        layer.remove(source_resource, strict=True)
-
-        return layer
-
     def merge_pecha(
         self,
         source_pecha: "StamPecha",
@@ -167,28 +120,11 @@ class StamPecha:
         """
 
         target_base = self.get_base(target_base_name)
+        source_base = source_pecha.get_base(source_base_name)
 
-        source_pecha.update_base(source_base_name, target_base, save=False)
-
-        for layer_fn, layer in source_pecha.get_layers(
-            source_base_name, from_cache=True
-        ):
-
-            with utils.cwd(self.parent):
-                target_base_fn = (
-                    self.base_path.relative_to(self.parent) / f"{target_base_name}.txt"
-                )
-                target_layer_fn = self.layers_path / target_base_name / layer_fn
-                layer.set_filename(str(target_layer_fn))
-                layer.add_resource(
-                    id=target_base_name,
-                    filename=f"../../base/{target_base_fn.stem}.txt",
-                )
-                source_resouce = layer.resource(source_base_name)
-                target_resource = layer.resource(target_base_name)
-                layer = self.change_resource(source_resouce, target_resource, layer)
-                layer.save()
-
+        for _, layer in source_pecha.get_layer(source_base_name):
+            updated_anns = get_updated_layer_anns(source_base_name, source_base, target_base, layer)
+            
 
 class Pecha:
     def __init__(self, pecha_id: str, pecha_path: Path) -> None:

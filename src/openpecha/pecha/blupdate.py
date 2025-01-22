@@ -183,9 +183,14 @@ class Blupdate:
             return self.get_updated_with_dmp(srcblcoord, cctvforcoord[0])
 
 
-def update_layer(base_name, old_base, new_base: str, layer: AnnotationStore):
-    resource = layer.resource(base_name)
+def get_updated_layer_anns(old_base, new_base: str, layer: AnnotationStore):
+    """
+    1.Read all the annotations in layer
+    2.Compute the updated coordinate of ann based on new  base
+    3.Return the updated annotations
+    """
     blupdate = Blupdate(old_base, new_base)
+    updated_anns = []
     for ann in layer.annotations():
         old_begin = ann.offset().begin().value()
         old_end = ann.offset().end().value()
@@ -196,21 +201,10 @@ def update_layer(base_name, old_base, new_base: str, layer: AnnotationStore):
         if new_begin == -1 or new_end == -1:
             continue
 
-        begin_shift = new_begin - old_begin
-        end_shift = new_end - old_end
 
         ann_id = ann.id()
-        new_begin_cursor = ann.offset().begin().shift(begin_shift)
-        new_end_cursor = ann.offset().end().shift(end_shift)
-        new_offset = Offset(new_begin_cursor, new_end_cursor)
         ann_data = list(ann.data())
 
-        layer.remove(ann)
+        updated_anns.append({"id": ann_id, "span":(new_begin, new_end), "ann_data":ann_data})
 
-        layer.annotate(
-            id=ann_id,
-            target=Selector.textselector(resource, new_offset),
-            data=ann_data,
-        )
-
-    return layer
+    return updated_anns
