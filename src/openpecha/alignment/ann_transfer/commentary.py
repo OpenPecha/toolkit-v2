@@ -2,9 +2,9 @@ import os
 from pathlib import Path
 from typing import Dict, List, Union
 
-from openpecha.alignment.ann_transfer import AlignmentAnnTransfer
 from openpecha.alignment.alignment import AlignmentEnum
-from openpecha.pecha import Pecha, StamPecha
+from openpecha.alignment.ann_transfer import AlignmentAnnTransfer
+from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.utils import parse_root_mapping
 
@@ -40,7 +40,7 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
         Creates a dictionary of display and commentary alignment layer annotations.
         """
         commentary_layer_anns = []
-        commentary_pecha = StamPecha(self.commentary_pecha_path)
+        commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
         self.commentary_layer = commentary_pecha.get_layers(self.commentary_base_name)
         commentary_layer = next(
             (

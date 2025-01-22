@@ -4,7 +4,7 @@ from typing import Dict, Generator, Union
 
 from stam import AnnotationStore
 
-from openpecha.pecha import Pecha, StamPecha
+from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 
 
@@ -46,8 +46,8 @@ class AlignmentAnnTransfer:
         """
         Transfer the annotation layer from source to target pecha with give basename.
         """
-        target_pecha = StamPecha(self.target_pecha_path)
-        source_pecha = StamPecha(self.source_pecha_path)
+        target_pecha = Pecha.from_path(self.target_pecha_path)
+        source_pecha = Pecha.from_path(self.source_pecha_path)
         self.target_layers = target_pecha.get_layers(self.target_base_name)
         self.source_layers = source_pecha.get_layers(self.source_base_name)
         self.get_layer_name()
@@ -105,7 +105,7 @@ class AlignmentAnnTransfer:
         """
         assert self.target_layers is not None, "Target layer is not set."
 
-        target_pecha = StamPecha(self.target_pecha_path)
+        target_pecha = Pecha.from_path(self.target_pecha_path)
         self.target_layers = target_pecha.get_layers(self.target_base_name)
         tranfered_layer = next(
             (
@@ -124,7 +124,7 @@ class AlignmentAnnTransfer:
         Get the annotations of the display layer from the target Pecha.
         """
         assert self.target_layers is not None, "Target layer is not set."
-        target_pecha = StamPecha(self.target_pecha_path)
+        target_pecha = Pecha.from_path(self.target_pecha_path)
         self.target_layers = target_pecha.get_layers(self.target_base_name)
         display_layer = next(
             (
