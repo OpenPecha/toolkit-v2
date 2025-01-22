@@ -1,7 +1,8 @@
 import math
 
 import diff_match_patch as dmp_module
-from stam import AnnotationStore, Offset, Selector
+from diff_match_patch import diff_match_patch
+from stam import AnnotationStore
 
 
 class Blupdate:
@@ -189,22 +190,27 @@ def get_updated_layer_anns(old_base, new_base: str, layer: AnnotationStore):
     2.Compute the updated coordinate of ann based on new  base
     3.Return the updated annotations
     """
-    blupdate = Blupdate(old_base, new_base)
+    dmp = diff_match_patch()
+    diffs = dmp.diff_main(old_base, new_base)
     updated_anns = []
     for ann in layer.annotations():
         old_begin = ann.offset().begin().value()
         old_end = ann.offset().end().value()
 
-        new_begin = blupdate.get_updated_coord(old_begin)
-        new_end = blupdate.get_updated_coord(old_end)
+        new_begin = dmp.diff_xIndex(diffs, old_begin)
+        new_end = dmp.diff_xIndex(diffs, old_end)
 
-        if new_begin == -1 or new_end == -1:
-            continue
+        if new_begin >= len(new_base):
+            new_begin = len(new_base) - 1
 
+        if new_end >= len(new_base):
+            new_end = len(new_base) - 1
 
         ann_id = ann.id()
         ann_data = list(ann.data())
 
-        updated_anns.append({"id": ann_id, "span":(new_begin, new_end), "ann_data":ann_data})
+        updated_anns.append(
+            {"id": ann_id, "span": (new_begin, new_end), "ann_data": ann_data}
+        )
 
     return updated_anns

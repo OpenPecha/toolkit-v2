@@ -368,9 +368,7 @@ class Pecha:
         source_base = source_pecha.get_base(source_base_name)
 
         for layer_name, layer in source_pecha.get_layers(source_base_name):
-            updated_anns = get_updated_layer_anns(  # noqa
-                source_base, target_base, layer
-            )
+            updated_anns = get_updated_layer_anns(source_base, target_base, layer)
             layer, _ = self.add_layer(
                 target_base_name, LayerEnum(layer_name.split("-")[0])
             )
