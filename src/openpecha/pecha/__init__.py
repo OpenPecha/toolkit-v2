@@ -359,8 +359,21 @@ class Pecha:
         target_base = self.get_base(target_base_name)
         source_base = source_pecha.get_base(source_base_name)
 
-        for _, layer in source_pecha.get_layers(source_base_name):
+        for layer_name, layer in source_pecha.get_layers(source_base_name):
             updated_anns = get_updated_layer_anns(  # noqa
                 source_base, target_base, layer
             )
-            # Write the updated anns to the updated annotation
+            layer, _ = self.add_layer(
+                target_base_name, LayerEnum(layer_name.split("-")[0])
+            )
+            resource = next(layer.resources())
+            for ann in updated_anns:
+                start, end = ann["span"][0], ann["span"][1]
+                layer.annotate(
+                    id=ann["id"],
+                    target=Selector.textselector(resource, Offset.simple(start, end)),
+                    data=ann["ann_data"],
+                )
+            layer_output_path = self.layer_path / target_base_name / layer_name
+            layer.set_filename(layer_output_path)
+            layer.save()
