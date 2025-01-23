@@ -1,8 +1,8 @@
-import tempfile
 from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
+from openpecha.pecha import Pecha
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -34,17 +34,22 @@ class TestTextTranslationSerializer(TestCase):
     def test_translation_serializer(self):
         root_opf = DATA_DIR / "bo/IE60BBDE8"
         translation_opf = DATA_DIR / "en/I62E00D78"
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            output_dir = Path(tmpdirname)
 
-            serializer = TextTranslationSerializer()
-            json_output = serializer.serialize(
-                root_opf, translation_opf, output_dir, False
-            )
+        root_pecha = Pecha.from_path(root_opf)
+        translation_pecha = Pecha.from_path(translation_opf)
 
-            expected_json_path = DATA_DIR / "expected_output.json"
-            assert read_json(json_output) == read_json(expected_json_path)
+        serializer = TextTranslationSerializer()
+        json_output = serializer.serialize(root_pecha, translation_pecha, False)
+
+        expected_json_path = DATA_DIR / "expected_output.json"
+        assert json_output == read_json(expected_json_path)
 
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
+
+
+serializer = TestTextTranslationSerializer()
+serializer.setUp()
+serializer.test_translation_serializer()
+serializer.tearDown()

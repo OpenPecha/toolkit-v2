@@ -11,21 +11,21 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "testdataset",
+      "@id": "Root_Commentary",
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "pos"
+          "@id": "Associated_Alignment"
         }
       ],
       "data": [
         {
           "@type": "AnnotationData",
           "@id": "D1",
-          "key": "pos",
+          "key": "Associated_Alignment",
           "value": {
             "@type": "String",
-            "value": "noun"
+            "value": "Root_Segment"
           }
         }
       ]
@@ -54,7 +54,7 @@
         {
           "@type": "AnnotationData",
           "@id": "D1",
-          "set": "testdataset"
+          "set": "Root_Commentary"
         }
       ]
     }

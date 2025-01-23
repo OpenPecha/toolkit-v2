@@ -42,7 +42,7 @@ If the annotations are done in two different base files, the annotations can be 
 ```py
 
 from pathlib import Path
-from openpecha.pecha import StamPecha
+from openpecha.pecha import Pecha
 
 source_pecha_path = Path("source pecha path")
 target_pecha_path = Path("target pecha path")
@@ -50,8 +50,8 @@ target_pecha_path = Path("target pecha path")
 source_base_name = "source base name"
 target_base_name = "target base name"
 
-source_pecha = StamPecha(source_pecha_path)
-target_pecha = StamPecha(target_pecha_path)
+source_pecha = Pecha.from_path(source_pecha_path)
+target_pecha = Pecha.from_path(target_pecha_path)
 
 target_pecha.merge_pecha(source_pecha, source_base_name, target_base_name)
 

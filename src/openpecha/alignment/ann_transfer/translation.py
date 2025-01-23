@@ -2,8 +2,9 @@ import os
 from pathlib import Path
 from typing import Dict, Union
 
+from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.alignment.ann_transfer import AlignmentAnnTransfer
-from openpecha.pecha import Pecha, StamPecha
+from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 
 
@@ -37,7 +38,7 @@ class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
         """
         curr_ann = {}
         translation_layer_ann = {}
-        translation_pecha = StamPecha(self.translation_pecha_path)
+        translation_pecha = Pecha.from_path(self.translation_pecha_path)
         self.translation_layer = translation_pecha.get_layers(
             self.translation_base_name
         )
@@ -88,7 +89,7 @@ class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
         self.update_metadata(
             pecha_path=self.translation_pecha_path,
             new_metadata={
-                "pecha_display_segment_alignments": [
+                AlignmentEnum.pecha_display_alignments.value: [
                     {
                         "pecha_display": os.path.relpath(
                             f"{self.target_pecha_id}/layers/{self.target_base_name}/{self.target_layer_name}"

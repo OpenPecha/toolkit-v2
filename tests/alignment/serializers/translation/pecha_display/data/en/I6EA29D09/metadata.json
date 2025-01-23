@@ -38,7 +38,7 @@
         "target": "I6EA29D09/layers/564C/English_Segment-9F9B.json"
       }
     ],
-    "pecha_display_segment_alignments": [
+    "pecha_display_alignments": [
       {
         "pecha_display": "IFA46BBC2/layers/4665/Tibetan_Segment-4D29.json",
         "translation": "I6EA29D09/layers/564C/Pecha_Display_Alignment_Segment-891D.json"
