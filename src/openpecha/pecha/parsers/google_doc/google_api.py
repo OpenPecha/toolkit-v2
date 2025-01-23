@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 
+from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 
@@ -83,8 +84,18 @@ class GoogleDocAndSheetsDownloader:
             print(f"An error occurred: {e}")
 
 
-def get_token_via_authentication(cred_file_path: Path):
+def get_token_via_authentication(
+    credential_path: Path, output_dir: Path = Path(".")
+) -> Path:
     """
-    This function does authentication to get token for GoogleDocAndSheetDownloader
+    Get authenticated token via web app credential
     """
-    pass
+    SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
+
+    flow = InstalledAppFlow.from_client_secrets_file(credential_path, SCOPES)
+    creds = flow.run_local_server(port=0)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    token_file_path = output_dir / "token.pickle"
+    with open(token_file_path, "wb") as token:
+        pickle.dump(creds, token)
+    return token_file_path
