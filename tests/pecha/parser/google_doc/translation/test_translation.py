@@ -1,6 +1,5 @@
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
@@ -42,11 +41,8 @@ def test_en_google_doc_translation_parser():
     parser = GoogleDocTranslationParser(
         source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
     )
-    with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.update_alignment_in_source_pecha"
-    ) as mock_update_source_pecha:
+    with tempfile.TemporaryDirectory() as tmpdirname:
         OUTPUT_DIR = Path(tmpdirname)
-        mock_update_source_pecha.return_value = None
 
         pecha, _ = parser.parse(
             input=en_docx_file,
@@ -75,11 +71,8 @@ def test_zh_google_doc_translation_parser():
     parser = GoogleDocTranslationParser(
         source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
     )
-    with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.update_alignment_in_source_pecha"
-    ) as mock_update_source_pecha:
+    with tempfile.TemporaryDirectory() as tmpdirname:
         OUTPUT_DIR = Path(tmpdirname)
-        mock_update_source_pecha.return_value = None
 
         pecha, _ = parser.parse(
             input=en_docx_file,
