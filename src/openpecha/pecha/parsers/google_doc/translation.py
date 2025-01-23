@@ -135,7 +135,7 @@ class GoogleDocTranslationParser(BaseParser):
         input: Path,
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
-    ):
+    ) -> "Pecha":
         """
         Inputs:
             input: Docx file path
@@ -152,8 +152,8 @@ class GoogleDocTranslationParser(BaseParser):
 
         """
         anns, base = self.extract_root_idx(input, metadata)
-        pecha, layer_path = self.create_pecha(anns, base, metadata, output_path)
-        return pecha, layer_path
+        pecha, _ = self.create_pecha(anns, base, metadata, output_path)
+        return pecha
 
     def create_pecha(
         self, anns: List[Dict], base: str, metadata: Dict, output_path: Path

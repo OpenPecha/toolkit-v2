@@ -36,7 +36,7 @@ def test_bo_google_doc_translation_parser():
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
-        pecha, _ = parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
+        pecha = parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
 
@@ -71,7 +71,7 @@ def test_en_google_doc_translation_parser():
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
-        pecha, _ = parser.parse(en_docx_file, metadata, OUTPUT_DIR)
+        pecha = parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
 
@@ -105,6 +105,6 @@ def test_zh_google_doc_translation_parser():
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
-        pecha, _ = parser.parse(zh_docx_file, metadata, OUTPUT_DIR)
+        pecha = parser.parse(zh_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
