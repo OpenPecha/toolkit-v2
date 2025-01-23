@@ -20,7 +20,7 @@ class GoogleDocAndSheetsDownloader:
         4.Authenticate through pop up window
         5.Give .pickle token here
         """
-        self.token_path: Path = self.token_path
+        self.token_path: Path = token_path
 
     def get_id_from_link(self, link: str) -> Optional[str]:
         """
@@ -81,3 +81,10 @@ class GoogleDocAndSheetsDownloader:
             return output_path
         except Exception as e:
             print(f"An error occurred: {e}")
+
+
+def get_token_via_authentication(cred_file_path: Path):
+    """
+    This function does authentication to get token for GoogleDocAndSheetDownloader
+    """
+    pass
