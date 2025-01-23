@@ -2,6 +2,7 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.alignment.serializers.translation import TextTranslationSerializer
+from openpecha.pecha import Pecha
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -34,8 +35,10 @@ class TestTextTranslationSerializer(TestCase):
         root_opf = DATA_DIR / "bo/IFA46BBC2"
         translation_opf = DATA_DIR / "en/I6EA29D09"
 
+        root_pecha = Pecha.from_path(root_opf)
+        translation_pecha = Pecha.from_path(translation_opf)
         serializer = TextTranslationSerializer()
-        json_output = serializer.serialize(root_opf, translation_opf)
+        json_output = serializer.serialize(root_pecha, translation_pecha)
 
         expected_json_path = DATA_DIR / "expected_output.json"
         assert json_output == read_json(expected_json_path)

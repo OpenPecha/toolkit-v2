@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
@@ -20,8 +19,6 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "categories": [],
             "books": [],
         }
-        self.root_opf_path: Path
-        self.translation_opf_path: Path
 
         self.root_basename: str
         self.translation_basename: str
@@ -58,26 +55,6 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "completestatus": "done",
         }
 
-    def set_root_metadata(self):
-        """
-        Set tibetan text metadata to root json
-        """
-        assert isinstance(
-            self.root_opf_path, Path
-        ), "Root opf path is not set for 'set_root_metadata'"
-        root_pecha = Pecha.from_path(self.root_opf_path)
-        self.root_json["books"].append(self.extract_metadata(root_pecha))
-
-    def set_translation_metadata(self):
-        """
-        Set English, Chinese, etc. text metadata to translation json
-        """
-        assert isinstance(
-            self.translation_opf_path, Path
-        ), "Translation opf path is not set for 'set_translation_metadata'"
-        translation_pecha = Pecha.from_path(self.translation_opf_path)
-        self.translation_json["books"].append(self.extract_metadata(translation_pecha))
-
     @staticmethod
     def get_texts_from_layer(layer: AnnotationStore):
         """
@@ -89,17 +66,13 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def set_root_content(self):
+    def set_root_content(self, pecha: Pecha):
         """
         Processes:
         1. Get the first txt file from root and translation opf
         2. Read meaning layer from the base txt file from each opfs
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
-        assert isinstance(
-            self.root_opf_path, Path
-        ), "Root opf path is not set for 'set_root_content'"
-        pecha = Pecha.from_path(self.root_opf_path)
         segment_layer = AnnotationStore(
             file=pecha.layer_path.joinpath(
                 self.root_basename, self.root_layername
@@ -108,20 +81,16 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         segments = self.get_texts_from_layer(segment_layer)
         self.root_json["books"][0]["content"] = chunk_strings(segments)
 
-    def set_translation_content(self, is_pecha_display: bool):
+    def set_translation_content(self, pecha: Pecha, is_pecha_display: bool):
         """
         Processes:
         1. Get the first txt file from root and translation opf
         2. Read meaning layer from the base txt file from each opfs
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
-        assert isinstance(
-            self.translation_opf_path, Path
-        ), "Translation opf path is not set for 'set_translation_content'"
 
-        translation_pecha = Pecha.from_path(self.translation_opf_path)
         translation_segment_layer = AnnotationStore(
-            file=translation_pecha.layer_path.joinpath(
+            file=pecha.layer_path.joinpath(
                 self.translation_basename, self.translation_layername
             ).as_posix()
         )
@@ -157,14 +126,14 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             translation_segments
         )
 
-    def get_root_and_translation_layer(self, is_pecha_display: bool):
+    def get_root_and_translation_layer(
+        self, root_pecha: Pecha, translation_pecha: Pecha, is_pecha_display: bool
+    ):
         """
         Get the root layer and translation layer to serialize the layer(STAM) to JSON
         1.First it checks if the 'pecha_display_alignments' contains in the metadata (from translation opf)
         2.Select the first meaning segment layer found in each of the opf
         """
-        root_pecha = Pecha.from_path(self.root_opf_path)
-        translation_pecha = Pecha.from_path(self.translation_opf_path)
         if is_pecha_display:
             assert (
                 AlignmentEnum.pecha_display_alignments.value
@@ -191,8 +160,10 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                     self.translation_basename = translation_basename
                     self.root_layername = root_layer
                     self.translation_layername = translation_layer
-                    break
-            assert f"No proper pecha display alignment found in Root: {root_pecha.id} and translation:{translation_pecha.id} to serialize"
+                    return None
+            raise LookupError(
+                f"No proper pecha display alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
+            )
         else:
             assert (
                 AlignmentEnum.translation_alignment.value
@@ -219,11 +190,12 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                     self.translation_basename = translation_basename
                     self.root_layername = root_layer
                     self.translation_layername = translation_layer
-                    break
-            assert f"No proper translation alignment found in Root: {root_pecha.id} and translation:{translation_pecha.id} to serialize"
+                    return None
+            raise LookupError(
+                f"No proper translation alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
+            )
 
-    def get_pecha_title(self, pecha_path: Path):
-        pecha = Pecha.from_path(pecha_path)
+    def get_pecha_title(self, pecha: Pecha):
         lang = pecha.metadata.language.value
         title = pecha.metadata.title
         if isinstance(title, dict):
@@ -233,28 +205,27 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
 
     def serialize(
         self,
-        root_opf_path: Path,
-        translation_opf_path: Path,
+        root_pecha: Pecha,
+        translation_pecha: Pecha,
         is_pecha_display: bool = True,
     ) -> Dict:
 
-        self.root_opf_path = root_opf_path
-        self.translation_opf_path = translation_opf_path
-
         # Extract metadata from opf and set to JSON
-        self.set_root_metadata()
-        self.set_translation_metadata()
+        self.root_json["books"].append(self.extract_metadata(root_pecha))
+        self.translation_json["books"].append(self.extract_metadata(translation_pecha))
 
         # Get pecha category from pecha_org_tools package and set to JSON
-        pecha_title = self.get_pecha_title(self.root_opf_path)
+        pecha_title = self.get_pecha_title(root_pecha)
         self.set_pecha_category(pecha_title)
 
         # Get the root and translation layer to serialize the layer(STAM) to JSON
-        self.get_root_and_translation_layer(is_pecha_display)
+        self.get_root_and_translation_layer(
+            root_pecha, translation_pecha, is_pecha_display
+        )
 
         # Set the content for source and target and set it to JSON
-        self.set_root_content()
-        self.set_translation_content(is_pecha_display)
+        self.set_root_content(root_pecha)
+        self.set_translation_content(translation_pecha, is_pecha_display)
 
         json_output = {
             "source": self.translation_json,
