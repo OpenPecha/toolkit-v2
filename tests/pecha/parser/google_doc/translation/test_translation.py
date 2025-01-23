@@ -41,61 +41,70 @@ def test_bo_google_doc_translation_parser():
         assert isinstance(pecha, Pecha)
 
 
-# def test_en_google_doc_translation_parser():
-#     en_docx_file = DATA_DIR / "en" / "English aligned Root Text Translation.docx"
-#     en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
+def test_en_google_doc_translation_parser():
+    en_docx_file = DATA_DIR / "en" / "English aligned Root Text Translation.docx"
+    en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
 
-#     parser = GoogleDocTranslationParser(
-#         source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
-#     )
-#     with tempfile.TemporaryDirectory() as tmpdirname, patch(""):
-#         OUTPUT_DIR = Path(tmpdirname)
+    parser = GoogleDocTranslationParser(
+        source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
+    )
 
-#         pecha, _ = parser.parse(
-#             input=en_docx_file,
-#             metadata=en_metadata,
-#             output_path=OUTPUT_DIR,
-#         )
+    expected_anns = [
+        {"English_Segment": {"start": 0, "end": 154}, "root_idx_mapping": "1"},
+        {"English_Segment": {"start": 155, "end": 194}, "root_idx_mapping": "2"},
+        {"English_Segment": {"start": 195, "end": 404}, "root_idx_mapping": "3"},
+    ]
+    expected_base = 'In Sanskrit: Āryavajracchedikā-prajñāpāramitā-nāma-mahāyāna-sūtra In Tibetan: The Noble Mahāyāna Sūtra "The Perfection of Wisdom that Cuts Like a Diamond"\nHomage to all Buddhas and Bodhisattvas.\nThus have I heard at one time: The Blessed One was dwelling in Śrāvastī, in the Jeta Grove, in Anāthapiṇḍada\'s park, together with a great assembly of 1,250 monks and a great number of bodhisattva mahāsattvas.'
 
-#         assert isinstance(pecha, Pecha)
+    metadata = extract_metadata_from_xlsx(en_metadata)
+    anns, base = parser.extract_root_idx(en_docx_file, metadata)
 
-#         assert (
-#             parser.base
-#             == 'In Sanskrit: Āryavajracchedikā-prajñāpāramitā-nāma-mahāyāna-sūtra In Tibetan: The Noble Mahāyāna Sūtra "The Perfection of Wisdom that Cuts Like a Diamond"\nHomage to all Buddhas and Bodhisattvas.\nThus have I heard at one time: The Blessed One was dwelling in Śrāvastī, in the Jeta Grove, in Anāthapiṇḍada\'s park, together with a great assembly of 1,250 monks and a great number of bodhisattva mahāsattvas.'
-#         )
-#         expected_anns = [
-#             {"English_Segment": {"start": 0, "end": 154}, "root_idx_mapping": "1"},
-#             {"English_Segment": {"start": 155, "end": 194}, "root_idx_mapping": "2"},
-#             {"English_Segment": {"start": 195, "end": 404}, "root_idx_mapping": "3"},
-#         ]
-#         assert parser.anns == expected_anns
+    assert (
+        anns == expected_anns
+    ), "Translation Parser failed parsing Root anns properly for en data."
+    assert (
+        base == expected_base
+    ), "Translation Parser failed preparing base text properly for en data"
+
+    with tempfile.TemporaryDirectory() as tmpdirname, patch(
+        "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.extract_root_idx"
+    ) as mock_extract_root_idx:
+        OUTPUT_DIR = Path(tmpdirname)
+        mock_extract_root_idx.return_value = (expected_anns, expected_base)
+        pecha, _ = parser.parse(en_docx_file, metadata, OUTPUT_DIR)
+
+        assert isinstance(pecha, Pecha)
 
 
-# def test_zh_google_doc_translation_parser():
-#     en_docx_file = DATA_DIR / "zh" / "Chinese aligned Root Text Translation.docx"
-#     en_metadata = DATA_DIR / "zh" / "Chinese Root text Translation Metadata.xlsx"
+def test_zh_google_doc_translation_parser():
+    zh_docx_file = DATA_DIR / "zh" / "Chinese aligned Root Text Translation.docx"
+    zh_metadata = DATA_DIR / "zh" / "Chinese Root text Translation Metadata.xlsx"
 
-#     parser = GoogleDocTranslationParser(
-#         source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
-#     )
-#     with tempfile.TemporaryDirectory() as tmpdirname:
-#         OUTPUT_DIR = Path(tmpdirname)
+    parser = GoogleDocTranslationParser(
+        source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
+    )
+    expected_anns = [
+        {"Chinese_Segment": {"start": 0, "end": 72}, "root_idx_mapping": "1"},
+        {"Chinese_Segment": {"start": 73, "end": 81}, "root_idx_mapping": "2"},
+        {"Chinese_Segment": {"start": 82, "end": 125}, "root_idx_mapping": "3"},
+    ]
+    expected_base = "梵文：Āryavajracchedikā-prajñāpāramitā-nāma-mahāyāna-sūtra 藏文：圣般若波罗蜜多金刚经大乘经\n礼敬一切佛菩萨。\n如是我闻，一时：佛在舍卫国祇树给孤独园，与大比丘众千二百五十人俱，并诸菩萨摩诃萨众多。"
 
-#         pecha, _ = parser.parse(
-#             input=en_docx_file,
-#             metadata=en_metadata,
-#             output_path=OUTPUT_DIR,
-#         )
+    metadata = extract_metadata_from_xlsx(zh_metadata)
+    anns, base = parser.extract_root_idx(zh_docx_file, metadata)
 
-#         assert isinstance(pecha, Pecha)
+    assert (
+        anns == expected_anns
+    ), "Translation Parser failed parsing Root anns properly for zh data."
+    assert (
+        base == expected_base
+    ), "Translation Parser failed preparing base text properly for zh data"
 
-#         assert (
-#             parser.base
-#             == "梵文：Āryavajracchedikā-prajñāpāramitā-nāma-mahāyāna-sūtra 藏文：圣般若波罗蜜多金刚经大乘经\n礼敬一切佛菩萨。\n如是我闻，一时：佛在舍卫国祇树给孤独园，与大比丘众千二百五十人俱，并诸菩萨摩诃萨众多。"
-#         )
-#         expected_anns = [
-#             {"Chinese_Segment": {"start": 0, "end": 72}, "root_idx_mapping": "1"},
-#             {"Chinese_Segment": {"start": 73, "end": 81}, "root_idx_mapping": "2"},
-#             {"Chinese_Segment": {"start": 82, "end": 125}, "root_idx_mapping": "3"},
-#         ]
-#         assert parser.anns == expected_anns
+    with tempfile.TemporaryDirectory() as tmpdirname, patch(
+        "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.extract_root_idx"
+    ) as mock_extract_root_idx:
+        OUTPUT_DIR = Path(tmpdirname)
+        mock_extract_root_idx.return_value = (expected_anns, expected_base)
+        pecha, _ = parser.parse(zh_docx_file, metadata, OUTPUT_DIR)
+
+        assert isinstance(pecha, Pecha)
