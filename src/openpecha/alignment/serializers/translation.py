@@ -50,7 +50,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def get_root_content(self, pecha: Pecha, root_basename: str, root_layername: str):
+    def get_root_content(self, pecha: Pecha, alignment_data: Dict):
         """
         Processes:
         1. Get the first txt file from root and translation opf
@@ -58,7 +58,9 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
         segment_layer = AnnotationStore(
-            file=pecha.layer_path.joinpath(root_basename, root_layername).as_posix()
+            file=pecha.layer_path.joinpath(
+                alignment_data["root_basename"], alignment_data["root_layername"]
+            ).as_posix()
         )
         segments = self.get_texts_from_layer(segment_layer)
         return chunk_strings(segments)
@@ -66,8 +68,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
     def get_translation_content(
         self,
         pecha: Pecha,
-        translation_basename: str,
-        translation_layername: str,
+        alignment_data: Dict,
         is_pecha_display: bool,
     ):
         """
@@ -79,7 +80,8 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
 
         translation_segment_layer = AnnotationStore(
             file=pecha.layer_path.joinpath(
-                translation_basename, translation_layername
+                alignment_data["translation_basename"],
+                alignment_data["translation_layername"],
             ).as_posix()
         )
 
@@ -142,13 +144,13 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                 ) and translation_pecha.get_layer_by_filename(
                     translation_basename, translation_layer
                 ):
-                    alignment_layer = {
+                    alignment_data = {
                         "root_basename": root_basename,
                         "root_layername": root_layer,
                         "translation_basename": translation_basename,
                         "translation_layername": translation_layer,
                     }
-                    return alignment_layer
+                    return alignment_data
 
             raise LookupError(
                 f"No proper pecha display alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
@@ -175,13 +177,13 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                 ) and translation_pecha.get_layer_by_filename(
                     translation_basename, translation_layer
                 ):
-                    alignment_layer = {
+                    alignment_data = {
                         "root_basename": root_basename,
                         "root_layername": root_layer,
                         "translation_basename": translation_basename,
                         "translation_layername": translation_layer,
                     }
-                    return alignment_layer
+                    return alignment_data
             raise LookupError(
                 f"No proper translation alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
             )
@@ -214,20 +216,18 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         }
 
         # Get the root and translation layer to serialize the layer(STAM) to JSON
-        alignment_layer = self.get_root_and_translation_layer(
+        alignment_data = self.get_root_and_translation_layer(
             root_pecha, translation_pecha, is_pecha_display
         )
 
         # Set the content for source and target and set it to JSON
         root_json["books"][0]["content"] = self.get_root_content(
             root_pecha,
-            alignment_layer["root_basename"],
-            alignment_layer["root_layername"],
+            alignment_data,
         )
         translation_json["books"][0]["content"] = self.get_translation_content(
             translation_pecha,
-            alignment_layer["translation_basename"],
-            alignment_layer["translation_layername"],
+            alignment_data,
             is_pecha_display,
         )
 
