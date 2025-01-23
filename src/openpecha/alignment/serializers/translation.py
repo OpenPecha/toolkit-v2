@@ -10,12 +10,13 @@ from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 
 class TextTranslationSerializer(BaseAlignmentSerializer):
-    def set_pecha_category(self, category: str):
+    def get_pecha_category(self, pecha: Pecha):
         """
         Set pecha category both in english and tibetan in the JSON output.
         """
+        pecha_title = self.get_pecha_title(pecha)
         category_extractor = CategoryExtractor()
-        categories = category_extractor.get_category(category)
+        categories = category_extractor.get_category(pecha_title)
         return categories["bo"], categories["en"]
 
     def extract_metadata(self, pecha: Pecha):
@@ -49,7 +50,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def set_root_content(self, pecha: Pecha, root_basename: str, root_layername: str):
+    def get_root_content(self, pecha: Pecha, root_basename: str, root_layername: str):
         """
         Processes:
         1. Get the first txt file from root and translation opf
@@ -62,7 +63,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         segments = self.get_texts_from_layer(segment_layer)
         return chunk_strings(segments)
 
-    def set_translation_content(
+    def get_translation_content(
         self,
         pecha: Pecha,
         translation_basename: str,
@@ -213,8 +214,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         translation_json["books"].append(self.extract_metadata(translation_pecha))
 
         # Get pecha category from pecha_org_tools package and set to JSON
-        pecha_title = self.get_pecha_title(root_pecha)
-        bo_category, en_category = self.set_pecha_category(pecha_title)
+        bo_category, en_category = self.get_pecha_category(root_pecha)
 
         root_json["categories"] = bo_category
         translation_json["categories"] = en_category
@@ -225,12 +225,12 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         )
 
         # Set the content for source and target and set it to JSON
-        root_json["books"][0]["content"] = self.set_root_content(
+        root_json["books"][0]["content"] = self.get_root_content(
             root_pecha,
             alignment_layer["root_basename"],
             alignment_layer["root_layername"],
         )
-        translation_json["books"][0]["content"] = self.set_translation_content(
+        translation_json["books"][0]["content"] = self.get_translation_content(
             translation_pecha,
             alignment_layer["translation_basename"],
             alignment_layer["translation_layername"],
