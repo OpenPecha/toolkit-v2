@@ -20,12 +20,6 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "books": [],
         }
 
-        self.root_basename: str
-        self.translation_basename: str
-
-        self.root_layername: str
-        self.translation_layername: str
-
     def set_pecha_category(self, category: str):
         """
         Set pecha category both in english and tibetan in the JSON output.
@@ -66,7 +60,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def set_root_content(self, pecha: Pecha):
+    def set_root_content(self, pecha: Pecha, root_basename: str, root_layername: str):
         """
         Processes:
         1. Get the first txt file from root and translation opf
@@ -74,14 +68,18 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
         segment_layer = AnnotationStore(
-            file=pecha.layer_path.joinpath(
-                self.root_basename, self.root_layername
-            ).as_posix()
+            file=pecha.layer_path.joinpath(root_basename, root_layername).as_posix()
         )
         segments = self.get_texts_from_layer(segment_layer)
         self.root_json["books"][0]["content"] = chunk_strings(segments)
 
-    def set_translation_content(self, pecha: Pecha, is_pecha_display: bool):
+    def set_translation_content(
+        self,
+        pecha: Pecha,
+        translation_basename: str,
+        translation_layername: str,
+        is_pecha_display: bool,
+    ):
         """
         Processes:
         1. Get the first txt file from root and translation opf
@@ -91,7 +89,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
 
         translation_segment_layer = AnnotationStore(
             file=pecha.layer_path.joinpath(
-                self.translation_basename, self.translation_layername
+                translation_basename, translation_layername
             ).as_posix()
         )
 
@@ -156,11 +154,14 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                 ) and translation_pecha.get_layer_by_filename(
                     translation_basename, translation_layer
                 ):
-                    self.root_basename = root_basename
-                    self.translation_basename = translation_basename
-                    self.root_layername = root_layer
-                    self.translation_layername = translation_layer
-                    return None
+                    alignment_layer = {
+                        "root_basename": root_basename,
+                        "root_layername": root_layer,
+                        "translation_basename": translation_basename,
+                        "translation_layername": translation_layer,
+                    }
+                    return alignment_layer
+
             raise LookupError(
                 f"No proper pecha display alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
             )
@@ -186,11 +187,13 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                 ) and translation_pecha.get_layer_by_filename(
                     translation_basename, translation_layer
                 ):
-                    self.root_basename = root_basename
-                    self.translation_basename = translation_basename
-                    self.root_layername = root_layer
-                    self.translation_layername = translation_layer
-                    return None
+                    alignment_layer = {
+                        "root_basename": root_basename,
+                        "root_layername": root_layer,
+                        "translation_basename": translation_basename,
+                        "translation_layername": translation_layer,
+                    }
+                    return alignment_layer
             raise LookupError(
                 f"No proper translation alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
             )
@@ -219,13 +222,22 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self.set_pecha_category(pecha_title)
 
         # Get the root and translation layer to serialize the layer(STAM) to JSON
-        self.get_root_and_translation_layer(
+        alignment_layer = self.get_root_and_translation_layer(
             root_pecha, translation_pecha, is_pecha_display
         )
 
         # Set the content for source and target and set it to JSON
-        self.set_root_content(root_pecha)
-        self.set_translation_content(translation_pecha, is_pecha_display)
+        self.set_root_content(
+            root_pecha,
+            alignment_layer["root_basename"],
+            alignment_layer["root_layername"],
+        )
+        self.set_translation_content(
+            translation_pecha,
+            alignment_layer["translation_basename"],
+            alignment_layer["translation_layername"],
+            is_pecha_display,
+        )
 
         json_output = {
             "source": self.translation_json,
