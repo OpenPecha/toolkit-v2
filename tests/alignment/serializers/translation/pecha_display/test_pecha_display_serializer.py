@@ -38,7 +38,7 @@ class TestTextTranslationSerializer(TestCase):
         root_pecha = Pecha.from_path(root_opf)
         translation_pecha = Pecha.from_path(translation_opf)
         serializer = TextTranslationSerializer()
-        json_output = serializer.serialize(root_pecha, translation_pecha)
+        json_output = serializer.serialize(root_pecha, translation_pecha, True)
 
         expected_json_path = DATA_DIR / "expected_output.json"
         assert json_output == read_json(expected_json_path)

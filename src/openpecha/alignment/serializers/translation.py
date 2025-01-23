@@ -200,7 +200,7 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         self,
         root_pecha: Pecha,
         translation_pecha: Pecha,
-        is_pecha_display: bool = True,
+        is_pecha_display: bool = False,
     ) -> Dict:
 
         # Get pecha category from pecha_org_tools package and set to JSON
