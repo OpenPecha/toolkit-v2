@@ -25,9 +25,6 @@ class GoogleDocTranslationParser(BaseParser):
         """
         self.root_idx_regex = r"^\d+\."
         self.source_path = source_path
-        self.anns: List[Dict] = []
-        self.base = ""
-        self.metadata: Dict = {}
 
     @staticmethod
     def get_layer_enum_with_lang(lang: str):
@@ -97,16 +94,28 @@ class GoogleDocTranslationParser(BaseParser):
                 ] = clean_text  # Store root_idx as string in extracted_text
         return content
 
-    def extract_root_idx(self, input: Path):
+    def extract_root_idx(
+        self,
+        input: Path,
+        metadata: Dict,
+    ) -> Tuple[List[Dict], str]:
+        """
+        1.Extract root idx from the input file .docx or .txt
+        2.Return
+            i)Root annotations
+            ii)base text with no root annotations,
+
+        """
         extracted_text = self.extract_root_idx_from_doc(input)
         extracted_segments = list(extracted_text.values())
         extracted_segments = [segment for segment in extracted_segments if segment]
 
-        self.base = "\n".join(extracted_segments)
+        base = "\n".join(extracted_segments)
 
-        layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
+        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
 
         count = 0
+        anns: List[Dict] = []
         for root_idx, segment in extracted_text.items():
             curr_ann = {
                 layer_enum.value: {
@@ -115,16 +124,17 @@ class GoogleDocTranslationParser(BaseParser):
                 },
                 "root_idx_mapping": root_idx,
             }
-            self.anns.append(curr_ann)
+            anns.append(curr_ann)
             count += len(segment)
 
-            if segment and count + 1 < len(self.base):
+            if segment and count + 1 < len(base):
                 count += 1
+        return (anns, base)
 
     def parse(
         self,
         input: Path,
-        metadata: Union[Dict, Path],
+        metadata: Dict,
         output_path: Path = PECHAS_PATH,
     ):
         """
@@ -143,24 +153,26 @@ class GoogleDocTranslationParser(BaseParser):
 
         """
         if isinstance(metadata, Path):
-            self.metadata = extract_metadata_from_xlsx(metadata)
+            metadata = extract_metadata_from_xlsx(metadata)
 
         else:
-            self.metadata = metadata
+            metadata = metadata
 
-        self.extract_root_idx(input)
-        pecha, layer_path = self.create_pecha(output_path)
+        anns, base = self.extract_root_idx(input, metadata)
+        pecha, layer_path = self.create_pecha(anns, base, metadata, output_path)
         return pecha, layer_path
 
-    def create_pecha(self, output_path: Path) -> Tuple[Pecha, Path]:
+    def create_pecha(
+        self, anns: List[Dict], base: str, metadata: Dict, output_path: Path
+    ) -> Tuple[Pecha, Path]:
         pecha = Pecha.create(output_path)
-        basename = pecha.set_base(self.base)
+        basename = pecha.set_base(base)
 
-        layer_enum = self.get_layer_enum_with_lang(self.metadata["language"])
+        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
 
         # Add meaning_segment layer
         meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
-        for ann in self.anns:
+        for ann in anns:
             pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
 
@@ -168,7 +180,7 @@ class GoogleDocTranslationParser(BaseParser):
         bases = [
             {
                 basename: {
-                    "source_metadata": {"total_segments": len(self.anns)},
+                    "source_metadata": {"total_segments": len(anns)},
                     "base_file": f"{basename}.txt",
                 }
             }
@@ -180,7 +192,7 @@ class GoogleDocTranslationParser(BaseParser):
 
         # Set source path in translation alignment
         if self.source_path:
-            self.metadata[AlignmentEnum.translation_alignment.value] = [
+            metadata[AlignmentEnum.translation_alignment.value] = [
                 {"source": self.source_path, "target": str(relative_layer_path)}
             ]
 
@@ -188,7 +200,7 @@ class GoogleDocTranslationParser(BaseParser):
             PechaMetaData(
                 id=pecha.id,
                 parser="GoogleDocTranslationParser",
-                **self.metadata,
+                **metadata,
                 bases=bases,
                 initial_creation_type=InitialCreationType.google_docx,
             )
