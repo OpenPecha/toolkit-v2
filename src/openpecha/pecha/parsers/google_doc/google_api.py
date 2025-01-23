@@ -56,11 +56,7 @@ class GoogleDocAndSheetsDownloader:
         file_id = self.get_id_from_link(file_link)
         try:
             service = build("drive", "v3", credentials=cred)
-            request = service.files().export_media(
-                fileId=file_id,
-                mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                supportsAllDrives=True,
-            )
+            request = service.files().get_media(fileId=file_id, supportsAllDrives=True)
             fh = io.BytesIO()
             downloader = MediaIoBaseDownload(fh, request)
             done = False
