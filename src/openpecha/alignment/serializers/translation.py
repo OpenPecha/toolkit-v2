@@ -206,31 +206,33 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         # Get pecha category from pecha_org_tools package and set to JSON
         bo_category, en_category = self.get_pecha_category(root_pecha)
 
-        root_json: Dict[str, List] = {
-            "categories": bo_category,
-            "books": [self.get_metadata_for_pecha_org(root_pecha)],
-        }
-        translation_json: Dict[str, List] = {
-            "categories": en_category,
-            "books": [self.get_metadata_for_pecha_org(translation_pecha)],
-        }
-
         # Get the root and translation layer to serialize the layer(STAM) to JSON
         alignment_data = self.get_root_and_translation_layer(
             root_pecha, translation_pecha, is_pecha_display
         )
 
-        # Set the content for source and target and set it to JSON
-        root_json["books"][0]["content"] = self.get_root_content(
-            root_pecha,
-            alignment_data,
-        )
-        translation_json["books"][0]["content"] = self.get_translation_content(
-            translation_pecha,
-            alignment_data,
-            is_pecha_display,
-        )
+        root_json: Dict[str, List] = {
+            "categories": bo_category,
+            "books": [
+                {
+                    **self.get_metadata_for_pecha_org(root_pecha),
+                    "content": self.get_root_content(root_pecha, alignment_data),
+                }
+            ],
+        }
+        translation_json: Dict[str, List] = {
+            "categories": en_category,
+            "books": [
+                {
+                    **self.get_metadata_for_pecha_org(translation_pecha),
+                    "content": self.get_translation_content(
+                        translation_pecha, alignment_data, is_pecha_display
+                    ),
+                }
+            ],
+        }
 
+        # Set the content for source and target and set it to JSON
         json_output = {
             "source": translation_json,
             "target": root_json,
