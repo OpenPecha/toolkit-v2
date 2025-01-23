@@ -342,7 +342,7 @@ class Pecha:
         ]
 
         catalog = PechaDataCatalog()
-        catalog.add_entry_to_opf_catalog(row)
+        catalog.add_entry_to_pecha_catalog(row)
 
     @staticmethod
     def map_stam_ann_data(ann_data: AnnotationData) -> Dict:

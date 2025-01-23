@@ -13,27 +13,25 @@ class PechaDataCatalog:
     def __init__(self, output_path: Path = PECHAS_PATH):
         self.org_name = PECHA_DATA_ORG
         self.repo_name = "catalog"
-        self.opf_catalog_file = "opf_catalog.csv"
         self.repo_path = self.clone_catalog(output_path)
+        self.pecha_catalog_file = self.repo_path / "opf_catalog.csv"
+        self.catalog_data = read_csv(self.pecha_catalog_file)
 
     def clone_catalog(self, output_path: Path):
         repo_path = clone_repo("catalog", output_path)
         return repo_path
 
-    def add_entry_to_opf_catalog(self, new_entry: List[str]) -> None:
+    def add_entry_to_pecha_catalog(self, new_entry: List[str]) -> None:
         """
-        Update a Pecha information to PechaData opf catalog
+        Update a Pecha information to PechaData pecha catalog
         """
-        csv_path = self.repo_path / self.opf_catalog_file
-        catalog_data = read_csv(csv_path)
-
         # Check if new entry already exists in the catalog data
         formated_new_entry = [
             str(data) if data is not None else "" for data in new_entry
         ]
-        if formated_new_entry not in catalog_data:
-            catalog_data.append(new_entry)
-            write_csv(csv_path, catalog_data)
+        if formated_new_entry not in self.catalog_data:
+            self.catalog_data.append(new_entry)
+            write_csv(self.pecha_catalog_file, self.catalog_data)
             commit_and_push(
                 Repo(self.repo_path), message="Update catalog", branch="main"
             )
