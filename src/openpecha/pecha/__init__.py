@@ -9,6 +9,7 @@ from git import Repo
 from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
 
 from openpecha import utils
+from openpecha.catalog import PechaDataCatalog
 from openpecha.config import PECHAS_PATH
 from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
@@ -339,7 +340,9 @@ class Pecha:
             self.metadata.initial_creation_type.value,
             self.metadata.imported,
         ]
-        utils.update_catalog(row, "opf_catalog.csv")
+
+        catalog = PechaDataCatalog()
+        catalog.update_opf_catalog(row)
 
     @staticmethod
     def map_stam_ann_data(ann_data: AnnotationData) -> Dict:
