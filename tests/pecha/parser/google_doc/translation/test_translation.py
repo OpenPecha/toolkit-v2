@@ -1,5 +1,6 @@
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.google_doc.translation import GoogleDocTranslationParser
@@ -30,11 +31,12 @@ def test_bo_google_doc_translation_parser():
         base == expected_base
     ), "Translation Parser failed preparing base text properly for bo data"
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
+    with tempfile.TemporaryDirectory() as tmpdirname, patch(
+        "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.extract_root_idx"
+    ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
-        pecha, _ = parser.create_pecha(
-            expected_anns, expected_base, metadata, OUTPUT_DIR
-        )
+        mock_extract_root_idx.return_value = (expected_anns, expected_base)
+        pecha, _ = parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
 

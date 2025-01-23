@@ -11,7 +11,6 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
-from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
 class GoogleDocTranslationParser(BaseParser):
@@ -152,12 +151,6 @@ class GoogleDocTranslationParser(BaseParser):
             - Create OPF
 
         """
-        if isinstance(metadata, Path):
-            metadata = extract_metadata_from_xlsx(metadata)
-
-        else:
-            metadata = metadata
-
         anns, base = self.extract_root_idx(input, metadata)
         pecha, layer_path = self.create_pecha(anns, base, metadata, output_path)
         return pecha, layer_path
