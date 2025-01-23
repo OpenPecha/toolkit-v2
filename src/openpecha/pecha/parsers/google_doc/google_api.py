@@ -11,6 +11,17 @@ from openpecha.config import GOOGLE_API_TOKEN_PATH
 
 
 class GoogleDocAndSheetsDownloader:
+    def __init__(self, token_path: Path = GOOGLE_API_TOKEN_PATH):
+        """
+        This token should be a .pickle file
+        1.Go to Google API
+        2.Create a Oauth2 web app api
+        3.Download the api credential .json file
+        4.Authenticate through pop up window
+        5.Give .pickle token here
+        """
+        self.token_path: Path = self.token_path
+
     def get_id_from_link(self, link: str) -> Optional[str]:
         """
         Input: link to a Google Doc or Google sheet Document.
@@ -28,7 +39,7 @@ class GoogleDocAndSheetsDownloader:
             raise ValueError(f"[Invalid link] [{link}]{str(e)}")
 
     def get_google_docx(self, file_link: str, output_path: Path):
-        with open(GOOGLE_API_TOKEN_PATH, "rb") as token:
+        with open(self.token_path, "rb") as token:
             cred = pickle.load(token)
 
         file_id = self.get_id_from_link(file_link)
@@ -50,7 +61,7 @@ class GoogleDocAndSheetsDownloader:
             print(f"An error occurred: {e}")
 
     def get_google_sheet(self, file_link: str, output_path: Path):
-        with open(GOOGLE_API_TOKEN_PATH, "rb") as token:
+        with open(self.token_path, "rb") as token:
             cred = pickle.load(token)
 
         file_id = self.get_id_from_link(file_link)
