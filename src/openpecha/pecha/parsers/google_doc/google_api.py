@@ -1,9 +1,11 @@
 import io
+import os
 import pickle
 from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
 
+from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
@@ -99,3 +101,19 @@ def get_token_via_authentication(
     with open(token_file_path, "wb") as token:
         pickle.dump(creds, token)
     return token_file_path
+
+
+def check_token_validity(token_path: Path):
+    creds = None
+    if os.path.exists(token_path):
+        with open(token_path, "rb") as token:
+            creds = pickle.load(token)
+
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            return True
+        else:
+            return False
+
+    return True
