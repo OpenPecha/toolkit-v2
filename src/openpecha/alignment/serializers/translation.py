@@ -233,9 +233,9 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
         }
 
         # Set the content for source and target and set it to JSON
-        json_output = {
+        serialized_json = {
             "source": translation_json,
             "target": root_json,
         }
 
-        return json_output
+        return serialized_json
