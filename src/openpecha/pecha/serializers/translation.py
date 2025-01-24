@@ -113,6 +113,18 @@ class TextTranslationSerializer:
 
         return chunk_strings(translation_segments)
 
+    def get_root_layer(self, pecha: Pecha):
+        """
+        1.Get the first annotation json file from Root Pecha.
+        2.Return its basename and layername
+        """
+        ann_layer_file = list(pecha.layer_path.rglob("*.json"))[0]
+        alignment_data = {
+            "root_basename": ann_layer_file.parent.name,
+            "root_layername": ann_layer_file.name,
+        }
+        return alignment_data
+
     def get_root_and_translation_layer(
         self, root_pecha: Pecha, translation_pecha: Pecha, is_pecha_display: bool
     ):
@@ -229,6 +241,8 @@ class TextTranslationSerializer:
             alignment_data = self.get_root_and_translation_layer(
                 root_pecha, translation_pecha, is_pecha_display
             )
+        else:
+            alignment_data = self.get_root_layer(root_pecha)
 
         root_json: Dict[str, List] = {
             "categories": bo_category,
