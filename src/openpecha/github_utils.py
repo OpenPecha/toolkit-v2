@@ -20,12 +20,7 @@ from openpecha.exceptions import (
     OrganizationNotFoundError,
 )
 
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
-if not GITHUB_TOKEN:
-    raise OSError("[ERROR]: GITHUB_TOKEN environment variable not set.")
-
 org = None
-
 
 def _get_openpecha_data_org(org_name=None, token=None):
     """OpenPecha github org singleton."""
@@ -70,7 +65,11 @@ def upload_folder_to_github(
     :param folder_path: The local folder path to upload (as a Path object).
     """
     try:
+        GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+        if not GITHUB_TOKEN:
+            raise BadCredentialsException("[ERROR]: GITHUB_TOKEN environment variable not set.")
         g = Github(GITHUB_TOKEN)
+        
         org = g.get_organization(org_name)
         repo = org.get_repo(repo_name)
 
