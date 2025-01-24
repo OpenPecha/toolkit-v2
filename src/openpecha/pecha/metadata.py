@@ -77,7 +77,7 @@ class LicenseType(Enum):
 
 class PechaMetaData(BaseModel):
     id: str
-    title: Optional[Union[List[str], Dict[str, str], str]] = None
+    title: Optional[Union[Dict[str, str], str]] = None
     author: Optional[Union[List[str], Dict[str, str], str]] = None
     imported: Optional[datetime] = None
     source: Optional[str] = None
@@ -142,7 +142,7 @@ class PechaMetaData(BaseModel):
     def set_toolkit_version(cls, values):
         if "toolkit_version" not in values or values["toolkit_version"] is None:
             try:
-                from importlib.metadata import version, PackageNotFoundError
+                from importlib.metadata import PackageNotFoundError, version
 
                 # Fetch the version of the package directly
                 toolkit_version = version("openpecha")

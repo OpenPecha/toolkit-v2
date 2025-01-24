@@ -1,5 +1,6 @@
+import ast
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 from git import Repo
 
@@ -35,3 +36,27 @@ class PechaDataCatalog:
             commit_and_push(
                 Repo(self.repo_path), message="Update catalog", branch="main"
             )
+
+    def get_pecha_id_with_title(self, title: str) -> Union[str, None]:
+        """
+        1.Get pecha/opf catalog data
+        2.Compare title with each entry
+        3.When matched, return the pecha id
+        """
+        for cat_data in self.catalog_data[1:]:
+            pecha_id = cat_data[0]
+            entry_title_str = cat_data[1]
+
+            try:
+                entry_title = ast.literal_eval(entry_title_str)
+            except (ValueError, SyntaxError):
+                entry_title = entry_title_str
+
+            if isinstance(entry_title, dict):
+                if title in entry_title.values():
+                    return pecha_id
+
+            elif isinstance(entry_title, str):
+                if title == entry_title:
+                    return pecha_id
+        return None
