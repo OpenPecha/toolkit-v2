@@ -220,5 +220,9 @@ def get_aligned_root_layer(root_pecha_title: str):
         root_pecha_id is not None
     ), f"Failed to get pecha id for title {root_pecha_title}"
     root_pecha = Pecha.from_id(pecha_id=root_pecha_id)
-    root_layer_filename = list(root_pecha.layer_path.rglob("*.json"))[0].as_posix()
-    return root_layer_filename
+    layer_path = list(root_pecha.layer_path.rglob("*.json"))[0]
+    relative_layer_path = layer_path.relative_to(
+        root_pecha.pecha_path.parent
+    ).as_posix()
+
+    return relative_layer_path
