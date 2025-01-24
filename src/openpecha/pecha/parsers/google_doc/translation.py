@@ -1,11 +1,12 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 
 from docx import Document
 
 from openpecha.alignment.alignment import AlignmentEnum
+from openpecha.catalog import PechaDataCatalog
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
@@ -14,7 +15,7 @@ from openpecha.pecha.parsers import BaseParser
 
 
 class GoogleDocTranslationParser(BaseParser):
-    def __init__(self, source_path: Union[str, None] = None):
+    def __init__(self):
         """
         source_path: Normaly, Tibetan file is the source i.e other lang files are translated based
                      on the tibetan file.
@@ -23,7 +24,6 @@ class GoogleDocTranslationParser(BaseParser):
 
         """
         self.root_idx_regex = r"^\d+\."
-        self.source_path = source_path
 
     @staticmethod
     def get_layer_enum_with_lang(lang: str):
@@ -183,11 +183,14 @@ class GoogleDocTranslationParser(BaseParser):
         index = layer_path.parts.index(pecha.id)
         relative_layer_path = Path(*layer_path.parts[index:])
 
-        # Set source path in translation alignment
-        if self.source_path:
-            metadata[AlignmentEnum.translation_alignment.value] = [
-                {"source": self.source_path, "target": str(relative_layer_path)}
-            ]
+        # Inlude Root pecha and layer information if this is a translation pecha
+        if "is_version_of" in metadata:
+            root_pecha_title = metadata["is_version_of"]
+            if root_pecha_title:
+                root_layer_filepath = get_aligned_root_layer(root_pecha_title)
+                metadata[AlignmentEnum.translation_alignment.value] = [
+                    {"source": root_layer_filepath, "target": str(relative_layer_path)}
+                ]
 
         pecha.set_metadata(
             PechaMetaData(
@@ -200,3 +203,22 @@ class GoogleDocTranslationParser(BaseParser):
         )
 
         return (pecha, relative_layer_path)
+
+
+def get_aligned_root_layer(root_pecha_title: str):
+    """
+    1.Get Root pecha id from Catalog comparing title
+    2.Download Root pecha
+    3.Get first layer annotation file [TODO: Improve later on.]
+
+    Output: Pecha id/ layers/ basename/ layer filename
+    Eg:     IE60BBDE8/layers/3635/Tibetan_Segment-039B.json
+    """
+    catalog = PechaDataCatalog()
+    root_pecha_id = catalog.get_pecha_id_with_title(root_pecha_title)
+    assert (
+        root_pecha_id is not None
+    ), f"Failed to get pecha id for title {root_pecha_title}"
+    root_pecha = Pecha.from_id(pecha_id=root_pecha_id)
+    root_layer_filename = list(root_pecha.layer_path.rglob("*.json"))[0].as_posix()
+    return root_layer_filename

@@ -37,4 +37,7 @@ def extract_metadata_from_xlsx(input: Path):
     if "source" in metadata and isinstance(metadata["source"], dict):
         metadata["source"] = list(metadata["source"].values())[0]
 
+    if "is_version_of" in metadata and isinstance(metadata["is_version_of"], dict):
+        metadata["is_version_of"] = list(metadata["is_version_of"].values())[0]
+
     return metadata

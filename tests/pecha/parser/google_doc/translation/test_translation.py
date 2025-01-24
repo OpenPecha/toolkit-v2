@@ -45,9 +45,7 @@ def test_en_google_doc_translation_parser():
     en_docx_file = DATA_DIR / "en" / "English aligned Root Text Translation.docx"
     en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
 
-    parser = GoogleDocTranslationParser(
-        source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
-    )
+    parser = GoogleDocTranslationParser()
 
     expected_anns = [
         {"English_Segment": {"start": 0, "end": 154}, "root_idx_mapping": "1"},
@@ -68,9 +66,14 @@ def test_en_google_doc_translation_parser():
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
         "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.extract_root_idx"
-    ) as mock_extract_root_idx:
+    ) as mock_extract_root_idx, patch(
+        "openpecha.pecha.parsers.google_doc.translation.get_aligned_root_layer"
+    ) as mock_get_aligned_root_layer:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
+        mock_get_aligned_root_layer.return_value = (
+            "I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
+        )
         pecha = parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
@@ -80,9 +83,7 @@ def test_zh_google_doc_translation_parser():
     zh_docx_file = DATA_DIR / "zh" / "Chinese aligned Root Text Translation.docx"
     zh_metadata = DATA_DIR / "zh" / "Chinese Root text Translation Metadata.xlsx"
 
-    parser = GoogleDocTranslationParser(
-        source_path="I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
-    )
+    parser = GoogleDocTranslationParser()
     expected_anns = [
         {"Chinese_Segment": {"start": 0, "end": 72}, "root_idx_mapping": "1"},
         {"Chinese_Segment": {"start": 73, "end": 81}, "root_idx_mapping": "2"},
@@ -102,9 +103,14 @@ def test_zh_google_doc_translation_parser():
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
         "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.extract_root_idx"
-    ) as mock_extract_root_idx:
+    ) as mock_extract_root_idx, patch(
+        "openpecha.pecha.parsers.google_doc.translation.get_aligned_root_layer"
+    ) as mock_get_aligned_root_layer:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
+        mock_get_aligned_root_layer.return_value = (
+            "I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
+        )
         pecha = parser.parse(zh_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
