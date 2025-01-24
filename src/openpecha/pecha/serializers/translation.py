@@ -4,12 +4,11 @@ from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.alignment.alignment import AlignmentEnum
-from openpecha.alignment.serializers import BaseAlignmentSerializer
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, get_pecha_with_title
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 
-class TextTranslationSerializer(BaseAlignmentSerializer):
+class TextTranslationSerializer:
     def get_pecha_category(self, pecha: Pecha):
         """
         Set pecha category both in english and tibetan in the JSON output.
@@ -196,20 +195,40 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
 
         return title
 
+    @staticmethod
+    def is_translation_pecha(pecha: Pecha) -> bool:
+        if "is_version_of" in pecha.metadata.source_metadata:
+            root_pecha_title = pecha.metadata.source_metadata["is_version_of"]
+            # Considering field "is_version_of" is str
+            if root_pecha_title:
+                return True
+            return False
+        return False
+
     def serialize(
         self,
-        root_pecha: Pecha,
-        translation_pecha: Pecha,
+        pecha: Pecha,
         is_pecha_display: bool = False,
     ) -> Dict:
+        # Check if the pecha is Root Pecha or Translation Pecha
+        is_translation_pecha = self.is_translation_pecha(pecha)
+        if is_translation_pecha:
+            root_pecha_title = pecha.metadata.source_metadata["is_version_of"]
+            root_pecha = get_pecha_with_title(root_pecha_title)
+            translation_pecha = pecha
+
+        else:
+            root_pecha = pecha
+            translation_pecha = None
 
         # Get pecha category from pecha_org_tools package and set to JSON
         bo_category, en_category = self.get_pecha_category(root_pecha)
 
         # Get the root and translation layer to serialize the layer(STAM) to JSON
-        alignment_data = self.get_root_and_translation_layer(
-            root_pecha, translation_pecha, is_pecha_display
-        )
+        if translation_pecha:
+            alignment_data = self.get_root_and_translation_layer(
+                root_pecha, translation_pecha, is_pecha_display
+            )
 
         root_json: Dict[str, List] = {
             "categories": bo_category,
@@ -229,6 +248,8 @@ class TextTranslationSerializer(BaseAlignmentSerializer):
                         translation_pecha, alignment_data, is_pecha_display
                     ),
                 }
+                if translation_pecha
+                else {}
             ],
         }
 

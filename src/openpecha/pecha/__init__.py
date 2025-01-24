@@ -387,3 +387,29 @@ class Pecha:
             layer_output_path = self.layer_path / target_base_name / layer_name
             layer.set_filename(layer_output_path.as_posix())
             layer.save()
+
+
+def get_pecha_with_title(title: str) -> Pecha:
+    catalog = PechaDataCatalog()
+    root_pecha_id = catalog.get_pecha_id_with_title(title)
+    assert root_pecha_id is not None, f"Failed to get pecha id for title {title}"
+    root_pecha = Pecha.from_id(pecha_id=root_pecha_id)
+    return root_pecha
+
+
+def get_aligned_root_layer(root_pecha_title: str):
+    """
+    1.Get Root pecha id from Catalog comparing title
+    2.Download Root pecha
+    3.Get first layer annotation file [TODO: Improve later on.]
+
+    Output: Pecha id/ layers/ basename/ layer filename
+    Eg:     IE60BBDE8/layers/3635/Tibetan_Segment-039B.json
+    """
+    root_pecha = get_pecha_with_title(root_pecha_title)
+    layer_path = list(root_pecha.layer_path.rglob("*.json"))[0]
+    relative_layer_path = layer_path.relative_to(
+        root_pecha.pecha_path.parent
+    ).as_posix()
+
+    return relative_layer_path

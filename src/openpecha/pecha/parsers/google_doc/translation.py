@@ -6,9 +6,8 @@ from typing import Dict, List, Tuple
 from docx import Document
 
 from openpecha.alignment.alignment import AlignmentEnum
-from openpecha.catalog import PechaDataCatalog
 from openpecha.config import PECHAS_PATH
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, get_aligned_root_layer
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
@@ -203,26 +202,3 @@ class GoogleDocTranslationParser(BaseParser):
         )
 
         return (pecha, relative_layer_path)
-
-
-def get_aligned_root_layer(root_pecha_title: str):
-    """
-    1.Get Root pecha id from Catalog comparing title
-    2.Download Root pecha
-    3.Get first layer annotation file [TODO: Improve later on.]
-
-    Output: Pecha id/ layers/ basename/ layer filename
-    Eg:     IE60BBDE8/layers/3635/Tibetan_Segment-039B.json
-    """
-    catalog = PechaDataCatalog()
-    root_pecha_id = catalog.get_pecha_id_with_title(root_pecha_title)
-    assert (
-        root_pecha_id is not None
-    ), f"Failed to get pecha id for title {root_pecha_title}"
-    root_pecha = Pecha.from_id(pecha_id=root_pecha_id)
-    layer_path = list(root_pecha.layer_path.rglob("*.json"))[0]
-    relative_layer_path = layer_path.relative_to(
-        root_pecha.pecha_path.parent
-    ).as_posix()
-
-    return relative_layer_path
