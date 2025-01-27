@@ -31,6 +31,3 @@ def test_pecha_read():
     anns = list(dataset.data(key, value=LayerEnum.root_segment.value).annotations())
     for ann, expected_ann in zip(anns, expected_anns):
         assert str(ann) == expected_ann
-
-
-test_pecha_read()

@@ -8,7 +8,7 @@ from openpecha.pecha import Pecha
 
 @pytest.fixture
 def temp_data(tmp_path):
-    source = Path("tests/pecha/data")
+    source = Path("tests/pecha/merge/data")
     destination = tmp_path / "data"
     shutil.copytree(source, destination)
     return destination
