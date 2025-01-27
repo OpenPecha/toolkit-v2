@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 import git
-from git import Repo
+from git import GitCommandError, Repo
 from github import Github
 
 from openpecha.github_utils import create_github_repo
@@ -60,11 +60,20 @@ def setup_auth_for_old_repo(repo, org, token):
 
 
 def commit_and_push(repo, message, branch=None):
-    if not branch:
-        branch = repo.active_branch.name
-    repo.git.add("-A")
-    repo.git.commit("-m", message)
-    repo.git.push("-u", "origin", branch)
+    try:
+        if not branch:
+            branch = repo.active_branch.name
+        repo.git.add("-A")
+
+        # Check if there are changes to commit
+        if not repo.is_dirty(untracked_files=True):
+            # "No changes to commit. Working tree is clean.
+            return
+
+        repo.git.commit("-m", message)
+        repo.git.push("-u", "origin", branch)
+    except GitCommandError as e:
+        print(f"Git command error: {e}")
 
 
 class Storage:

@@ -1,20 +1,20 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 
 from docx import Document
 
 from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, get_aligned_root_layer
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
 class GoogleDocTranslationParser(BaseParser):
-    def __init__(self, source_path: Union[str, None] = None):
+    def __init__(self):
         """
         source_path: Normaly, Tibetan file is the source i.e other lang files are translated based
                      on the tibetan file.
@@ -23,7 +23,6 @@ class GoogleDocTranslationParser(BaseParser):
 
         """
         self.root_idx_regex = r"^\d+\."
-        self.source_path = source_path
 
     @staticmethod
     def get_layer_enum_with_lang(lang: str):
@@ -183,11 +182,14 @@ class GoogleDocTranslationParser(BaseParser):
         index = layer_path.parts.index(pecha.id)
         relative_layer_path = Path(*layer_path.parts[index:])
 
-        # Set source path in translation alignment
-        if self.source_path:
-            metadata[AlignmentEnum.translation_alignment.value] = [
-                {"source": self.source_path, "target": str(relative_layer_path)}
-            ]
+        # Inlude Root pecha and layer information if this is a translation pecha
+        if "is_version_of" in metadata:
+            root_pecha_title = metadata["is_version_of"]
+            if root_pecha_title:
+                root_layer_filepath = get_aligned_root_layer(root_pecha_title)
+                metadata[AlignmentEnum.translation_alignment.value] = [
+                    {"source": root_layer_filepath, "target": str(relative_layer_path)}
+                ]
 
         pecha.set_metadata(
             PechaMetaData(
