@@ -12,7 +12,7 @@ def test_parser_on_bo_commentary():
     metadata = data / "bo/Tibetan Commentary text Metadata 2.xlsx"
 
     parser = GoogleDocCommentaryParser(
-        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+        root_path="opf_id/layers/basename/layer_file.json"
     )
 
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -35,7 +35,7 @@ def test_parser_on_en_commentary():
     metadata = data / "en/English Commentary text Metadata 2.xlsx"
 
     parser = GoogleDocCommentaryParser(
-        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+        root_path="opf_id/layers/basename/layer_file.json"
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_path = Path(tmpdirname)
@@ -55,7 +55,7 @@ def test_parser_on_zh_commentary():
     metadata = data / "zh/Chinese Commentary text Metadata 1.xlsx"
 
     parser = GoogleDocCommentaryParser(
-        source_type="commentary", root_path="opf_id/layers/basename/layer_file.json"
+        root_path="opf_id/layers/basename/layer_file.json"
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
         output_path = Path(tmpdirname)

@@ -14,10 +14,8 @@ from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
 class GoogleDocCommentaryParser(BaseParser):
-    def __init__(self, source_type: str, root_path: Optional[str] = None):
-        self.source_type = source_type
+    def __init__(self, root_path: Optional[str] = None):
         self.root_path = root_path
-        self.root_segment_splitter = "\n"
         self.commentary_segment_splitter = "\n\n"
         self.meaning_segment_anns: List[Dict[str, Any]] = []
         self.sapche_anns: List[Dict[str, Any]] = []
@@ -60,66 +58,14 @@ class GoogleDocCommentaryParser(BaseParser):
 
         if isinstance(metadata, Path):
             metadata = extract_metadata_from_xlsx(metadata)
-        if self.source_type == "commentary":
-            assert self.source_type is not None
-            assert isinstance(metadata, dict)
-            metadata["root_path"] = self.root_path
 
         assert isinstance(metadata, dict)
+        metadata["root_path"] = self.root_path
         self.metadata = metadata
-
-        if self.source_type == "root":
-            input_text = input.read_text(encoding="utf-8")
-            input_text = self.normalize_text(input_text)
-            if input_text.startswith("\ufeff"):
-                input_text = input_text[1:]
-
-            self.parse_root(input_text)
-
-        elif self.source_type == "commentary":
-            self.parse_commentary(input)
+        self.parse_commentary(input)
 
         pecha = self.create_pecha(output_path)
-
         return pecha
-
-    def parse_root(self, input: str):
-        """
-        Input: Normalized text
-        Process: Parse and record the root annotations and cleaned base text in self.meaning_segment_anns, self.base
-        """
-        char_count = 0
-        base_texts = []
-        for segment in input.split(self.root_segment_splitter):
-            segment = segment.strip()
-
-            match = re.search(r"^(\d+)\.", segment)
-            if match:
-                root_idx_num = match.group(1)
-                segment = segment.replace(f"{root_idx_num}.", "")
-                segment = segment.strip()
-
-                curr_segment_ann = {
-                    LayerEnum.meaning_segment.value: {
-                        "start": char_count,
-                        "end": char_count + len(segment),
-                    },
-                    "root_idx": int(root_idx_num),
-                }
-
-            else:
-                curr_segment_ann = {
-                    LayerEnum.meaning_segment.value: {
-                        "start": char_count,
-                        "end": char_count + len(segment),
-                    }
-                }
-
-            self.meaning_segment_anns.append(curr_segment_ann)
-            base_texts.append(segment)
-            char_count += len(segment)
-            char_count += 1  # for newline
-        self.base = "\n".join(base_texts)
 
     def prepare_doc(self, input: Path):
         """
