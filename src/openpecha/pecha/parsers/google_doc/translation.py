@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 from docx import Document
 
@@ -131,7 +131,7 @@ class GoogleDocTranslationParser(BaseParser):
 
     def parse(
         self,
-        input: Path,
+        input: Union[str, Path],
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
     ) -> "Pecha":
@@ -150,6 +150,7 @@ class GoogleDocTranslationParser(BaseParser):
             - Create OPF
 
         """
+        input = Path(input)
         anns, base = self.extract_root_idx(input, metadata)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path)
         return pecha
