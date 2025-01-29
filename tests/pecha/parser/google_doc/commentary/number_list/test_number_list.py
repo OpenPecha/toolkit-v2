@@ -1,6 +1,7 @@
 from pathlib import Path
-from unittest import TestCase
+from unittest import TestCase, mock
 
+from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.google_doc.commentary.number_list import (
     DocxNumberListCommentaryParser,
 )
@@ -40,8 +41,20 @@ class TestNumberListCommentaryParser(TestCase):
             base == expected_base
         ), "NumberedList Commentary failed preparing base text properly."
 
+        with mock.patch(
+            "openpecha.pecha.parsers.google_doc.commentary.number_list.DocxNumberListCommentaryParser.extract_commentary_segments_anns"
+        ) as mock_extract_commentary_segments_anns:
+            mock_extract_commentary_segments_anns.return_value = (
+                expected_anns,
+                expected_base,
+            )
+            pecha = parser.parse(self.input, self.metadata, self.output_dir)
+            assert isinstance(pecha, Pecha)
+
     def tearDown(self):
-        del self.data_dir
-        del self.input
-        del self.metadata
-        del self.output_dir
+        pass
+
+
+parser = TestNumberListCommentaryParser()
+parser.setUp()
+parser.test_parse_numberlist_commentary_parser()
