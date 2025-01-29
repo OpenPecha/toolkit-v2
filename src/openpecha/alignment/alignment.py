@@ -7,4 +7,5 @@ class AlignmentEnum(Enum):
     """
 
     translation_alignment = "translation_alignments"
+    commentary_alignment = "commentary_alignments"
     pecha_display_alignments = "pecha_display_alignments"
