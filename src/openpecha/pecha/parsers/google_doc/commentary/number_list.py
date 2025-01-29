@@ -78,19 +78,21 @@ class DocxNumberListCommentaryParser(BaseParser):
         base = ""
         char_count = 0
         for root_idx_mapping, segment in numbered_text.items():
-            match = re.match(self.root_alignment_index_regex, text)
+            match = re.match(self.root_alignment_index_regex, segment)
             if match:
                 root_idx_mapping = match.group(1)
                 segment = match.group(2)
             curr_segment_ann = {
                 LayerEnum.meaning_segment.value: {
                     "start": char_count,
-                    "end": char_count + len(segment),
+                    "end": char_count + len(segment) + 1,
                 },
                 "root_idx_mapping": root_idx_mapping,
             }
             anns.append(curr_segment_ann)
-            base += segment
+            base += f"{segment}\n"
+
+            char_count += len(segment) + 1
         return (anns, base)
 
     def parse(
