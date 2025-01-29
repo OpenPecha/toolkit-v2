@@ -13,7 +13,7 @@ class TextTranslationSerializer:
         """
         Set pecha category both in english and tibetan in the JSON output.
         """
-        pecha_title = self.get_pecha_title(pecha)
+        pecha_title = self.get_pecha_bo_title(pecha)
         category_extractor = CategoryExtractor()
         categories = category_extractor.get_category(pecha_title)
         return categories["bo"], categories["en"]
@@ -199,11 +199,13 @@ class TextTranslationSerializer:
                 f"No proper translation alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
             )
 
-    def get_pecha_title(self, pecha: Pecha):
-        lang = pecha.metadata.language.value
+    def get_pecha_bo_title(self, pecha: Pecha):
+        """
+        Get tibetan title from the Pecha metadata
+        """
         title = pecha.metadata.title
         if isinstance(title, dict):
-            title = title.get(lang.lower()) or title.get(lang.upper())
+            title = title.get("bo") or title.get("BO")
 
         return title
 
