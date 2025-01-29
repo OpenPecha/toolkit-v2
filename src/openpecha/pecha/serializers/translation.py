@@ -140,7 +140,7 @@ class TextTranslationSerializer:
             ), f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
             alignment = translation_pecha.metadata.source_metadata[
                 AlignmentEnum.pecha_display_alignments.value
-            ][0]
+            ]
         else:
             assert (
                 AlignmentEnum.translation_alignment.value
@@ -148,7 +148,7 @@ class TextTranslationSerializer:
             ), f"translation alignment not present to serialize in translation Pecha {translation_pecha.id}"
             alignment = translation_pecha.metadata.source_metadata[
                 AlignmentEnum.translation_alignment.value
-            ][0]
+            ]
         root_basename, root_layer = (
             alignment["root"].split("/")[-2],
             alignment["root"].split("/")[-1],

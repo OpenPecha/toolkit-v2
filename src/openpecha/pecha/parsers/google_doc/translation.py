@@ -188,12 +188,10 @@ class GoogleDocTranslationParser(BaseParser):
             root_pecha_id = metadata["translation_of"]
             if root_pecha_id:
                 root_layer_filepath = get_aligned_root_layer(root_pecha_id)
-                metadata[AlignmentEnum.translation_alignment.value] = [
-                    {
-                        "root": root_layer_filepath,
-                        "translation": str(relative_layer_path),
-                    }
-                ]
+                metadata[AlignmentEnum.translation_alignment.value] = {
+                    "root": root_layer_filepath,
+                    "translation": str(relative_layer_path),
+                }
 
         pecha.set_metadata(
             PechaMetaData(
