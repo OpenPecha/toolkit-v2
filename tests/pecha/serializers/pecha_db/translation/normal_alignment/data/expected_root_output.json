@@ -23,7 +23,14 @@
       }
     ],
     "books": [
-      {}
+      {
+        "title": "Vajra Cutter Root Book",
+        "language": "en",
+        "versionSource": "",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": []
+      }
     ]
   },
   "target": {

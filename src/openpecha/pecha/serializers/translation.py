@@ -1,10 +1,11 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.pecha import Pecha, get_pecha_with_id
+from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 
@@ -18,15 +19,18 @@ class TextTranslationSerializer:
         categories = category_extractor.get_category(pecha_title)
         return categories["bo"], categories["en"]
 
-    def get_metadata_for_pecha_org(self, pecha: Pecha):
+    def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
         Extract required metadata from opf
         """
-        lang = pecha.metadata.language.value
+        if not lang:
+            lang = pecha.metadata.language.value
         direction = get_text_direction_with_lang(lang)
         title = pecha.metadata.title
         if isinstance(title, dict):
-            title = title.get(lang.lower()) or title.get(lang.upper())
+            title = title.get(lang.lower(), None) or title.get(  # type: ignore
+                lang.upper(), None  # type: ignore
+            )
         title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
         source = pecha.metadata.source if pecha.metadata.source else ""
 
@@ -232,7 +236,12 @@ class TextTranslationSerializer:
                     ),
                 }
                 if translation_pecha
-                else {}
+                else {
+                    **self.get_metadata_for_pecha_org(
+                        root_pecha, Language.english.value
+                    ),
+                    "content": [],
+                }
             ],
         }
 
