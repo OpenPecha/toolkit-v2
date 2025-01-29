@@ -32,7 +32,8 @@ dependencies = [
   "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
   "pecha_org_tools @ git+https://github.com/OpenPecha/pecha_org_tools.git",
   "google-auth-httplib2 >= 0.2.0",
-  "google-api-python-client >= 2.156.0"
+  "google-api-python-client >= 2.156.0",
+  "docx2python == 3.3.0"
 ]
 
 [project.optional-dependencies]
