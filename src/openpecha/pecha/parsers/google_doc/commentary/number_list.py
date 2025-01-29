@@ -12,6 +12,7 @@ class DocxNumberListCommentaryParser(BaseParser):
     def __init__(self, root_path: Optional[str] = None):
         self.root_path = root_path
         self.number_list_regex = r"^(\d+)\)\t(.*)"
+        self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
 
     def normalize_text(self, text: str):
         text = self.normalize_whitespaces(text)
@@ -33,9 +34,17 @@ class DocxNumberListCommentaryParser(BaseParser):
         """
         return re.sub(r"\n{3,}", "\n\n", text)
 
-    def get_number_list(self, text: str) -> Dict:
+    def extract_numbered_list(self, text: str) -> Dict[str, str]:
         """
         Extract number list from the extracted text from docx.
+
+        Example Output:>
+            {
+                '1': 'དབུ་མ་དགོངས་པ་རབ་གསལ་ལེའུ་དྲུག་པ་བདེན་གཉིས་སོ་སོའི་ངོ་བོ་བཤད་པ།། ',
+                '2': '2 གསུམ་པ་ལ་གཉིས། ཀུན་རྫོབ་ཀྱི་བདེན་པ་བཤད་པ་དང་། ',
+                '3': '2,3 དེས་གང་ལ་སྒྲིབ་ན་ཡང་དག་ཀུན་རྫོབ་འདོད་ཅེས་པས་ཡང་དག་པའི་དོན་ལ་སྒྲིབ་པས་ཀུན་རྫོབ་བམ་སྒྲིབ་བྱེད་དུ་འདོད་ཅེས་པ་སྟེ། །',
+                ...
+            }
         """
         res: Dict[str, str] = {}
         for para_text in text.split("\n\n"):
@@ -47,13 +56,25 @@ class DocxNumberListCommentaryParser(BaseParser):
 
         return res
 
+    def extract_root_aligned_indices(self, docx_file: Path) -> Dict:
+
+        text = docx2python(docx_file).text
+        text = self.normalize_text(text)
+        numbered_text: Dict[str, str] = self.extract_numbered_list(text)
+        root_aligned_indices = {}
+        for number, text in numbered_text.items():
+            match = re.match(self.root_alignment_index_regex, text)
+            if match:
+                root_aligned_indices[match.group(1)] = match.group(2)
+            else:
+                root_aligned_indices[number] = text
+        return root_aligned_indices
+
     def parse(
         self,
         input: Path,
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
     ):
-        text = docx2python(input).text
-        text = self.normalize_text(text)
-        res = self.get_number_list(text)
+        res = self.extract_root_aligned_indices(input)
         return res
