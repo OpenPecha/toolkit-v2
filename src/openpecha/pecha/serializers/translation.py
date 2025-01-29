@@ -126,7 +126,7 @@ class TextTranslationSerializer:
         return alignment_data
 
     def get_root_and_translation_layer(
-        self, root_pecha: Pecha, translation_pecha: Pecha, is_pecha_display: bool
+        self, translation_pecha: Pecha, is_pecha_display: bool
     ):
         """
         Get the root layer and translation layer to serialize the layer(STAM) to JSON
@@ -138,66 +138,33 @@ class TextTranslationSerializer:
                 AlignmentEnum.pecha_display_alignments.value
                 in translation_pecha.metadata.source_metadata
             ), f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            pecha_display_alignments = translation_pecha.metadata.source_metadata[
+            alignment = translation_pecha.metadata.source_metadata[
                 AlignmentEnum.pecha_display_alignments.value
-            ]
-            for alignment in pecha_display_alignments:
-                root_basename, root_layer = (
-                    alignment["pecha_display"].split("/")[-2],
-                    alignment["pecha_display"].split("/")[-1],
-                )
-                translation_basename, translation_layer = (
-                    alignment["translation"].split("/")[-2],
-                    alignment["translation"].split("/")[-1],
-                )
-                if root_pecha.get_layer_by_filename(
-                    root_basename, root_layer
-                ) and translation_pecha.get_layer_by_filename(
-                    translation_basename, translation_layer
-                ):
-                    alignment_data = {
-                        "root_basename": root_basename,
-                        "root_layername": root_layer,
-                        "translation_basename": translation_basename,
-                        "translation_layername": translation_layer,
-                    }
-                    return alignment_data
-
-            raise LookupError(
-                f"No proper pecha display alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
-            )
+            ][0]
         else:
             assert (
                 AlignmentEnum.translation_alignment.value
                 in translation_pecha.metadata.source_metadata
             ), f"translation alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            translation_alignments = translation_pecha.metadata.source_metadata[
+            alignment = translation_pecha.metadata.source_metadata[
                 AlignmentEnum.translation_alignment.value
-            ]
-            for alignment in translation_alignments:
-                root_basename, root_layer = (
-                    alignment["source"].split("/")[-2],
-                    alignment["source"].split("/")[-1],
-                )
-                translation_basename, translation_layer = (
-                    alignment["target"].split("/")[-2],
-                    alignment["target"].split("/")[-1],
-                )
-                if root_pecha.get_layer_by_filename(
-                    root_basename, root_layer
-                ) and translation_pecha.get_layer_by_filename(
-                    translation_basename, translation_layer
-                ):
-                    alignment_data = {
-                        "root_basename": root_basename,
-                        "root_layername": root_layer,
-                        "translation_basename": translation_basename,
-                        "translation_layername": translation_layer,
-                    }
-                    return alignment_data
-            raise LookupError(
-                f"No proper translation alignment found in Root {root_pecha.id} and translation {translation_pecha.id} to serialize"
-            )
+            ][0]
+        root_basename, root_layer = (
+            alignment["root"].split("/")[-2],
+            alignment["root"].split("/")[-1],
+        )
+        translation_basename, translation_layer = (
+            alignment["translation"].split("/")[-2],
+            alignment["translation"].split("/")[-1],
+        )
+
+        alignment_data = {
+            "root_basename": root_basename,
+            "root_layername": root_layer,
+            "translation_basename": translation_basename,
+            "translation_layername": translation_layer,
+        }
+        return alignment_data
 
     def get_pecha_bo_title(self, pecha: Pecha):
         """
@@ -241,7 +208,7 @@ class TextTranslationSerializer:
         # Get the root and translation layer to serialize the layer(STAM) to JSON
         if translation_pecha:
             alignment_data = self.get_root_and_translation_layer(
-                root_pecha, translation_pecha, is_pecha_display
+                translation_pecha, is_pecha_display
             )
         else:
             alignment_data = self.get_root_layer(root_pecha)
