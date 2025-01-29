@@ -30,18 +30,16 @@
       "BO": "རྡོ་རྗེ་སུམ་བརྒྱ་པའམ་རྡོ་རྗེ་གཅོད་པ།"
     },
     "translation_of": "ཚོད་ལྟ་དཔེ་དེབ་",
-    "translation_alignments": [
-      {
+    "translation_alignments": {
         "source": "I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json",
         "target": "I6EA29D09/layers/564C/English_Segment-9F9B.json"
       }
-    ],
-    "pecha_display_alignments": [
-      {
-        "pecha_display": "IFA46BBC2/layers/4665/Tibetan_Segment-4D29.json",
+    ,
+    "pecha_display_alignments": {
+        "root": "IFA46BBC2/layers/4665/Tibetan_Segment-4D29.json",
         "translation": "I6EA29D09/layers/564C/Pecha_Display_Alignment_Segment-891D.json"
       }
-    ]
+    
   },
   "bases": [
     {

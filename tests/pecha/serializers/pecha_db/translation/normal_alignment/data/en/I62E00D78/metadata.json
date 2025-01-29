@@ -26,12 +26,11 @@
       "BO": "རྡོ་རྗེ་སུམ་བརྒྱ་པའམ་རྡོ་རྗེ་གཅོད་པ།"
     },
     "translation_of": "རྡོ་རྗེ་གཅོད་པ་རྩ་བ་དེབ།",
-    "translation_alignments": [
-      {
-        "source": "IE60BBDE9/layers/3635/Tibetan_Segment-039B.json",
-        "target": "I62E00D79/layers/D93E/English_Segment-0216.json"
+    "translation_alignments":{
+        "root": "IE60BBDE9/layers/3635/Tibetan_Segment-039B.json",
+        "translation": "I62E00D79/layers/D93E/English_Segment-0216.json"
       }
-    ]
+    
   },
   "bases": [
     {
