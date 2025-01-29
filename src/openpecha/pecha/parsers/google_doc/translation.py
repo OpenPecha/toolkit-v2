@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 from docx import Document
 
@@ -131,7 +131,7 @@ class GoogleDocTranslationParser(BaseParser):
 
     def parse(
         self,
-        input: Path,
+        input: Union[str, Path],
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
     ) -> "Pecha":
@@ -150,6 +150,7 @@ class GoogleDocTranslationParser(BaseParser):
             - Create OPF
 
         """
+        input = Path(input)
         anns, base = self.extract_root_idx(input, metadata)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path)
         return pecha
@@ -183,10 +184,10 @@ class GoogleDocTranslationParser(BaseParser):
         relative_layer_path = Path(*layer_path.parts[index:])
 
         # Inlude Root pecha and layer information if this is a translation pecha
-        if "is_version_of" in metadata:
-            root_pecha_title = metadata["is_version_of"]
-            if root_pecha_title:
-                root_layer_filepath = get_aligned_root_layer(root_pecha_title)
+        if "translation_of" in metadata:
+            root_pecha_id = metadata["translation_of"]
+            if root_pecha_id:
+                root_layer_filepath = get_aligned_root_layer(root_pecha_id)
                 metadata[AlignmentEnum.translation_alignment.value] = [
                     {"source": root_layer_filepath, "target": str(relative_layer_path)}
                 ]
