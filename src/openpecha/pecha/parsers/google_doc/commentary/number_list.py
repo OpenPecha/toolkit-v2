@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from docx2python import docx2python
 
@@ -98,10 +98,11 @@ class DocxNumberListCommentaryParser(BaseParser):
 
     def parse(
         self,
-        input: Path,
+        input: Union[str, Path],
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
     ):
+        input = Path(input)
         anns, base = self.extract_commentary_segments_anns(input)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path)
         return pecha
