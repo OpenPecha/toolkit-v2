@@ -4,7 +4,7 @@ from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.alignment.alignment import AlignmentEnum
-from openpecha.pecha import Pecha, get_pecha_with_title
+from openpecha.pecha import Pecha, get_pecha_with_id
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 
@@ -209,9 +209,9 @@ class TextTranslationSerializer:
 
     @staticmethod
     def is_translation_pecha(pecha: Pecha) -> bool:
-        if "is_version_of" in pecha.metadata.source_metadata:
-            root_pecha_title = pecha.metadata.source_metadata["is_version_of"]
-            # Considering field "is_version_of" is str
+        if "translation_of" in pecha.metadata.source_metadata:
+            root_pecha_title = pecha.metadata.source_metadata["translation_of"]
+            # Considering field "translation_of" is str
             if root_pecha_title:
                 return True
             return False
@@ -225,8 +225,8 @@ class TextTranslationSerializer:
         # Check if the pecha is Root Pecha or Translation Pecha
         is_translation_pecha = self.is_translation_pecha(pecha)
         if is_translation_pecha:
-            root_pecha_title = pecha.metadata.source_metadata["is_version_of"]
-            root_pecha = get_pecha_with_title(root_pecha_title)
+            root_pecha_id = pecha.metadata.source_metadata["translation_of"]
+            root_pecha = get_pecha_with_id(root_pecha_id)
             translation_pecha = pecha
 
         else:

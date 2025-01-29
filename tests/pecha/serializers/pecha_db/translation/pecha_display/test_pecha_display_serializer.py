@@ -48,9 +48,9 @@ class TestTextTranslationSerializer(TestCase):
         root_pecha = Pecha.from_path(root_opf)
         translation_pecha = Pecha.from_path(translation_opf)
         with mock.patch(
-            "openpecha.pecha.serializers.translation.get_pecha_with_title"
-        ) as mock_get_pecha_with_title:
-            mock_get_pecha_with_title.return_value = root_pecha
+            "openpecha.pecha.serializers.translation.get_pecha_with_id"
+        ) as mock_get_pecha_with_id:
+            mock_get_pecha_with_id.return_value = root_pecha
 
             serializer = TextTranslationSerializer()
             json_output = serializer.serialize(translation_pecha, True)

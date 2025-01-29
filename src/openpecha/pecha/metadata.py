@@ -227,7 +227,7 @@ class KungsangMonlamMetaData(BaseModel):
     title_alt_1: Optional[Dict[str, str]] = Field(default_factory=dict)
     title_alt_2: Optional[Dict[str, str]] = Field(default_factory=dict)
     is_commentary_of: Optional[Dict[str, str]] = Field(default_factory=dict)
-    is_version_of: Optional[Dict[str, str]] = Field(default_factory=dict)
+    translation_of: Optional[Dict[str, str]] = Field(default_factory=dict)
     lang: Optional[str] = None
 
     model_config = ConfigDict(extra="allow")
