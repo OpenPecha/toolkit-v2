@@ -91,7 +91,7 @@ class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
             new_metadata={
                 AlignmentEnum.pecha_display_alignments.value: [
                     {
-                        "pecha_display": os.path.relpath(
+                        "root": os.path.relpath(
                             f"{self.target_pecha_id}/layers/{self.target_base_name}/{self.target_layer_name}"
                         ),
                         "translation": os.path.relpath(segment_path.as_posix()),
