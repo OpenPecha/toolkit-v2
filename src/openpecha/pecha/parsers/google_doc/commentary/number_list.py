@@ -1,10 +1,13 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from docx2python import docx2python
 
 from openpecha.config import PECHAS_PATH
+from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -56,19 +59,39 @@ class DocxNumberListCommentaryParser(BaseParser):
 
         return res
 
-    def extract_root_aligned_indices(self, docx_file: Path) -> Dict:
-
+    def extract_commentary_segments_anns(
+        self, docx_file: Path
+    ) -> Tuple[List[Dict], str]:
+        """
+        1.Loop through numbered text
+        2.If text contains root index indentifier, save it
+        3.Else save the numberlist as it is
+        """
+        # Normalize text
         text = docx2python(docx_file).text
         text = self.normalize_text(text)
+
+        # Extract text with numbered list from docx file
         numbered_text: Dict[str, str] = self.extract_numbered_list(text)
-        root_aligned_indices = {}
-        for number, text in numbered_text.items():
+
+        anns = []
+        base = ""
+        char_count = 0
+        for root_idx_mapping, segment in numbered_text.items():
             match = re.match(self.root_alignment_index_regex, text)
             if match:
-                root_aligned_indices[match.group(1)] = match.group(2)
-            else:
-                root_aligned_indices[number] = text
-        return root_aligned_indices
+                root_idx_mapping = match.group(1)
+                segment = match.group(2)
+            curr_segment_ann = {
+                LayerEnum.meaning_segment.value: {
+                    "start": char_count,
+                    "end": char_count + len(segment),
+                },
+                "root_idx_mapping": root_idx_mapping,
+            }
+            anns.append(curr_segment_ann)
+            base += segment
+        return (anns, base)
 
     def parse(
         self,
@@ -76,5 +99,31 @@ class DocxNumberListCommentaryParser(BaseParser):
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
     ):
-        res = self.extract_root_aligned_indices(input)
-        return res
+        anns, base = self.extract_commentary_segments_anns(input)
+        pecha, _ = self.create_pecha(anns, base, metadata, output_path)
+        return pecha
+
+    def create_pecha(
+        self, anns: List[Dict], base: str, metadata: Dict, output_path: Path
+    ) -> Tuple[Pecha, Path]:
+        pecha = Pecha.create(output_path)
+        basename = pecha.set_base(base)
+
+        # Add meaning_segment layer
+        meaning_segment_layer, layer_path = pecha.add_layer(
+            basename, LayerEnum.meaning_segment
+        )
+        for ann in anns:
+            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
+        meaning_segment_layer.save()
+
+        pecha.set_metadata(
+            PechaMetaData(
+                id=pecha.id,
+                parser=self.name,
+                initial_creation_type=InitialCreationType.google_docx,
+                **metadata,
+            )
+        )
+
+        return (pecha, layer_path)
