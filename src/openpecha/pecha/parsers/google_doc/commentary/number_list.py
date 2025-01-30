@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 from docx2python import docx2python
 
@@ -13,8 +13,7 @@ from openpecha.pecha.parsers import BaseParser
 
 
 class DocxNumberListCommentaryParser(BaseParser):
-    def __init__(self, root_path: Optional[str] = None):
-        self.root_path = root_path
+    def __init__(self):
         self.number_list_regex = r"^(\d+)\)\t(.*)"
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
 
