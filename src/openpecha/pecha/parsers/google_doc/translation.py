@@ -34,6 +34,14 @@ class GoogleDocTranslationParser(BaseParser):
 
         if lang == Language.chinese.value:
             return LayerEnum.chinese_segment
+        
+        if lang == Language.sanskrit.value:
+            return LayerEnum.sanskrit_segment
+        
+        if lang == Language.italian.value:
+            return LayerEnum.italian_segment
+        
+
 
         assert f"Language not properly given in metadata path: {str(input)}."
 
