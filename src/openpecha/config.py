@@ -27,7 +27,7 @@ ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignments")
 INPUT_DATA_PATH = _mkdir_if_not(BASE_PATH / "input_data")
 JSON_OUTPUT_PATH = _mkdir_if_not(BASE_PATH / "pechadb_json_output")
 
-PECHA_DATA_ORG = "PechaData"
+GITHUB_ORG_NAME = "PechaData"
 
 LINE_BREAKERS = [
     "། །",

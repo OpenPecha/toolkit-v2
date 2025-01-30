@@ -9,6 +9,7 @@ from git import GitCommandError, Repo
 from github import Github
 
 from openpecha.github_utils import create_github_repo
+from openpecha.config import GITHUB_ORG_NAME
 
 URL: str
 
@@ -113,7 +114,7 @@ class GithubStorage(Storage):
         username: Optional[str] = None,
         email: Optional[str] = None,
     ):
-        self.org_name = _get_value(org, "PECHA_DATA_GITHUB_ORG")
+        self.org_name = GITHUB_ORG_NAME
         self.token = _get_value(token, "GITHUB_TOKEN")
         self._username = _get_value(username, "GITHUB_USERNAME", optional=True)
         self._email = _get_value(email, "GITHUB_EMAIL", optional=True)
