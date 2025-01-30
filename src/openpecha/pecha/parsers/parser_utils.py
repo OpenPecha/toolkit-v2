@@ -40,4 +40,7 @@ def extract_metadata_from_xlsx(input: Path):
     if "translation_of" in metadata and isinstance(metadata["translation_of"], dict):
         metadata["translation_of"] = list(metadata["translation_of"].values())[0]
 
+    if "commentary_of" in metadata and isinstance(metadata["commentary_of"], dict):
+        metadata["commentary_of"] = list(metadata["commentary_of"].values())[0]
+
     return metadata
