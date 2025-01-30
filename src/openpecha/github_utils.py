@@ -11,7 +11,7 @@ from github.GithubException import (
     UnknownObjectException,
 )
 
-from openpecha.config import PECHA_DATA_ORG, _mkdir
+from openpecha.config import GITHUB_ORG_NAME, _mkdir
 from openpecha.exceptions import (
     FileUploadError,
     GithubCloneError,
@@ -22,16 +22,13 @@ from openpecha.exceptions import (
 
 org = None
 
-def _get_openpecha_data_org(org_name=None, token=None):
+def _get_openpecha_data_org(org_name=GITHUB_ORG_NAME, token=None):
     """OpenPecha github org singleton."""
     global org
-    if org is None:
-        if not token:
-            token = os.environ.get("GITHUB_TOKEN")
-        if not org_name:
-            org_name = os.environ["OPENPECHA_DATA_GITHUB_ORG"]
-        g = Github(token)
-        org = g.get_organization(org_name)
+    if not token:
+        token = os.environ.get("GITHUB_TOKEN")
+    g = Github(token)
+    org = g.get_organization(org_name)
     return org
 
 
@@ -55,7 +52,7 @@ def create_github_repo(path, org_name, token, private=False, description=None):
 
 
 def upload_folder_to_github(
-    repo_name: str, folder_path: Path, org_name: str = PECHA_DATA_ORG
+    repo_name: str, folder_path: Path, org_name: str = GITHUB_ORG_NAME
 ) -> None:
     """
     Upload a folder to a GitHub repository.
@@ -109,7 +106,7 @@ def upload_folder_to_github(
 
 
 def clone_repo(
-    repo_name: str, output_path: Path, org_name: str = PECHA_DATA_ORG
+    repo_name: str, output_path: Path, org_name: str = GITHUB_ORG_NAME
 ) -> Path:
     if not output_path.is_dir():
         raise NotADirectoryError("Given path should be directory !!!")

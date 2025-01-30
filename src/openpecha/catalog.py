@@ -4,7 +4,7 @@ from typing import List, Union
 
 from git import Repo
 
-from openpecha.config import PECHA_DATA_ORG, PECHAS_PATH
+from openpecha.config import GITHUB_ORG_NAME, PECHAS_PATH
 from openpecha.github_utils import clone_repo
 from openpecha.storages import commit_and_push
 from openpecha.utils import read_csv, write_csv
@@ -12,7 +12,7 @@ from openpecha.utils import read_csv, write_csv
 
 class PechaDataCatalog:
     def __init__(self, output_path: Path = PECHAS_PATH):
-        self.org_name = PECHA_DATA_ORG
+        self.org_name = GITHUB_ORG_NAME
         self.repo_name = "catalog"
         self.repo_path = self.clone_catalog(output_path)
         self.pecha_catalog_file = self.repo_path / "opf_catalog.csv"
