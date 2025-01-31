@@ -161,7 +161,21 @@ class AlignmentAnnTransfer:
                     display_span["Span"]["start"],
                     display_span["Span"]["end"],
                 )
-                if t_start <= d_start <= t_end or t_start <= d_end <= t_end:
+                flag = False
+
+                # In between
+                if t_start <= d_start <= t_end - 1 or t_start <= d_end - 1 <= t_end - 1:
+                    flag = True
+
+                # Contain
+                if d_start < t_start and d_end > t_end:
+                    flag = True
+
+                # Overlap
+                if d_start == t_end or d_end == t_start:
+                    flag = False
+
+                if flag:
                     transfered_to_display_map[transfer_key].append(
                         [display_key, [d_start, d_end]]
                     )
