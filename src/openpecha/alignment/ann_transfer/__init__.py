@@ -10,10 +10,10 @@ from openpecha.pecha.layer import LayerEnum
 
 class AlignmentAnnTransfer:
     def __init__(self, source: Dict, target: Dict):
-        self.source_pecha_path: Path = source["source_pecha_path"]
-        self.target_pecha_path: Path = target["target_pecha_path"]
-        self.source_base_name: str = source["source_base_name"]
-        self.target_base_name: str = target["target_base_name"]
+        self.source_pecha_path: Path = source["pecha_path"]
+        self.target_pecha_path: Path = target["pecha_path"]
+        self.source_base_name: str = source["base_name"]
+        self.target_base_name: str = target["base_name"]
 
         self.source_pecha_id: str = self.source_pecha_path.name
         self.target_pecha_id: str = self.target_pecha_path.name
@@ -161,7 +161,21 @@ class AlignmentAnnTransfer:
                     display_span["Span"]["start"],
                     display_span["Span"]["end"],
                 )
-                if t_start <= d_start <= t_end or t_start <= d_end <= t_end:
+                flag = False
+
+                # In between
+                if t_start <= d_start <= t_end - 1 or t_start <= d_end - 1 <= t_end - 1:
+                    flag = True
+
+                # Contain
+                if d_start < t_start and d_end > t_end:
+                    flag = True
+
+                # Overlap
+                if d_start == t_end or d_end == t_start:
+                    flag = False
+
+                if flag:
                     transfered_to_display_map[transfer_key].append(
                         [display_key, [d_start, d_end]]
                     )

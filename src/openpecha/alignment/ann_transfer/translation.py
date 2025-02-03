@@ -12,8 +12,8 @@ class TranslationAlignmentAnnTransfer(AlignmentAnnTransfer):
     def __init__(self, source: Dict, target: Dict, translation: Dict):
         super().__init__(source, target)
 
-        self.translation_pecha_path: Path = translation["translation_pecha_path"]
-        self.translation_base_name = translation["translation_base_name"]
+        self.translation_pecha_path: Path = translation["pecha_path"]
+        self.translation_base_name = translation["base_name"]
 
         self.translation_pecha_id: str = self.translation_pecha_path.name
         self.translation_layer_name: Union[str, None] = None
