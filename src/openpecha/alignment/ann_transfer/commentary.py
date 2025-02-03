@@ -14,7 +14,7 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
         super().__init__(source, target)
 
         self.commentary_pecha_path: Path = commentary["pecha_path"]
-        self.commentary_base_name = commentary["commentary_base_name"]
+        self.commentary_base_name = commentary["base_name"]
 
         self.commentary_pecha_id: str = self.commentary_pecha_path.name
         self.commentary_layer_name: Union[str, None] = None
