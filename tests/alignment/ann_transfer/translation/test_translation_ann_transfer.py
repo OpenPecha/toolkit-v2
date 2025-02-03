@@ -9,10 +9,10 @@ from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
 
-source = {"source_pecha_path": DATA_DIR / "IAEB27E9F", "source_base_name": "275D"}
-target = {"target_pecha_path": DATA_DIR / "IFA46BBC2", "target_base_name": "4665"}
+source = {"pecha_path": DATA_DIR / "IAEB27E9F", "source_base_name": "275D"}
+target = {"pecha_path": DATA_DIR / "IFA46BBC2", "target_base_name": "4665"}
 translation = {
-    "translation_pecha_path": DATA_DIR / "I6EA29D09",
+    "pecha_path": DATA_DIR / "I6EA29D09",
     "translation_base_name": "564C",
 }
 expected_alignment_data = read_json(

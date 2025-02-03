@@ -13,7 +13,7 @@ class CommentaryAlignmentAnnTransfer(AlignmentAnnTransfer):
     def __init__(self, source: Dict, target: Dict, commentary: Dict):
         super().__init__(source, target)
 
-        self.commentary_pecha_path: Path = commentary["commentary_pecha_path"]
+        self.commentary_pecha_path: Path = commentary["pecha_path"]
         self.commentary_base_name = commentary["commentary_base_name"]
 
         self.commentary_pecha_id: str = self.commentary_pecha_path.name

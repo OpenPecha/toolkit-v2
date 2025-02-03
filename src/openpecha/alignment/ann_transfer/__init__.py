@@ -10,8 +10,8 @@ from openpecha.pecha.layer import LayerEnum
 
 class AlignmentAnnTransfer:
     def __init__(self, source: Dict, target: Dict):
-        self.source_pecha_path: Path = source["source_pecha_path"]
-        self.target_pecha_path: Path = target["target_pecha_path"]
+        self.source_pecha_path: Path = source["pecha_path"]
+        self.target_pecha_path: Path = target["pecha_path"]
         self.source_base_name: str = source["source_base_name"]
         self.target_base_name: str = target["target_base_name"]
 
