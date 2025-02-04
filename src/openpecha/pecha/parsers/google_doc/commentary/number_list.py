@@ -100,16 +100,22 @@ class DocxNumberListCommentaryParser(BaseParser):
         input: Union[str, Path],
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
+        pecha_id: Union[str, None] = None,
     ):
         input = Path(input)
         anns, base = self.extract_commentary_segments_anns(input)
-        pecha, _ = self.create_pecha(anns, base, metadata, output_path)
+        pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
         return pecha
 
     def create_pecha(
-        self, anns: List[Dict], base: str, metadata: Dict, output_path: Path
+        self,
+        anns: List[Dict],
+        base: str,
+        metadata: Dict,
+        output_path: Path,
+        pecha_id: str,
     ) -> Tuple[Pecha, Path]:
-        pecha = Pecha.create(output_path)
+        pecha = Pecha.create(output_path, pecha_id)
         basename = pecha.set_base(base)
 
         # Add meaning_segment layer
