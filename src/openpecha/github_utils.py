@@ -1,9 +1,11 @@
 import os
+import shutil
 import subprocess
 import time
-from uuid import uuid4
 from pathlib import Path
+from uuid import uuid4
 
+from git import Repo
 from github import Github
 from github.GithubException import (
     BadCredentialsException,
@@ -11,7 +13,7 @@ from github.GithubException import (
     UnknownObjectException,
 )
 
-from openpecha.config import GITHUB_ORG_NAME, _mkdir
+from openpecha.config import GITHUB_ORG_NAME, TEMP_CACHE_PATH, _mkdir
 from openpecha.exceptions import (
     FileUploadError,
     GithubCloneError,
@@ -19,9 +21,9 @@ from openpecha.exceptions import (
     InvalidTokenError,
     OrganizationNotFoundError,
 )
-from git import Repo
 
 org = None
+
 
 def _get_openpecha_data_org(org_name=GITHUB_ORG_NAME, token=None):
     """OpenPecha github org singleton."""
@@ -53,7 +55,7 @@ def create_github_repo(path, org_name, token, private=False, description=None):
 
 
 def upload_folder_to_github(
-    repo_name: str, folder_path: Path, org_name: str = GITHUB_ORG_NAME
+    repo_name: str, folder_path: Path, org_name: str = GITHUB_ORG_NAME  
 ) -> None:
     """
     Upload a folder to a GitHub repository.
@@ -65,9 +67,11 @@ def upload_folder_to_github(
     try:
         GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
         if not GITHUB_TOKEN:
-            raise BadCredentialsException("[ERROR]: GITHUB_TOKEN environment variable not set.")
+            raise BadCredentialsException(
+                "[ERROR]: GITHUB_TOKEN environment variable not set."
+            )
         g = Github(GITHUB_TOKEN)
-        
+
         org = g.get_organization(org_name)
         repo = org.get_repo(repo_name)
 
@@ -128,7 +132,7 @@ def clone_repo(
         return target_path
     except subprocess.CalledProcessError as e:
         raise GithubCloneError(f"Failed to clone {repo_name}. Error: {e}")
-    
+
 
 def get_bumped_tag(repo):
     try:
@@ -150,6 +154,7 @@ def upload_assets(release, tag_name=None, asset_paths=[]):
         download_url = asset.browser_download_url
         print(f"[INFO] Uploaded asset {asset_path}")
     return download_url
+
 
 def create_release(
     repo_name,
@@ -173,6 +178,7 @@ def create_release(
         new_release, tag_name=bumped_tag, asset_paths=asset_paths
     )
     return asset_download_url
+
 
 def commit(repo_path, message, not_includes, branch=None):
     if isinstance(repo_path, Repo):
@@ -214,3 +220,42 @@ def commit(repo_path, message, not_includes, branch=None):
             message = "Initial commit"
         repo.git.commit("-m", message)
         repo.git.push("origin", branch)
+
+
+def update_github_repo(
+    input_data_dir: Path, repo_name: str, org_name: str = GITHUB_ORG_NAME
+):
+    """
+    Overwrite the files in the github repo with the files in the input data dir
+    1. Clone the repo from the github organization
+    2. Delete files from the new repo
+    2. Copy files from input data dir to new git repo
+    3. Commit and push the changes in main branch
+    """
+    if (TEMP_CACHE_PATH / repo_name).exists():
+        shutil.rmtree(TEMP_CACHE_PATH / repo_name)
+
+    repo_path = clone_repo(repo_name, TEMP_CACHE_PATH, org_name)
+
+    # delete files from the new repo
+    for file in repo_path.glob("*"):
+        if file.name == ".git":
+            continue
+
+        if file.is_dir():
+            shutil.rmtree(file)
+        else:
+            file.unlink()
+
+    # Copy files from input data dir to new git repo
+    for file in input_data_dir.rglob("*"):
+        if file.is_file():
+            relative_path = file.relative_to(input_data_dir)
+            dest_path = repo_path / relative_path
+
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+            shutil.copy2(file, dest_path)
+
+    # Commit and push the changes in main branch
+    commit(repo_path, message="Update files", not_includes=[".git", ".DS_Store"])
