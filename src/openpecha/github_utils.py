@@ -13,7 +13,7 @@ from github.GithubException import (
     UnknownObjectException,
 )
 
-from openpecha.config import GITHUB_ORG_NAME, TEMP_CACHE_PATH, _mkdir
+from openpecha.config import GITHUB_ORG_NAME, _mkdir
 from openpecha.exceptions import (
     FileUploadError,
     GithubCloneError,
@@ -21,6 +21,7 @@ from openpecha.exceptions import (
     InvalidTokenError,
     OrganizationNotFoundError,
 )
+
 
 org = None
 
@@ -222,40 +223,3 @@ def commit(repo_path, message, not_includes, branch=None):
         repo.git.push("origin", branch)
 
 
-def update_github_repo(
-    input_data_dir: Path, repo_name: str, org_name: str = GITHUB_ORG_NAME
-):
-    """
-    Overwrite the files in the github repo with the files in the input data dir
-    1. Clone the repo from the github organization
-    2. Delete files from the new repo
-    2. Copy files from input data dir to new git repo
-    3. Commit and push the changes in main branch
-    """
-    if (TEMP_CACHE_PATH / repo_name).exists():
-        shutil.rmtree(TEMP_CACHE_PATH / repo_name)
-
-    repo_path = clone_repo(repo_name, TEMP_CACHE_PATH, org_name)
-
-    # delete files from the new repo
-    for file in repo_path.glob("*"):
-        if file.name == ".git":
-            continue
-
-        if file.is_dir():
-            shutil.rmtree(file)
-        else:
-            file.unlink()
-
-    # Copy files from input data dir to new git repo
-    for file in input_data_dir.rglob("*"):
-        if file.is_file():
-            relative_path = file.relative_to(input_data_dir)
-            dest_path = repo_path / relative_path
-
-            dest_path.parent.mkdir(parents=True, exist_ok=True)
-
-            shutil.copy2(file, dest_path)
-
-    # Commit and push the changes in main branch
-    commit(repo_path, message="Update files", not_includes=[".git", ".DS_Store"])
