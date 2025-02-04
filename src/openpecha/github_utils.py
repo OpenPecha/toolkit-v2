@@ -122,7 +122,7 @@ def clone_repo(
     if (target_path).exists():
         _mkdir(target_path)
 
-    repo_url = f"https://github.com/{org_name}/{repo_name}.git"  # noqa
+    repo_url = f"git@github.com:{org_name}/{repo_name}.git" # noqa
     try:
         subprocess.run(
             ["git", "clone", repo_url, str(target_path)],
