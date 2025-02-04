@@ -1,6 +1,7 @@
+import os
 from pathlib import Path
 from shutil import rmtree
-import os
+
 
 def _mkdir(path):
     if path.exists():
@@ -22,6 +23,7 @@ GOOGLE_API_CRENDENTIALS_PATH = (
 
 BASE_PATH = _mkdir_if_not(Path.home() / ".openpecha")
 PECHAS_PATH = _mkdir_if_not(BASE_PATH / "pechas")
+TEMP_CACHE_PATH = _mkdir_if_not(BASE_PATH / "temp_cache")
 ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignments")
 
 INPUT_DATA_PATH = _mkdir_if_not(BASE_PATH / "input_data")
