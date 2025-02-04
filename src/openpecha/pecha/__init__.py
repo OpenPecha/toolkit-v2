@@ -45,6 +45,8 @@ class Pecha:
     def create(cls, output_path: Path, pecha_id: Union[str, None] = None) -> "Pecha":
         pecha_id = get_initial_pecha_id() if not pecha_id else pecha_id
         pecha_path = output_path / pecha_id
+        if pecha_path.exists():
+            shutil.rmtree(pecha_path)
         pecha_path.mkdir(parents=True, exist_ok=True)
         return cls(pecha_id, pecha_path)
 
