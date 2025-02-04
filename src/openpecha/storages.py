@@ -270,5 +270,12 @@ def update_github_repo(
 
     # Commit and push the changes in main branch
     local_repo = Repo(repo_path)
-    commit_and_push(local_repo, message="Pecha update")
+    # Get Git user details from environment variables
+    git_user_name = os.getenv("GIT_USER_NAME")
+    git_user_email = os.getenv("GIT_USER_EMAIL")
 
+    with local_repo.config_writer() as config:
+        config.set_value("user", "name", git_user_name)
+        config.set_value("user", "email", git_user_email)
+
+    commit_and_push(local_repo, message="Pecha update")
