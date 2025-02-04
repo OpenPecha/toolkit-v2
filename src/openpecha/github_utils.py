@@ -129,6 +129,8 @@ def clone_repo(
             check=True,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
+            env=os.environ  
+
         )
         return target_path
     except subprocess.CalledProcessError as e:
