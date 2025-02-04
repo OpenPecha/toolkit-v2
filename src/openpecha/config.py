@@ -1,6 +1,6 @@
 from pathlib import Path
 from shutil import rmtree
-
+import os
 
 def _mkdir(path):
     if path.exists():
@@ -27,7 +27,10 @@ ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignments")
 INPUT_DATA_PATH = _mkdir_if_not(BASE_PATH / "input_data")
 JSON_OUTPUT_PATH = _mkdir_if_not(BASE_PATH / "pechadb_json_output")
 
-GITHUB_ORG_NAME = "PechaData"
+if os.environ.get("GITHUB_ORG_NAME"):
+    GITHUB_ORG_NAME = os.environ.get("GITHUB_ORG_NAME")
+else:
+    GITHUB_ORG_NAME = "PechaData"
 
 LINE_BREAKERS = [
     "། །",
