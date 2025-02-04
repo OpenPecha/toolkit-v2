@@ -34,14 +34,12 @@ class GoogleDocTranslationParser(BaseParser):
 
         if lang == Language.chinese.value:
             return LayerEnum.chinese_segment
-        
+
         if lang == Language.sanskrit.value:
             return LayerEnum.sanskrit_segment
-        
+
         if lang == Language.italian.value:
             return LayerEnum.italian_segment
-        
-
 
         assert f"Language not properly given in metadata path: {str(input)}."
 
@@ -142,6 +140,7 @@ class GoogleDocTranslationParser(BaseParser):
         input: Union[str, Path],
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
+        pecha_id: Union[str, None] = None,
     ) -> "Pecha":
         """
         Inputs:
@@ -160,13 +159,20 @@ class GoogleDocTranslationParser(BaseParser):
         """
         input = Path(input)
         anns, base = self.extract_root_idx(input, metadata)
-        pecha, _ = self.create_pecha(anns, base, metadata, output_path)
+        pecha, _ = self.create_pecha(
+            anns, base, metadata, output_path, pecha_id  # type: ignore
+        )
         return pecha
 
     def create_pecha(
-        self, anns: List[Dict], base: str, metadata: Dict, output_path: Path
+        self,
+        anns: List[Dict],
+        base: str,
+        metadata: Dict,
+        output_path: Path,
+        pecha_id: str,
     ) -> Tuple[Pecha, Path]:
-        pecha = Pecha.create(output_path)
+        pecha = Pecha.create(output_path, pecha_id)
         basename = pecha.set_base(base)
 
         layer_enum = self.get_layer_enum_with_lang(metadata["language"])
