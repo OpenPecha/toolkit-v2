@@ -42,8 +42,8 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @classmethod
-    def create(cls, output_path: Path) -> "Pecha":
-        pecha_id = get_initial_pecha_id()
+    def create(cls, output_path: Path, pecha_id: Union[str, None] = None) -> "Pecha":
+        pecha_id = get_initial_pecha_id() if not pecha_id else pecha_id
         pecha_path = output_path / pecha_id
         pecha_path.mkdir(parents=True, exist_ok=True)
         return cls(pecha_id, pecha_path)
