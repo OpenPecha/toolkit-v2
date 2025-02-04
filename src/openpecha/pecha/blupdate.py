@@ -191,7 +191,9 @@ def get_updated_layer_anns(old_base, new_base: str, layer: AnnotationStore):
     3.Return the updated annotations
     """
     dmp = diff_match_patch()
-    diffs = dmp.diff_main(old_base, new_base)
+    dmp.Diff_Timeout = 60
+    diffs = dmp.diff_main(old_base, new_base, checklines=False)
+
     updated_anns = []
     for ann in layer.annotations():
         old_begin = ann.offset().begin().value()
