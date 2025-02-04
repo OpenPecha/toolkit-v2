@@ -279,7 +279,3 @@ def update_github_repo(
         config.set_value("user", "email", git_user_email)
 
     commit_and_push(local_repo, message="Pecha update")
-
-
-if __name__ == "__main__":
-    update_github_repo(Path("zebra/ICBA8A398"), "ICBA8A398")
