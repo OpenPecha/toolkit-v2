@@ -271,11 +271,15 @@ def update_github_repo(
     # Commit and push the changes in main branch
     local_repo = Repo(repo_path)
     # Get Git user details from environment variables
-    git_user_name = os.getenv("GIT_USER_NAME")
-    git_user_email = os.getenv("GIT_USER_EMAIL")
+    git_user_name = os.getenv("GITHUB_USERNAME")
+    git_user_email = os.getenv("GITHUB_EMAIL")
 
     with local_repo.config_writer() as config:
         config.set_value("user", "name", git_user_name)
         config.set_value("user", "email", git_user_email)
 
     commit_and_push(local_repo, message="Pecha update")
+
+
+if __name__ == "__main__":
+    update_github_repo(Path("zebra/ICBA8A398"), "ICBA8A398")
