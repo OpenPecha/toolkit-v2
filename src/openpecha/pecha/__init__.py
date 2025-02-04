@@ -11,7 +11,7 @@ from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
 from openpecha import utils
 from openpecha.catalog import PechaDataCatalog
 from openpecha.config import PECHAS_PATH, GITHUB_ORG_NAME
-from openpecha.github_utils import clone_repo, create_release, update_github_repo
+from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
@@ -311,13 +311,12 @@ class Pecha:
             local_repo = Repo(self.pecha_path)
             commit_and_push(repo=local_repo, message="Pecha update", branch=branch)
         else:
-            update_github_repo(self.pecha_path, self.id, GITHUB_ORG_NAME)
-            # self.storage.add_dir(
-            #     path=self.pecha_path,
-            #     description=prepare_repo_description(self.metadata.title),
-            #     is_private=is_private,
-            #     branch=branch,
-            # )
+            self.storage.add_dir(
+                path=self.pecha_path,
+                description=prepare_repo_description(self.metadata.title),
+                is_private=is_private,
+                branch=branch,
+            )
         asset_paths = []
         if asset_path:
             repo_name = self.id
