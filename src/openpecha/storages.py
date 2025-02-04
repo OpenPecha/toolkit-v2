@@ -250,7 +250,7 @@ def update_github_repo(
 
     # delete files from the new repo
     for file in repo_path.glob("*"):
-        if file.name == ".git":
+        if file.name in [".git", ".github"]:
             continue
 
         if file.is_dir():
