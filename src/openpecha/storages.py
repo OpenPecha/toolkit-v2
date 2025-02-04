@@ -279,3 +279,4 @@ def update_github_repo(
         config.set_value("user", "email", git_user_email)
 
     commit_and_push(local_repo, message="Pecha update")
+
