@@ -121,15 +121,16 @@ def clone_repo(
 
     if (target_path).exists():
         _mkdir(target_path)
+    
+    GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Get token from environment variable
 
-    repo_url = f"git@github.com:{org_name}/{repo_name}.git" # noqa
+    repo_url = f"https://{GITHUB_TOKEN}@github.com/{org_name}/{repo_name}.git"
     try:
         subprocess.run(
             ["git", "clone", repo_url, str(target_path)],
             check=True,
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            env=os.environ  
+            stderr=subprocess.DEVNULL
 
         )
         return target_path
