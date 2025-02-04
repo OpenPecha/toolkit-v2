@@ -19,6 +19,7 @@ from openpecha.exceptions import (
     InvalidTokenError,
     OrganizationNotFoundError,
 )
+from git import Repo
 
 org = None
 
@@ -172,3 +173,44 @@ def create_release(
         new_release, tag_name=bumped_tag, asset_paths=asset_paths
     )
     return asset_download_url
+
+def commit(repo_path, message, not_includes, branch=None):
+    if isinstance(repo_path, Repo):
+        repo = repo_path
+    else:
+        repo = Repo(repo_path)
+
+    if not branch:
+        branch = repo.active_branch.name
+
+    has_changed = False
+
+    # add untrack fns
+    for fn in repo.untracked_files:
+
+        ignored = False
+        for not_include_fn in not_includes:
+            if not_include_fn in fn:
+                ignored = True
+
+        if ignored:
+            continue
+
+        if fn:
+            repo.git.add(fn)
+        if has_changed is False:
+            has_changed = True
+
+    # add modified fns
+    if repo.is_dirty() is True:
+        for fn in repo.git.diff(None, name_only=True).split("\n"):
+            if fn:
+                repo.git.add(fn)
+            if has_changed is False:
+                has_changed = True
+
+    if has_changed is True:
+        if not message:
+            message = "Initial commit"
+        repo.git.commit("-m", message)
+        repo.git.push("origin", branch)
