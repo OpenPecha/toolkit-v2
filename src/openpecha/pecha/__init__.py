@@ -311,13 +311,12 @@ class Pecha:
             local_repo = Repo(self.pecha_path)
             commit_and_push(repo=local_repo, message="Pecha update", branch=branch)
         else:
-            update_github_repo(self.pecha_path, self.id, GITHUB_ORG_NAME)
-            # self.storage.add_dir(
-            #     path=self.pecha_path,
-            #     description=prepare_repo_description(self.metadata.title),
-            #     is_private=is_private,
-            #     branch=branch,
-            # )
+            self.storage.add_dir(
+                path=self.pecha_path,
+                description=prepare_repo_description(self.metadata.title),
+                is_private=is_private,
+                branch=branch,
+            )
         asset_paths = []
         if asset_path:
             repo_name = self.id
