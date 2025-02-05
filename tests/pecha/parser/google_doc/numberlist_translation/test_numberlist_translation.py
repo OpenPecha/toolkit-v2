@@ -10,8 +10,8 @@ DATA_DIR = Path(__file__).parent / "data"
 
 
 def test_bo_google_doc_translation_parser():
-    bo_docx_file = DATA_DIR / "entering_middle_way.docx"
-    bo_metadata = DATA_DIR / "Tibetan Root text Translation Metadata.xlsx"
+    bo_docx_file = DATA_DIR / "bo/entering_middle_way.docx"
+    bo_metadata = DATA_DIR / "bo/Tibetan Root text Translation Metadata.xlsx"
 
     parser = DocxNumberListTranslationParser()
 
