@@ -8,7 +8,7 @@ from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha, get_aligned_root_layer
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
+from openpecha.pecha.metadata import InitialCreationType, PechaMetaData, Language
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -57,6 +57,25 @@ class DocxNumberListTranslationParser(BaseParser):
                 res[number] = text
 
         return res
+    
+    @staticmethod
+    def get_layer_enum_with_lang(lang: str):
+        if lang == Language.english.value:
+            return LayerEnum.english_segment
+
+        if lang == Language.tibetan.value:
+            return LayerEnum.tibetan_segment
+
+        if lang == Language.chinese.value:
+            return LayerEnum.chinese_segment
+
+        if lang == Language.sanskrit.value:
+            return LayerEnum.sanskrit_segment
+
+        if lang == Language.italian.value:
+            return LayerEnum.italian_segment
+
+        assert f"Language not properly given in metadata path: {str(input)}."
 
     def extract_root_segments_anns(
         self, docx_file: Path, metadata:Dict
@@ -105,6 +124,7 @@ class DocxNumberListTranslationParser(BaseParser):
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
         return pecha
 
+    
     def create_pecha(
         self,
         anns: List[Dict],
@@ -116,13 +136,23 @@ class DocxNumberListTranslationParser(BaseParser):
         pecha = Pecha.create(output_path, pecha_id)
         basename = pecha.set_base(base)
 
+        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
+
         # Add meaning_segment layer
-        meaning_segment_layer, layer_path = pecha.add_layer(
-            basename, LayerEnum.meaning_segment
-        )
+        meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
         for ann in anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
+            pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
+
+        # set base metadata
+        bases = [
+            {
+                basename: {
+                    "source_metadata": {"total_segments": len(anns)},
+                    "base_file": f"{basename}.txt",
+                }
+            }
+        ]
 
         # Get layer path relative to Pecha Path
         index = layer_path.parts.index(pecha.id)
@@ -141,10 +171,11 @@ class DocxNumberListTranslationParser(BaseParser):
         pecha.set_metadata(
             PechaMetaData(
                 id=pecha.id,
-                parser=self.name,
-                initial_creation_type=InitialCreationType.google_docx,
+                parser="GoogleDocTranslationParser",
                 **metadata,
+                bases=bases,
+                initial_creation_type=InitialCreationType.google_docx,
             )
         )
 
-        return (pecha, layer_path)
+        return (pecha, relative_layer_path)
