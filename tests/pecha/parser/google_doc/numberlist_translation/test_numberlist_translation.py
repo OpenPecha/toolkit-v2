@@ -42,3 +42,44 @@ def test_bo_google_doc_translation_parser():
 
         assert isinstance(pecha, Pecha)
 
+
+
+
+def test_en_google_doc_translation_parser():
+    en_docx_file = DATA_DIR / "en" / "entering the middle way english.docx"
+    en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
+
+    parser = DocxNumberListTranslationParser()
+
+    expected_anns = [
+        {'English_Segment': {'start': 0, 'end': 51}, 'root_idx_mapping': '1'},
+        {'English_Segment': {'start': 51, 'end': 282}, 'root_idx_mapping': '2'},
+        {'English_Segment': {'start': 282, 'end': 501}, 'root_idx_mapping': '3'},
+        {'English_Segment': {'start': 501, 'end': 708}, 'root_idx_mapping': '4'},
+        {'English_Segment': {'start': 708, 'end': 908}, 'root_idx_mapping': '5'}
+    ]
+    expected_base = '"From the Madhyamakavatara, Sixth Mind Generation"\n"When the mind rests in meditative equipoise, directly oriented Towards the qualities of the fully enlightened Buddha, And through this, sees the reality of dependent origination, Through abiding in wisdom, one attains cessation."\n"Just as a single person with eyes Can easily lead an entire group of blind people To their desired destination, likewise here too, intelligence Takes hold of the qualities lacking sight and proceeds to enlightenment."\n"Just as one understands these profound teachings Through scripture and through reasoning as well, Similarly, following the tradition of Noble Nagarjuna\'s writings, I shall explain things just as they are."\n"Even while still an ordinary being, upon hearing about emptiness, Great joy arises again and again within. From this supreme joy, tears moisten one\'s eyes, And the hairs of one\'s body stand on end."\n'
+
+    metadata = extract_metadata_from_xlsx(en_metadata)
+    anns, base = parser.extract_root_segments_anns(en_docx_file, metadata)
+
+    assert (
+        anns == expected_anns
+    ), "Translation Parser failed parsing Root anns properly for en data."
+    assert (
+        base == expected_base
+    ), "Translation Parser failed preparing base text properly for en data"
+
+    with tempfile.TemporaryDirectory() as tmpdirname, patch(
+        "openpecha.pecha.parsers.google_doc.numberlist_translation.DocxNumberListTranslationParser.extract_root_segments_anns"
+    ) as mock_extract_root_idx, patch(
+        "openpecha.pecha.parsers.google_doc.numberlist_translation.get_aligned_root_layer"
+    ) as mock_get_aligned_root_layer:
+        OUTPUT_DIR = Path(tmpdirname)
+        mock_extract_root_idx.return_value = (expected_anns, expected_base)
+        mock_get_aligned_root_layer.return_value = (
+            "I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
+        )
+        pecha = parser.parse(en_docx_file, metadata, OUTPUT_DIR)
+
+        assert isinstance(pecha, Pecha)
