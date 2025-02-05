@@ -120,7 +120,7 @@ class DocxNumberListTranslationParser(BaseParser):
         pecha_id: Union[str, None] = None,
     ):
         input = Path(input)
-        anns, base = self.extract_root_segments_anns(input)
+        anns, base = self.extract_root_segments_anns(input, metadata)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
         return pecha
 
