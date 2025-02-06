@@ -25,6 +25,7 @@ class Language(Enum):
     chinese = "zh"
     sanskrit = "sa"
     italian = "it"
+    russian = "ru"
 
 
 class CopyrightStatus(Enum):
