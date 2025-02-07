@@ -8,7 +8,7 @@ from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha, get_aligned_root_layer
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import InitialCreationType, PechaMetaData, Language
+from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -57,7 +57,7 @@ class DocxNumberListTranslationParser(BaseParser):
                 res[number] = text
 
         return res
-    
+
     @staticmethod
     def get_layer_enum_with_lang(lang: str):
         if lang == Language.english.value:
@@ -75,10 +75,13 @@ class DocxNumberListTranslationParser(BaseParser):
         if lang == Language.italian.value:
             return LayerEnum.italian_segment
 
+        if lang == Language.russian.value:
+            return LayerEnum.russian_segment
+
         assert f"Language not properly given in metadata path: {str(input)}."
 
     def extract_root_segments_anns(
-        self, docx_file: Path, metadata:Dict
+        self, docx_file: Path, metadata: Dict
     ) -> Tuple[List[Dict], str]:
         """
         1.Loop through numbered text
@@ -98,7 +101,7 @@ class DocxNumberListTranslationParser(BaseParser):
         base = ""
         char_count = 0
         for root_idx_mapping, segment in numbered_text.items():
-            
+
             curr_segment_ann = {
                 layer_enum.value: {
                     "start": char_count,
@@ -124,7 +127,6 @@ class DocxNumberListTranslationParser(BaseParser):
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
         return pecha
 
-    
     def create_pecha(
         self,
         anns: List[Dict],
