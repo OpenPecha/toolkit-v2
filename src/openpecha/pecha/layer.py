@@ -20,6 +20,7 @@ class LayerEnum(Enum):
     chinese_segment = "Chinese_Segment"
     sanskrit_segment = "Sanskrit_Segment"
     italian_segment = "Italian_Segment"
+    russian_segment = "Russian_Segment"
     pecha_display_alignment_segment = "Pecha_Display_Alignment_Segment"
     chapter = "Chapter"
     sapche = "Sapche"
@@ -44,6 +45,7 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
         LayerEnum.chinese_segment,
         LayerEnum.sanskrit_segment,
         LayerEnum.italian_segment,
+        LayerEnum.russian_segment,
         LayerEnum.pecha_display_alignment_segment,
     ]:
         return LayerGroupEnum.translation_segment
@@ -74,6 +76,7 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
         LayerEnum.chinese_segment,
         LayerEnum.sanskrit_segment,
         LayerEnum.italian_segment,
+        LayerEnum.russian_segment,
         LayerEnum.pecha_display_alignment_segment,
     ]:
         return LayerCollectionEnum.translation
