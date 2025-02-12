@@ -425,8 +425,10 @@ def get_pecha_alignment_data(pecha: Pecha) -> Union[Dict[str, str], None]:
         if key in pecha.metadata.source_metadata:
             root_pecha = get_pecha_with_id(pecha.metadata.source_metadata[key])
             return {
-                "source": get_first_layer_file(root_pecha),
-                "target": get_first_layer_file(pecha),
+                "source": get_first_layer_file(root_pecha),  # Root pecha layer file
+                "target": get_first_layer_file(
+                    pecha
+                ),  # Commentary/Translation/Version pecha layer file
             }
 
     return None
