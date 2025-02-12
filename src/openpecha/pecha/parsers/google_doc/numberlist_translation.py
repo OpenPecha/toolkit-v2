@@ -6,6 +6,7 @@ from docx2python import docx2python
 
 from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
+from openpecha.exceptions import EmptyFileError, FileNotFoundError
 from openpecha.pecha import Pecha, get_aligned_root_layer
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
@@ -90,6 +91,9 @@ class DocxNumberListTranslationParser(BaseParser):
         """
         # Normalize text
         text = docx2python(docx_file).text
+        if not text:
+            raise EmptyFileError(f"Empty file: {str(docx_file)}.")
+
         text = self.normalize_text(text)
 
         # Extract text with numbered list from docx file
@@ -123,6 +127,9 @@ class DocxNumberListTranslationParser(BaseParser):
         pecha_id: Union[str, None] = None,
     ):
         input = Path(input)
+        if not input.exists():
+            raise FileNotFoundError(f"File not found: {str(input)}.")
+
         anns, base = self.extract_root_segments_anns(input, metadata)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
         return pecha
