@@ -118,13 +118,13 @@ class TextTranslationSerializer:
             root_content = self.get_root_content(root_pecha, relative_layer_path)
             translation_content = []
         else:
-            root_pecha_id = alignment_data["root"].split("/")[0]
+            root_pecha_id = alignment_data["source"].split("/")[0]
             root_pecha = get_pecha_with_id(root_pecha_id)
             translation_pecha = pecha
 
-            root_content = self.get_root_content(root_pecha, alignment_data["root"])
+            root_content = self.get_root_content(root_pecha, alignment_data["source"])
             translation_content = self.get_translation_content(
-                translation_pecha, alignment_data["translation"]
+                translation_pecha, alignment_data["target"]
             )
 
         # Get pecha category from pecha_org_tools package and set to JSON

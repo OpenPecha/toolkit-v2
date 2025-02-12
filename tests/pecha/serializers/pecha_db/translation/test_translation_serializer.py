@@ -46,8 +46,8 @@ class TestTextTranslationSerializer(TestCase):
         translation_opf = DATA_DIR / "en/I62E00D78"
 
         translation_alignment = {
-            "root": "IE60BBDE8/layers/3635/Tibetan_Segment-039B.json",
-            "translation": "I62E00D78/layers/D93E/English_Segment-0216.json",
+            "source": "IE60BBDE8/layers/3635/Tibetan_Segment-039B.json",
+            "target": "I62E00D78/layers/D93E/English_Segment-0216.json",
         }
 
         root_pecha = Pecha.from_path(root_opf)
