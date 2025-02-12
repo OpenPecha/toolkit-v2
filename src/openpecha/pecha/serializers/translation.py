@@ -107,25 +107,21 @@ class TextTranslationSerializer:
         alignment_data: Union[Dict, None] = None,
     ) -> Dict:
 
-        if alignment_data is None:
-            root_pecha = pecha
-            translation_pecha = None
-
-            root_layer_path = next(root_pecha.layer_path.rglob("*.json"))
-            relative_layer_path = root_layer_path.relative_to(
-                root_pecha.pecha_path.parent
-            )
-            root_content = self.get_root_content(root_pecha, relative_layer_path)
-            translation_content = []
-        else:
-            root_pecha_id = alignment_data["source"].split("/")[0]
-            root_pecha = get_pecha_with_id(root_pecha_id)
+        if alignment_data:
+            root_pecha = get_pecha_with_id(alignment_data["source"].split("/")[0])
             translation_pecha = pecha
-
             root_content = self.get_root_content(root_pecha, alignment_data["source"])
             translation_content = self.get_translation_content(
                 translation_pecha, alignment_data["target"]
             )
+        else:
+            root_pecha = pecha
+            translation_pecha = None
+            root_layer_path = next(root_pecha.layer_path.rglob("*.json"))
+            root_content = self.get_root_content(
+                root_pecha, root_layer_path.relative_to(root_pecha.pecha_path.parent)
+            )
+            translation_content = []
 
         # Get pecha category from pecha_org_tools package and set to JSON
         bo_category, en_category = self.get_pecha_category(root_pecha)
@@ -136,21 +132,14 @@ class TextTranslationSerializer:
                 {**self.get_metadata_for_pecha_org(root_pecha), "content": root_content}
             ],
         }
-        translation_json: Dict[str, List] = {
+
+        translation_metadata = self.get_metadata_for_pecha_org(
+            translation_pecha if translation_pecha else root_pecha,
+            Language.english.value,
+        )
+        translation_json = {
             "categories": en_category,
-            "books": [
-                {
-                    **self.get_metadata_for_pecha_org(translation_pecha),
-                    "content": translation_content,
-                }
-                if translation_pecha
-                else {
-                    **self.get_metadata_for_pecha_org(
-                        root_pecha, Language.english.value
-                    ),
-                    "content": translation_content,
-                }
-            ],
+            "books": [{**translation_metadata, "content": translation_content}],
         }
 
         # Set the content for source and target and set it to JSON
