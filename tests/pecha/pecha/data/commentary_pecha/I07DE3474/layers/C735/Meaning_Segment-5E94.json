@@ -1,0 +1,20 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "I07DE3474",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "C735",
+      "@include": "../../base/C735.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "Structure_Annotation",
+      "keys": [],
+      "data": []
+    }
+  ],
+  "annotations": []
+}
