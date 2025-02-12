@@ -10,7 +10,7 @@ from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.catalog import PechaDataCatalog
-from openpecha.config import PECHAS_PATH, GITHUB_ORG_NAME
+from openpecha.config import GITHUB_ORG_NAME, PECHAS_PATH
 from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import get_updated_layer_anns
@@ -396,6 +396,17 @@ def get_pecha_with_id(pecha_id: str) -> Pecha:
     return root_pecha
 
 
+def get_first_layer_file(pecha: Pecha) -> str:
+    """
+    1. Get the first layer file from the pecha
+    2. Get the relative path of the layer file
+    """
+    layer_path = list(pecha.layer_path.rglob("*.json"))[0]
+    relative_layer_path = layer_path.relative_to(pecha.pecha_path.parent).as_posix()
+
+    return relative_layer_path
+
+
 def get_aligned_root_layer(pecha_id: str):
     """
     1.Get Root pecha id from Catalog comparing title
@@ -406,9 +417,16 @@ def get_aligned_root_layer(pecha_id: str):
     Eg:     IE60BBDE8/layers/3635/Tibetan_Segment-039B.json
     """
     root_pecha = get_pecha_with_id(pecha_id)
-    layer_path = list(root_pecha.layer_path.rglob("*.json"))[0]
-    relative_layer_path = layer_path.relative_to(
-        root_pecha.pecha_path.parent
-    ).as_posix()
+    return get_first_layer_file(root_pecha)
 
-    return relative_layer_path
+
+def get_pecha_alignment_data(pecha: Pecha) -> Union[Dict[str, str], None]:
+    for key in ("commentary_of", "translation_of", "version_of"):
+        if key in pecha.metadata.source_metadata:
+            root_pecha = get_pecha_with_id(pecha.metadata.source_metadata[key])
+            return {
+                "source": get_first_layer_file(root_pecha),
+                "target": get_first_layer_file(pecha),
+            }
+
+    return None
