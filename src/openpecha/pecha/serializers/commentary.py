@@ -128,21 +128,19 @@ class CommentarySerializer:
             for data in ann:
                 ann_metadata[data.key().id()] = str(data.value())
 
-            curr_meaining_segment_ann = {
+            curr_ann = {
                 "Span": {"start": start, "end": end},
                 "text": str(ann),
             }
 
             if "root_idx_mapping" in ann_metadata:
-                curr_meaining_segment_ann["root_idx_mapping"] = ann_metadata[
-                    "root_idx_mapping"
-                ]
+                curr_ann["root_idx_mapping"] = ann_metadata["root_idx_mapping"]
 
-            meaning_segment_anns.append(curr_meaining_segment_ann)
+            meaning_segment_anns.append(curr_ann)
 
         return meaning_segment_anns
 
-    def prepare_content(self, pecha: Pecha):
+    def get_content(self, pecha: Pecha):
         """
         Prepare content in the sapche annotations to the required format(Tree like structure)
         """
@@ -250,7 +248,7 @@ class CommentarySerializer:
         """
         Fill the source and target content to the json format
         """
-        prepared_content = self.prepare_content(pecha)
+        content = self.get_content(pecha)
 
         bo_title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
 
@@ -270,17 +268,17 @@ class CommentarySerializer:
             src_content = {
                 other_title: {
                     "data": [],
-                    **get_en_content_translation(prepared_content),
+                    **get_en_content_translation(content),
                 }
             }
-            tgt_content = {bo_title: {"data": [], **prepared_content}}
+            tgt_content = {bo_title: {"data": [], **content}}
 
         else:
-            src_content = {other_title: {"data": [], **prepared_content}}
+            src_content = {other_title: {"data": [], **content}}
             tgt_content = {
                 bo_title: {
                     "data": [],
-                    **get_bo_content_translation(prepared_content),
+                    **get_bo_content_translation(content),
                 }
             }
         return (src_content, tgt_content)
