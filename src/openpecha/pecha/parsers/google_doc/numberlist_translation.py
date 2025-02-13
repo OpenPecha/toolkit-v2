@@ -10,6 +10,7 @@ from openpecha.exceptions import (
     EmptyFileError,
     FileNotFoundError,
     InvalidLanguageEnumError,
+    MetaDataValidationError,
 )
 from openpecha.pecha import Pecha, get_aligned_root_layer
 from openpecha.pecha.layer import LayerEnum
@@ -185,14 +186,19 @@ class DocxNumberListTranslationParser(BaseParser):
                     "translation": str(relative_layer_path),
                 }
 
-        pecha.set_metadata(
-            PechaMetaData(
+        try:
+            pecha_metadata = PechaMetaData(
                 id=pecha.id,
                 parser="GoogleDocTranslationParser",
                 **metadata,
                 bases=bases,
                 initial_creation_type=InitialCreationType.google_docx,
             )
-        )
+        except Exception as e:
+            raise MetaDataValidationError(
+                f"[Error] The metadata given was not valid. {e}"
+            )
+        else:
+            pecha.set_metadata(pecha_metadata)
 
         return (pecha, relative_layer_path)
