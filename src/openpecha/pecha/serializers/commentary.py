@@ -14,10 +14,6 @@ from openpecha.utils import get_text_direction_with_lang
 
 
 class CommentarySerializer:
-    def __init__(self):
-
-        self.prepared_content = {}
-
     def extract_metadata(self, pecha: Pecha):
         """
         Extract neccessary metadata from opf for serialization to json
@@ -183,8 +179,7 @@ class CommentarySerializer:
                     }
                 current = current[key]["children"]
 
-        self.prepared_content = format_tree(formatted_sapche_anns)
-        return self.prepared_content
+        return format_tree(formatted_sapche_anns)
 
     @staticmethod
     def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
@@ -248,7 +243,7 @@ class CommentarySerializer:
         """
         Fill the source and target content to the json format
         """
-        self.prepare_content(pecha)
+        prepared_content = self.prepare_content(pecha)
 
         bo_title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
 
@@ -268,17 +263,17 @@ class CommentarySerializer:
             src_content = {
                 other_title: {
                     "data": [],
-                    **get_en_content_translation(self.prepared_content),
+                    **get_en_content_translation(prepared_content),
                 }
             }
-            tgt_content = {bo_title: {"data": [], **self.prepared_content}}
+            tgt_content = {bo_title: {"data": [], **prepared_content}}
 
         else:
-            src_content = {other_title: {"data": [], **self.prepared_content}}
+            src_content = {other_title: {"data": [], **prepared_content}}
             tgt_content = {
                 bo_title: {
                     "data": [],
-                    **get_bo_content_translation(self.prepared_content),
+                    **get_bo_content_translation(prepared_content),
                 }
             }
         return (src_content, tgt_content)
