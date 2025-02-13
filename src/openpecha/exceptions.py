@@ -16,12 +16,6 @@ class OrganizationNotFoundError(GithubRepoError):
     pass
 
 
-class RepositoryCreationError(GithubRepoError):
-    """Raised when there is an error creating the repository."""
-
-    pass
-
-
 class FileUploadError(GithubRepoError):
     """Raised when there is an error uploading files to the repository."""
 
@@ -64,20 +58,8 @@ class MetaDataValidationError(Exception):
     pass
 
 
-class PechaCategoryNotFoundError(Exception):
-    """Raised when the specified pecha category is not found."""
-
-    pass
-
-
 class BaseUpdateFailedError(Exception):
     """Raised when the base update mechanism failed."""
-
-    pass
-
-
-class AlignmentAnnotationTransferFailedError(Exception):
-    """Raised when the alignment annotation transfer failed."""
 
     pass
 
