@@ -191,7 +191,7 @@ class DocxNumberListTranslationParser(BaseParser):
         try:
             pecha_metadata = PechaMetaData(
                 id=pecha.id,
-                parser="GoogleDocTranslationParser",
+                parser=self.name,
                 **metadata,
                 bases=bases,
                 initial_creation_type=InitialCreationType.google_docx,
