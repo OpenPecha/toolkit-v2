@@ -116,6 +116,7 @@ class DocxNumberListCommentaryParser(BaseParser):
             raise FileNotFoundError(
                 f"[Error] The input file '{str(input)}' does not exist."
             )
+        output_path.mkdir(parents=True, exist_ok=True)
 
         anns, base = self.extract_commentary_segments_anns(input)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore

@@ -140,6 +140,8 @@ class DocxNumberListTranslationParser(BaseParser):
                 f"[Error] The input file '{str(input)}' does not exist."
             )
 
+        output_path.mkdir(parents=True, exist_ok=True)
+
         anns, base = self.extract_root_segments_anns(input, metadata)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
         return pecha
