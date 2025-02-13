@@ -4,14 +4,13 @@ from typing import Any, Dict, List, Tuple, Union
 
 from docx2python import docx2python
 
-from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
 from openpecha.exceptions import (
     EmptyFileError,
     FileNotFoundError,
     MetaDataValidationError,
 )
-from openpecha.pecha import Pecha, get_aligned_root_layer
+from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
@@ -140,19 +139,6 @@ class DocxNumberListCommentaryParser(BaseParser):
         for ann in anns:
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
         meaning_segment_layer.save()
-
-        # Get layer path relative to Pecha Path
-        index = layer_path.parts.index(pecha.id)
-        relative_layer_path = Path(*layer_path.parts[index:])
-
-        # Inlude Root pecha and layer information if this is a translation pecha
-        if "commentary_of" in metadata:
-            root_pecha_id = metadata["commentary_of"]
-            if root_pecha_id:
-                root_layer_filepath = get_aligned_root_layer(root_pecha_id)
-                metadata[AlignmentEnum.commentary_alignment.value] = [
-                    {"source": root_layer_filepath, "target": str(relative_layer_path)}
-                ]
 
         try:
             pecha_metadata = PechaMetaData(

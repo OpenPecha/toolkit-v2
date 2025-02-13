@@ -66,14 +66,9 @@ def test_en_google_doc_translation_parser():
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
         "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.extract_root_idx"
-    ) as mock_extract_root_idx, patch(
-        "openpecha.pecha.parsers.google_doc.translation.get_aligned_root_layer"
-    ) as mock_get_aligned_root_layer:
+    ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
-        mock_get_aligned_root_layer.return_value = (
-            "I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
-        )
         pecha = parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
@@ -103,14 +98,9 @@ def test_zh_google_doc_translation_parser():
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
         "openpecha.pecha.parsers.google_doc.translation.GoogleDocTranslationParser.extract_root_idx"
-    ) as mock_extract_root_idx, patch(
-        "openpecha.pecha.parsers.google_doc.translation.get_aligned_root_layer"
-    ) as mock_get_aligned_root_layer:
+    ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
-        mock_get_aligned_root_layer.return_value = (
-            "I30EA9E0D/layers/4EE7/Tibetan_Segment-7438.json"
-        )
         pecha = parser.parse(zh_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)

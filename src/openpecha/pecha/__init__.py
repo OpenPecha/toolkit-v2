@@ -401,19 +401,26 @@ def get_pecha_with_id(pecha_id: str) -> Pecha:
     return root_pecha
 
 
-def get_aligned_root_layer(pecha_id: str):
+def get_first_layer_file(pecha: Pecha) -> str:
     """
-    1.Get Root pecha id from Catalog comparing title
-    2.Download Root pecha
-    3.Get first layer annotation file [TODO: Improve later on.]
-
-    Output: Pecha id/ layers/ basename/ layer filename
-    Eg:     IE60BBDE8/layers/3635/Tibetan_Segment-039B.json
+    1. Get the first layer file from the pecha
+    2. Get the relative path of the layer file
     """
-    root_pecha = get_pecha_with_id(pecha_id)
-    layer_path = list(root_pecha.layer_path.rglob("*.json"))[0]
-    relative_layer_path = layer_path.relative_to(
-        root_pecha.pecha_path.parent
-    ).as_posix()
+    layer_path = list(pecha.layer_path.rglob("*.json"))[0]
+    relative_layer_path = layer_path.relative_to(pecha.pecha_path.parent).as_posix()
 
     return relative_layer_path
+
+
+def get_pecha_alignment_data(pecha: Pecha) -> Union[Dict[str, str], None]:
+    for key in ("commentary_of", "translation_of", "version_of"):
+        if key in pecha.metadata.source_metadata:
+            root_pecha = get_pecha_with_id(pecha.metadata.source_metadata[key])
+            return {
+                "source": get_first_layer_file(root_pecha),  # Root pecha layer file
+                "target": get_first_layer_file(
+                    pecha
+                ),  # Commentary/Translation/Version pecha layer file
+            }
+
+    return None

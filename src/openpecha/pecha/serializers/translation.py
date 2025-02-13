@@ -3,7 +3,6 @@ from typing import Dict, List, Union
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
-from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.pecha import Pecha, get_pecha_with_id
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
@@ -53,27 +52,14 @@ class TextTranslationSerializer:
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def get_root_content(self, pecha: Pecha, alignment_data: Dict):
-        """
-        Processes:
-        1. Get the first txt file from root and translation opf
-        2. Read meaning layer from the base txt file from each opfs
-        3. Read segment texts and fill it to 'content' attribute in json formats
-        """
+    def get_root_content(self, pecha: Pecha, pecha_layer_path: str):
         segment_layer = AnnotationStore(
-            file=pecha.layer_path.joinpath(
-                alignment_data["root_basename"], alignment_data["root_layername"]
-            ).as_posix()
+            file=pecha.pecha_path.parent.joinpath(pecha_layer_path).as_posix()
         )
         segments = self.get_texts_from_layer(segment_layer)
         return chunk_strings(segments)
 
-    def get_translation_content(
-        self,
-        pecha: Pecha,
-        alignment_data: Dict,
-        is_pecha_display: bool,
-    ):
+    def get_translation_content(self, pecha: Pecha, layer_path: str):
         """
         Processes:
         1. Get the first txt file from root and translation opf
@@ -82,10 +68,7 @@ class TextTranslationSerializer:
         """
 
         translation_segment_layer = AnnotationStore(
-            file=pecha.layer_path.joinpath(
-                alignment_data["translation_basename"],
-                alignment_data["translation_layername"],
-            ).as_posix()
+            file=pecha.pecha_path.parent.joinpath(layer_path).as_posix()
         )
 
         segments: Dict[int, List[str]] = {}
@@ -94,18 +77,9 @@ class TextTranslationSerializer:
             for data in ann:
                 ann_data[str(data.key().id())] = data.value().get()
 
-            if is_pecha_display:
-                if "alignment_mapping" in ann_data:
-                    for map in ann_data["alignment_mapping"]:
-                        root_map = map[0]
-                        if root_map in segments:
-                            segments[root_map].append(str(ann))
-                        else:
-                            segments[root_map] = [str(ann)]
-            else:
-                if "root_idx_mapping" in ann_data:
-                    root_map = int(ann_data["root_idx_mapping"])
-                    segments[root_map] = [str(ann)]
+            if "root_idx_mapping" in ann_data:
+                root_map = int(ann_data["root_idx_mapping"])
+                segments[root_map] = [str(ann)]
 
         max_root_idx = max(segments.keys())
         translation_segments = []
@@ -117,59 +91,6 @@ class TextTranslationSerializer:
 
         return chunk_strings(translation_segments)
 
-    def get_root_layer(self, pecha: Pecha):
-        """
-        1.Get the first annotation json file from Root Pecha.
-        2.Return its basename and layername
-        """
-        ann_layer_file = list(pecha.layer_path.rglob("*.json"))[0]
-        alignment_data = {
-            "root_basename": ann_layer_file.parent.name,
-            "root_layername": ann_layer_file.name,
-        }
-        return alignment_data
-
-    def get_root_and_translation_layer(
-        self, translation_pecha: Pecha, is_pecha_display: bool
-    ):
-        """
-        Get the root layer and translation layer to serialize the layer(STAM) to JSON
-        1.First it checks if the 'pecha_display_alignments' contains in the metadata (from translation opf)
-        2.Select the first meaning segment layer found in each of the opf
-        """
-        if is_pecha_display:
-            assert (
-                AlignmentEnum.pecha_display_alignments.value
-                in translation_pecha.metadata.source_metadata
-            ), f"pecha display alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            alignment = translation_pecha.metadata.source_metadata[
-                AlignmentEnum.pecha_display_alignments.value
-            ]
-        else:
-            assert (
-                AlignmentEnum.translation_alignment.value
-                in translation_pecha.metadata.source_metadata
-            ), f"translation alignment not present to serialize in translation Pecha {translation_pecha.id}"
-            alignment = translation_pecha.metadata.source_metadata[
-                AlignmentEnum.translation_alignment.value
-            ]
-        root_basename, root_layer = (
-            alignment["root"].split("/")[-2],
-            alignment["root"].split("/")[-1],
-        )
-        translation_basename, translation_layer = (
-            alignment["translation"].split("/")[-2],
-            alignment["translation"].split("/")[-1],
-        )
-
-        alignment_data = {
-            "root_basename": root_basename,
-            "root_layername": root_layer,
-            "translation_basename": translation_basename,
-            "translation_layername": translation_layer,
-        }
-        return alignment_data
-
     def get_pecha_bo_title(self, pecha: Pecha):
         """
         Get tibetan title from the Pecha metadata
@@ -180,69 +101,45 @@ class TextTranslationSerializer:
 
         return title
 
-    @staticmethod
-    def is_translation_pecha(pecha: Pecha) -> bool:
-        if "translation_of" in pecha.metadata.source_metadata:
-            root_pecha_title = pecha.metadata.source_metadata["translation_of"]
-            # Considering field "translation_of" is str
-            if root_pecha_title:
-                return True
-            return False
-        return False
-
     def serialize(
         self,
         pecha: Pecha,
-        is_pecha_display: bool = False,
+        alignment_data: Union[Dict, None] = None,
     ) -> Dict:
-        # Check if the pecha is Root Pecha or Translation Pecha
-        is_translation_pecha = self.is_translation_pecha(pecha)
-        if is_translation_pecha:
-            root_pecha_id = pecha.metadata.source_metadata["translation_of"]
-            root_pecha = get_pecha_with_id(root_pecha_id)
-            translation_pecha = pecha
 
+        if alignment_data:
+            root_pecha = get_pecha_with_id(alignment_data["source"].split("/")[0])
+            translation_pecha = pecha
+            root_content = self.get_root_content(root_pecha, alignment_data["source"])
+            translation_content = self.get_translation_content(
+                translation_pecha, alignment_data["target"]
+            )
         else:
             root_pecha = pecha
             translation_pecha = None
+            root_layer_path = next(root_pecha.layer_path.rglob("*.json"))
+            root_content = self.get_root_content(
+                root_pecha, root_layer_path.relative_to(root_pecha.pecha_path.parent)
+            )
+            translation_content = []
 
         # Get pecha category from pecha_org_tools package and set to JSON
         bo_category, en_category = self.get_pecha_category(root_pecha)
 
-        # Get the root and translation layer to serialize the layer(STAM) to JSON
-        if translation_pecha:
-            alignment_data = self.get_root_and_translation_layer(
-                translation_pecha, is_pecha_display
-            )
-        else:
-            alignment_data = self.get_root_layer(root_pecha)
-
         root_json: Dict[str, List] = {
             "categories": bo_category,
             "books": [
-                {
-                    **self.get_metadata_for_pecha_org(root_pecha),
-                    "content": self.get_root_content(root_pecha, alignment_data),
-                }
+                {**self.get_metadata_for_pecha_org(root_pecha), "content": root_content}
             ],
         }
-        translation_json: Dict[str, List] = {
+
+        translation_metadata = self.get_metadata_for_pecha_org(
+            translation_pecha if translation_pecha else root_pecha,
+            Language.english.value,
+        )
+        translation_json = {
             "categories": en_category,
-            "books": [
-                {
-                    **self.get_metadata_for_pecha_org(translation_pecha),
-                    "content": self.get_translation_content(
-                        translation_pecha, alignment_data, is_pecha_display
-                    ),
-                }
-                if translation_pecha
-                else {
-                    **self.get_metadata_for_pecha_org(
-                        root_pecha, Language.english.value
-                    ),
-                    "content": [],
-                }
-            ],
+            "books": [{**translation_metadata, "content": translation_content}],
         }
 
         # Set the content for source and target and set it to JSON

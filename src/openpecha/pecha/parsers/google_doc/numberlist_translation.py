@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Tuple, Union
 
 from docx2python import docx2python
 
-from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
 from openpecha.exceptions import (
     EmptyFileError,
@@ -12,7 +11,7 @@ from openpecha.exceptions import (
     InvalidLanguageEnumError,
     MetaDataValidationError,
 )
-from openpecha.pecha import Pecha, get_aligned_root_layer
+from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
@@ -177,16 +176,6 @@ class DocxNumberListTranslationParser(BaseParser):
         # Get layer path relative to Pecha Path
         index = layer_path.parts.index(pecha.id)
         relative_layer_path = Path(*layer_path.parts[index:])
-
-        # Inlude Root pecha and layer information if this is a translation pecha
-        if "translation_of" in metadata:
-            root_pecha_id = metadata["translation_of"]
-            if root_pecha_id:
-                root_layer_filepath = get_aligned_root_layer(root_pecha_id)
-                metadata[AlignmentEnum.translation_alignment.value] = {
-                    "root": root_layer_filepath,
-                    "translation": str(relative_layer_path),
-                }
 
         try:
             pecha_metadata = PechaMetaData(
