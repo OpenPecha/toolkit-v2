@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 from pecha_org_tools.extract import CategoryExtractor
 from pecha_org_tools.translation import (
@@ -20,14 +20,11 @@ class CommentarySerializer:
         self.meaning_segment_anns = []
         self.prepared_content = {}
 
-        self.pecha: Union[Pecha, None] = None
-
-    def extract_metadata(self):
+    def extract_metadata(self, pecha: Pecha):
         """
         Extract neccessary metadata from opf for serialization to json
         """
-        assert self.pecha is not None, "Pecha object is not set"
-        pecha_metadata = self.pecha.metadata
+        pecha_metadata = pecha.metadata
         source_title = pecha_metadata.title.get("en") or pecha_metadata.title.get("EN")
         target_title = pecha_metadata.title.get("bo") or pecha_metadata.title.get("BO")
 
@@ -80,28 +77,24 @@ class CommentarySerializer:
 
         return category_json
 
-    def get_categories(self, root_title: str):
+    def get_categories(self, pecha: Pecha, root_title: str):
         """
         Set the category format to self.category attribute
         """
-        assert self.pecha is not None, "Pecha object is not set"
 
-        title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
-            "BO"
-        )
+        title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
         category_json = self.get_category(title)
         category_json = self.modify_category(category_json, root_title)
 
         return (category_json["en"], category_json["bo"])  # source and target category
 
-    def get_sapche_anns(self):
+    def get_sapche_anns(self, pecha: Pecha):
         """
         Get the sapche annotations from the sapche layer,
         and store it in self.sapche_anns attribute
         """
-        assert self.pecha is not None, "Pecha object is not set"
-        basename = next(self.pecha.base_path.rglob("*.txt")).stem
-        sapche_layer, _ = self.pecha.get_layer_by_ann_type(basename, LayerEnum.sapche)
+        basename = next(pecha.base_path.rglob("*.txt")).stem
+        sapche_layer, _ = pecha.get_layer_by_ann_type(basename, LayerEnum.sapche)
         for ann in sapche_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
             # Get metadata of the annotation
@@ -118,14 +111,13 @@ class CommentarySerializer:
 
         return self.sapche_anns
 
-    def get_meaning_segment_anns(self):
+    def get_meaning_segment_anns(self, pecha: Pecha):
         """
         Get the meaning segment annotations from the meaning segment layer,
         and store it in self.meaning_segment_anns attribute
         """
-        assert self.pecha is not None, "Pecha object is not set"
-        basename = next(self.pecha.base_path.rglob("*.txt")).stem
-        meaning_segment_layer, _ = self.pecha.get_layer_by_ann_type(
+        basename = next(pecha.base_path.rglob("*.txt")).stem
+        meaning_segment_layer, _ = pecha.get_layer_by_ann_type(
             basename, LayerEnum.meaning_segment
         )
         for ann in meaning_segment_layer:
@@ -149,7 +141,7 @@ class CommentarySerializer:
 
         return self.meaning_segment_anns
 
-    def prepare_content(self):
+    def prepare_content(self, pecha: Pecha):
         """
         Prepare content in the sapche annotations to the required format(Tree like structure)
         """
@@ -176,8 +168,8 @@ class CommentarySerializer:
 
             return formatted_tree
 
-        self.get_sapche_anns()
-        self.get_text_related_to_sapche()
+        self.get_sapche_anns(pecha)
+        self.get_text_related_to_sapche(pecha)
 
         formatted_sapche_anns: Dict[str, Any] = {}
 
@@ -192,9 +184,6 @@ class CommentarySerializer:
                         "data": sapche_ann["meaning_segments"],
                     }
                 current = current[key]["children"]
-
-        assert self.pecha is not None, "Pecha object is not set"
-        assert self.pecha.metadata is not None, "Pecha metadata is not set"
 
         self.prepared_content = format_tree(formatted_sapche_anns)
         return self.prepared_content
@@ -215,12 +204,12 @@ class CommentarySerializer:
             return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
         return ann["text"].strip()
 
-    def get_text_related_to_sapche(self):
+    def get_text_related_to_sapche(self, pecha: Pecha):
         """
         Get the text related to the sapche annotations from meaning segment layer,
         and add to 'meaning_segments' key of sapche annotations
         """
-        self.get_meaning_segment_anns()
+        self.get_meaning_segment_anns(pecha)
 
         num_of_sapches = len(self.sapche_anns)
         for idx, sapche_ann in enumerate(self.sapche_anns):
@@ -257,20 +246,15 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def get_json_content(self):
+    def get_json_content(self, pecha: Pecha):
         """
         Fill the source and target content to the json format
         """
-        self.prepare_content()
+        self.prepare_content(pecha)
 
-        assert self.pecha is not None, "Pecha object is not set"
-        assert self.pecha.metadata is not None, "Pecha metadata is not set"
+        bo_title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
 
-        bo_title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
-            "BO"
-        )
-
-        pecha_lang = self.pecha.metadata.language
+        pecha_lang = pecha.metadata.language
 
         if pecha_lang == Language.tibetan:
             pecha_lang = Language.english
@@ -278,11 +262,11 @@ class CommentarySerializer:
         pecha_lang_lowercase = pecha_lang.value.lower()
         pecha_lang_uppercase = pecha_lang.value.upper()
 
-        other_title = self.pecha.metadata.title.get(
+        other_title = pecha.metadata.title.get(
             pecha_lang_lowercase
-        ) or self.pecha.metadata.title.get(pecha_lang_uppercase)
+        ) or pecha.metadata.title.get(pecha_lang_uppercase)
 
-        if self.pecha.metadata.language == Language.tibetan:
+        if pecha.metadata.language == Language.tibetan:
             src_content = {
                 other_title: {
                     "data": [],
@@ -306,16 +290,16 @@ class CommentarySerializer:
         Serialize the commentary pecha to json format
         """
 
-        self.pecha = Pecha.from_path(pecha_path)
+        pecha = Pecha.from_path(pecha_path)
 
         src_book, tgt_book = [], []
-        src_metadata, tgt_metadata = self.extract_metadata()
+        src_metadata, tgt_metadata = self.extract_metadata(pecha)
         src_book.append(src_metadata)
         tgt_book.append(tgt_metadata)
 
-        src_category, tgt_category = self.get_categories(root_title)
+        src_category, tgt_category = self.get_categories(pecha, root_title)
 
-        src_content, tgt_content = self.get_json_content()
+        src_content, tgt_content = self.get_json_content(pecha)
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content
 
