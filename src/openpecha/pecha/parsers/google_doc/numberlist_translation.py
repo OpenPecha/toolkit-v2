@@ -100,7 +100,7 @@ class DocxNumberListTranslationParser(BaseParser):
         text = docx2python(docx_file).text
         if not text:
             raise EmptyFileError(
-                f"[Error] The document '{docx_file}' is empty or contains only whitespace."
+                f"[Error] The document '{str(docx_file)}' is empty or contains only whitespace."
             )
 
         text = self.normalize_text(text)
@@ -137,7 +137,9 @@ class DocxNumberListTranslationParser(BaseParser):
     ):
         input = Path(input)
         if not input.exists():
-            raise FileNotFoundError(f"[Error] The input file '{input}' does not exist.")
+            raise FileNotFoundError(
+                f"[Error] The input file '{str(input)}' does not exist."
+            )
 
         anns, base = self.extract_root_segments_anns(input, metadata)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
@@ -196,7 +198,7 @@ class DocxNumberListTranslationParser(BaseParser):
             )
         except Exception as e:
             raise MetaDataValidationError(
-                f"[Error] The metadata given was not valid. {e}"
+                f"[Error] The metadata given was not valid. {str(e)}"
             )
         else:
             pecha.set_metadata(pecha_metadata)
