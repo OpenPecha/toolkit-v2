@@ -4,6 +4,8 @@ import diff_match_patch as dmp_module
 from diff_match_patch import diff_match_patch
 from stam import AnnotationStore
 
+from openpecha.exceptions import BaseUpdateFailedError
+
 
 class Blupdate:
     """
@@ -201,6 +203,9 @@ def get_updated_layer_anns(old_base, new_base: str, layer: AnnotationStore):
 
         new_begin = dmp.diff_xIndex(diffs, old_begin)
         new_end = dmp.diff_xIndex(diffs, old_end)
+
+        if new_begin < 0 or new_end < 0:
+            raise BaseUpdateFailedError("Failed to update the layer using Blupdate.")
 
         if new_begin >= len(new_base):
             new_begin = len(new_base) - 1

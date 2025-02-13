@@ -4,6 +4,12 @@ class GithubRepoError(Exception):
     pass
 
 
+class GithubTokenNotSetError(Exception):
+    """Raised when the GitHub token is not set."""
+
+    pass
+
+
 class InvalidTokenError(GithubRepoError):
     """Raised when the GitHub token is invalid."""
 
@@ -16,12 +22,6 @@ class OrganizationNotFoundError(GithubRepoError):
     pass
 
 
-class RepositoryCreationError(GithubRepoError):
-    """Raised when there is an error creating the repository."""
-
-    pass
-
-
 class FileUploadError(GithubRepoError):
     """Raised when there is an error uploading files to the repository."""
 
@@ -30,5 +30,65 @@ class FileUploadError(GithubRepoError):
 
 class GithubCloneError(GithubRepoError):
     """Raised when there is an error cloning github repo"""
+
+    pass
+
+
+class GithubRepoNotFoundError(GithubRepoError):
+    """Raised when the specified github repo is not found"""
+
+    pass
+
+
+class FileNotFoundError(Exception):
+    """Raised when the specified file is not found."""
+
+    pass
+
+
+class EmptyFileError(Exception):
+    """Raised when the specified file is empty."""
+
+    pass
+
+
+class MetaDataMissingError(Exception):
+    """Raised when the metadata is missing."""
+
+    pass
+
+
+class MetaDataValidationError(Exception):
+    """Raised when the metadata is not valid."""
+
+    pass
+
+
+class BaseUpdateFailedError(Exception):
+    """Raised when the base update mechanism failed."""
+
+    pass
+
+
+class AlignmentDataKeyMissingError(Exception):
+    """Raised when the alignment information key is missing."""
+
+    pass
+
+
+class InvalidLanguageEnumError(Exception):
+    """Raised when the language enum is invalid."""
+
+    pass
+
+
+class StamAnnotationStoreLoadError(Exception):
+    """Raised when there is an error loading annotation store in STAM."""
+
+    pass
+
+
+class StamAddAnnotationError(Exception):
+    """Raised when there is an error adding annotation in STAM."""
 
     pass

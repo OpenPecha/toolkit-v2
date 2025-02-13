@@ -3,6 +3,11 @@ from typing import Dict, List, Union
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
+from openpecha.exceptions import (
+    AlignmentDataKeyMissingError,
+    FileNotFoundError,
+    StamAnnotationStoreLoadError,
+)
 from openpecha.pecha import Pecha, get_pecha_with_id
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
@@ -52,12 +57,22 @@ class TextTranslationSerializer:
             "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
         ]
 
-    def get_root_content(self, pecha: Pecha, pecha_layer_path: str):
-        segment_layer = AnnotationStore(
-            file=pecha.pecha_path.parent.joinpath(pecha_layer_path).as_posix()
-        )
-        segments = self.get_texts_from_layer(segment_layer)
-        return chunk_strings(segments)
+    def get_root_content(self, pecha: Pecha, layer_path: str):
+        ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
+        if not ann_store_path.exists():
+            raise FileNotFoundError(
+                f"[Error] The layer path '{str(ann_store_path)}' does not exist."
+            )
+
+        try:
+            segment_layer = AnnotationStore(file=ann_store_path.as_posix())
+        except Exception as e:
+            raise StamAnnotationStoreLoadError(
+                f"[Error] Error loading annotation store from layer path: {layer_path}. {str(e)}"
+            )
+        else:
+            segments = self.get_texts_from_layer(segment_layer)
+            return chunk_strings(segments)
 
     def get_translation_content(self, pecha: Pecha, layer_path: str):
         """
@@ -66,30 +81,38 @@ class TextTranslationSerializer:
         2. Read meaning layer from the base txt file from each opfs
         3. Read segment texts and fill it to 'content' attribute in json formats
         """
+        ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
+        if not ann_store_path.exists():
+            raise FileNotFoundError(
+                f"[Error] The layer path '{str(ann_store_path)}' does not exist."
+            )
 
-        translation_segment_layer = AnnotationStore(
-            file=pecha.pecha_path.parent.joinpath(layer_path).as_posix()
-        )
+        try:
+            translation_segment_layer = AnnotationStore(file=ann_store_path.as_posix())
+        except Exception as e:
+            raise StamAnnotationStoreLoadError(
+                f"[Error] Error loading annotation store from layer path: {ann_store_path}. {str(e)}"
+            )
+        else:
+            segments: Dict[int, List[str]] = {}
+            for ann in translation_segment_layer:
+                ann_data = {}
+                for data in ann:
+                    ann_data[str(data.key().id())] = data.value().get()
 
-        segments: Dict[int, List[str]] = {}
-        for ann in translation_segment_layer:
-            ann_data = {}
-            for data in ann:
-                ann_data[str(data.key().id())] = data.value().get()
+                if "root_idx_mapping" in ann_data:
+                    root_map = int(ann_data["root_idx_mapping"])
+                    segments[root_map] = [str(ann)]
 
-            if "root_idx_mapping" in ann_data:
-                root_map = int(ann_data["root_idx_mapping"])
-                segments[root_map] = [str(ann)]
+            max_root_idx = max(segments.keys())
+            translation_segments = []
+            for root_idx in range(1, max_root_idx + 1):
+                if root_idx in segments:
+                    translation_segments.append("".join(segments[root_idx]))
+                else:
+                    translation_segments.append("")
 
-        max_root_idx = max(segments.keys())
-        translation_segments = []
-        for root_idx in range(1, max_root_idx + 1):
-            if root_idx in segments:
-                translation_segments.append("".join(segments[root_idx]))
-            else:
-                translation_segments.append("")
-
-        return chunk_strings(translation_segments)
+            return chunk_strings(translation_segments)
 
     def get_pecha_bo_title(self, pecha: Pecha):
         """
@@ -108,6 +131,10 @@ class TextTranslationSerializer:
     ) -> Dict:
 
         if alignment_data:
+            if "source" not in alignment_data or "target" not in alignment_data:
+                raise AlignmentDataKeyMissingError(
+                    "Pecha alignment data must have 'source' and 'target' keys."
+                )
             root_pecha = get_pecha_with_id(alignment_data["source"].split("/")[0])
             translation_pecha = pecha
             root_content = self.get_root_content(root_pecha, alignment_data["source"])
