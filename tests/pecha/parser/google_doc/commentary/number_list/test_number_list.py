@@ -43,15 +43,10 @@ class TestNumberListCommentaryParser(TestCase):
         parser = DocxNumberListCommentaryParser()
         with tempfile.TemporaryDirectory() as tempdir, mock.patch(
             "openpecha.pecha.parsers.google_doc.commentary.number_list.DocxNumberListCommentaryParser.extract_commentary_segments_anns"
-        ) as mock_extract_commentary_segments_anns, mock.patch(
-            "openpecha.pecha.parsers.google_doc.commentary.number_list.get_aligned_root_layer"
-        ) as mock_get_aligned_root_layer:
+        ) as mock_extract_commentary_segments_anns:
             mock_extract_commentary_segments_anns.return_value = (
                 self.expected_anns,
                 self.expected_base,
-            )
-            mock_get_aligned_root_layer.return_value = (
-                "I54C654B4/layers/87D2/Tibetan_Segment-39CA.json"
             )
             pecha = parser.parse(self.input, self.metadata, Path(tempdir))
             assert isinstance(pecha, Pecha)

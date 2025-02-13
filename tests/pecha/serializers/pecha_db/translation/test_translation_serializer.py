@@ -36,7 +36,7 @@ class TestTextTranslationSerializer(TestCase):
         root_pecha = Pecha.from_path(root_opf)
 
         serializer = TextTranslationSerializer()
-        json_output = serializer.serialize(root_pecha, False)
+        json_output = serializer.serialize(pecha=root_pecha, alignment_data=None)
 
         expected_json_path = DATA_DIR / "expected_root_output.json"
         assert json_output == read_json(expected_json_path)
@@ -44,6 +44,11 @@ class TestTextTranslationSerializer(TestCase):
     def test_translation_serializer(self):
         root_opf = DATA_DIR / "bo/IE60BBDE8"
         translation_opf = DATA_DIR / "en/I62E00D78"
+
+        translation_alignment = {
+            "source": "IE60BBDE8/layers/3635/Tibetan_Segment-039B.json",
+            "target": "I62E00D78/layers/D93E/English_Segment-0216.json",
+        }
 
         root_pecha = Pecha.from_path(root_opf)
         translation_pecha = Pecha.from_path(translation_opf)
@@ -53,7 +58,9 @@ class TestTextTranslationSerializer(TestCase):
             mock_get_pecha_with_id.return_value = root_pecha
 
             serializer = TextTranslationSerializer()
-            json_output = serializer.serialize(translation_pecha, False)
+            json_output = serializer.serialize(
+                pecha=translation_pecha, alignment_data=translation_alignment
+            )
 
             expected_json_path = DATA_DIR / "expected_translation_output.json"
             assert json_output == read_json(expected_json_path)
