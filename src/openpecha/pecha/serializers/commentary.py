@@ -15,8 +15,6 @@ from openpecha.utils import get_text_direction_with_lang
 
 class CommentarySerializer:
     def __init__(self):
-        self.source_category = {}
-        self.target_category = {}
         self.source_book = []
         self.target_book = []
 
@@ -24,7 +22,6 @@ class CommentarySerializer:
         self.meaning_segment_anns = []
         self.prepared_content = {}
 
-        self.pecha_path: Union[Path, None] = None
         self.pecha: Union[Pecha, None] = None
 
     def extract_metadata(self):
@@ -105,8 +102,7 @@ class CommentarySerializer:
         category_json = self.get_category(title)
         category_json = self.modify_category(category_json, root_title)
 
-        self.source_category = category_json["en"]
-        self.target_category = category_json["bo"]
+        return (category_json["en"], category_json["bo"])  # source and target category
 
     def get_sapche_anns(self):
         """
@@ -323,16 +319,15 @@ class CommentarySerializer:
         Serialize the commentary pecha to json format
         """
 
-        self.pecha_path = pecha_path
         self.pecha = Pecha.from_path(pecha_path)
 
         self.set_metadata_to_json()
-        self.set_category_to_json(root_title)
+        src_category, tgt_category = self.set_category_to_json(root_title)
 
         self.fill_json_content()
 
         serialized_json = {
-            "source": {"categories": self.source_category, "book": self.source_book},
-            "target": {"categories": self.target_category, "book": self.target_book},
+            "source": {"categories": src_category, "book": self.source_book},
+            "target": {"categories": tgt_category, "book": self.target_book},
         }
         return serialized_json
