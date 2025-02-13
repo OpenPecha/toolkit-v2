@@ -88,6 +88,12 @@ class InvalidLanguageEnumError(Exception):
     pass
 
 
+class StamAnnotationStoreLoadError(Exception):
+    """Raised when there is an error loading annotation store in STAM."""
+
+    pass
+
+
 class StamAddAnnotationError(Exception):
     """Raised when there is an error adding annotation in STAM."""
 
