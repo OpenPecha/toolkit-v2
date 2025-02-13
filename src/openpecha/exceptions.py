@@ -52,6 +52,12 @@ class EmptyFileError(Exception):
     pass
 
 
+class MetaDataMissingError(Exception):
+    """Raised when the metadata is missing."""
+
+    pass
+
+
 class MetaDataValidationError(Exception):
     """Raised when the metadata is not valid."""
 

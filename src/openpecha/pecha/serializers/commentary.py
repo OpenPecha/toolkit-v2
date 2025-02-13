@@ -7,9 +7,10 @@ from pecha_org_tools.translation import (
     get_en_content_translation,
 )
 
+from openpecha.exceptions import MetaDataValidationError
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import Language
+from openpecha.pecha.metadata import Language, PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
 
@@ -18,27 +19,33 @@ class CommentarySerializer:
         """
         Extract neccessary metadata from opf for serialization to json
         """
-        pecha_metadata = pecha.metadata
-        source_title = pecha_metadata.title.get("en") or pecha_metadata.title.get("EN")
-        target_title = pecha_metadata.title.get("bo") or pecha_metadata.title.get("BO")
+        metadata: PechaMetaData = pecha.metadata
 
-        source_metadata = {
+        if not isinstance(metadata.title, dict):
+            raise MetaDataValidationError(
+                f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
+            )
+
+        source_title = metadata.title.get("en") or metadata.title.get("EN")
+        target_title = metadata.title.get("bo") or metadata.title.get("BO")
+
+        src_metadata = {
             "title": source_title,
             "language": "en",
-            "versionSource": pecha_metadata.source if pecha_metadata.source else "",
+            "versionSource": metadata.source if metadata.source else "",
             "direction": get_text_direction_with_lang("en"),
             "completestatus": "done",
         }
 
-        target_metadata = {
+        tgt_metadata = {
             "title": target_title,
-            "language": pecha_metadata.language.value,
-            "versionSource": pecha_metadata.source if pecha_metadata.source else "",
-            "direction": get_text_direction_with_lang(pecha_metadata.language),
+            "language": metadata.language.value,
+            "versionSource": metadata.source if metadata.source else "",
+            "direction": get_text_direction_with_lang(metadata.language),
             "completestatus": "done",
         }
 
-        return source_metadata, target_metadata
+        return src_metadata, tgt_metadata
 
     def get_category(self, category_name: str):
         """
@@ -47,15 +54,15 @@ class CommentarySerializer:
         """
 
         categorizer = CategoryExtractor()
-        category_json = categorizer.get_category(category_name)
-        return category_json
+        category = categorizer.get_category(category_name)
+        return category
 
-    def modify_category(self, category_json: Dict[str, Any], root_title: str):
+    def modify_category(self, category: Dict[str, Any], root_title: str):
         """
         Modify the category format to the required format for pecha.org commentary
         """
-        last_bo_category = category_json["bo"][-1]
-        last_en_category = category_json["en"][-1]
+        last_bo_category = category["bo"][-1]
+        last_en_category = category["en"][-1]
 
         last_bo_category["base_text_titles"] = [root_title]
         last_en_category["base_text_titles"] = [root_title]
@@ -66,10 +73,10 @@ class CommentarySerializer:
         last_bo_category["link"] = "Commentary"
         last_en_category["link"] = "Commentary"
 
-        category_json["bo"][-1] = last_bo_category
-        category_json["en"][-1] = last_en_category
+        category["bo"][-1] = last_bo_category
+        category["en"][-1] = last_en_category
 
-        return category_json
+        return category
 
     def get_categories(self, pecha: Pecha, root_title: str):
         """
@@ -77,10 +84,10 @@ class CommentarySerializer:
         """
 
         title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
-        category_json = self.get_category(title)
-        category_json = self.modify_category(category_json, root_title)
+        category = self.get_category(title)
+        category = self.modify_category(category, root_title)
 
-        return (category_json["en"], category_json["bo"])  # source and target category
+        return (category["en"], category["bo"])  # source and target category
 
     def get_sapche_anns(self, pecha: Pecha):
         """
