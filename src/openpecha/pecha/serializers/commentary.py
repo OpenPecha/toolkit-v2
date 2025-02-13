@@ -16,7 +16,6 @@ from openpecha.utils import get_text_direction_with_lang
 class CommentarySerializer:
     def __init__(self):
 
-        self.meaning_segment_anns = []
         self.prepared_content = {}
 
     def extract_metadata(self, pecha: Pecha):
@@ -113,8 +112,8 @@ class CommentarySerializer:
     def get_meaning_segment_anns(self, pecha: Pecha):
         """
         Get the meaning segment annotations from the meaning segment layer,
-        and store it in self.meaning_segment_anns attribute
         """
+        meaning_segment_anns = []
         basename = next(pecha.base_path.rglob("*.txt")).stem
         meaning_segment_layer, _ = pecha.get_layer_by_ann_type(
             basename, LayerEnum.meaning_segment
@@ -136,9 +135,9 @@ class CommentarySerializer:
                     "root_idx_mapping"
                 ]
 
-            self.meaning_segment_anns.append(curr_meaining_segment_ann)
+            meaning_segment_anns.append(curr_meaining_segment_ann)
 
-        return self.meaning_segment_anns
+        return meaning_segment_anns
 
     def prepare_content(self, pecha: Pecha):
         """
@@ -208,7 +207,7 @@ class CommentarySerializer:
         Get the text related to the sapche annotations from meaning segment layer,
         and add to 'meaning_segments' key of sapche annotations
         """
-        self.get_meaning_segment_anns(pecha)
+        meaning_segment_anns = self.get_meaning_segment_anns(pecha)
 
         num_of_sapches = len(sapche_anns)
         for idx, sapche_ann in enumerate(sapche_anns):
@@ -224,7 +223,7 @@ class CommentarySerializer:
                 else None
             )
 
-            for meaning_segment_ann in self.meaning_segment_anns:
+            for meaning_segment_ann in meaning_segment_anns:
                 meaning_segment_start = meaning_segment_ann["Span"]["start"]
                 meaning_segment_end = meaning_segment_ann["Span"]["end"]
 
