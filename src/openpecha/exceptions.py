@@ -86,3 +86,9 @@ class InvalidLanguageEnumError(Exception):
     """Raised when the language enum is invalid."""
 
     pass
+
+
+class StamAddAnnotationError(Exception):
+    """Raised when there is an error adding annotation in STAM."""
+
+    pass
