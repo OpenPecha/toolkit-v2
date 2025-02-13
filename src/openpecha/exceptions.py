@@ -76,6 +76,12 @@ class AlignmentAnnotationTransferFailedError(Exception):
     pass
 
 
+class AlignmentDataKeyMissingError(Exception):
+    """Raised when the alignment information key is missing."""
+
+    pass
+
+
 class InvalidLanguageEnumError(Exception):
     """Raised when the language enum is invalid."""
 

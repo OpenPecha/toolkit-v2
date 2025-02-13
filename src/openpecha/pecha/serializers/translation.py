@@ -3,6 +3,7 @@ from typing import Dict, List, Union
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
+from openpecha.exceptions import AlignmentDataKeyMissingError
 from openpecha.pecha import Pecha, get_pecha_with_id
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
@@ -108,6 +109,10 @@ class TextTranslationSerializer:
     ) -> Dict:
 
         if alignment_data:
+            if "source" not in alignment_data or "target" not in alignment_data:
+                raise AlignmentDataKeyMissingError(
+                    "Pecha alignment data must have 'source' and 'target' keys."
+                )
             root_pecha = get_pecha_with_id(alignment_data["source"].split("/")[0])
             translation_pecha = pecha
             root_content = self.get_root_content(root_pecha, alignment_data["source"])
