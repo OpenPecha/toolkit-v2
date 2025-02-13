@@ -15,8 +15,6 @@ from openpecha.utils import get_text_direction_with_lang
 
 class CommentarySerializer:
     def __init__(self):
-        self.source_book = []
-        self.target_book = []
 
         self.sapche_anns = []
         self.meaning_segment_anns = []
@@ -50,14 +48,6 @@ class CommentarySerializer:
         }
 
         return source_metadata, target_metadata
-
-    def set_metadata_to_json(self):
-        """
-        Set extracted metadata to json format
-        """
-        source_metadata, target_metadata = self.extract_metadata()
-        self.source_book.append(source_metadata)
-        self.target_book.append(target_metadata)
 
     def get_category(self, category_name: str):
         """
@@ -267,7 +257,7 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def fill_json_content(self):
+    def get_json_content(self):
         """
         Fill the source and target content to the json format
         """
@@ -293,26 +283,23 @@ class CommentarySerializer:
         ) or self.pecha.metadata.title.get(pecha_lang_uppercase)
 
         if self.pecha.metadata.language == Language.tibetan:
-            self.source_book[0]["content"] = {
+            src_content = {
                 other_title: {
                     "data": [],
                     **get_en_content_translation(self.prepared_content),
                 }
             }
-            self.target_book[0]["content"] = {
-                bo_title: {"data": [], **self.prepared_content}
-            }
+            tgt_content = {bo_title: {"data": [], **self.prepared_content}}
 
         else:
-            self.source_book[0]["content"] = {
-                other_title: {"data": [], **self.prepared_content}
-            }
-            self.target_book[0]["content"] = {
+            src_content = {other_title: {"data": [], **self.prepared_content}}
+            tgt_content = {
                 bo_title: {
                     "data": [],
                     **get_bo_content_translation(self.prepared_content),
                 }
             }
+        return (src_content, tgt_content)
 
     def serialize(self, pecha_path: Path, root_title: str):
         """
@@ -321,13 +308,19 @@ class CommentarySerializer:
 
         self.pecha = Pecha.from_path(pecha_path)
 
-        self.set_metadata_to_json()
+        src_book, tgt_book = [], []
+        src_metadata, tgt_metadata = self.extract_metadata()
+        src_book.append(src_metadata)
+        tgt_book.append(tgt_metadata)
+
         src_category, tgt_category = self.set_category_to_json(root_title)
 
-        self.fill_json_content()
+        src_content, tgt_content = self.get_json_content()
+        src_book[0]["content"] = src_content
+        tgt_book[0]["content"] = tgt_content
 
         serialized_json = {
-            "source": {"categories": src_category, "book": self.source_book},
-            "target": {"categories": tgt_category, "book": self.target_book},
+            "source": {"categories": src_category, "book": src_book},
+            "target": {"categories": tgt_category, "book": tgt_book},
         }
         return serialized_json
