@@ -80,7 +80,7 @@ class CommentarySerializer:
 
         return category_json
 
-    def set_category_to_json(self, root_title: str):
+    def get_categories(self, root_title: str):
         """
         Set the category format to self.category attribute
         """
@@ -313,7 +313,7 @@ class CommentarySerializer:
         src_book.append(src_metadata)
         tgt_book.append(tgt_metadata)
 
-        src_category, tgt_category = self.set_category_to_json(root_title)
+        src_category, tgt_category = self.get_categories(root_title)
 
         src_content, tgt_content = self.get_json_content()
         src_book[0]["content"] = src_content
