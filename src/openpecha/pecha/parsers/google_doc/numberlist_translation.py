@@ -6,7 +6,11 @@ from docx2python import docx2python
 
 from openpecha.alignment.alignment import AlignmentEnum
 from openpecha.config import PECHAS_PATH
-from openpecha.exceptions import EmptyFileError, FileNotFoundError
+from openpecha.exceptions import (
+    EmptyFileError,
+    FileNotFoundError,
+    InvalidLanguageEnumError,
+)
 from openpecha.pecha import Pecha, get_aligned_root_layer
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
@@ -79,7 +83,9 @@ class DocxNumberListTranslationParser(BaseParser):
         if lang == Language.russian.value:
             return LayerEnum.russian_segment
 
-        assert f"Language not properly given in metadata path: {str(input)}."
+        raise InvalidLanguageEnumError(
+            f"[Error] The language enum '{lang}' from metadata is invalid."
+        )
 
     def extract_root_segments_anns(
         self, docx_file: Path, metadata: Dict

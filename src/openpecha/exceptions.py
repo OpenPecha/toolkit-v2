@@ -80,3 +80,9 @@ class AlignmentAnnotationTransferFailedError(Exception):
     """Raised when the alignment annotation transfer failed."""
 
     pass
+
+
+class InvalidLanguageEnumError(Exception):
+    """Raised when the language enum is invalid."""
+
+    pass
