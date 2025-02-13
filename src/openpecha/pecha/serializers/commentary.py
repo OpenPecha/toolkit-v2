@@ -57,7 +57,7 @@ class CommentarySerializer:
         category = categorizer.get_category(category_name)
         return category
 
-    def modify_category(self, category: Dict[str, Any], root_title: str):
+    def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
         Modify the category format to the required format for pecha.org commentary
         """
@@ -85,7 +85,7 @@ class CommentarySerializer:
 
         title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
         category = self.get_category(title)
-        category = self.modify_category(category, root_title)
+        category = self.add_root_reference_to_category(category, root_title)
 
         return (category["en"], category["bo"])  # source and target category
 
