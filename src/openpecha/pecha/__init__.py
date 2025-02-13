@@ -11,7 +11,7 @@ from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
 from openpecha import utils
 from openpecha.catalog import PechaDataCatalog
 from openpecha.config import GITHUB_ORG_NAME, PECHAS_PATH
-from openpecha.exceptions import StamAddAnnotationError
+from openpecha.exceptions import GithubCloneError, StamAddAnnotationError
 from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
 from openpecha.pecha.blupdate import get_updated_layer_anns
@@ -34,8 +34,14 @@ class Pecha:
 
     @classmethod
     def from_id(cls, pecha_id: str):
-        pecha_path = clone_repo(pecha_id, PECHAS_PATH)
-        return Pecha.from_path(pecha_path)
+        try:
+            pecha_path = clone_repo(pecha_id, PECHAS_PATH)
+        except Exception as e:
+            raise GithubCloneError(
+                f"[Error] Failed to clone the pecha {pecha_id}. {str(e)}"
+            )
+        else:
+            return Pecha.from_path(pecha_path)
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":

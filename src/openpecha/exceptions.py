@@ -4,6 +4,12 @@ class GithubRepoError(Exception):
     pass
 
 
+class GithubTokenNotSetError(Exception):
+    """Raised when the GitHub token is not set."""
+
+    pass
+
+
 class InvalidTokenError(GithubRepoError):
     """Raised when the GitHub token is invalid."""
 
