@@ -328,9 +328,6 @@ class CommentarySerializer:
         self.pecha_path = pecha_path
         self.pecha = Pecha.from_path(pecha_path)
 
-        assert self.pecha is not None, "Pecha object is not set"
-        assert self.pecha.metadata is not None, "Pecha metadata is not set"
-
         self.set_metadata_to_json()
         self.set_category_to_json()
 
