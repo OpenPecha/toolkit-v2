@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
 from pecha_org_tools.translation import (
@@ -16,7 +16,6 @@ from openpecha.utils import get_text_direction_with_lang
 class CommentarySerializer:
     def __init__(self):
 
-        self.sapche_anns = []
         self.meaning_segment_anns = []
         self.prepared_content = {}
 
@@ -91,8 +90,8 @@ class CommentarySerializer:
     def get_sapche_anns(self, pecha: Pecha):
         """
         Get the sapche annotations from the sapche layer,
-        and store it in self.sapche_anns attribute
         """
+        sapche_anns = []
         basename = next(pecha.base_path.rglob("*.txt")).stem
         sapche_layer, _ = pecha.get_layer_by_ann_type(basename, LayerEnum.sapche)
         for ann in sapche_layer:
@@ -101,7 +100,7 @@ class CommentarySerializer:
             ann_metadata = {}
             for data in ann:
                 ann_metadata[data.key().id()] = str(data.value())
-            self.sapche_anns.append(
+            sapche_anns.append(
                 {
                     "Span": {"start": start, "end": end},
                     "text": str(ann),
@@ -109,7 +108,7 @@ class CommentarySerializer:
                 }
             )
 
-        return self.sapche_anns
+        return sapche_anns
 
     def get_meaning_segment_anns(self, pecha: Pecha):
         """
@@ -168,12 +167,12 @@ class CommentarySerializer:
 
             return formatted_tree
 
-        self.get_sapche_anns(pecha)
-        self.get_text_related_to_sapche(pecha)
+        sapche_anns = self.get_sapche_anns(pecha)
+        self.get_text_related_to_sapche(pecha, sapche_anns)
 
         formatted_sapche_anns: Dict[str, Any] = {}
 
-        for sapche_ann in self.sapche_anns:
+        for sapche_ann in sapche_anns:
             keys = sapche_ann["sapche_number"].strip(".").split(".")
             current = formatted_sapche_anns
             for key in keys:
@@ -204,15 +203,15 @@ class CommentarySerializer:
             return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
         return ann["text"].strip()
 
-    def get_text_related_to_sapche(self, pecha: Pecha):
+    def get_text_related_to_sapche(self, pecha: Pecha, sapche_anns: List[Dict]):
         """
         Get the text related to the sapche annotations from meaning segment layer,
         and add to 'meaning_segments' key of sapche annotations
         """
         self.get_meaning_segment_anns(pecha)
 
-        num_of_sapches = len(self.sapche_anns)
-        for idx, sapche_ann in enumerate(self.sapche_anns):
+        num_of_sapches = len(sapche_anns)
+        for idx, sapche_ann in enumerate(sapche_anns):
             start = sapche_ann["Span"]["start"]
             end = sapche_ann["Span"]["end"]
 
@@ -220,7 +219,7 @@ class CommentarySerializer:
 
             # Determine the boundary for the next sapche annotation, if applicable
             next_start = (
-                self.sapche_anns[idx + 1]["Span"]["start"]
+                sapche_anns[idx + 1]["Span"]["start"]
                 if idx < num_of_sapches - 1
                 else None
             )
