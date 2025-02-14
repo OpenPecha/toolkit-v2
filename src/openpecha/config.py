@@ -1,6 +1,21 @@
+import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from shutil import rmtree
+
+# Generate log filename with today's date
+log_filename = datetime.now().strftime("app_%Y-%m-%d.log")
+
+logging.basicConfig(
+    filename=log_filename,
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+
+
+def get_logger(name):
+    return logging.getLogger(name)
 
 
 def _mkdir(path):
