@@ -5,7 +5,7 @@ from pathlib import Path
 from shutil import rmtree
 
 # Generate log filename with today's date
-log_filename = datetime.now().strftime("app_%Y-%m-%d.log")
+log_filename = datetime.now().strftime("OpenPecha_Toolkit_%Y-%m-%d.log")
 
 logging.basicConfig(
     filename=log_filename,
