@@ -188,5 +188,5 @@ class TextTranslationSerializer:
             "source": translation_json,
             "target": root_json,
         }
-
+        logger.info(f"Pecha {pecha.id} is serialized successfully.")
         return serialized_json
