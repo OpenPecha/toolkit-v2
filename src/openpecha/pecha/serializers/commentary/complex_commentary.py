@@ -14,7 +14,7 @@ from openpecha.pecha.metadata import Language, PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
 
-class CommentarySerializer:
+class ComplexCommentarySerializer:
     def extract_metadata(self, pecha: Pecha):
         """
         Extract neccessary metadata from opf for serialization to json
