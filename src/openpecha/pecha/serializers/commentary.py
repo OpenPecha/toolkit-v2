@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
 from pecha_org_tools.translation import (
@@ -7,61 +7,45 @@ from pecha_org_tools.translation import (
     get_en_content_translation,
 )
 
+from openpecha.exceptions import MetaDataValidationError
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import Language
+from openpecha.pecha.metadata import Language, PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
 
 class CommentarySerializer:
-    def __init__(self):
-        self.source_category = {}
-        self.target_category = {}
-        self.source_book = []
-        self.target_book = []
-
-        self.sapche_anns = []
-        self.meaning_segment_anns = []
-        self.prepared_content = {}
-
-        self.root_title: Union[str, None] = None
-        self.pecha_path: Union[Path, None] = None
-        self.pecha: Union[Pecha, None] = None
-
-    def extract_metadata(self):
+    def extract_metadata(self, pecha: Pecha):
         """
         Extract neccessary metadata from opf for serialization to json
         """
-        assert self.pecha is not None, "Pecha object is not set"
-        pecha_metadata = self.pecha.metadata
-        source_title = pecha_metadata.title.get("en") or pecha_metadata.title.get("EN")
-        target_title = pecha_metadata.title.get("bo") or pecha_metadata.title.get("BO")
+        metadata: PechaMetaData = pecha.metadata
 
-        source_metadata = {
+        if not isinstance(metadata.title, dict):
+            raise MetaDataValidationError(
+                f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
+            )
+
+        source_title = metadata.title.get("en") or metadata.title.get("EN")
+        target_title = metadata.title.get("bo") or metadata.title.get("BO")
+
+        src_metadata = {
             "title": source_title,
             "language": "en",
-            "versionSource": pecha_metadata.source if pecha_metadata.source else "",
+            "versionSource": metadata.source if metadata.source else "",
             "direction": get_text_direction_with_lang("en"),
             "completestatus": "done",
         }
 
-        target_metadata = {
+        tgt_metadata = {
             "title": target_title,
-            "language": pecha_metadata.language.value,
-            "versionSource": pecha_metadata.source if pecha_metadata.source else "",
-            "direction": get_text_direction_with_lang(pecha_metadata.language),
+            "language": metadata.language.value,
+            "versionSource": metadata.source if metadata.source else "",
+            "direction": get_text_direction_with_lang(metadata.language),
             "completestatus": "done",
         }
 
-        return source_metadata, target_metadata
-
-    def set_metadata_to_json(self):
-        """
-        Set extracted metadata to json format
-        """
-        source_metadata, target_metadata = self.extract_metadata()
-        self.source_book.append(source_metadata)
-        self.target_book.append(target_metadata)
+        return src_metadata, tgt_metadata
 
     def get_category(self, category_name: str):
         """
@@ -70,18 +54,18 @@ class CommentarySerializer:
         """
 
         categorizer = CategoryExtractor()
-        category_json = categorizer.get_category(category_name)
-        return category_json
+        category = categorizer.get_category(category_name)
+        return category
 
-    def modify_category(self, category_json: Dict[str, Any]):
+    def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
         Modify the category format to the required format for pecha.org commentary
         """
-        last_bo_category = category_json["bo"][-1]
-        last_en_category = category_json["en"][-1]
+        last_bo_category = category["bo"][-1]
+        last_en_category = category["en"][-1]
 
-        last_bo_category["base_text_titles"] = [self.root_title]
-        last_en_category["base_text_titles"] = [self.root_title]
+        last_bo_category["base_text_titles"] = [root_title]
+        last_en_category["base_text_titles"] = [root_title]
 
         last_bo_category["base_text_mapping"] = "many_to_one"
         last_en_category["base_text_mapping"] = "many_to_one"
@@ -89,41 +73,36 @@ class CommentarySerializer:
         last_bo_category["link"] = "Commentary"
         last_en_category["link"] = "Commentary"
 
-        category_json["bo"][-1] = last_bo_category
-        category_json["en"][-1] = last_en_category
+        category["bo"][-1] = last_bo_category
+        category["en"][-1] = last_en_category
 
-        return category_json
+        return category
 
-    def set_category_to_json(self):
+    def get_categories(self, pecha: Pecha, root_title: str):
         """
         Set the category format to self.category attribute
         """
-        assert self.pecha is not None, "Pecha object is not set"
 
-        title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
-            "BO"
-        )
-        category_json = self.get_category(title)
-        category_json = self.modify_category(category_json)
+        title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
+        category = self.get_category(title)
+        category = self.add_root_reference_to_category(category, root_title)
 
-        self.source_category = category_json["en"]
-        self.target_category = category_json["bo"]
+        return (category["en"], category["bo"])  # source and target category
 
-    def get_sapche_anns(self):
+    def get_sapche_anns(self, pecha: Pecha):
         """
         Get the sapche annotations from the sapche layer,
-        and store it in self.sapche_anns attribute
         """
-        assert self.pecha is not None, "Pecha object is not set"
-        basename = next(self.pecha.base_path.rglob("*.txt")).stem
-        sapche_layer, _ = self.pecha.get_layer_by_ann_type(basename, LayerEnum.sapche)
+        sapche_anns = []
+        basename = next(pecha.base_path.rglob("*.txt")).stem
+        sapche_layer, _ = pecha.get_layer_by_ann_type(basename, LayerEnum.sapche)
         for ann in sapche_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
             # Get metadata of the annotation
             ann_metadata = {}
             for data in ann:
                 ann_metadata[data.key().id()] = str(data.value())
-            self.sapche_anns.append(
+            sapche_anns.append(
                 {
                     "Span": {"start": start, "end": end},
                     "text": str(ann),
@@ -131,16 +110,15 @@ class CommentarySerializer:
                 }
             )
 
-        return self.sapche_anns
+        return sapche_anns
 
-    def get_meaning_segment_anns(self):
+    def get_meaning_segment_anns(self, pecha: Pecha):
         """
         Get the meaning segment annotations from the meaning segment layer,
-        and store it in self.meaning_segment_anns attribute
         """
-        assert self.pecha is not None, "Pecha object is not set"
-        basename = next(self.pecha.base_path.rglob("*.txt")).stem
-        meaning_segment_layer, _ = self.pecha.get_layer_by_ann_type(
+        meaning_segment_anns = []
+        basename = next(pecha.base_path.rglob("*.txt")).stem
+        meaning_segment_layer, _ = pecha.get_layer_by_ann_type(
             basename, LayerEnum.meaning_segment
         )
         for ann in meaning_segment_layer:
@@ -150,21 +128,19 @@ class CommentarySerializer:
             for data in ann:
                 ann_metadata[data.key().id()] = str(data.value())
 
-            curr_meaining_segment_ann = {
+            curr_ann = {
                 "Span": {"start": start, "end": end},
                 "text": str(ann),
             }
 
             if "root_idx_mapping" in ann_metadata:
-                curr_meaining_segment_ann["root_idx_mapping"] = ann_metadata[
-                    "root_idx_mapping"
-                ]
+                curr_ann["root_idx_mapping"] = ann_metadata["root_idx_mapping"]
 
-            self.meaning_segment_anns.append(curr_meaining_segment_ann)
+            meaning_segment_anns.append(curr_ann)
 
-        return self.meaning_segment_anns
+        return meaning_segment_anns
 
-    def prepare_content(self):
+    def get_content(self, pecha: Pecha):
         """
         Prepare content in the sapche annotations to the required format(Tree like structure)
         """
@@ -191,12 +167,12 @@ class CommentarySerializer:
 
             return formatted_tree
 
-        self.get_sapche_anns()
-        self.get_text_related_to_sapche()
+        sapche_anns = self.get_sapche_anns(pecha)
+        self.get_text_related_to_sapche(pecha, sapche_anns)
 
         formatted_sapche_anns: Dict[str, Any] = {}
 
-        for sapche_ann in self.sapche_anns:
+        for sapche_ann in sapche_anns:
             keys = sapche_ann["sapche_number"].strip(".").split(".")
             current = formatted_sapche_anns
             for key in keys:
@@ -208,11 +184,7 @@ class CommentarySerializer:
                     }
                 current = current[key]["children"]
 
-        assert self.pecha is not None, "Pecha object is not set"
-        assert self.pecha.metadata is not None, "Pecha metadata is not set"
-
-        self.prepared_content = format_tree(formatted_sapche_anns)
-        return self.prepared_content
+        return format_tree(formatted_sapche_anns)
 
     @staticmethod
     def format_commentary_segment_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
@@ -230,15 +202,15 @@ class CommentarySerializer:
             return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
         return ann["text"].strip()
 
-    def get_text_related_to_sapche(self):
+    def get_text_related_to_sapche(self, pecha: Pecha, sapche_anns: List[Dict]):
         """
         Get the text related to the sapche annotations from meaning segment layer,
         and add to 'meaning_segments' key of sapche annotations
         """
-        self.get_meaning_segment_anns()
+        meaning_segment_anns = self.get_meaning_segment_anns(pecha)
 
-        num_of_sapches = len(self.sapche_anns)
-        for idx, sapche_ann in enumerate(self.sapche_anns):
+        num_of_sapches = len(sapche_anns)
+        for idx, sapche_ann in enumerate(sapche_anns):
             start = sapche_ann["Span"]["start"]
             end = sapche_ann["Span"]["end"]
 
@@ -246,12 +218,12 @@ class CommentarySerializer:
 
             # Determine the boundary for the next sapche annotation, if applicable
             next_start = (
-                self.sapche_anns[idx + 1]["Span"]["start"]
+                sapche_anns[idx + 1]["Span"]["start"]
                 if idx < num_of_sapches - 1
                 else None
             )
 
-            for meaning_segment_ann in self.meaning_segment_anns:
+            for meaning_segment_ann in meaning_segment_anns:
                 meaning_segment_start = meaning_segment_ann["Span"]["start"]
                 meaning_segment_end = meaning_segment_ann["Span"]["end"]
 
@@ -272,20 +244,15 @@ class CommentarySerializer:
                     )
                     sapche_ann["meaning_segments"].append(formatted_meaning_segment_ann)
 
-    def fill_json_content(self):
+    def get_json_content(self, pecha: Pecha):
         """
         Fill the source and target content to the json format
         """
-        self.prepare_content()
+        content = self.get_content(pecha)
 
-        assert self.pecha is not None, "Pecha object is not set"
-        assert self.pecha.metadata is not None, "Pecha metadata is not set"
+        bo_title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
 
-        bo_title = self.pecha.metadata.title.get("bo") or self.pecha.metadata.title.get(
-            "BO"
-        )
-
-        pecha_lang = self.pecha.metadata.language
+        pecha_lang = pecha.metadata.language
 
         if pecha_lang == Language.tibetan:
             pecha_lang = Language.english
@@ -293,51 +260,49 @@ class CommentarySerializer:
         pecha_lang_lowercase = pecha_lang.value.lower()
         pecha_lang_uppercase = pecha_lang.value.upper()
 
-        other_title = self.pecha.metadata.title.get(
+        other_title = pecha.metadata.title.get(
             pecha_lang_lowercase
-        ) or self.pecha.metadata.title.get(pecha_lang_uppercase)
+        ) or pecha.metadata.title.get(pecha_lang_uppercase)
 
-        if self.pecha.metadata.language == Language.tibetan:
-            self.source_book[0]["content"] = {
+        if pecha.metadata.language == Language.tibetan:
+            src_content = {
                 other_title: {
                     "data": [],
-                    **get_en_content_translation(self.prepared_content),
+                    **get_en_content_translation(content),
                 }
             }
-            self.target_book[0]["content"] = {
-                bo_title: {"data": [], **self.prepared_content}
-            }
+            tgt_content = {bo_title: {"data": [], **content}}
 
         else:
-            self.source_book[0]["content"] = {
-                other_title: {"data": [], **self.prepared_content}
-            }
-            self.target_book[0]["content"] = {
+            src_content = {other_title: {"data": [], **content}}
+            tgt_content = {
                 bo_title: {
                     "data": [],
-                    **get_bo_content_translation(self.prepared_content),
+                    **get_bo_content_translation(content),
                 }
             }
+        return (src_content, tgt_content)
 
     def serialize(self, pecha_path: Path, root_title: str):
         """
         Serialize the commentary pecha to json format
         """
-        self.root_title = root_title
 
-        self.pecha_path = pecha_path
-        self.pecha = Pecha.from_path(pecha_path)
+        pecha = Pecha.from_path(pecha_path)
 
-        assert self.pecha is not None, "Pecha object is not set"
-        assert self.pecha.metadata is not None, "Pecha metadata is not set"
+        src_book, tgt_book = [], []
+        src_metadata, tgt_metadata = self.extract_metadata(pecha)
+        src_book.append(src_metadata)
+        tgt_book.append(tgt_metadata)
 
-        self.set_metadata_to_json()
-        self.set_category_to_json()
+        src_category, tgt_category = self.get_categories(pecha, root_title)
 
-        self.fill_json_content()
+        src_content, tgt_content = self.get_json_content(pecha)
+        src_book[0]["content"] = src_content
+        tgt_book[0]["content"] = tgt_content
 
         serialized_json = {
-            "source": {"categories": self.source_category, "book": self.source_book},
-            "target": {"categories": self.target_category, "book": self.target_book},
+            "source": {"categories": src_category, "book": src_book},
+            "target": {"categories": tgt_category, "book": tgt_book},
         }
         return serialized_json

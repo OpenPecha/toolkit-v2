@@ -1,5 +1,4 @@
 import os
-import shutil
 import subprocess
 import time
 from pathlib import Path
@@ -18,10 +17,10 @@ from openpecha.exceptions import (
     FileUploadError,
     GithubCloneError,
     GithubRepoError,
+    GithubTokenNotSetError,
     InvalidTokenError,
     OrganizationNotFoundError,
 )
-
 
 org = None
 
@@ -56,7 +55,7 @@ def create_github_repo(path, org_name, token, private=False, description=None):
 
 
 def upload_folder_to_github(
-    repo_name: str, folder_path: Path, org_name: str = GITHUB_ORG_NAME  
+    repo_name: str, folder_path: Path, org_name: str = GITHUB_ORG_NAME
 ) -> None:
     """
     Upload a folder to a GitHub repository.
@@ -121,17 +120,18 @@ def clone_repo(
 
     if (target_path).exists():
         _mkdir(target_path)
-    
-    GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Get token from environment variable
 
-    repo_url = f"https://{GITHUB_TOKEN}@github.com/{org_name}/{repo_name}.git"
+    GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Get token from environment variable
+    if not GITHUB_TOKEN:
+        raise GithubTokenNotSetError("GITHUB_TOKEN environment variable not set !!!")
+
+    repo_url = f"https://{GITHUB_TOKEN}@github.com/{org_name}/{repo_name}.git"  # noqa
     try:
         subprocess.run(
             ["git", "clone", repo_url, str(target_path)],
             check=True,
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-
+            stderr=subprocess.DEVNULL,
         )
         return target_path
     except subprocess.CalledProcessError as e:
@@ -224,5 +224,3 @@ def commit(repo_path, message, not_includes, branch=None):
             message = "Initial commit"
         repo.git.commit("-m", message)
         repo.git.push("origin", branch)
-
-

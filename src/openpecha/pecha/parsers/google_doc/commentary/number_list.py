@@ -4,11 +4,18 @@ from typing import Any, Dict, List, Tuple, Union
 
 from docx2python import docx2python
 
-from openpecha.config import PECHAS_PATH
+from openpecha.config import PECHAS_PATH, get_logger
+from openpecha.exceptions import (
+    EmptyFileError,
+    FileNotFoundError,
+    MetaDataValidationError,
+)
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
+
+logger = get_logger(__name__)
 
 
 class DocxNumberListCommentaryParser(BaseParser):
@@ -68,6 +75,14 @@ class DocxNumberListCommentaryParser(BaseParser):
         """
         # Normalize text
         text = docx2python(docx_file).text
+        if not text:
+            logger.warning(
+                f"The docx file {str(docx_file)} is empty or contains only whitespace."
+            )
+            raise EmptyFileError(
+                f"[Error] The document '{str(docx_file)}' is empty or contains only whitespace."
+            )
+
         text = self.normalize_text(text)
 
         # Extract text with numbered list from docx file
@@ -102,8 +117,16 @@ class DocxNumberListCommentaryParser(BaseParser):
         pecha_id: Union[str, None] = None,
     ):
         input = Path(input)
+        if not input.exists():
+            logger.error(f"The input docx file {str(input)} does not exist.")
+            raise FileNotFoundError(
+                f"[Error] The input file '{str(input)}' does not exist."
+            )
+        output_path.mkdir(parents=True, exist_ok=True)
+
         anns, base = self.extract_commentary_segments_anns(input)
         pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
+        logger.info(f"Pecha {pecha.id} is created successfully.")
         return pecha
 
     def create_pecha(
@@ -125,13 +148,19 @@ class DocxNumberListCommentaryParser(BaseParser):
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
         meaning_segment_layer.save()
 
-        pecha.set_metadata(
-            PechaMetaData(
+        try:
+            pecha_metadata = PechaMetaData(
                 id=pecha.id,
                 parser=self.name,
                 initial_creation_type=InitialCreationType.google_docx,
                 **metadata,
             )
-        )
+        except Exception as e:
+            logger.error(f"The metadata given was not valid. {str(e)}")
+            raise MetaDataValidationError(
+                f"[Error] The metadata given was not valid. {str(e)}"
+            )
+        else:
+            pecha.set_metadata(pecha_metadata)
 
         return (pecha, layer_path)
