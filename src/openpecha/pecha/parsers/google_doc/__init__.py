@@ -12,6 +12,14 @@ from openpecha.pecha.parsers.google_doc.numberlist_translation import (
 
 class DocxParser:
     def is_commentary_pecha(self, metadatas: List[Dict]) -> bool:
+        """Checks if the given metadata corresponds to a commentary Pecha.
+
+        Args:
+            metadatas (List[Dict]): List of dictionaries containing metadata of the Pecha.
+
+        Returns:
+            bool: True if the Pecha is a commentary, otherwise False.
+        """
         for metadata in metadatas:
             if "commentary_of" in metadata and metadata["commentary_of"]:
                 return True
@@ -24,16 +32,17 @@ class DocxParser:
         output_path: Path,
         pecha_id: Union[str, None] = None,
     ) -> Pecha:
-        """_summary_
+        """Parses a DOCX file and generates a Pecha object based on its type.
 
         Args:
-            docx_file (Union[str, Path]): _description_
-            metadatas (List[Dict]): list of dictionary. Each dictionary contains metadata of the pecha.
-            output_path (Path): _description_
-            pecha_id (Union[str, None], optional): _description_. Defaults to None.
+            docx_file (Union[str, Path]): Path to the DOCX file to be parsed.
+            metadatas (List[Dict]): List of dictionaries, where each dictionary
+                                    contains metadata of the Pecha.
+            output_path (Path):
+            pecha_id (Union[str, None], optional): Pecha ID to be assigned. Defaults to None.
 
         Returns:
-            Pecha: _description_
+            Pecha: Pecha object.
         """
         is_commentary = self.is_commentary_pecha(metadatas)
 
