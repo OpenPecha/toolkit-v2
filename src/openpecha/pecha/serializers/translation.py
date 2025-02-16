@@ -3,6 +3,7 @@ from typing import Dict, List, Union
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
+from openpecha.config import get_logger
 from openpecha.exceptions import (
     AlignmentDataKeyMissingError,
     FileNotFoundError,
@@ -11,6 +12,8 @@ from openpecha.exceptions import (
 from openpecha.pecha import Pecha, get_pecha_with_id
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
+
+logger = get_logger(__name__)
 
 
 class TextTranslationSerializer:
@@ -60,6 +63,7 @@ class TextTranslationSerializer:
     def get_root_content(self, pecha: Pecha, layer_path: str):
         ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
         if not ann_store_path.exists():
+            logger.error(f"The layer path {str(ann_store_path)} does not exist.")
             raise FileNotFoundError(
                 f"[Error] The layer path '{str(ann_store_path)}' does not exist."
             )
@@ -67,6 +71,9 @@ class TextTranslationSerializer:
         try:
             segment_layer = AnnotationStore(file=ann_store_path.as_posix())
         except Exception as e:
+            logger.error(
+                f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
+            )
             raise StamAnnotationStoreLoadError(
                 f"[Error] Error loading annotation store from layer path: {layer_path}. {str(e)}"
             )
@@ -83,6 +90,7 @@ class TextTranslationSerializer:
         """
         ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
         if not ann_store_path.exists():
+            logger.error(f"The layer path {str(ann_store_path)} does not exist.")
             raise FileNotFoundError(
                 f"[Error] The layer path '{str(ann_store_path)}' does not exist."
             )
@@ -90,6 +98,9 @@ class TextTranslationSerializer:
         try:
             translation_segment_layer = AnnotationStore(file=ann_store_path.as_posix())
         except Exception as e:
+            logger.error(
+                f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
+            )
             raise StamAnnotationStoreLoadError(
                 f"[Error] Error loading annotation store from layer path: {ann_store_path}. {str(e)}"
             )
@@ -132,8 +143,11 @@ class TextTranslationSerializer:
 
         if alignment_data:
             if "source" not in alignment_data or "target" not in alignment_data:
+                logger.error(
+                    f"Pecha {pecha.id} alignment data must have 'source' and 'target' keys."
+                )
                 raise AlignmentDataKeyMissingError(
-                    "Pecha alignment data must have 'source' and 'target' keys."
+                    f"Pecha {pecha.id} alignment data must have 'source' and 'target' keys."
                 )
             root_pecha = get_pecha_with_id(alignment_data["source"].split("/")[0])
             translation_pecha = pecha
@@ -174,5 +188,5 @@ class TextTranslationSerializer:
             "source": translation_json,
             "target": root_json,
         }
-
+        logger.info(f"Pecha {pecha.id} is serialized successfully.")
         return serialized_json
