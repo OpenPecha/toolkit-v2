@@ -6,6 +6,7 @@ from typing import Dict, List, Tuple, Union
 from docx import Document
 
 from openpecha.config import PECHAS_PATH
+from openpecha.exceptions import InvalidLanguageEnumError
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
@@ -40,7 +41,9 @@ class GoogleDocTranslationParser(BaseParser):
         if lang == Language.italian.value:
             return LayerEnum.italian_segment
 
-        assert f"Language not properly given in metadata path: {str(input)}."
+        raise InvalidLanguageEnumError(
+            f"[Error] The language enum '{lang}' from metadata is invalid."
+        )
 
     def get_docx_content(self, input):
         docs = Document(input)
