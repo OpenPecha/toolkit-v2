@@ -13,7 +13,13 @@ from openpecha.catalog import PechaDataCatalog
 from openpecha.config import GITHUB_ORG_NAME, PECHAS_PATH
 from openpecha.exceptions import GithubCloneError, StamAddAnnotationError
 from openpecha.github_utils import clone_repo, create_release
-from openpecha.ids import get_annotation_id, get_base_id, get_initial_pecha_id, get_uuid
+from openpecha.ids import (
+    get_annotation_id,
+    get_base_id,
+    get_initial_pecha_id,
+    get_layer_id,
+    get_uuid,
+)
 from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
@@ -141,7 +147,7 @@ class Pecha:
 
         ann_store = AnnotationStore(id=self.id)
         ann_store_path = (
-            self.layer_path / base_name / f"{layer_type.value}-{get_base_id()}.json"
+            self.layer_path / base_name / f"{layer_type.value}-{get_layer_id()}.json"
         )
         ann_store.set_filename(str(ann_store_path))
         ann_store.add_resource(

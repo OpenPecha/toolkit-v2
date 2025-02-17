@@ -18,6 +18,10 @@ def get_base_id():
     return get_id("", length=4)
 
 
+def get_layer_id():
+    return get_id("", length=4)
+
+
 def get_initial_pecha_id():
     return get_id(prefix="I", length=8)
 
