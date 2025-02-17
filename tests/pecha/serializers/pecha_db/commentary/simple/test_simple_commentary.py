@@ -55,6 +55,26 @@ class TestSimpleCommentarySerializer(TestCase):
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
+    @mock.patch(
+        "openpecha.pecha.serializers.commentary.simple_commentary.get_pecha_with_id"
+    )
+    def test_zh_commentary_serializer(self, mock_get_pecha_with_id):
+        mock_get_pecha_with_id.return_value = Pecha.from_path(DATA_DIR / "bo/I6944984E")
+        pecha_path = DATA_DIR / "zh/I9A60B88D"
+
+        serializer = SimpleCommentarySerializer()
+        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
+
+        expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")
+        assert serialized_json == expected_serialized_json
+
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
+
+
+work = TestSimpleCommentarySerializer()
+work.setUp()
+work.test_bo_commentary_serializer()
+work.test_en_commentary_serializer()
+work.test_zh_commentary_serializer()
