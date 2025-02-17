@@ -39,10 +39,10 @@ def test_get_base_id():
 
 
 def test_get_layer_id():
-    base_id = get_layer_id()
+    layer_id = get_layer_id()
     assert re.match(
-        r"^[0-9A-F]{4}$", base_id
-    ), f"Base ID {base_id} is not in the correct format"
+        r"^[0-9A-F]{4}$", layer_id
+    ), f"Base ID {layer_id} is not in the correct format"
 
 
 def test_get_initial_pecha_id():
