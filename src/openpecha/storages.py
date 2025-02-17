@@ -8,8 +8,8 @@ import git
 from git import GitCommandError, Repo
 from github import Github
 
-from openpecha.github_utils import create_github_repo, clone_repo
-from openpecha.config import GITHUB_ORG_NAME, TEMP_CACHE_PATH
+from openpecha.config import GITHUB_ORG_NAME
+from openpecha.github_utils import create_github_repo
 
 URL: str
 
@@ -233,9 +233,7 @@ class GithubStorage(Storage):
         repo.delete_file(contents.path, message, contents.sha, branch=branch)
 
 
-def update_github_repo(
-    input_data_dir: Path, repo_name: str, org_name: str = GITHUB_ORG_NAME
-):
+def update_github_repo(input_data_dir: Path, repo_path: Path):
     """
     Overwrite the files in the github repo with the files in the input data dir
     1. Clone the repo from the github organization
@@ -243,10 +241,6 @@ def update_github_repo(
     2. Copy files from input data dir to new git repo
     3. Commit and push the changes in main branch
     """
-    if (TEMP_CACHE_PATH / repo_name).exists():
-        shutil.rmtree(TEMP_CACHE_PATH / repo_name)
-
-    repo_path = clone_repo(repo_name, TEMP_CACHE_PATH, org_name)
 
     # delete files from the new repo
     for file in repo_path.glob("*"):
@@ -279,4 +273,3 @@ def update_github_repo(
         config.set_value("user", "email", git_user_email)
 
     commit_and_push(local_repo, message="Pecha update")
-
