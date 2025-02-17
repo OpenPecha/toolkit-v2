@@ -1,7 +1,10 @@
 from pathlib import Path
 from unittest import TestCase, mock
 
-from openpecha.pecha.serializers.commentary import CommentarySerializer
+from openpecha.pecha import Pecha
+from openpecha.pecha.serializers.commentary.complex_commentary import (
+    ComplexCommentarySerializer,
+)
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -41,7 +44,7 @@ class TestCommentarySerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
-            "openpecha.pecha.serializers.commentary.CategoryExtractor.get_category",
+            "openpecha.pecha.serializers.commentary.complex_commentary.CategoryExtractor.get_category",
             return_value={
                 "bo": [
                     {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
@@ -61,40 +64,40 @@ class TestCommentarySerializer(TestCase):
         self.mock_get_category = self.patcher.start()
 
     @mock.patch(
-        "openpecha.pecha.serializers.commentary.get_en_content_translation",
+        "openpecha.pecha.serializers.commentary.complex_commentary.get_en_content_translation",
         return_value=MOCK_BO_TO_EN_TRANSLATION,
     )
     def test_bo_commentary_serializer(self, mock_get_en_translation):
-        pecha_path = DATA_DIR / "bo/I0EB9B939"
+        pecha = Pecha.from_path(DATA_DIR / "bo/I0EB9B939")
 
-        serializer = CommentarySerializer()
-        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
+        serializer = ComplexCommentarySerializer()
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
     @mock.patch(
-        "openpecha.pecha.serializers.commentary.get_bo_content_translation",
+        "openpecha.pecha.serializers.commentary.complex_commentary.get_bo_content_translation",
         return_value=MOCK_EN_TO_BO_TRANSLATION,
     )
     def test_en_commentary_serializer(self, mock_get_bo_translation):
-        pecha_path = DATA_DIR / "en/I088F7504"
+        pecha = Pecha.from_path(DATA_DIR / "en/I088F7504")
 
-        serializer = CommentarySerializer()
-        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
+        serializer = ComplexCommentarySerializer()
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
     @mock.patch(
-        "openpecha.pecha.serializers.commentary.get_bo_content_translation",
+        "openpecha.pecha.serializers.commentary.complex_commentary.get_bo_content_translation",
         return_value=MOCK_ZH_TO_BO_TRANSLATION,
     )
     def test_zh_commentary_serializer(self, mock_get_bo_translation):
-        pecha_path = DATA_DIR / "zh/I8BCEC781"
+        pecha = Pecha.from_path(DATA_DIR / "zh/I8BCEC781")
 
-        serializer = CommentarySerializer()
-        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
+        serializer = ComplexCommentarySerializer()
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")
         assert serialized_json == expected_serialized_json

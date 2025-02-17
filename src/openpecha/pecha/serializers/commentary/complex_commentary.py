@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
@@ -14,7 +13,7 @@ from openpecha.pecha.metadata import Language, PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
 
-class CommentarySerializer:
+class ComplexCommentarySerializer:
     def extract_metadata(self, pecha: Pecha):
         """
         Extract neccessary metadata from opf for serialization to json
@@ -61,21 +60,15 @@ class CommentarySerializer:
         """
         Modify the category format to the required format for pecha.org commentary
         """
-        last_bo_category = category["bo"][-1]
-        last_en_category = category["en"][-1]
-
-        last_bo_category["base_text_titles"] = [root_title]
-        last_en_category["base_text_titles"] = [root_title]
-
-        last_bo_category["base_text_mapping"] = "many_to_one"
-        last_en_category["base_text_mapping"] = "many_to_one"
-
-        last_bo_category["link"] = "Commentary"
-        last_en_category["link"] = "Commentary"
-
-        category["bo"][-1] = last_bo_category
-        category["en"][-1] = last_en_category
-
+        for lang in ["bo", "en"]:
+            last_category = category[lang][-1]
+            last_category.update(
+                {
+                    "base_text_titles": [root_title],
+                    "base_text_mapping": "many_to_one",
+                    "link": "Commentary",
+                }
+            )
         return category
 
     def get_categories(self, pecha: Pecha, root_title: str):
@@ -283,12 +276,10 @@ class CommentarySerializer:
             }
         return (src_content, tgt_content)
 
-    def serialize(self, pecha_path: Path, root_title: str):
+    def serialize(self, pecha: Pecha, root_title: str):
         """
         Serialize the commentary pecha to json format
         """
-
-        pecha = Pecha.from_path(pecha_path)
 
         src_book, tgt_book = [], []
         src_metadata, tgt_metadata = self.extract_metadata(pecha)
@@ -302,7 +293,7 @@ class CommentarySerializer:
         tgt_book[0]["content"] = tgt_content
 
         serialized_json = {
-            "source": {"categories": src_category, "book": src_book},
-            "target": {"categories": tgt_category, "book": tgt_book},
+            "source": {"categories": src_category, "books": src_book},
+            "target": {"categories": tgt_category, "books": tgt_book},
         }
         return serialized_json
