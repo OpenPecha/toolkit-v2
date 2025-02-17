@@ -26,6 +26,9 @@ class SimpleCommentarySerializer:
         source_title = metadata.title.get(src_lang.lower()) or metadata.title.get(
             src_lang.upper()
         )
+        source_title = (
+            source_title if src_lang == "en" else f"{source_title}[{src_lang}]"
+        )
         target_lang = "bo"
         target_title = metadata.title.get(target_lang.lower()) or metadata.title.get(
             target_lang.upper()
