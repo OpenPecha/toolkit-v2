@@ -23,14 +23,18 @@ class SimpleCommentarySerializer:
             )
 
         pecha_lang = pecha.metadata.language.value
-        source_title = metadata.title.get(pecha_lang.lower()) or metadata.title.get(
-            pecha_lang.upper()
+        src_lang = "en" if pecha_lang == "bo" else pecha_lang
+        source_title = metadata.title.get(src_lang.lower()) or metadata.title.get(
+            src_lang.upper()
         )
-        target_title = metadata.title.get("bo") or metadata.title.get("BO")
+        target_lang = "bo"
+        target_title = metadata.title.get(target_lang.lower()) or metadata.title.get(
+            target_lang.upper()
+        )
 
         src_metadata = {
             "title": source_title,
-            "language": "en",
+            "language": src_lang,
             "versionSource": metadata.source if metadata.source else "",
             "direction": get_text_direction_with_lang("en"),
             "completestatus": "done",
@@ -38,7 +42,7 @@ class SimpleCommentarySerializer:
 
         tgt_metadata = {
             "title": target_title,
-            "language": "bo",
+            "language": target_lang,
             "versionSource": metadata.source if metadata.source else "",
             "direction": get_text_direction_with_lang("bo"),
             "completestatus": "done",

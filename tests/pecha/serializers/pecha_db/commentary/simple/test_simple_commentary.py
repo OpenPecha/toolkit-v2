@@ -71,10 +71,3 @@ class TestSimpleCommentarySerializer(TestCase):
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
-
-
-work = TestSimpleCommentarySerializer()
-work.setUp()
-# work.test_bo_commentary_serializer()
-work.test_en_commentary_serializer()
-# work.test_zh_commentary_serializer()
