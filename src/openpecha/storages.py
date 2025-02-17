@@ -8,8 +8,8 @@ import git
 from git import GitCommandError, Repo
 from github import Github
 
-from openpecha.github_utils import create_github_repo, clone_repo
-from openpecha.config import GITHUB_ORG_NAME, TEMP_CACHE_PATH
+from openpecha.config import GITHUB_ORG_NAME
+from openpecha.github_utils import create_github_repo
 
 URL: str
 
@@ -233,23 +233,9 @@ class GithubStorage(Storage):
         repo.delete_file(contents.path, message, contents.sha, branch=branch)
 
 
-def update_github_repo(
-    input_data_dir: Path, repo_name: str, org_name: str = GITHUB_ORG_NAME
-):
-    """
-    Overwrite the files in the github repo with the files in the input data dir
-    1. Clone the repo from the github organization
-    2. Delete files from the new repo
-    2. Copy files from input data dir to new git repo
-    3. Commit and push the changes in main branch
-    """
-    if (TEMP_CACHE_PATH / repo_name).exists():
-        shutil.rmtree(TEMP_CACHE_PATH / repo_name)
-
-    repo_path = clone_repo(repo_name, TEMP_CACHE_PATH, org_name)
-
+def update_git_folder(update_source_folder_path: Path, update_dest_folder_path: Path):
     # delete files from the new repo
-    for file in repo_path.glob("*"):
+    for file in update_dest_folder_path.glob("*"):
         if file.name in [".git", ".github"]:
             continue
 
@@ -259,14 +245,26 @@ def update_github_repo(
             file.unlink()
 
     # Copy files from input data dir to new git repo
-    for file in input_data_dir.rglob("*"):
+    for file in update_source_folder_path.rglob("*"):
         if file.is_file():
-            relative_path = file.relative_to(input_data_dir)
-            dest_path = repo_path / relative_path
+            relative_path = file.relative_to(update_source_folder_path)
+            dest_path = update_dest_folder_path / relative_path
 
             dest_path.parent.mkdir(parents=True, exist_ok=True)
 
             shutil.copy2(file, dest_path)
+
+
+def update_github_repo(input_data_dir: Path, repo_path: Path):
+    """
+    Overwrite the files in the github repo with the files in the input data dir
+    1. Clone the repo from the github organization
+    2. Delete files from the new repo
+    2. Copy files from input data dir to new git repo
+    3. Commit and push the changes in main branch
+    """
+
+    update_git_folder(input_data_dir, repo_path)
 
     # Commit and push the changes in main branch
     local_repo = Repo(repo_path)
@@ -279,4 +277,3 @@ def update_github_repo(
         config.set_value("user", "email", git_user_email)
 
     commit_and_push(local_repo, message="Pecha update")
-
