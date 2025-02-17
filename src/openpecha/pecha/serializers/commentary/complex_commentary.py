@@ -61,21 +61,15 @@ class ComplexCommentarySerializer:
         """
         Modify the category format to the required format for pecha.org commentary
         """
-        last_bo_category = category["bo"][-1]
-        last_en_category = category["en"][-1]
-
-        last_bo_category["base_text_titles"] = [root_title]
-        last_en_category["base_text_titles"] = [root_title]
-
-        last_bo_category["base_text_mapping"] = "many_to_one"
-        last_en_category["base_text_mapping"] = "many_to_one"
-
-        last_bo_category["link"] = "Commentary"
-        last_en_category["link"] = "Commentary"
-
-        category["bo"][-1] = last_bo_category
-        category["en"][-1] = last_en_category
-
+        for lang in ["bo", "en"]:
+            last_category = category[lang][-1]
+            last_category.update(
+                {
+                    "base_text_titles": [root_title],
+                    "base_text_mapping": "many_to_one",
+                    "link": "Commentary",
+                }
+            )
         return category
 
     def get_categories(self, pecha: Pecha, root_title: str):
