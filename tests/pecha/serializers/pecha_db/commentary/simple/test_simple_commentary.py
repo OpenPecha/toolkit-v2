@@ -34,10 +34,10 @@ class TestSimpleCommentarySerializer(TestCase):
         self.mock_get_category = self.patcher.start()
 
     def test_bo_commentary_serializer(self):
-        pecha_path = DATA_DIR / "bo/I6944984E"
+        pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
 
         serializer = SimpleCommentarySerializer()
-        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -47,10 +47,10 @@ class TestSimpleCommentarySerializer(TestCase):
     )
     def test_en_commentary_serializer(self, mock_get_pecha_with_id):
         mock_get_pecha_with_id.return_value = Pecha.from_path(DATA_DIR / "bo/I6944984E")
-        pecha_path = DATA_DIR / "en/I94DBDA91"
+        pecha = Pecha.from_path(DATA_DIR / "en/I94DBDA91")
 
         serializer = SimpleCommentarySerializer()
-        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -60,10 +60,10 @@ class TestSimpleCommentarySerializer(TestCase):
     )
     def test_zh_commentary_serializer(self, mock_get_pecha_with_id):
         mock_get_pecha_with_id.return_value = Pecha.from_path(DATA_DIR / "bo/I6944984E")
-        pecha_path = DATA_DIR / "zh/I9A60B88D"
+        pecha = Pecha.from_path(DATA_DIR / "zh/I9A60B88D")
 
         serializer = SimpleCommentarySerializer()
-        serialized_json = serializer.serialize(pecha_path, "Vajra Cutter")
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
