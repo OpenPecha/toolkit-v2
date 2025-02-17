@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any, Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
@@ -277,12 +276,10 @@ class ComplexCommentarySerializer:
             }
         return (src_content, tgt_content)
 
-    def serialize(self, pecha_path: Path, root_title: str):
+    def serialize(self, pecha: Pecha, root_title: str):
         """
         Serialize the commentary pecha to json format
         """
-
-        pecha = Pecha.from_path(pecha_path)
 
         src_book, tgt_book = [], []
         src_metadata, tgt_metadata = self.extract_metadata(pecha)
