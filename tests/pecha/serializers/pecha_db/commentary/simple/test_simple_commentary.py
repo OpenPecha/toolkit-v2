@@ -75,6 +75,6 @@ class TestSimpleCommentarySerializer(TestCase):
 
 work = TestSimpleCommentarySerializer()
 work.setUp()
-work.test_bo_commentary_serializer()
+# work.test_bo_commentary_serializer()
 work.test_en_commentary_serializer()
-work.test_zh_commentary_serializer()
+# work.test_zh_commentary_serializer()

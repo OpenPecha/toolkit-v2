@@ -22,7 +22,10 @@ class SimpleCommentarySerializer:
                 f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
             )
 
-        source_title = metadata.title.get("en") or metadata.title.get("EN")
+        pecha_lang = pecha.metadata.language.value
+        source_title = metadata.title.get(pecha_lang.lower()) or metadata.title.get(
+            pecha_lang.upper()
+        )
         target_title = metadata.title.get("bo") or metadata.title.get("BO")
 
         src_metadata = {
@@ -35,9 +38,9 @@ class SimpleCommentarySerializer:
 
         tgt_metadata = {
             "title": target_title,
-            "language": metadata.language.value,
+            "language": "bo",
             "versionSource": metadata.source if metadata.source else "",
-            "direction": get_text_direction_with_lang(metadata.language),
+            "direction": get_text_direction_with_lang("bo"),
             "completestatus": "done",
         }
 
