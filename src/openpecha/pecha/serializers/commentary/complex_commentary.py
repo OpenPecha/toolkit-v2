@@ -296,7 +296,7 @@ class ComplexCommentarySerializer:
         tgt_book[0]["content"] = tgt_content
 
         serialized_json = {
-            "source": {"categories": src_category, "book": src_book},
-            "target": {"categories": tgt_category, "book": tgt_book},
+            "source": {"categories": src_category, "books": src_book},
+            "target": {"categories": tgt_category, "books": tgt_book},
         }
         return serialized_json
