@@ -88,14 +88,13 @@ class SimpleCommentarySerializer:
 
         return (category["en"], category["bo"])  # source and target category
 
-    def get_content(self, pecha: Pecha):
+    def get_content(self, pecha: Pecha, layer_path: str):
         """
         Prepare content in the sapche annotations to the required format(Tree like structure)
         """
+        ann_layer_path = pecha.pecha_path.parent.joinpath(layer_path)
+        segment_layer = AnnotationStore(file=str(ann_layer_path))
 
-        segment_layer = AnnotationStore(
-            file=str(next(pecha.layer_path.rglob("*.json")))
-        )
         anns = get_anns(segment_layer)
         contents = [self.format_commentary_ann(ann) for ann in anns]
         return contents
@@ -116,7 +115,7 @@ class SimpleCommentarySerializer:
             return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
         return ann["text"].strip()
 
-    def serialize(self, pecha: Pecha, root_title: str):
+    def serialize(self, pecha: Pecha, alignment_data: Dict, root_title: str):
         """
         Serialize the commentary pecha to json format
         """
@@ -129,15 +128,18 @@ class SimpleCommentarySerializer:
         src_category, tgt_category = self.get_categories(pecha, root_title)
 
         if "translation_of" in pecha.metadata.source_metadata:
-            src_content = self.get_content(pecha)
+            translation_path = alignment_data["target"]
+            commentary_path = alignment_data["source"]
+            tgt_layer_path = alignment_data["target"]
+            src_content = self.get_content(pecha, translation_path)
             root_pecha = get_pecha_with_id(
                 pecha.metadata.source_metadata["translation_of"]
             )
-            tgt_content = self.get_content(root_pecha)
+            tgt_content = self.get_content(root_pecha, commentary_path)
         else:
-
+            tgt_layer_path = alignment_data["target"]
             src_content = []
-            tgt_content = self.get_content(pecha)
+            tgt_content = self.get_content(pecha, tgt_layer_path)
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content
 
