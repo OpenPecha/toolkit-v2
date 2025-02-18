@@ -37,7 +37,13 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
 
         serializer = SimpleCommentarySerializer()
-        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
+        commentary_alignment = {
+            "source": "IA74EAD05/layers/717E/Tibetan_Segment-DA1B.json",
+            "target": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
+        }
+        serialized_json = serializer.serialize(
+            pecha, commentary_alignment, "Vajra Cutter"
+        )
 
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -50,7 +56,13 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "en/I94DBDA91")
 
         serializer = SimpleCommentarySerializer()
-        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
+        commentary_alignment = {
+            "source": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
+            "target": "I94DBDA91/layers/FD22/Meaning_Segment-599A.json",
+        }
+        serialized_json = serializer.serialize(
+            pecha, commentary_alignment, "Vajra Cutter"
+        )
 
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -63,7 +75,13 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "zh/I9A60B88D")
 
         serializer = SimpleCommentarySerializer()
-        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
+        commentary_alignment = {
+            "source": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
+            "target": "I9A60B88D/layers/B97E/Meaning_Segment-22A8.json",
+        }
+        serialized_json = serializer.serialize(
+            pecha, commentary_alignment, "Vajra Cutter"
+        )
 
         expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -71,3 +89,10 @@ class TestSimpleCommentarySerializer(TestCase):
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
+
+
+work = TestSimpleCommentarySerializer()
+work.setUp()
+work.test_bo_commentary_serializer()
+work.test_en_commentary_serializer()
+work.test_zh_commentary_serializer()
