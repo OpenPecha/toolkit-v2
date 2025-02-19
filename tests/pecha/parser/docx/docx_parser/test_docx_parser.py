@@ -1,7 +1,7 @@
 from typing import Collection, Dict, Union
 from unittest import TestCase
 
-from openpecha.pecha.parsers.google_doc import DocxParser
+from openpecha.pecha.parsers.docx import DocxParser
 
 extra_fields = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},

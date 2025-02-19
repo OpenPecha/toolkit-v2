@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.google_doc.commentary.number_list import (
+from openpecha.pecha.parsers.docx.commentary.number_list import (
     DocxNumberListCommentaryParser,
 )
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
@@ -42,7 +42,7 @@ class TestNumberListCommentaryParser(TestCase):
     def test_create_pecha(self):
         parser = DocxNumberListCommentaryParser()
         with tempfile.TemporaryDirectory() as tempdir, mock.patch(
-            "openpecha.pecha.parsers.google_doc.commentary.number_list.DocxNumberListCommentaryParser.extract_commentary_segments_anns"
+            "openpecha.pecha.parsers.docx.commentary.number_list.DocxNumberListCommentaryParser.extract_commentary_segments_anns"
         ) as mock_extract_commentary_segments_anns:
             mock_extract_commentary_segments_anns.return_value = (
                 self.expected_anns,

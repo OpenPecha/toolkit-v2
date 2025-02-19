@@ -2,10 +2,10 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.google_doc.commentary.number_list import (
+from openpecha.pecha.parsers.docx.commentary.number_list import (
     DocxNumberListCommentaryParser,
 )
-from openpecha.pecha.parsers.google_doc.numberlist_translation import (
+from openpecha.pecha.parsers.docx.numberlist_translation import (
     DocxNumberListTranslationParser,
 )
 

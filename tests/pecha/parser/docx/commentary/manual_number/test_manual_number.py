@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.parsers.google_doc.commentary.manual_number import (
+from openpecha.pecha.parsers.docx.commentary.manual_number import (
     GoogleDocCommentaryParser,
 )
 
