@@ -1,9 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.parsers.docx.commentary.manual_number import (
-    GoogleDocCommentaryParser,
-)
+from openpecha.pecha.parsers.docx.commentary.complex import DocxComplexCommentaryParser
 
 
 def test_parser_on_bo_commentary():
@@ -11,7 +9,7 @@ def test_parser_on_bo_commentary():
     input = data / "bo/Tibetan Commentary text test 2.docx"
     metadata = data / "bo/Tibetan Commentary text Metadata 2.xlsx"
 
-    parser = GoogleDocCommentaryParser(
+    parser = DocxComplexCommentaryParser(
         root_path="opf_id/layers/basename/layer_file.json"
     )
 
@@ -34,7 +32,7 @@ def test_parser_on_en_commentary():
     input = data / "en/English aligned Commentary Text 2.docx"
     metadata = data / "en/English Commentary text Metadata 2.xlsx"
 
-    parser = GoogleDocCommentaryParser(
+    parser = DocxComplexCommentaryParser(
         root_path="opf_id/layers/basename/layer_file.json"
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -54,7 +52,7 @@ def test_parser_on_zh_commentary():
     input = data / "zh/Chinese aligned Commentary Text 1.docx"
     metadata = data / "zh/Chinese Commentary text Metadata 1.xlsx"
 
-    parser = GoogleDocCommentaryParser(
+    parser = DocxComplexCommentaryParser(
         root_path="opf_id/layers/basename/layer_file.json"
     )
     with tempfile.TemporaryDirectory() as tmpdirname:

@@ -10,7 +10,7 @@
   "imported": "2024-12-18T09:50:49.562263",
   "source": null,
   "toolkit_version": "0.0.1",
-  "parser": "GoogleDocCommentaryParser",
+  "parser": "DocxComplexCommentaryParser",
   "initial_creation_type": "google_docx",
   "language": "bo",
   "source_metadata": {
