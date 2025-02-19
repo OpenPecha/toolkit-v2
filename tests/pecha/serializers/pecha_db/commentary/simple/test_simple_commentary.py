@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.commentary.simple_commentary import (
+from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
 from openpecha.utils import read_json
@@ -14,7 +14,7 @@ class TestSimpleCommentarySerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
-            "openpecha.pecha.serializers.commentary.simple_commentary.CategoryExtractor.get_category",
+            "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.CategoryExtractor.get_category",
             return_value={
                 "bo": [
                     {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
@@ -49,7 +49,7 @@ class TestSimpleCommentarySerializer(TestCase):
         assert serialized_json == expected_serialized_json
 
     @mock.patch(
-        "openpecha.pecha.serializers.commentary.simple_commentary.get_pecha_with_id"
+        "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.get_pecha_with_id"
     )
     def test_en_commentary_serializer(self, mock_get_pecha_with_id):
         mock_get_pecha_with_id.return_value = Pecha.from_path(DATA_DIR / "bo/I6944984E")
@@ -68,7 +68,7 @@ class TestSimpleCommentarySerializer(TestCase):
         assert serialized_json == expected_serialized_json
 
     @mock.patch(
-        "openpecha.pecha.serializers.commentary.simple_commentary.get_pecha_with_id"
+        "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.get_pecha_with_id"
     )
     def test_zh_commentary_serializer(self, mock_get_pecha_with_id):
         mock_get_pecha_with_id.return_value = Pecha.from_path(DATA_DIR / "bo/I6944984E")
@@ -89,10 +89,3 @@ class TestSimpleCommentarySerializer(TestCase):
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
-
-
-work = TestSimpleCommentarySerializer()
-work.setUp()
-work.test_bo_commentary_serializer()
-work.test_en_commentary_serializer()
-work.test_zh_commentary_serializer()

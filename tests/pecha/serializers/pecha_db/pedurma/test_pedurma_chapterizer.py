@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.serializers.pecha_db import chapterize_serialized_json
+from openpecha.pecha.serializers.pecha_db.pecha_db import chapterize_serialized_json
 from openpecha.utils import read_json
 
 

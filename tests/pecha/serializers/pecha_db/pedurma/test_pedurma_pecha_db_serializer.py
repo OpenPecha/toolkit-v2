@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.serializers.pecha_db import PechaDBSerializer
+from openpecha.pecha.serializers.pecha_db.pecha_db import PechaDBSerializer
 from openpecha.utils import read_json
 
 
