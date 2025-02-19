@@ -10,7 +10,7 @@
   "imported": "2025-02-14T06:58:57.516526",
   "source": "https://library.bdrc.io/",
   "toolkit_version": "0.0.1",
-  "parser": "DocxNumberListCommentaryParser",
+  "parser": "DocxSimpleCommentaryParser",
   "initial_creation_type": "google_docx",
   "language": "en",
   "source_metadata": {

@@ -18,7 +18,7 @@ from openpecha.pecha.parsers import BaseParser
 logger = get_logger(__name__)
 
 
-class DocxNumberListCommentaryParser(BaseParser):
+class DocxSimpleCommentaryParser(BaseParser):
     def __init__(self):
         self.number_list_regex = r"^(\d+)\)\t(.*)"
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"

@@ -13,7 +13,7 @@ from openpecha.pecha.parsers import BaseParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
-class GoogleDocCommentaryParser(BaseParser):
+class DocxComplexCommentaryParser(BaseParser):
     def __init__(self, root_path: Optional[str] = None):
         self.root_path = root_path
         self.commentary_segment_splitter = "\n\n"

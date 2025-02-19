@@ -2,10 +2,8 @@ from pathlib import Path
 from typing import Dict, List, Union
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.google_doc.commentary.number_list import (
-    DocxNumberListCommentaryParser,
-)
-from openpecha.pecha.parsers.google_doc.numberlist_translation import (
+from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
+from openpecha.pecha.parsers.docx.numberlist_translation import (
     DocxNumberListTranslationParser,
 )
 
@@ -47,7 +45,7 @@ class DocxParser:
         is_commentary = self.is_commentary_pecha(metadatas)
 
         if is_commentary:
-            return DocxNumberListCommentaryParser().parse(
+            return DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 output_path=output_path,

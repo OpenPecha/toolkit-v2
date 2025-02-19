@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.google_doc.numberlist_translation import (
+from openpecha.pecha.parsers.docx.numberlist_translation import (
     DocxNumberListTranslationParser,
 )
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
@@ -36,7 +36,7 @@ def test_bo_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for bo data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.google_doc.numberlist_translation.DocxNumberListTranslationParser.extract_root_segments_anns"
+        "openpecha.pecha.parsers.docx.numberlist_translation.DocxNumberListTranslationParser.extract_root_segments_anns"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
@@ -71,7 +71,7 @@ def test_en_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for en data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.google_doc.numberlist_translation.DocxNumberListTranslationParser.extract_root_segments_anns"
+        "openpecha.pecha.parsers.docx.numberlist_translation.DocxNumberListTranslationParser.extract_root_segments_anns"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
