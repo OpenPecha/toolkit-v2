@@ -22,8 +22,8 @@ class Serializer:
                 return True
         return False
 
-    def get_root_title(self, metadatas: List[Dict]):
-        root_title = metadatas[0].get("title", {}).get("en")
+    def get_root_en_title(self, metadatas: List[Dict]):
+        root_title = metadatas[-1].get("title", {}).get("en")
         return root_title
 
     def serialize(
@@ -36,7 +36,7 @@ class Serializer:
 
         is_commentary = self.is_commentary_pecha(metadatas)
         if is_commentary:
-            root_title = self.get_root_title(metadatas)
+            root_title = self.get_root_en_title(metadatas)
             return SimpleCommentarySerializer().serialize(
                 pecha, alignment_data, root_title, root_pecha
             )
