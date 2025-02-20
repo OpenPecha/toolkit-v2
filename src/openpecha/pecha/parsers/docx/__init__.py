@@ -20,12 +20,11 @@ class PechaOrgPechaMetaDataValidator:
         self.validate_lang_title(metadata)
 
     def ensure_no_forbidden_symbols(self, title: str):
-        symbols = ["-", ":", "_"]
+        symbols = ["-", ":", "_", ".", "/"]
         for symbol in symbols:
             if symbol in title:
                 logger.error(f"Title can't have symbol {symbol}")
                 raise MetaDataValidationError(f"Title can't have symbol {symbol}")
-        pass
 
     def validate_metadata_dtype(self, metadata: Dict):
         if not isinstance(metadata, dict):

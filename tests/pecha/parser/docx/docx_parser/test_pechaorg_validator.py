@@ -46,6 +46,12 @@ def test_ensure_no_forbidden_symbols(validator):
     with pytest.raises(MetaDataValidationError, match="Title can't have symbol _"):
         validator.ensure_no_forbidden_symbols("Invalid_Title")
 
+    with pytest.raises(MetaDataValidationError, match="Title can't have symbol ."):
+        validator.ensure_no_forbidden_symbols("Invalid.Title")
+
+    with pytest.raises(MetaDataValidationError, match="Title can't have symbol /"):
+        validator.ensure_no_forbidden_symbols("Invalid/Title")
+
 
 def test_validate_metadata_success(validator):
     metadata = {
