@@ -51,7 +51,7 @@ class Serializer:
                 f"Title should be a dictionary in Root Pecha {root_pecha.id}."
             )
 
-        en_title = title.get("en")
+        en_title = next((title[key] for key in title if key.lower() == "en"), None)
 
         if not en_title:
             logger.error(f"English title is missing in Root Pecha {root_pecha.id}.")

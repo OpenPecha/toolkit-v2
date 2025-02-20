@@ -138,7 +138,9 @@ class TestSerializer(TestCase):
         self.root_translation_pecha = Pecha.from_path(
             Path("tests/pecha/serializers/pecha_db/translation/data/en/I62E00D78")
         )
-        # self.commentary_pecha = Pecha.from_path("")
+        self.commentary_pecha = Pecha.from_path(
+            Path("tests/pecha/serializers/pecha_db/commentary/simple/data/bo/I6944984E")
+        )
         # self.commentary_translation_pecha = Pecha.from_path("")
         self.root_pecha_metadata = {
             "translation_of": None,
@@ -151,6 +153,12 @@ class TestSerializer(TestCase):
             "commentary_of": None,
             "version_of": None,
             **self.root_translation_pecha.metadata.to_dict(),
+        }
+        self.commentary_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": "IE60BBDE8",
+            "version_of": None,
+            **self.commentary_pecha.metadata.to_dict(),
         }
 
     @mock.patch(
@@ -191,8 +199,30 @@ class TestSerializer(TestCase):
             self.root_translation_pecha, alignment_data, self.root_pecha
         )
 
-    def test_commentary_pecha(self):
-        pass
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.SimpleCommentarySerializer.serialize"
+    )
+    def test_commentary_pecha(self, mock_commentary_serialize):
+        mock_commentary_serialize.return_value = {}
+        pechas = [self.commentary_pecha, self.root_pecha]
+        metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
+        alignment_data = {
+            "source": "IE60BBDE8/layers/3635/Tibetan_Segment-039B.json",
+            "target": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
+        }
+
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas, alignment_data)
+
+        mock_commentary_serialize.assert_called_once()
+        mock_commentary_serialize.assert_called_with(
+            self.commentary_pecha, alignment_data, self.root_pecha.metadata.title["EN"]
+        )
 
     def test_commentary_translation_pecha(self):
         pass
+
+
+work = TestSerializer()
+work.setUp()
+work.test_commentary_pecha()
