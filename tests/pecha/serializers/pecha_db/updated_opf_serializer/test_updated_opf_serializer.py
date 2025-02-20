@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.updated_opf_serializer import (
+from openpecha.pecha.serializers.pecha_db.updated_opf_serializer import (
     UpdatedCommentarySerializer,
     UpdatedRootSerializer,
 )
