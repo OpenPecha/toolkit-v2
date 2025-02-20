@@ -7,9 +7,10 @@ from openpecha.config import get_logger
 from openpecha.exceptions import (
     AlignmentDataKeyMissingError,
     FileNotFoundError,
+    RootPechaNotFoundError,
     StamAnnotationStoreLoadError,
 )
-from openpecha.pecha import Pecha, get_pecha_with_id
+from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
@@ -139,6 +140,7 @@ class TranslationSerializer:
         self,
         pecha: Pecha,
         alignment_data: Union[Dict, None] = None,
+        root_pecha: Union[Pecha, None] = None,
     ) -> Dict:
 
         if alignment_data:
@@ -149,7 +151,11 @@ class TranslationSerializer:
                 raise AlignmentDataKeyMissingError(
                     f"Pecha {pecha.id} alignment data must have 'source' and 'target' keys."
                 )
-            root_pecha = get_pecha_with_id(alignment_data["source"].split("/")[0])
+            if not root_pecha or not isinstance(root_pecha, Pecha):
+                raise RootPechaNotFoundError(
+                    "Root pecha is not passed during Root Translation Serialization."
+                )
+
             translation_pecha = pecha
             root_content = self.get_root_content(root_pecha, alignment_data["source"])
             translation_content = self.get_translation_content(
