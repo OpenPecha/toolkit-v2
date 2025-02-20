@@ -152,6 +152,9 @@ class TranslationSerializer:
                     f"Pecha {pecha.id} alignment data must have 'source' and 'target' keys."
                 )
             if not root_pecha or not isinstance(root_pecha, Pecha):
+                logger.error(
+                    "Root pecha is not passed during Root Translation Serialization."
+                )
                 raise RootPechaNotFoundError(
                     "Root pecha is not passed during Root Translation Serialization."
                 )
