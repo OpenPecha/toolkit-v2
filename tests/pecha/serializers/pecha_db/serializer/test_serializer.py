@@ -171,16 +171,28 @@ class TestSerializer(TestCase):
             self.root_pecha, alignment_data, None
         )
 
-    def test_root_translation_pecha(self):
-        pass
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.translation.TranslationSerializer.serialize"
+    )
+    def test_root_translation_pecha(self, mock_translation_serialize):
+        mock_translation_serialize.return_value = {}
+
+        pechas = [self.root_translation_pecha, self.root_pecha]
+        metadatas = [self.root_translation_pecha_metadata, self.root_pecha_metadata]
+        alignment_data = {
+            "source": "IE60BBDE8/layers/3635/Tibetan_Segment-039B.json",
+            "target": "I62E00D78/layers/D93E/English_Segment-0216.json",
+        }
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas, alignment_data)
+
+        mock_translation_serialize.assert_called_once()
+        mock_translation_serialize.assert_called_with(
+            self.root_translation_pecha, alignment_data, self.root_pecha
+        )
 
     def test_commentary_pecha(self):
         pass
 
     def test_commentary_translation_pecha(self):
         pass
-
-
-work = TestSerializer()
-work.setUp()
-work.test_root_pecha()
