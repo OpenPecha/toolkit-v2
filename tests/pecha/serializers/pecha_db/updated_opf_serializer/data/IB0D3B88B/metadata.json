@@ -11,7 +11,7 @@
   "imported": "2025-02-07T12:04:28.421284",
   "source": "https://docs.google.com/document/d/1--EOib3nmA4OTPt6_QuB9L_34gTFmJb0YKatyjaJdag/edit?addon_store&tab=t.0",
   "toolkit_version": "0.0.1",
-  "parser": "DocxNumberListCommentaryParser",
+  "parser": "DocxSimpleCommentaryParser",
   "initial_creation_type": "google_docx",
   "language": "ru",
   "source_metadata": {
