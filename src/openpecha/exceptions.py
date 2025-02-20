@@ -92,3 +92,9 @@ class StamAddAnnotationError(Exception):
     """Raised when there is an error adding annotation in STAM."""
 
     pass
+
+
+class RootPechaNotFoundError(Exception):
+    """Raised when the root pecha is not found."""
+
+    pass

@@ -1,12 +1,15 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
-from openpecha.exceptions import MetaDataValidationError
-from openpecha.pecha import Pecha, get_pecha_with_id
+from openpecha.config import get_logger
+from openpecha.exceptions import MetaDataValidationError, RootPechaNotFoundError
+from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
+
+logger = get_logger(__name__)
 
 
 class SimpleCommentarySerializer:
@@ -17,6 +20,7 @@ class SimpleCommentarySerializer:
         metadata: PechaMetaData = pecha.metadata
 
         if not isinstance(metadata.title, dict):
+            logger.error(f"Title is not available in the Commentary Pecha {pecha.id}.")
             raise MetaDataValidationError(
                 f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
             )
@@ -93,6 +97,11 @@ class SimpleCommentarySerializer:
         Prepare content in the sapche annotations to the required format(Tree like structure)
         """
         ann_layer_path = pecha.pecha_path.parent.joinpath(layer_path)
+        if not ann_layer_path.exists():
+            logger.error(f"The layer path {str(ann_layer_path)} does not exist.")
+            raise FileNotFoundError(
+                f"[Error] The layer path '{str(ann_layer_path)}' does not exist."
+            )
         segment_layer = AnnotationStore(file=str(ann_layer_path))
 
         anns = get_anns(segment_layer)
@@ -115,7 +124,13 @@ class SimpleCommentarySerializer:
             return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
         return ann["text"].strip()
 
-    def serialize(self, pecha: Pecha, alignment_data: Dict, root_title: str):
+    def serialize(
+        self,
+        pecha: Pecha,
+        alignment_data: Dict,
+        root_title: str,
+        root_pecha: Union[Pecha, None] = None,
+    ):
         """
         Serialize the commentary pecha to json format
         """
@@ -128,13 +143,17 @@ class SimpleCommentarySerializer:
         src_category, tgt_category = self.get_categories(pecha, root_title)
 
         if "translation_of" in pecha.metadata.source_metadata:
+            if not root_pecha or not isinstance(root_pecha, Pecha):
+                logger.error(
+                    "Root pecha is not passed during Commentary Translation Serialization."
+                )
+                raise RootPechaNotFoundError(
+                    "Root pecha is not passed during Commentary Translation Serialization."
+                )
             translation_path = alignment_data["target"]
             commentary_path = alignment_data["source"]
             tgt_layer_path = alignment_data["target"]
             src_content = self.get_content(pecha, translation_path)
-            root_pecha = get_pecha_with_id(
-                pecha.metadata.source_metadata["translation_of"]
-            )
             tgt_content = self.get_content(root_pecha, commentary_path)
         else:
             tgt_layer_path = alignment_data["target"]
@@ -147,6 +166,7 @@ class SimpleCommentarySerializer:
             "source": {"categories": src_category, "books": src_book},
             "target": {"categories": tgt_category, "books": tgt_book},
         }
+        logger.info(f"Pecha {pecha.id} is serialized successfully.")
         return serialized_json
 
 

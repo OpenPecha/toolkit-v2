@@ -52,18 +52,16 @@ class TestTranslationSerializer(TestCase):
 
         root_pecha = Pecha.from_path(root_opf)
         translation_pecha = Pecha.from_path(translation_opf)
-        with mock.patch(
-            "openpecha.pecha.serializers.pecha_db.translation.get_pecha_with_id"
-        ) as mock_get_pecha_with_id:
-            mock_get_pecha_with_id.return_value = root_pecha
 
-            serializer = TranslationSerializer()
-            json_output = serializer.serialize(
-                pecha=translation_pecha, alignment_data=translation_alignment
-            )
+        serializer = TranslationSerializer()
+        json_output = serializer.serialize(
+            pecha=translation_pecha,
+            alignment_data=translation_alignment,
+            root_pecha=root_pecha,
+        )
 
-            expected_json_path = DATA_DIR / "expected_translation_output.json"
-            assert json_output == read_json(expected_json_path)
+        expected_json_path = DATA_DIR / "expected_translation_output.json"
+        assert json_output == read_json(expected_json_path)
 
     def tearDown(self):
         # Stop the patch
