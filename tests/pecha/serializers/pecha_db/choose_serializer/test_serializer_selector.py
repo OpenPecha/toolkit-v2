@@ -11,7 +11,7 @@ extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
         "en": "Illuminating the Intent Chapter 6, verses 1 to 64 Literal Translation, Monlam AI, February 2025"
     },
     "title": {
-        "bo": "\u0f51\u0f42\u0f7c\u0f44\u0f66\u0f0b\u0f54\u0f0b\u0f62\u0f56\u0f0b\u0f42\u0f66\u0f63\u0f0b\u0f63\u0f66\u0f0b\u0f66\u0f7a\u0f58\u0f66\u0f0b\u0f56\u0f66\u0f90\u0fb1\u0f7a\u0f51\u0f0b\u0f51\u0fb2\u0f74\u0f42\u0f0b\u0f54\u0f0d \u0f64\u0f7c\u0f0b\u0f63\u0f7c\u0f0b\u0f40 \u0f21 \u0f53\u0f66\u0f0b \u0f26\u0f24",
+        "bo": "མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ།",
         "en": "Illuminating the Intent Chapter 6",
     },
     "usage_title": {"en": "Illuminating the Intent Chapter 6"},
@@ -24,7 +24,7 @@ class TestPechaSerializer(TestCase):
     def setUp(self):
         self.serializer = PechaSerializer()
 
-    def test_choose_simple_commentary_serializer(self):
+    def test_simple_commentary_serializer(self):
         metadatas: List[MetadataType] = [
             {
                 "commentary_of": "P0001",
@@ -39,7 +39,7 @@ class TestPechaSerializer(TestCase):
         ]
         self.assertTrue(self.serializer.is_commentary_pecha(metadatas))
 
-    def test_choose_translation_serializer(self):
+    def test_translation_serializer(self):
         metadatas: List[MetadataType] = [
             {
                 "commentary_of": None,
@@ -53,6 +53,26 @@ class TestPechaSerializer(TestCase):
             },
         ]
         self.assertFalse(self.serializer.is_commentary_pecha(metadatas))
+
+    def test_commentary_translation_pecha(self):
+        metadatas: List[MetadataType] = [
+            {
+                "commentary_of": "P0001",
+                "translation_of": None,
+                **extra_fields,
+            },
+            {
+                "commentary_of": None,
+                "translation_of": "P0002",
+                **extra_fields,
+            },
+            {
+                "commentary_of": None,
+                "translation_of": None,
+                **extra_fields,
+            },
+        ]
+        self.assertTrue(self.serializer.is_commentary_pecha(metadatas))
 
     def test_is_root(self):
         metadatas: List[MetadataType] = [
