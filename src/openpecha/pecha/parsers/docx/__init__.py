@@ -27,7 +27,6 @@ class DocxParser:
         self,
         docx_file: Union[str, Path],
         metadatas: List[Dict],
-        output_path: Path,
         pecha_id: Union[str, None] = None,
     ) -> Pecha:
         """Parses a DOCX file and generates a Pecha object based on its type.
@@ -48,13 +47,11 @@ class DocxParser:
             return DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
-                output_path=output_path,
                 pecha_id=pecha_id,
             )
         else:
             return DocxNumberListTranslationParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
-                output_path=output_path,
                 pecha_id=pecha_id,
             )
