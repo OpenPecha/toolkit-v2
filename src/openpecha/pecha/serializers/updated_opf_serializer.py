@@ -1,12 +1,11 @@
 import re
 import subprocess
-from pathlib import Path
 from typing import Dict
 
 from openpecha.config import get_logger
 from openpecha.exceptions import GithubRepoError
 from openpecha.pecha import Pecha
-from openpecha.utils import read_json, write_json
+from openpecha.utils import read_json
 
 logger = get_logger(__name__)
 
@@ -55,14 +54,6 @@ class UpdateSerializeJson:
         updated_text = updated_text.replace("$", "\n")
         return updated_text
 
-    def update_repo(self, pecha: Pecha):
-        pecha_path = pecha.pecha_path.__str__()
-        subprocess.run(["git add ."], cwd=pecha_path, shell=True, check=True)
-        subprocess.run(
-            ["git commit -m 'update json'"], cwd=pecha_path, shell=True, check=True
-        )
-        subprocess.run(["git push"], cwd=pecha_path, shell=True, check=True)
-
 
 class UpdatedCommentarySerializer(UpdateSerializeJson):
     def get_new_content(self, opf_segments, content):
@@ -75,11 +66,9 @@ class UpdatedCommentarySerializer(UpdateSerializeJson):
             new_content.append(updated_text)
         return new_content
 
-    def update_json(self, pecha: Pecha) -> Dict:
+    def update_json(self, pecha: Pecha, commentary_json: Dict) -> Dict:
         new_content = []
-        pecha_id = pecha.id
         opf_segments = self.get_pecha_segments(pecha)
-        commentary_json = self.get_pecha_json(pecha)
         if "translation_of" in pecha.metadata.source_metadata.keys():
             content = commentary_json["source"]["books"][0]["content"][0]
             new_content = self.get_new_content(opf_segments, content)
@@ -88,7 +77,6 @@ class UpdatedCommentarySerializer(UpdateSerializeJson):
             content = commentary_json["target"]["books"][0]["content"][0]
             new_content = self.get_new_content(opf_segments, content)
             commentary_json["target"]["books"][0]["content"][0] = new_content
-        write_json(Path(f"{pecha.pecha_path}/{pecha_id}.json"), commentary_json)
         return commentary_json
 
 
@@ -104,16 +92,14 @@ class UpdatedRootSerializer(UpdateSerializeJson):
     def update_json(
         self,
         pecha: Pecha,
+        root_json: Dict,
     ) -> Dict:
         new_content = []
-        pecha_id = pecha.id
         opf_segments = self.get_pecha_segments(pecha)
-        root_json = self.get_pecha_json(pecha)
         if "translation_of" in pecha.metadata.source_metadata.keys():
             new_content = self.get_new_content(opf_segments)
             root_json["source"]["books"][0]["content"][0] = new_content
         else:
             new_content = self.get_new_content(opf_segments)
             root_json["target"]["books"][0]["content"][0] = new_content
-        write_json(Path(f"{pecha.pecha_path}/{pecha_id}.json"), root_json)
         return root_json
