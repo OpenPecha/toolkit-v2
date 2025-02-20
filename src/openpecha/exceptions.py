@@ -70,6 +70,12 @@ class BaseUpdateFailedError(Exception):
     pass
 
 
+class AlignmentDataMissingError(Exception):
+    """Raised when the alignment information is missing."""
+
+    pass
+
+
 class AlignmentDataKeyMissingError(Exception):
     """Raised when the alignment information key is missing."""
 
