@@ -2,17 +2,17 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.translation import TextTranslationSerializer
+from openpecha.pecha.serializers.pecha_db.translation import TranslationSerializer
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
 
 
-class TestTextTranslationSerializer(TestCase):
+class TestTranslationSerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
-            "openpecha.pecha.serializers.translation.CategoryExtractor.get_category",
+            "openpecha.pecha.serializers.pecha_db.translation.CategoryExtractor.get_category",
             return_value={
                 "bo": [
                     {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
@@ -35,7 +35,7 @@ class TestTextTranslationSerializer(TestCase):
         root_opf = DATA_DIR / "bo/IE60BBDE8"
         root_pecha = Pecha.from_path(root_opf)
 
-        serializer = TextTranslationSerializer()
+        serializer = TranslationSerializer()
         json_output = serializer.serialize(pecha=root_pecha, alignment_data=None)
 
         expected_json_path = DATA_DIR / "expected_root_output.json"
@@ -52,18 +52,16 @@ class TestTextTranslationSerializer(TestCase):
 
         root_pecha = Pecha.from_path(root_opf)
         translation_pecha = Pecha.from_path(translation_opf)
-        with mock.patch(
-            "openpecha.pecha.serializers.translation.get_pecha_with_id"
-        ) as mock_get_pecha_with_id:
-            mock_get_pecha_with_id.return_value = root_pecha
 
-            serializer = TextTranslationSerializer()
-            json_output = serializer.serialize(
-                pecha=translation_pecha, alignment_data=translation_alignment
-            )
+        serializer = TranslationSerializer()
+        json_output = serializer.serialize(
+            pecha=translation_pecha,
+            alignment_data=translation_alignment,
+            root_pecha=root_pecha,
+        )
 
-            expected_json_path = DATA_DIR / "expected_translation_output.json"
-            assert json_output == read_json(expected_json_path)
+        expected_json_path = DATA_DIR / "expected_translation_output.json"
+        assert json_output == read_json(expected_json_path)
 
     def tearDown(self):
         # Stop the patch

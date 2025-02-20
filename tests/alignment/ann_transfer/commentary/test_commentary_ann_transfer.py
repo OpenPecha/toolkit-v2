@@ -35,3 +35,6 @@ def test_alignment_ann_transfer(mock_update_metadata):
     # Clean up
     ann_transfer.source_transfered_layer_path.unlink()
     ann_transfer.pecha_display_aligned_layer_path.unlink()
+
+
+test_alignment_ann_transfer()
