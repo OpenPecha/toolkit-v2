@@ -20,6 +20,7 @@ class SimpleCommentarySerializer:
         metadata: PechaMetaData = pecha.metadata
 
         if not isinstance(metadata.title, dict):
+            logger.error(f"Title is not available in the Commentary Pecha {pecha.id}.")
             raise MetaDataValidationError(
                 f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
             )
@@ -96,6 +97,11 @@ class SimpleCommentarySerializer:
         Prepare content in the sapche annotations to the required format(Tree like structure)
         """
         ann_layer_path = pecha.pecha_path.parent.joinpath(layer_path)
+        if not ann_layer_path.exists():
+            logger.error(f"The layer path {str(ann_layer_path)} does not exist.")
+            raise FileNotFoundError(
+                f"[Error] The layer path '{str(ann_layer_path)}' does not exist."
+            )
         segment_layer = AnnotationStore(file=str(ann_layer_path))
 
         anns = get_anns(segment_layer)
