@@ -142,6 +142,20 @@ class TranslationSerializer:
         alignment_data: Union[Dict, None] = None,
         root_pecha: Union[Pecha, None] = None,
     ) -> Dict:
+        """
+        Root Pecha can be i) Root Pecha ii) Translation of Root Pecha
+        if Root Pecha,
+            pecha: Root Pecha
+            alignment_data: None
+            root_pecha: None
+
+        if Translation of Root Pecha,
+            pecha: Translation of Root Pecha
+            alignment_data: 'translation_of' mapping with Root Pecha
+            root_pecha: Root Pecha
+
+        Output: JSON format for pecha_org
+        """
 
         if alignment_data:
             if "source" not in alignment_data or "target" not in alignment_data:

@@ -132,7 +132,20 @@ class SimpleCommentarySerializer:
         commentary_pecha: Union[Pecha, None] = None,
     ):
         """
-        Serialize the commentary pecha to json format
+        Commentary Pecha can be i) Commentary Pecha ii) Translation of Commentary Pecha
+        if Commentary Pecha,
+            pecha: Commentary Pecha
+            alignment_data: 'commentary_of' mapping with Root Pecha
+            root_title: Root Pecha title
+            commentary_pecha: None
+
+        if Translation of Commentary Pecha,
+            pecha: Translation of Commentary Pecha
+            alignment_data: 'translation_of' mapping with Commentary Pecha
+            root_title: Root Pecha title
+            commentary_pecha: Commentary Pecha
+
+        Output: Serialized JSON of Commentary Pecha
         """
 
         src_book, tgt_book = [], []
