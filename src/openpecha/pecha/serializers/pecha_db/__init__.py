@@ -94,17 +94,14 @@ class Serializer:
                 )
             commentary_serializer = SimpleCommentarySerializer()
             root_en_title = self.get_root_en_title(metadatas, pechas)
-            root_pecha = pechas[1]
+            commentary_pecha = pechas[1]
             if is_translation:
                 return commentary_serializer.serialize(
-                    pecha, alignment_data, root_en_title, root_pecha
+                    pecha, alignment_data, root_en_title, commentary_pecha
                 )
             return commentary_serializer.serialize(pecha, alignment_data, root_en_title)
 
         # Root Pecha or Translation of Root Pecha
         root_serializer = TranslationSerializer()
-        return root_serializer.serialize(
-            pecha,
-            alignment_data,
-            self.get_root_pecha(pechas) if is_translation else None,
-        )
+        root_pecha = self.get_root_pecha(pechas) if is_translation else None
+        return root_serializer.serialize(pecha, alignment_data, root_pecha)
