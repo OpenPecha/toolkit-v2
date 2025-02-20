@@ -9,36 +9,62 @@ from openpecha.pecha.serializers.pecha_db.translation import TranslationSerializ
 
 class Serializer:
     def is_commentary_pecha(self, metadatas: List[Dict]) -> bool:
-        """Checks if the given metadata corresponds to a commentary Pecha.
-
-        Args:
-            metadatas (List[Dict]): List of dictionaries containing metadata of the Pecha.
-
-        Returns:
-            bool: True if the Pecha is a commentary, otherwise False.
+        """
+        Pecha can be i) Root Pecha ii) Commentary Pecha
+        Output: True if Commentary Pecha, False otherwise
         """
         for metadata in metadatas:
             if "commentary_of" in metadata and metadata["commentary_of"]:
                 return True
         return False
 
+    def is_translation_pecha(self, metadatas: List[Dict]) -> bool:
+        """
+        Return
+            True if i) Translation of Root Pecha ii) Translation of Commentary Pecha
+            False otherwise
+        """
+        if "translation_of" in metadatas[0] and metadatas[0]["translation_of"]:
+            return True
+        return False
+
     def get_root_en_title(self, metadatas: List[Dict]):
+        """
+        Commentary Pecha serialized JSON should have the root english title
+        """
         root_title = metadatas[-1].get("title", {}).get("en")
         return root_title
 
+    def get_pecha_for_serialization(self, pechas: List[Pecha]) -> Pecha:
+        return pechas[0]
+
+    def get_root_pecha(self, pechas: List[Pecha]) -> Pecha:
+        return pechas[-1]
+
     def serialize(
         self,
-        pecha: Pecha,
-        alignment_data: Dict,
+        pechas: List[Pecha],
         metadatas: List[Dict[str, Any]],
-        root_pecha: Union[Pecha, None] = None,
+        alignment_data: Union[Dict, None],
     ) -> Dict[str, Any]:
 
+        pecha = self.get_pecha_for_serialization(pechas)
         is_commentary = self.is_commentary_pecha(metadatas)
+        is_translation = self.is_translation_pecha(metadatas)
         if is_commentary:
-            root_title = self.get_root_en_title(metadatas)
-            return SimpleCommentarySerializer().serialize(
-                pecha, alignment_data, root_title, root_pecha
-            )
+            if is_translation:
+                root_pecha = self.get_root_pecha(pechas)
+                root_title = self.get_root_en_title(metadatas)
+                return SimpleCommentarySerializer().serialize(
+                    pecha, alignment_data, root_title, root_pecha  # type: ignore
+                )
+            else:
+                return SimpleCommentarySerializer().serialize(pecha, alignment_data)  # type: ignore
         else:
-            return TranslationSerializer().serialize(pecha, alignment_data, root_pecha)
+            if is_translation:
+                root_pecha = self.get_root_pecha(pechas)
+                return TranslationSerializer().serialize(
+                    pecha, alignment_data, root_pecha
+                )
+            else:
+                return TranslationSerializer().serialize(pecha, alignment_data)

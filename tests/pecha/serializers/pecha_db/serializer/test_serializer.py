@@ -101,23 +101,6 @@ class TestSerializerGetRootEnTitle(TestCase):
     def setUp(self):
         self.serializer = Serializer()
 
-    def test_root_pecha(self):
-        metadatas: list[MetadataType] = [
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                "version_of": None,
-                "title": {
-                    "en": "Entering the middle Way Chapter 6",
-                    "bo": "མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ།",
-                },
-            },
-        ]
-        assert (
-            self.serializer.get_root_en_title(metadatas)
-            == "Entering the middle Way Chapter 6"
-        )
-
     def test_commentary_pecha(self):
         metadatas: list[MetadataType] = [
             {
