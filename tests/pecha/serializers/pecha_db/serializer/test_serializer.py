@@ -99,37 +99,6 @@ class TestSerializerIsCommentary(TestCase):
         assert self.serializer.is_commentary_pecha(metadatas)
 
 
-# class TestSerializerGetRootEnTitle(TestCase):
-#     def setUp(self):
-#         self.serializer = Serializer()
-
-#     def test_commentary_pecha(self):
-#         metadatas: list[MetadataType] = [
-#             {
-#                 "translation_of": None,
-#                 "commentary_of": "P0001",
-#                 "version_of": None,
-#                 "title": {
-#                     "en": "Illuminating the Intent Chapter 6",
-#                     "bo": "མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ།",
-#                 },
-#             },
-#             {
-#                 "translation_of": None,
-#                 "commentary_of": None,
-#                 "version_of": None,
-#                 "title": {
-#                     "en": "Entering the middle Way Chapter 6",
-#                     "bo": "མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ།",
-#                 },
-#             },
-#         ]
-#         assert (
-#             self.serializer.get_root_en_title(metadatas)
-#             == "Entering the middle Way Chapter 6"
-#         )
-
-
 class TestSerializer(TestCase):
     def setUp(self):
         self.root_pecha = Pecha.from_path(
@@ -184,7 +153,7 @@ class TestSerializer(TestCase):
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_pecha, alignment_data, None
+            self.root_pecha, alignment_data, alignment_data
         )
 
     @mock.patch(
