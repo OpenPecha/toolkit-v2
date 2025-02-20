@@ -4,7 +4,11 @@ from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataValidationError, RootPechaNotFoundError
+from openpecha.exceptions import (
+    MetaDataValidationError,
+    PechaCategoryNotFoundError,
+    RootPechaNotFoundError,
+)
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
@@ -63,7 +67,15 @@ class SimpleCommentarySerializer:
         """
 
         categorizer = CategoryExtractor()
-        category = categorizer.get_category(category_name)
+        try:
+            category = categorizer.get_category(category_name)
+        except Exception as e:
+            logger.error(
+                f"Category not found for pecha title: {category_name}. {str(e)}"
+            )
+            raise PechaCategoryNotFoundError(
+                f"Category not found for pecha title: {category_name}. {str(e)}"
+            )
         return category
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):

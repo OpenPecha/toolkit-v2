@@ -7,6 +7,7 @@ from openpecha.config import get_logger
 from openpecha.exceptions import (
     AlignmentDataKeyMissingError,
     FileNotFoundError,
+    PechaCategoryNotFoundError,
     RootPechaNotFoundError,
     StamAnnotationStoreLoadError,
 )
@@ -24,8 +25,25 @@ class TranslationSerializer:
         """
         pecha_title = self.get_pecha_bo_title(pecha)
         category_extractor = CategoryExtractor()
-        categories = category_extractor.get_category(pecha_title)
-        return categories["bo"], categories["en"]
+        try:
+            categories = category_extractor.get_category(pecha_title)
+            bo_category = categories.get("bo")
+            en_category = categories.get("en")
+
+            if bo_category is None or en_category is None:
+                raise KeyError(
+                    f"bo or en category is missing in pecha category for title {pecha_title}."
+                )
+
+        except Exception as e:
+            logger.error(
+                f"Category not found for pecha {pecha.id} title: {pecha_title}. {str(e)}"
+            )
+            raise PechaCategoryNotFoundError(
+                f"Category not found for pecha {pecha.id} title: {pecha_title}. {str(e)}"
+            )
+        else:
+            return bo_category, en_category
 
     def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
