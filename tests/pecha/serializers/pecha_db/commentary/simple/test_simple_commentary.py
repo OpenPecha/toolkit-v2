@@ -48,12 +48,9 @@ class TestSimpleCommentarySerializer(TestCase):
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
-    @mock.patch(
-        "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.get_pecha_with_id"
-    )
-    def test_en_commentary_serializer(self, mock_get_pecha_with_id):
-        mock_get_pecha_with_id.return_value = Pecha.from_path(DATA_DIR / "bo/I6944984E")
+    def test_en_commentary_serializer(self):
         pecha = Pecha.from_path(DATA_DIR / "en/I94DBDA91")
+        root_pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
 
         serializer = SimpleCommentarySerializer()
         commentary_alignment = {
@@ -61,18 +58,15 @@ class TestSimpleCommentarySerializer(TestCase):
             "target": "I94DBDA91/layers/FD22/Meaning_Segment-599A.json",
         }
         serialized_json = serializer.serialize(
-            pecha, commentary_alignment, "Vajra Cutter"
+            pecha, commentary_alignment, "Vajra Cutter", root_pecha
         )
 
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
-    @mock.patch(
-        "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.get_pecha_with_id"
-    )
-    def test_zh_commentary_serializer(self, mock_get_pecha_with_id):
-        mock_get_pecha_with_id.return_value = Pecha.from_path(DATA_DIR / "bo/I6944984E")
+    def test_zh_commentary_serializer(self):
         pecha = Pecha.from_path(DATA_DIR / "zh/I9A60B88D")
+        root_pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
 
         serializer = SimpleCommentarySerializer()
         commentary_alignment = {
@@ -80,7 +74,7 @@ class TestSimpleCommentarySerializer(TestCase):
             "target": "I9A60B88D/layers/B97E/Meaning_Segment-22A8.json",
         }
         serialized_json = serializer.serialize(
-            pecha, commentary_alignment, "Vajra Cutter"
+            pecha, commentary_alignment, "Vajra Cutter", root_pecha
         )
 
         expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")

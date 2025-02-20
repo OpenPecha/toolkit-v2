@@ -1,10 +1,10 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.exceptions import MetaDataValidationError
-from openpecha.pecha import Pecha, get_pecha_with_id
+from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
@@ -115,7 +115,13 @@ class SimpleCommentarySerializer:
             return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
         return ann["text"].strip()
 
-    def serialize(self, pecha: Pecha, alignment_data: Dict, root_title: str):
+    def serialize(
+        self,
+        pecha: Pecha,
+        alignment_data: Dict,
+        root_title: str,
+        root_pecha: Union[Pecha, None] = None,
+    ):
         """
         Serialize the commentary pecha to json format
         """
@@ -132,10 +138,7 @@ class SimpleCommentarySerializer:
             commentary_path = alignment_data["source"]
             tgt_layer_path = alignment_data["target"]
             src_content = self.get_content(pecha, translation_path)
-            root_pecha = get_pecha_with_id(
-                pecha.metadata.source_metadata["translation_of"]
-            )
-            tgt_content = self.get_content(root_pecha, commentary_path)
+            tgt_content = self.get_content(root_pecha, commentary_path)  # type: ignore
         else:
             tgt_layer_path = alignment_data["target"]
             src_content = []
