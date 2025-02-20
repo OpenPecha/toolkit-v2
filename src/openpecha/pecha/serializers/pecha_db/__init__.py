@@ -1,7 +1,11 @@
 from typing import Any, Dict, List, Union
 
 from openpecha.config import get_logger
-from openpecha.exceptions import AlignmentDataMissingError
+from openpecha.exceptions import (
+    AlignmentDataMissingError,
+    MetaDataMissingError,
+    MetaDataValidationError,
+)
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
@@ -32,19 +36,39 @@ class Serializer:
             return True
         return False
 
-    def get_root_en_title(self, metadatas: List[Dict]):
+    def get_root_en_title(self, metadatas: List[Dict], pechas: List[Pecha]) -> str:
         """
-        Commentary Pecha serialized JSON should have the root english title
+        Commentary Pecha serialized JSON should have the root English title.
         """
-        root_title = metadatas[-1].get("title", {}).get("en")
-        return root_title
+        root_metadata = self.get_root_metadata(metadatas)
+        root_pecha = self.get_root_pecha(pechas)
+
+        title = root_metadata.get("title")
+
+        if not isinstance(title, dict):
+            logger.error(f"Title should be a dictionary in Root Pecha {root_pecha.id}.")
+            raise MetaDataValidationError(
+                f"Title should be a dictionary in Root Pecha {root_pecha.id}."
+            )
+
+        en_title = title.get("en")
+
+        if not en_title:
+            logger.error(f"English title is missing in Root Pecha {root_pecha.id}.")
+            raise MetaDataMissingError(
+                f"English title is missing in Root Pecha {root_pecha.id}."
+            )
+
+        return en_title
 
     def get_pecha_for_serialization(self, pechas: List[Pecha]) -> Pecha:
         return pechas[0]
 
     def get_root_pecha(self, pechas: List[Pecha]) -> Pecha:
-        """ """
         return pechas[-1]
+
+    def get_root_metadata(self, metadatas: List[Dict]) -> Dict:
+        return metadatas[-1]
 
     def serialize(
         self,
@@ -69,7 +93,7 @@ class Serializer:
                     "Alignment data is missing for Commentary Pecha Serialization."
                 )
             commentary_serializer = SimpleCommentarySerializer()
-            root_en_title = self.get_root_en_title(metadatas)
+            root_en_title = self.get_root_en_title(metadatas, pechas)
             root_pecha = self.get_root_pecha(pechas)
             if is_translation:
                 return commentary_serializer.serialize(
