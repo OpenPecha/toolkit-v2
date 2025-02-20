@@ -1,0 +1,43 @@
+{
+  "id": "IB0D3B88B",
+  "title": {
+    "bo": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡ ནས་ ༦༤",
+    "ru": "Прояснение сокровенного смысла, глава 6, строфы 1 до 64",
+    "en": "Illuminating the Intent Chapter 6, verses 1 to 64 Russian literal translation"
+  },
+  "author": {
+    "en": "DPO and Claude-3-5-sonnet-20241022"
+  },
+  "imported": "2025-02-07T12:04:28.421284",
+  "source": "https://docs.google.com/document/d/1--EOib3nmA4OTPt6_QuB9L_34gTFmJb0YKatyjaJdag/edit?addon_store&tab=t.0",
+  "toolkit_version": "0.0.1",
+  "parser": "DocxSimpleCommentaryParser",
+  "initial_creation_type": "google_docx",
+  "language": "ru",
+  "source_metadata": {
+    "document_id": "1--EOib3nmA4OTPt6_QuB9L_34gTFmJb0YKatyjaJdag",
+    "commentary_alignments": [
+      {
+        "source": "IB42962D2/layers/F741/Tibetan_Segment-D792.json",
+        "target": "IB0D3B88B/layers/3A5A/Meaning_Segment-D5D9.json"
+      }
+    ],
+    "long_title": {
+      "en": "Illuminating the Intent Chapter 6, verses 1 to 64 Russian literal translation"
+    },
+    "presentation": {
+      "en": ""
+    },
+    "usage_title": {
+      "en": "Illuminating the Intent Chapter 6, verses 1 to 64 Russian literal translation"
+    },
+    "translation_of": "IB42962D2"
+  },
+  "bases": [],
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}
