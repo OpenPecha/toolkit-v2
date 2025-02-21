@@ -129,10 +129,23 @@ class SimpleCommentarySerializer:
         pecha: Pecha,
         alignment_data: Dict,
         root_title: str,
-        root_pecha: Union[Pecha, None] = None,
+        commentary_pecha: Union[Pecha, None] = None,
     ):
         """
-        Serialize the commentary pecha to json format
+        Commentary Pecha can be i) Commentary Pecha ii) Translation of Commentary Pecha
+        if Commentary Pecha,
+            pecha: Commentary Pecha
+            alignment_data: 'commentary_of' mapping with Root Pecha
+            root_title: Root Pecha title
+            commentary_pecha: None
+
+        if Translation of Commentary Pecha,
+            pecha: Translation of Commentary Pecha
+            alignment_data: 'translation_of' mapping with Commentary Pecha
+            root_title: Root Pecha title
+            commentary_pecha: Commentary Pecha
+
+        Output: Serialized JSON of Commentary Pecha
         """
 
         src_book, tgt_book = [], []
@@ -143,7 +156,7 @@ class SimpleCommentarySerializer:
         src_category, tgt_category = self.get_categories(pecha, root_title)
 
         if "translation_of" in pecha.metadata.source_metadata:
-            if not root_pecha or not isinstance(root_pecha, Pecha):
+            if not commentary_pecha or not isinstance(commentary_pecha, Pecha):
                 logger.error(
                     "Root pecha is not passed during Commentary Translation Serialization."
                 )
@@ -154,7 +167,7 @@ class SimpleCommentarySerializer:
             commentary_path = alignment_data["source"]
             tgt_layer_path = alignment_data["target"]
             src_content = self.get_content(pecha, translation_path)
-            tgt_content = self.get_content(root_pecha, commentary_path)
+            tgt_content = self.get_content(commentary_pecha, commentary_path)
         else:
             tgt_layer_path = alignment_data["target"]
             src_content = []
