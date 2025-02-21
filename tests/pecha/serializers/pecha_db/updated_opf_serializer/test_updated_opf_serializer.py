@@ -24,7 +24,7 @@ extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
 }
 
 
-def test_updated_commentary_serializer():
+def test_updated_commentary_translation_serializer():
     pecha_id = "IB0D3B88B"
     expected_commentary_json = read_json(
         Path(
@@ -67,7 +67,7 @@ def test_updated_commentary_serializer():
     assert expected_commentary_json == updated_commentary_json
 
 
-def test_updated_root_serializer():
+def test_updated_root_translation_serializer():
     pecha_id = "I99491BA1"
     expected_root_json = read_json(
         Path(
