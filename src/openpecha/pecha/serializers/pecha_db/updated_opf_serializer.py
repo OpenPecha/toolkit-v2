@@ -1,10 +1,11 @@
 import re
 import subprocess
-from typing import Dict
+from typing import Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import GithubRepoError
 from openpecha.pecha import Pecha
+from openpecha.pecha.serializers.pecha_db import Serializer
 from openpecha.utils import read_json
 
 logger = get_logger(__name__)
@@ -66,10 +67,15 @@ class UpdatedCommentarySerializer(UpdateSerializeJson):
             new_content.append(updated_text)
         return new_content
 
-    def update_json(self, pecha: Pecha, commentary_json: Dict) -> Dict:
+    def update_json(
+        self,
+        pecha: Pecha,
+        commentary_json: Dict,
+        is_translation: bool,
+    ) -> Dict:
         new_content = []
         opf_segments = self.get_pecha_segments(pecha)
-        if "translation_of" in pecha.metadata.source_metadata.keys():
+        if is_translation:
             content = commentary_json["source"]["books"][0]["content"][0]
             new_content = self.get_new_content(opf_segments, content)
             commentary_json["source"]["books"][0]["content"][0] = new_content
@@ -93,13 +99,27 @@ class UpdatedRootSerializer(UpdateSerializeJson):
         self,
         pecha: Pecha,
         root_json: Dict,
+        is_translation: bool,
     ) -> Dict:
         new_content = []
         opf_segments = self.get_pecha_segments(pecha)
-        if "translation_of" in pecha.metadata.source_metadata.keys():
+        if is_translation:
             new_content = self.get_new_content(opf_segments)
             root_json["source"]["books"][0]["content"][0] = new_content
         else:
             new_content = self.get_new_content(opf_segments)
             root_json["target"]["books"][0]["content"][0] = new_content
         return root_json
+
+
+def update_serialize_json(pecha: Pecha, metadatas: List[Dict], json: Dict) -> Dict:
+    is_commentary = Serializer().is_commentary_pecha(metadatas)
+    is_translation = Serializer().is_translation_pecha(metadatas)
+    if is_commentary:
+        return UpdatedCommentarySerializer().update_json(
+            pecha=pecha, commentary_json=json, is_translation=is_translation
+        )
+    else:
+        return UpdatedRootSerializer().update_json(
+            pecha=pecha, root_json=json, is_translation=is_translation
+        )
