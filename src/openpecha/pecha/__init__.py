@@ -408,11 +408,6 @@ class Pecha:
             layer.save()
 
 
-def get_pecha_with_id(pecha_id: str) -> Pecha:
-    root_pecha = Pecha.from_id(pecha_id=pecha_id)
-    return root_pecha
-
-
 def get_first_layer_file(pecha: Pecha) -> str:
     """
     1. Get the first layer file from the pecha
@@ -422,17 +417,3 @@ def get_first_layer_file(pecha: Pecha) -> str:
     relative_layer_path = layer_path.relative_to(pecha.pecha_path.parent).as_posix()
 
     return relative_layer_path
-
-
-def get_pecha_alignment_data(pecha: Pecha) -> Union[Dict[str, str], None]:
-    for key in ("commentary_of", "translation_of", "version_of"):
-        if key in pecha.metadata.source_metadata:
-            root_pecha = get_pecha_with_id(pecha.metadata.source_metadata[key])
-            return {
-                "source": get_first_layer_file(root_pecha),  # Root pecha layer file
-                "target": get_first_layer_file(
-                    pecha
-                ),  # Commentary/Translation/Version pecha layer file
-            }
-
-    return None
