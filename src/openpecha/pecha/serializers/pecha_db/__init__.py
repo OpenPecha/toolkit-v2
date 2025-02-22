@@ -1,12 +1,8 @@
 from typing import Any, Dict, List, Union
 
 from openpecha.config import get_logger
-from openpecha.exceptions import (
-    AlignmentDataMissingError,
-    MetaDataMissingError,
-    MetaDataValidationError,
-)
-from openpecha.pecha import Pecha
+from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
+from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
@@ -71,10 +67,7 @@ class Serializer:
         return metadatas[-1]
 
     def serialize(
-        self,
-        pechas: List[Pecha],
-        metadatas: List[Dict[str, Any]],
-        alignment_data: Union[Dict, None],
+        self, pechas: List[Pecha], metadatas: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """
         Serialize a Pecha based on its type.
@@ -85,23 +78,16 @@ class Serializer:
 
         # Commentary Pecha or Translation of Commentary Pecha
         if is_commentary:
-            if not alignment_data:
-                logger.error(
-                    "Alignment data is missing for Commentary Pecha Serialization."
-                )
-                raise AlignmentDataMissingError(
-                    "Alignment data is missing for Commentary Pecha Serialization."
-                )
             commentary_serializer = SimpleCommentarySerializer()
             root_en_title = self.get_root_en_title(metadatas, pechas)
             commentary_pecha = pechas[1]
             if is_translation:
                 return commentary_serializer.serialize(
-                    pecha, alignment_data, root_en_title, commentary_pecha
+                    pecha, root_en_title, commentary_pecha
                 )
-            return commentary_serializer.serialize(pecha, alignment_data, root_en_title)
+            return commentary_serializer.serialize(pecha, root_en_title)
 
         # Root Pecha or Translation of Root Pecha
         root_serializer = TranslationSerializer()
         root_pecha = self.get_root_pecha(pechas) if is_translation else None
-        return root_serializer.serialize(pecha, alignment_data, root_pecha)
+        return root_serializer.serialize(pecha, root_pecha)

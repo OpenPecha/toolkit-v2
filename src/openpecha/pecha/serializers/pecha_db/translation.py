@@ -5,13 +5,12 @@ from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.exceptions import (
-    AlignmentDataKeyMissingError,
     FileNotFoundError,
     PechaCategoryNotFoundError,
     RootPechaNotFoundError,
     StamAnnotationStoreLoadError,
 )
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
@@ -24,8 +23,9 @@ class TranslationSerializer:
         Set pecha category both in english and tibetan in the JSON output.
         """
         pecha_title = self.get_pecha_bo_title(pecha)
-        category_extractor = CategoryExtractor()
+
         try:
+            category_extractor = CategoryExtractor()
             categories = category_extractor.get_category(pecha_title)
             bo_category = categories.get("bo")
             en_category = categories.get("en")
@@ -37,10 +37,10 @@ class TranslationSerializer:
 
         except Exception as e:
             logger.error(
-                f"Category not found for pecha {pecha.id} title: {pecha_title}. {str(e)}"
+                f"Failed getting Category for pecha {pecha.id} title: {pecha_title}. {str(e)}"
             )
             raise PechaCategoryNotFoundError(
-                f"Category not found for pecha {pecha.id} title: {pecha_title}. {str(e)}"
+                f"Failed gettting Category for pecha {pecha.id} title: {pecha_title}. {str(e)}"
             )
         else:
             return bo_category, en_category
@@ -157,32 +157,22 @@ class TranslationSerializer:
     def serialize(
         self,
         pecha: Pecha,
-        alignment_data: Union[Dict, None] = None,
         root_pecha: Union[Pecha, None] = None,
     ) -> Dict:
         """
         Root Pecha can be i) Root Pecha ii) Translation of Root Pecha
         if Root Pecha,
             pecha: Root Pecha
-            alignment_data: None
             root_pecha: None
 
         if Translation of Root Pecha,
             pecha: Translation of Root Pecha
-            alignment_data: 'translation_of' mapping with Root Pecha
             root_pecha: Root Pecha
 
         Output: JSON format for pecha_org
         """
 
-        if alignment_data:
-            if "source" not in alignment_data or "target" not in alignment_data:
-                logger.error(
-                    f"Pecha {pecha.id} alignment data must have 'source' and 'target' keys."
-                )
-                raise AlignmentDataKeyMissingError(
-                    f"Pecha {pecha.id} alignment data must have 'source' and 'target' keys."
-                )
+        if root_pecha:
             if not root_pecha or not isinstance(root_pecha, Pecha):
                 logger.error(
                     "Root pecha is not passed during Root Translation Serialization."
@@ -191,18 +181,19 @@ class TranslationSerializer:
                     "Root pecha is not passed during Root Translation Serialization."
                 )
 
+            root_layer_path = get_first_layer_file(root_pecha)
+            root_content = self.get_root_content(root_pecha, root_layer_path)
+
             translation_pecha = pecha
-            root_content = self.get_root_content(root_pecha, alignment_data["source"])
+            translation_layer_path = get_first_layer_file(translation_pecha)
             translation_content = self.get_translation_content(
-                translation_pecha, alignment_data["target"]
+                translation_pecha, translation_layer_path
             )
         else:
             root_pecha = pecha
             translation_pecha = None
-            root_layer_path = next(root_pecha.layer_path.rglob("*.json"))
-            root_content = self.get_root_content(
-                root_pecha, root_layer_path.relative_to(root_pecha.pecha_path.parent)
-            )
+            root_layer_path = get_first_layer_file(root_pecha)
+            root_content = self.get_root_content(root_pecha, root_layer_path)
             translation_content = []
 
         # Get pecha category from pecha_org_tools package and set to JSON
