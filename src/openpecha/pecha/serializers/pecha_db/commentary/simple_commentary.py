@@ -66,8 +66,8 @@ class SimpleCommentarySerializer:
         Process: Get the category format from the pecha.org categorizer package
         """
 
-        categorizer = CategoryExtractor()
         try:
+            categorizer = CategoryExtractor()
             category = categorizer.get_category(category_name)
         except Exception as e:
             logger.error(
