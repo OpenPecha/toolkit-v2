@@ -14,7 +14,7 @@ class TestSimpleCommentarySerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
-            "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.CategoryExtractor.get_category",
+            "openpecha.pecha.serializers.pecha_db.commentary.simple_commentary.SimpleCommentarySerializer.get_category",
             return_value={
                 "bo": [
                     {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
@@ -37,13 +37,7 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
 
         serializer = SimpleCommentarySerializer()
-        commentary_alignment = {
-            "source": "IA74EAD05/layers/717E/Tibetan_Segment-DA1B.json",
-            "target": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
-        }
-        serialized_json = serializer.serialize(
-            pecha, commentary_alignment, "Vajra Cutter"
-        )
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter")
 
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -53,13 +47,7 @@ class TestSimpleCommentarySerializer(TestCase):
         root_pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
 
         serializer = SimpleCommentarySerializer()
-        commentary_alignment = {
-            "source": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
-            "target": "I94DBDA91/layers/FD22/Meaning_Segment-599A.json",
-        }
-        serialized_json = serializer.serialize(
-            pecha, commentary_alignment, "Vajra Cutter", root_pecha
-        )
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter", root_pecha)
 
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -69,13 +57,8 @@ class TestSimpleCommentarySerializer(TestCase):
         root_pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
 
         serializer = SimpleCommentarySerializer()
-        commentary_alignment = {
-            "source": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
-            "target": "I9A60B88D/layers/B97E/Meaning_Segment-22A8.json",
-        }
-        serialized_json = serializer.serialize(
-            pecha, commentary_alignment, "Vajra Cutter", root_pecha
-        )
+
+        serialized_json = serializer.serialize(pecha, "Vajra Cutter", root_pecha)
 
         expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")
         assert serialized_json == expected_serialized_json

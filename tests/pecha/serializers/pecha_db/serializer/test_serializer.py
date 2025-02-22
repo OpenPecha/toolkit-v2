@@ -146,15 +146,12 @@ class TestSerializer(TestCase):
 
         pechas = [self.root_pecha]
         metadatas = [self.root_pecha_metadata]
-        alignment_data = None
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, alignment_data)
+        serializer.serialize(pechas, metadatas)
 
         mock_translation_serialize.assert_called_once()
-        mock_translation_serialize.assert_called_with(
-            self.root_pecha, alignment_data, alignment_data
-        )
+        mock_translation_serialize.assert_called_with(self.root_pecha, None)
 
     @mock.patch(
         "openpecha.pecha.serializers.pecha_db.translation.TranslationSerializer.serialize"
@@ -164,16 +161,13 @@ class TestSerializer(TestCase):
 
         pechas = [self.root_translation_pecha, self.root_pecha]
         metadatas = [self.root_translation_pecha_metadata, self.root_pecha_metadata]
-        alignment_data = {
-            "source": "IE60BBDE8/layers/3635/Tibetan_Segment-039B.json",
-            "target": "I62E00D78/layers/D93E/English_Segment-0216.json",
-        }
+
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, alignment_data)
+        serializer.serialize(pechas, metadatas)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_translation_pecha, alignment_data, self.root_pecha
+            self.root_translation_pecha, self.root_pecha
         )
 
     @mock.patch(
@@ -183,17 +177,13 @@ class TestSerializer(TestCase):
         mock_commentary_serialize.return_value = {}
         pechas = [self.commentary_pecha, self.root_pecha]
         metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
-        alignment_data = {
-            "source": "IE60BBDE8/layers/3635/Tibetan_Segment-039B.json",
-            "target": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
-        }
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, alignment_data)
+        serializer.serialize(pechas, metadatas)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
-            self.commentary_pecha, alignment_data, self.root_pecha.metadata.title["EN"]
+            self.commentary_pecha, self.root_pecha.metadata.title["EN"]
         )
 
     @mock.patch(
@@ -211,18 +201,13 @@ class TestSerializer(TestCase):
             self.commentary_pecha_metadata,
             self.root_pecha_metadata,
         ]
-        alignment_data = {
-            "source": "I6944984E/layers/E949/Meaning_Segment-2F29.json",
-            "target": "I94DBDA91/layers/FD22/Meaning_Segment-599A.json",
-        }
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, alignment_data)
+        serializer.serialize(pechas, metadatas)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_translation_pecha,
-            alignment_data,
             self.root_pecha.metadata.title["EN"],
             self.commentary_pecha,
         )

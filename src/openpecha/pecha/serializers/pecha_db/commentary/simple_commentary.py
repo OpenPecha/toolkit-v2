@@ -9,7 +9,7 @@ from openpecha.exceptions import (
     PechaCategoryNotFoundError,
     RootPechaNotFoundError,
 )
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
@@ -66,8 +66,8 @@ class SimpleCommentarySerializer:
         Process: Get the category format from the pecha.org categorizer package
         """
 
-        categorizer = CategoryExtractor()
         try:
+            categorizer = CategoryExtractor()
             category = categorizer.get_category(category_name)
         except Exception as e:
             logger.error(
@@ -139,7 +139,6 @@ class SimpleCommentarySerializer:
     def serialize(
         self,
         pecha: Pecha,
-        alignment_data: Dict,
         root_title: str,
         commentary_pecha: Union[Pecha, None] = None,
     ):
@@ -147,13 +146,11 @@ class SimpleCommentarySerializer:
         Commentary Pecha can be i) Commentary Pecha ii) Translation of Commentary Pecha
         if Commentary Pecha,
             pecha: Commentary Pecha
-            alignment_data: 'commentary_of' mapping with Root Pecha
             root_title: Root Pecha title
             commentary_pecha: None
 
         if Translation of Commentary Pecha,
             pecha: Translation of Commentary Pecha
-            alignment_data: 'translation_of' mapping with Commentary Pecha
             root_title: Root Pecha title
             commentary_pecha: Commentary Pecha
 
@@ -175,13 +172,12 @@ class SimpleCommentarySerializer:
                 raise RootPechaNotFoundError(
                     "Root pecha is not passed during Commentary Translation Serialization."
                 )
-            translation_path = alignment_data["target"]
-            commentary_path = alignment_data["source"]
-            tgt_layer_path = alignment_data["target"]
+            translation_path = get_first_layer_file(pecha)
+            commentary_path = get_first_layer_file(commentary_pecha)
             src_content = self.get_content(pecha, translation_path)
             tgt_content = self.get_content(commentary_pecha, commentary_path)
         else:
-            tgt_layer_path = alignment_data["target"]
+            tgt_layer_path = get_first_layer_file(pecha)
             src_content = []
             tgt_content = self.get_content(pecha, tgt_layer_path)
         src_book[0]["content"] = src_content

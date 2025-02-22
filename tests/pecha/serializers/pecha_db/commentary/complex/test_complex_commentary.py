@@ -44,7 +44,7 @@ class TestCommentarySerializer(TestCase):
     def setUp(self):
         # Create the patcher and set return_value
         self.patcher = mock.patch(
-            "openpecha.pecha.serializers.pecha_db.commentary.complex_commentary.CategoryExtractor.get_category",
+            "openpecha.pecha.serializers.pecha_db.commentary.complex_commentary.ComplexCommentarySerializer.get_category",
             return_value={
                 "bo": [
                     {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
