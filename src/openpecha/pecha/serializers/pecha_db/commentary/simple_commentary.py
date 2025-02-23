@@ -164,7 +164,9 @@ class SimpleCommentarySerializer:
 
         src_category, tgt_category = self.get_categories(pecha, root_title)
 
-        if "translation_of" in pecha.metadata.source_metadata:
+        pecha_metadata = pecha.metadata.source_metadata
+
+        if "translation_of" in pecha_metadata and pecha_metadata["translation_of"]:
             if not commentary_pecha or not isinstance(commentary_pecha, Pecha):
                 logger.error(
                     "Root pecha is not passed during Commentary Translation Serialization."
