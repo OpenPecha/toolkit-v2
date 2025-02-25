@@ -12,7 +12,7 @@ from openpecha.exceptions import (
 )
 from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.metadata import Language
-from openpecha.utils import chunk_strings, get_text_direction_with_lang
+from openpecha.utils import get_text_direction_with_lang
 
 logger = get_logger(__name__)
 
@@ -98,7 +98,7 @@ class TranslationSerializer:
             )
         else:
             segments = self.get_texts_from_layer(segment_layer)
-            return chunk_strings(segments)
+            return segments
 
     def get_translation_content(self, pecha: Pecha, layer_path: str):
         """
@@ -142,7 +142,7 @@ class TranslationSerializer:
                 else:
                     translation_segments.append("")
 
-            return chunk_strings(translation_segments)
+            return translation_segments
 
     def get_pecha_bo_title(self, pecha: Pecha):
         """
