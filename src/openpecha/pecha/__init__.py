@@ -243,6 +243,13 @@ class Pecha:
         if "parser" not in pecha_metadata:
             pecha_metadata["parser"] = parser_name
 
+        # Retrieve initial creation type name
+        initial_creation_type = (
+            self.metadata.initial_creation_type if self.metadata else None
+        )
+        if "initial_creation_type" not in pecha_metadata:
+            pecha_metadata["initial_creation_type"] = initial_creation_type
+
         try:
             pecha_metadata = PechaMetaData(**pecha_metadata)
         except Exception as e:
