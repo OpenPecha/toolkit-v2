@@ -8,7 +8,6 @@ import pyewts
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 ewts = pyewts.pyewts()
@@ -172,7 +171,7 @@ class DharamanexusParser(BaseParser):
             order += 1
 
         pecha.set_metadata(
-            PechaMetaData(id=pecha.id, parser=self.name, bases=bases, **metadata)
+            {"id": pecha.id, "parser": self.name, "bases": bases, **metadata}
         )
 
     def parse(

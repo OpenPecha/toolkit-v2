@@ -7,7 +7,6 @@ from botok.tokenizers.chunktokenizer import ChunkTokenizer
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 from openpecha.utils import read_json
 
@@ -92,9 +91,7 @@ class PedurmaParser(BaseParser):
 
         assert isinstance(metadata, dict)
         metadata = modify_metadata(metadata)
-        pecha.set_metadata(
-            PechaMetaData(id=pecha.id, parser=self.name, **metadata)
-        )  # noqa
+        pecha.set_metadata({"id": pecha.id, "parser": self.name, **metadata})  # noqa
 
         return pecha
 

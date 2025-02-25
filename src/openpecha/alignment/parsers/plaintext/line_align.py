@@ -123,7 +123,7 @@ def create_pecha_stam(
     pecha = Pecha.create(output_path)
     base_name = pecha.set_base(base_text)
 
-    pecha.set_metadata(metadata)
+    pecha.set_metadata(metadata.to_dict())
 
     layer, layer_path = pecha.add_layer(base_name, ann_type)
 

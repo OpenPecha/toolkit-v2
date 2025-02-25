@@ -6,7 +6,6 @@ from typing import Dict, List, Union
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -103,6 +102,6 @@ class ChonjukChapterParser(BaseParser):
         for ann in self.annotations:
             pecha.add_annotation(layer, ann, LayerEnum.chapter)
 
-        pecha.set_metadata(PechaMetaData(id=pecha.id, parser=self.name, **metadata))
+        pecha.set_metadata({"id": pecha.id, "parser": self.name, **metadata})
         layer.save()
         return pecha

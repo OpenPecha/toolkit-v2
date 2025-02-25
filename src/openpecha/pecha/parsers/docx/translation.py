@@ -9,7 +9,7 @@ from openpecha.config import PECHAS_PATH
 from openpecha.exceptions import InvalidLanguageEnumError
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
+from openpecha.pecha.metadata import InitialCreationType, Language
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -200,13 +200,13 @@ class GoogleDocTranslationParser(BaseParser):
         relative_layer_path = Path(*layer_path.parts[index:])
 
         pecha.set_metadata(
-            PechaMetaData(
-                id=pecha.id,
-                parser="GoogleDocTranslationParser",
+            {
+                "id": pecha.id,
+                "parser": "GoogleDocTranslationParser",
                 **metadata,
-                bases=bases,
-                initial_creation_type=InitialCreationType.google_docx,
-            )
+                "bases": bases,
+                "initial_creation_type": InitialCreationType.google_docx,
+            }
         )
 
         return (pecha, relative_layer_path)
