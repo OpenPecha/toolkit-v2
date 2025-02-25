@@ -239,8 +239,8 @@ class Pecha:
 
     def set_metadata(self, pecha_metadata: Dict):
         # Retrieve parser name
-        parser_name = pecha_metadata.get("parser", None)
-        if "parser" in pecha_metadata:
+        parser_name = self.metadata.parser if self.metadata else None
+        if "parser" not in pecha_metadata:
             pecha_metadata["parser"] = parser_name
 
         try:
