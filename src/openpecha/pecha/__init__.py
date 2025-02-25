@@ -238,6 +238,10 @@ class Pecha:
         return ann_store
 
     def set_metadata(self, pecha_metadata: Dict):
+        # Retrieve parser name
+        parser_name = pecha_metadata.get("parser", None)
+        pecha_metadata["parser"] = parser_name
+
         try:
             pecha_metadata = PechaMetaData(**pecha_metadata)
         except Exception as e:
