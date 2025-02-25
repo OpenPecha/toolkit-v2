@@ -237,7 +237,12 @@ class Pecha:
             )
         return ann_store
 
-    def set_metadata(self, pecha_metadata: PechaMetaData):
+    def set_metadata(self, pecha_metadata: Dict):
+        try:
+            pecha_metadata = PechaMetaData(**pecha_metadata)
+        except Exception as e:
+            raise ValueError(f"Invalid metadata: {e}")
+
         self.metadata = pecha_metadata
         with open(self.metadata_path, "w") as f:
             json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)

@@ -8,7 +8,7 @@ from docx.shared import RGBColor
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
+from openpecha.pecha.metadata import InitialCreationType
 from openpecha.pecha.parsers import BaseParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
@@ -320,12 +320,12 @@ class DocxComplexCommentaryParser(BaseParser):
         sapche_layer.save()
 
         pecha.set_metadata(
-            PechaMetaData(
-                id=pecha.id,
-                parser=self.name,
-                initial_creation_type=InitialCreationType.google_docx,
+            {
+                "id": pecha.id,
+                "parser": self.name,
+                "initial_creation_type": InitialCreationType.google_docx,
                 **self.metadata,
-            )
+            }
         )
 
         return pecha

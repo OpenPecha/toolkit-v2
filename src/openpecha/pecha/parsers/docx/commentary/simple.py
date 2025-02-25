@@ -161,6 +161,6 @@ class DocxSimpleCommentaryParser(BaseParser):
                 f"[Error] The metadata given was not valid. {str(e)}"
             )
         else:
-            pecha.set_metadata(pecha_metadata)
+            pecha.set_metadata(pecha_metadata.to_dict())
 
         return (pecha, layer_path)
