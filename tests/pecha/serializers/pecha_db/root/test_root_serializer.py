@@ -31,7 +31,7 @@ class TestTranslationSerializer(TestCase):
         # Start the patch
         self.mock_get_category = self.patcher.start()
 
-    def test_root_serializer(self):
+    def test_root_pecha(self):
         root_opf = DATA_DIR / "bo/IE60BBDE8"
         root_pecha = Pecha.from_path(root_opf)
 
@@ -41,7 +41,7 @@ class TestTranslationSerializer(TestCase):
         expected_json_path = DATA_DIR / "expected_root_output.json"
         assert json_output == read_json(expected_json_path)
 
-    def test_translation_serializer(self):
+    def test_root_translation_pecha(self):
         root_opf = DATA_DIR / "bo/IE60BBDE8"
         translation_opf = DATA_DIR / "en/I62E00D78"
 
@@ -60,10 +60,3 @@ class TestTranslationSerializer(TestCase):
     def tearDown(self):
         # Stop the patch
         self.patcher.stop()
-
-
-work = TestTranslationSerializer()
-work.setUp()
-work.test_root_serializer()
-work.test_translation_serializer()
-work.tearDown()
