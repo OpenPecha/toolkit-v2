@@ -123,6 +123,13 @@ class Serializer:
 
         pecha_type = get_pecha_type(metadatas)
 
+        if pecha_type == PechaType.root_pecha:
+            return RootSerializer().serialize(pecha)
+
+        elif pecha_type == PechaType.root_translation_pecha:
+            root_pecha = self.get_root_pecha(pechas)
+            return RootSerializer().serialize(pecha, root_pecha)
+
         if pecha_type == PechaType.commentary_pecha:
             root_en_title = self.get_root_en_title(metadatas, pechas)
             return SimpleCommentarySerializer().serialize(pecha, root_en_title)
@@ -133,10 +140,3 @@ class Serializer:
             return SimpleCommentarySerializer().serialize(
                 pecha, root_en_title, commentary_pecha
             )
-
-        elif pecha_type == PechaType.root_pecha:
-            return RootSerializer().serialize(pecha)
-
-        elif pecha_type == PechaType.root_translation_pecha:
-            root_pecha = self.get_root_pecha(pechas)
-            return RootSerializer().serialize(pecha, root_pecha)
