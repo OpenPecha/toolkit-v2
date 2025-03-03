@@ -6,7 +6,7 @@ from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
-from openpecha.pecha.serializers.pecha_db.translation import TranslationSerializer
+from openpecha.pecha.serializers.pecha_db.root import RootSerializer
 
 logger = get_logger(__name__)
 
@@ -88,6 +88,6 @@ class Serializer:
             return commentary_serializer.serialize(pecha, root_en_title)
 
         # Root Pecha or Translation of Root Pecha
-        root_serializer = TranslationSerializer()
+        root_serializer = RootSerializer()
         root_pecha = self.get_root_pecha(pechas) if is_translation else None
         return root_serializer.serialize(pecha, root_pecha)

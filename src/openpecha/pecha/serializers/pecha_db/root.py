@@ -17,7 +17,7 @@ from openpecha.utils import get_text_direction_with_lang
 logger = get_logger(__name__)
 
 
-class TranslationSerializer:
+class RootSerializer:
     def get_pecha_category(self, pecha: Pecha):
         """
         Set pecha category both in english and tibetan in the JSON output.

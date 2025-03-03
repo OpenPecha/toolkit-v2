@@ -102,10 +102,10 @@ class TestSerializerIsCommentary(TestCase):
 class TestSerializer(TestCase):
     def setUp(self):
         self.root_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/translation/data/bo/IE60BBDE8")
+            Path("tests/pecha/serializers/pecha_db/root/data/bo/IE60BBDE8")
         )
         self.root_translation_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/translation/data/en/I62E00D78")
+            Path("tests/pecha/serializers/pecha_db/root/data/en/I62E00D78")
         )
         self.commentary_pecha = Pecha.from_path(
             Path("tests/pecha/serializers/pecha_db/commentary/simple/data/bo/I6944984E")
@@ -138,9 +138,7 @@ class TestSerializer(TestCase):
             **self.commentary_translation_pecha.metadata.to_dict(),
         }
 
-    @mock.patch(
-        "openpecha.pecha.serializers.pecha_db.translation.TranslationSerializer.serialize"
-    )
+    @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
@@ -153,9 +151,7 @@ class TestSerializer(TestCase):
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(self.root_pecha, None)
 
-    @mock.patch(
-        "openpecha.pecha.serializers.pecha_db.translation.TranslationSerializer.serialize"
-    )
+    @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_translation_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
