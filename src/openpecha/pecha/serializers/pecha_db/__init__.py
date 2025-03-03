@@ -23,6 +23,9 @@ class PechaType(Enum):
     commentary_pecha = "commentary_pecha"
     commentary_translation_pecha = "commentary_translation_pecha"
 
+    prealigned_commentary_pecha = "prealigned_commentary_pecha"
+    prealigned_commentary_translation_pecha = "prealigned_commentary_translation_pecha"
+
 
 def get_pecha_type(metadatas: List[Dict]) -> PechaType:
     is_commentary = is_commentary_pecha(metadatas)
@@ -30,7 +33,12 @@ def get_pecha_type(metadatas: List[Dict]) -> PechaType:
 
     if is_commentary:
         if is_translation:
+            if has_version_of(metadatas):
+                return PechaType.prealigned_commentary_translation_pecha
             return PechaType.commentary_translation_pecha
+        if has_version_of(metadatas):
+            return PechaType.prealigned_commentary_pecha
+
         return PechaType.commentary_pecha
     else:
         if is_translation:
@@ -57,6 +65,18 @@ def is_translation_pecha(metadatas: List[Dict]) -> bool:
     """
     if "translation_of" in metadatas[0] and metadatas[0]["translation_of"]:
         return True
+    return False
+
+
+def has_version_of(metadatas: List[Dict]) -> bool:
+    """
+    Return
+        True: if the any pecha has a 'version_of' metadata chain
+        False: otherwise
+    """
+    for metadata in metadatas:
+        if "version_of" in metadata and metadata["version_of"]:
+            return True
     return False
 
 
@@ -95,9 +115,7 @@ class Serializer:
     def get_root_metadata(self, metadatas: List[Dict]) -> Dict:
         return metadatas[-1]
 
-    def serialize(
-        self, pechas: List[Pecha], metadatas: List[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+    def serialize(self, pechas: List[Pecha], metadatas: List[Dict[str, Any]]):
         """
         Serialize a Pecha based on its type.
         """

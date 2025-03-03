@@ -27,8 +27,6 @@ class TestPechaType(TestCase):
         pass
 
     def test_root_pecha(self):
-        # this is the root pecha
-
         metadatas: list[MetadataType] = [
             {
                 "translation_of": None,
@@ -40,7 +38,6 @@ class TestPechaType(TestCase):
         assert get_pecha_type(metadatas) == PechaType.root_pecha
 
     def test_root_translation_pecha(self):
-        # translation of root pecha
         metadatas: list[MetadataType] = [
             {
                 "translation_of": "P0001",
@@ -75,7 +72,6 @@ class TestPechaType(TestCase):
         assert get_pecha_type(metadatas) == PechaType.commentary_pecha
 
     def test_commentary_translation_pecha(self):
-        # translation of commentary pecha
         metadatas: list[MetadataType] = [
             {
                 "translation_of": "P0001",
@@ -97,6 +93,61 @@ class TestPechaType(TestCase):
             },
         ]
         assert get_pecha_type(metadatas) == PechaType.commentary_translation_pecha
+
+    def test_prealigned_commentary_pecha(self):
+        metadatas: list[MetadataType] = [
+            {
+                "translation_of": None,
+                "commentary_of": "P0001",
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": "P0002",
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+        ]
+        assert get_pecha_type(metadatas) == PechaType.prealigned_commentary_pecha
+
+    def test_prealigned_commentary_translation_pecha(self):
+        metadatas: list[MetadataType] = [
+            {
+                "translation_of": "P0001",
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": "P0002",
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": "P0003",
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+        ]
+        assert (
+            get_pecha_type(metadatas)
+            == PechaType.prealigned_commentary_translation_pecha
+        )
 
 
 class TestSerializer(TestCase):
@@ -207,8 +258,3 @@ class TestSerializer(TestCase):
             self.root_pecha.metadata.title["EN"],
             self.commentary_pecha,
         )
-
-
-work = TestSerializer()
-work.setUp()
-work.test_root_pecha()
