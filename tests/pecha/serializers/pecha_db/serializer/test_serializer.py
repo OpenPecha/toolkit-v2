@@ -94,6 +94,29 @@ class TestPechaType(TestCase):
         ]
         assert get_pecha_type(metadatas) == PechaType.commentary_translation_pecha
 
+    def test_prealigned_root_translation_pecha(self):
+        metadatas: list[MetadataType] = [
+            {
+                "translation_of": "P0001",
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": "P0002",
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+        ]
+        assert get_pecha_type(metadatas) == PechaType.prealigned_root_translation_pecha
+
     def test_prealigned_commentary_pecha(self):
         metadatas: list[MetadataType] = [
             {

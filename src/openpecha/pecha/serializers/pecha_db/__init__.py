@@ -23,6 +23,8 @@ class PechaType(Enum):
     commentary_pecha = "commentary_pecha"
     commentary_translation_pecha = "commentary_translation_pecha"
 
+    prealigned_root_translation_pecha = "prealigned_root_translation_pecha"
+
     prealigned_commentary_pecha = "prealigned_commentary_pecha"
     prealigned_commentary_translation_pecha = "prealigned_commentary_translation_pecha"
 
@@ -42,6 +44,8 @@ def get_pecha_type(metadatas: List[Dict]) -> PechaType:
         return PechaType.commentary_pecha
     else:
         if is_translation:
+            if has_version_of(metadatas):
+                return PechaType.prealigned_root_translation_pecha
             return PechaType.root_translation_pecha
         return PechaType.root_pecha
 
