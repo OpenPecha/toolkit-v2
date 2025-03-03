@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Union
+from enum import Enum
+from typing import Any, Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
@@ -11,7 +12,32 @@ from openpecha.pecha.serializers.pecha_db.root import RootSerializer
 logger = get_logger(__name__)
 
 
+class PechaType(Enum):
+    """
+    Pecha Type for Serializer to determine the type of Pecha.
+    """
+
+    root_pecha = "root_pecha"
+    root_translation_pecha = "root_translation_pecha"
+
+    commentary_pecha = "commentary_pecha"
+    commentary_translation_pecha = "commentary_translation_pecha"
+
+
 class Serializer:
+    def get_pecha_type(self, metadatas: List[Dict]) -> PechaType:
+        is_commentary = self.is_commentary_pecha(metadatas)
+        is_translation = self.is_translation_pecha(metadatas)
+
+        if is_commentary:
+            if is_translation:
+                return PechaType.commentary_translation_pecha
+            return PechaType.commentary_pecha
+        else:
+            if is_translation:
+                return PechaType.root_translation_pecha
+            return PechaType.root_pecha
+
     def is_commentary_pecha(self, metadatas: List[Dict]) -> bool:
         """
         Pecha can be i) Root Pecha ii) Commentary Pecha
@@ -73,21 +99,23 @@ class Serializer:
         Serialize a Pecha based on its type.
         """
         pecha = self.get_pecha_for_serialization(pechas)
-        is_commentary = self.is_commentary_pecha(metadatas)
-        is_translation = self.is_translation_pecha(metadatas)
 
-        # Commentary Pecha or Translation of Commentary Pecha
-        if is_commentary:
-            commentary_serializer = SimpleCommentarySerializer()
+        pecha_type = self.get_pecha_type(metadatas)
+
+        if pecha_type == PechaType.commentary_pecha:
+            root_en_title = self.get_root_en_title(metadatas, pechas)
+            return SimpleCommentarySerializer().serialize(pecha, root_en_title)
+
+        elif pecha_type == PechaType.commentary_translation_pecha:
             root_en_title = self.get_root_en_title(metadatas, pechas)
             commentary_pecha = pechas[1]
-            if is_translation:
-                return commentary_serializer.serialize(
-                    pecha, root_en_title, commentary_pecha
-                )
-            return commentary_serializer.serialize(pecha, root_en_title)
+            return SimpleCommentarySerializer().serialize(
+                pecha, root_en_title, commentary_pecha
+            )
 
-        # Root Pecha or Translation of Root Pecha
-        root_serializer = RootSerializer()
-        root_pecha = self.get_root_pecha(pechas) if is_translation else None
-        return root_serializer.serialize(pecha, root_pecha)
+        elif pecha_type == PechaType.root_pecha:
+            return RootSerializer().serialize(pecha)
+
+        elif pecha_type == PechaType.root_translation_pecha:
+            root_pecha = self.get_root_pecha(pechas)
+            return RootSerializer().serialize(pecha, root_pecha)

@@ -149,7 +149,7 @@ class TestSerializer(TestCase):
         serializer.serialize(pechas, metadatas)
 
         mock_translation_serialize.assert_called_once()
-        mock_translation_serialize.assert_called_with(self.root_pecha, None)
+        mock_translation_serialize.assert_called_with(self.root_pecha)
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_translation_pecha(self, mock_translation_serialize):
@@ -207,3 +207,8 @@ class TestSerializer(TestCase):
             self.root_pecha.metadata.title["EN"],
             self.commentary_pecha,
         )
+
+
+work = TestSerializer()
+work.setUp()
+work.test_root_pecha()
