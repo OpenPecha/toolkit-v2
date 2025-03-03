@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.pecha_db import Serializer
+from openpecha.pecha.serializers.pecha_db import PechaType, Serializer, get_pecha_type
 
 extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
@@ -22,9 +22,9 @@ extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
 MetadataType = Dict[str, Union[str, Dict[str, str], List[str], None]]
 
 
-class TestSerializerIsCommentary(TestCase):
+class TestPechaType(TestCase):
     def setUp(self):
-        self.serializer = Serializer()
+        pass
 
     def test_root_pecha(self):
         # this is the root pecha
@@ -37,7 +37,7 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert not self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.root_pecha
 
     def test_root_translation_pecha(self):
         # translation of root pecha
@@ -55,7 +55,7 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert not self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.root_translation_pecha
 
     def test_commentary_pecha(self):
         metadatas: list[MetadataType] = [
@@ -72,7 +72,7 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.commentary_pecha
 
     def test_commentary_translation_pecha(self):
         # translation of commentary pecha
@@ -96,7 +96,7 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.commentary_translation_pecha
 
 
 class TestSerializer(TestCase):

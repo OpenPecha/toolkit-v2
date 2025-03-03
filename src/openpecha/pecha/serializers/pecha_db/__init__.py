@@ -24,40 +24,43 @@ class PechaType(Enum):
     commentary_translation_pecha = "commentary_translation_pecha"
 
 
-class Serializer:
-    def get_pecha_type(self, metadatas: List[Dict]) -> PechaType:
-        is_commentary = self.is_commentary_pecha(metadatas)
-        is_translation = self.is_translation_pecha(metadatas)
+def get_pecha_type(metadatas: List[Dict]) -> PechaType:
+    is_commentary = is_commentary_pecha(metadatas)
+    is_translation = is_translation_pecha(metadatas)
 
-        if is_commentary:
-            if is_translation:
-                return PechaType.commentary_translation_pecha
-            return PechaType.commentary_pecha
-        else:
-            if is_translation:
-                return PechaType.root_translation_pecha
-            return PechaType.root_pecha
+    if is_commentary:
+        if is_translation:
+            return PechaType.commentary_translation_pecha
+        return PechaType.commentary_pecha
+    else:
+        if is_translation:
+            return PechaType.root_translation_pecha
+        return PechaType.root_pecha
 
-    def is_commentary_pecha(self, metadatas: List[Dict]) -> bool:
-        """
-        Pecha can be i) Root Pecha ii) Commentary Pecha
-        Output: True if Commentary Pecha, False otherwise
-        """
-        for metadata in metadatas:
-            if "commentary_of" in metadata and metadata["commentary_of"]:
-                return True
-        return False
 
-    def is_translation_pecha(self, metadatas: List[Dict]) -> bool:
-        """
-        Return
-            True if i) Translation of Root Pecha ii) Translation of Commentary Pecha
-            False otherwise
-        """
-        if "translation_of" in metadatas[0] and metadatas[0]["translation_of"]:
+def is_commentary_pecha(metadatas: List[Dict]) -> bool:
+    """
+    Pecha can be i) Root Pecha ii) Commentary Pecha
+    Output: True if Commentary Pecha, False otherwise
+    """
+    for metadata in metadatas:
+        if "commentary_of" in metadata and metadata["commentary_of"]:
             return True
-        return False
+    return False
 
+
+def is_translation_pecha(metadatas: List[Dict]) -> bool:
+    """
+    Return
+        True if i) Translation of Root Pecha ii) Translation of Commentary Pecha
+        False otherwise
+    """
+    if "translation_of" in metadatas[0] and metadatas[0]["translation_of"]:
+        return True
+    return False
+
+
+class Serializer:
     def get_root_en_title(self, metadatas: List[Dict], pechas: List[Pecha]) -> str:
         """
         Commentary Pecha serialized JSON should have the root English title.
@@ -100,7 +103,7 @@ class Serializer:
         """
         pecha = self.get_pecha_for_serialization(pechas)
 
-        pecha_type = self.get_pecha_type(metadatas)
+        pecha_type = get_pecha_type(metadatas)
 
         if pecha_type == PechaType.commentary_pecha:
             root_en_title = self.get_root_en_title(metadatas, pechas)
