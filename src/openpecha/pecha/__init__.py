@@ -434,3 +434,14 @@ def get_first_layer_file(pecha: Pecha) -> str:
     relative_layer_path = layer_path.relative_to(pecha.pecha_path.parent).as_posix()
 
     return relative_layer_path
+
+
+def get_anns(ann_store: AnnotationStore):
+    anns = []
+    for ann in ann_store:
+        ann_data = {}
+        for data in ann:
+            ann_data[data.key().id()] = data.value().get()
+        curr_ann = {**ann_data, "text": str(ann)}
+        anns.append(curr_ann)
+    return anns

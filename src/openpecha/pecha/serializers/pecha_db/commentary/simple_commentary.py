@@ -9,7 +9,7 @@ from openpecha.exceptions import (
     PechaCategoryNotFoundError,
     RootPechaNotFoundError,
 )
-from openpecha.pecha import Pecha, get_first_layer_file
+from openpecha.pecha import Pecha, get_anns, get_first_layer_file
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
@@ -191,14 +191,3 @@ class SimpleCommentarySerializer:
         }
         logger.info(f"Pecha {pecha.id} is serialized successfully.")
         return serialized_json
-
-
-def get_anns(ann_store: AnnotationStore):
-    anns = []
-    for ann in ann_store:
-        ann_data = {}
-        for data in ann:
-            ann_data[data.key().id()] = data.value().get()
-        curr_ann = {**ann_data, "text": str(ann)}
-        anns.append(curr_ann)
-    return anns
