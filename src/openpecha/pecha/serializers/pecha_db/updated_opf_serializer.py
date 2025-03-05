@@ -5,7 +5,10 @@ from typing import Dict, List
 from openpecha.config import get_logger
 from openpecha.exceptions import GithubRepoError
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.pecha_db import Serializer
+from openpecha.pecha.serializers.pecha_db import (
+    is_commentary_pecha,
+    is_translation_pecha,
+)
 from openpecha.utils import read_json
 
 logger = get_logger(__name__)
@@ -113,8 +116,8 @@ class UpdatedRootSerializer(UpdateSerializeJson):
 
 
 def update_serialize_json(pecha: Pecha, metadatas: List[Dict], json: Dict) -> Dict:
-    is_commentary = Serializer().is_commentary_pecha(metadatas)
-    is_translation = Serializer().is_translation_pecha(metadatas)
+    is_commentary = is_commentary_pecha(metadatas)
+    is_translation = is_translation_pecha(metadatas)
     if is_commentary:
         return UpdatedCommentarySerializer().update_json(
             pecha=pecha, commentary_json=json, is_translation=is_translation

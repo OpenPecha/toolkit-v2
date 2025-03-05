@@ -3,7 +3,7 @@ from typing import Dict, List, Union
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.pecha_db import Serializer
+from openpecha.pecha.serializers.pecha_db import PechaType, Serializer, get_pecha_type
 
 extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
@@ -22,13 +22,11 @@ extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
 MetadataType = Dict[str, Union[str, Dict[str, str], List[str], None]]
 
 
-class TestSerializerIsCommentary(TestCase):
+class TestPechaType(TestCase):
     def setUp(self):
-        self.serializer = Serializer()
+        pass
 
     def test_root_pecha(self):
-        # this is the root pecha
-
         metadatas: list[MetadataType] = [
             {
                 "translation_of": None,
@@ -37,10 +35,9 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert not self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.root_pecha
 
     def test_root_translation_pecha(self):
-        # translation of root pecha
         metadatas: list[MetadataType] = [
             {
                 "translation_of": "P0001",
@@ -55,7 +52,7 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert not self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.root_translation_pecha
 
     def test_commentary_pecha(self):
         metadatas: list[MetadataType] = [
@@ -72,10 +69,9 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.commentary_pecha
 
     def test_commentary_translation_pecha(self):
-        # translation of commentary pecha
         metadatas: list[MetadataType] = [
             {
                 "translation_of": "P0001",
@@ -96,7 +92,85 @@ class TestSerializerIsCommentary(TestCase):
                 **extra_fields,
             },
         ]
-        assert self.serializer.is_commentary_pecha(metadatas)
+        assert get_pecha_type(metadatas) == PechaType.commentary_translation_pecha
+
+    def test_prealigned_root_translation_pecha(self):
+        metadatas: list[MetadataType] = [
+            {
+                "translation_of": "P0001",
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": "P0002",
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+        ]
+        assert get_pecha_type(metadatas) == PechaType.prealigned_root_translation_pecha
+
+    def test_prealigned_commentary_pecha(self):
+        metadatas: list[MetadataType] = [
+            {
+                "translation_of": None,
+                "commentary_of": "P0001",
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": "P0002",
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+        ]
+        assert get_pecha_type(metadatas) == PechaType.prealigned_commentary_pecha
+
+    def test_prealigned_commentary_translation_pecha(self):
+        metadatas: list[MetadataType] = [
+            {
+                "translation_of": "P0001",
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": "P0002",
+                "version_of": None,
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": "P0003",
+                **extra_fields,
+            },
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                "version_of": None,
+                **extra_fields,
+            },
+        ]
+        assert (
+            get_pecha_type(metadatas)
+            == PechaType.prealigned_commentary_translation_pecha
+        )
 
 
 class TestSerializer(TestCase):
@@ -149,7 +223,7 @@ class TestSerializer(TestCase):
         serializer.serialize(pechas, metadatas)
 
         mock_translation_serialize.assert_called_once()
-        mock_translation_serialize.assert_called_with(self.root_pecha, None)
+        mock_translation_serialize.assert_called_with(self.root_pecha)
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_translation_pecha(self, mock_translation_serialize):
