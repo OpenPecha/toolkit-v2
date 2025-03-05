@@ -109,15 +109,15 @@ class PreAlignedCommentarySerializer:
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_display_pecha)
 
-        root_display_layer_path = next(root_display_pecha.layer_path.rglob("*.json"))
+        root_display_layer_path = self.get_first_layer_path(root_display_pecha)
         root_display_anns = self.extract_root_anns(
             AnnotationStore(file=str(root_display_layer_path))
         )
 
-        root_layer_path = next(root_pecha.layer_path.rglob("*.json"))
+        root_layer_path = self.get_first_layer_path(root_pecha)
         root_anns = self.extract_root_anns(AnnotationStore(file=str(root_layer_path)))
 
-        commentary_layer_path = next(commentary_pecha.layer_path.rglob("*.json"))
+        commentary_layer_path = self.get_first_layer_path(commentary_pecha)
         commentary_anns = get_anns(AnnotationStore(file=str(commentary_layer_path)))
         segments = []
         for ann in commentary_anns:
