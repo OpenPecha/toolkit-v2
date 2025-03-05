@@ -64,19 +64,12 @@ class PreAlignedCommentarySerializer:
                 tgt_start, tgt_end = tgt_span["Span"]["start"], tgt_span["Span"]["end"]
 
                 # Check for mapping conditions
-                if (
-                    src_start
-                    <= tgt_start
-                    < src_end  # Target annotation starts within source
-                    or src_start
-                    < tgt_end
-                    <= src_end  # Target annotation ends within source
-                    or (
-                        tgt_start < src_start and tgt_end > src_end
-                    )  # Target fully contains source
-                ) and not (
-                    tgt_start == src_end or tgt_end == src_start
-                ):  # No exact edge overlap
+                is_overlap = (
+                    src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
+                )
+                is_contained = tgt_start < src_start and tgt_end > src_end
+                is_edge_overlap = tgt_start == src_end or tgt_end == src_start
+                if is_overlap or is_contained and not is_edge_overlap:
                     mapping[src_idx].append(tgt_idx)
 
         # Sort the mapping by source indices
