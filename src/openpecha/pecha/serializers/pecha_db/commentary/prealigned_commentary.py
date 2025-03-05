@@ -115,30 +115,32 @@ class PreAlignedCommentarySerializer:
         segments = []
         for ann in commentary_anns:
             root_indices = parse_root_mapping(ann["root_idx_mapping"])
-            first_idx = root_indices[0]
+            root_idx = root_indices[0]
             commentary_text = ann["text"]
 
-            # # If the commentary text is empty, skip
-            if is_empty(commentary_text):
-                curr_segment = commentary_text
+            # Skip if commentary is empty
+            is_commentary_empty = is_empty(commentary_text)
+            if is_commentary_empty:
+                continue
 
-            # If aligned root does not have text, dont add any mapping
-            elif not root_map.get(first_idx):
-                curr_segment = commentary_text
+            # Dont include mapping if root is empty
+            idx_not_in_root = root_idx not in root_anns
+            is_root_empty = is_empty(root_anns[root_idx]["text"])
+            if is_commentary_empty or idx_not_in_root or is_root_empty:
+                segments.append(commentary_text)
+                continue
 
-            # If the root text is empty, dont add any mapping
-            elif is_empty(root_anns[first_idx]["text"]):
-                curr_segment = commentary_text
-            else:
-                display_idx = root_map[first_idx][0]
-                if display_idx in root_display_anns and not is_empty(
-                    root_display_anns[display_idx]["text"]
-                ):
-                    curr_segment = f"<1><{display_idx}>{commentary_text}"
-                # If root display is empty, dont add any mapping
-                else:
-                    curr_segment = commentary_text
-            segments.append(curr_segment)
+            # Dont include mapping if root_display is empty
+            root_display_idx = root_map[root_idx][0]
+            idx_not_in_root_display = root_display_idx not in root_display_anns
+            is_root_display_empty = is_empty(
+                root_display_anns[root_display_idx]["text"]
+            )
+            if idx_not_in_root_display or is_root_display_empty:
+                segments.append(commentary_text)
+                continue
+
+            segments.append(f"<1><{root_display_idx}>{commentary_text}")
         return segments
 
 
