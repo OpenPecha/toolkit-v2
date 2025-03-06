@@ -3,7 +3,10 @@ from typing import Any, Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
-from openpecha.pecha import Pecha, get_first_layer_file
+from openpecha.pecha import Pecha
+from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
+    PreAlignedCommentarySerializer,
+)
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
@@ -89,8 +92,8 @@ class Serializer:
         """
         Commentary Pecha serialized JSON should have the root English title.
         """
-        root_metadata = self.get_root_metadata(metadatas)
-        root_pecha = self.get_root_pecha(pechas)
+        root_metadata = metadatas[-1]
+        root_pecha = pechas[-1]
 
         title = root_metadata.get("title")
 
@@ -110,37 +113,36 @@ class Serializer:
 
         return en_title
 
-    def get_pecha_for_serialization(self, pechas: List[Pecha]) -> Pecha:
-        return pechas[0]
-
-    def get_root_pecha(self, pechas: List[Pecha]) -> Pecha:
-        return pechas[-1]
-
-    def get_root_metadata(self, metadatas: List[Dict]) -> Dict:
-        return metadatas[-1]
-
     def serialize(self, pechas: List[Pecha], metadatas: List[Dict[str, Any]]):
         """
         Serialize a Pecha based on its type.
         """
-        pecha = self.get_pecha_for_serialization(pechas)
+        pecha = pechas[0]
 
         pecha_type = get_pecha_type(metadatas)
 
         if pecha_type == PechaType.root_pecha:
             return RootSerializer().serialize(pecha)
 
-        elif pecha_type == PechaType.root_translation_pecha:
-            root_pecha = self.get_root_pecha(pechas)
+        if pecha_type == PechaType.root_translation_pecha:
+            root_pecha = pechas[-1]
             return RootSerializer().serialize(pecha, root_pecha)
 
         if pecha_type == PechaType.commentary_pecha:
             root_en_title = self.get_root_en_title(metadatas, pechas)
             return SimpleCommentarySerializer().serialize(pecha, root_en_title)
 
-        elif pecha_type == PechaType.commentary_translation_pecha:
+        if pecha_type == PechaType.commentary_translation_pecha:
             root_en_title = self.get_root_en_title(metadatas, pechas)
             commentary_pecha = pechas[1]
             return SimpleCommentarySerializer().serialize(
                 pecha, root_en_title, commentary_pecha
+            )
+
+        if pecha_type == PechaType.prealigned_commentary_pecha:
+            root_display_pecha = pechas[2]
+            root_pecha = pechas[1]
+            commentary_pecha = pechas[0]
+            return PreAlignedCommentarySerializer().serialize(
+                root_display_pecha, root_pecha, commentary_pecha
             )

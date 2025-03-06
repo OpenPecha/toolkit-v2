@@ -175,6 +175,9 @@ class TestPechaType(TestCase):
 
 class TestSerializer(TestCase):
     def setUp(self):
+        self.root_display_pecha = Pecha.from_path(
+            Path("tests/alignment/commentary_transfer/data/P1/IA6E66F92")
+        )
         self.root_pecha = Pecha.from_path(
             Path("tests/pecha/serializers/pecha_db/root/data/bo/IE60BBDE8")
         )
@@ -187,10 +190,16 @@ class TestSerializer(TestCase):
         self.commentary_translation_pecha = Pecha.from_path(
             Path("tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91")
         )
-        self.root_pecha_metadata = {
+        self.root_display_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
             "version_of": None,
+            **self.root_display_pecha.metadata.to_dict(),
+        }
+        self.root_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": None,
+            "version_of": "IA6E66F92",
             **self.root_pecha.metadata.to_dict(),
         }
         self.root_translation_pecha_metadata = {
@@ -229,15 +238,18 @@ class TestSerializer(TestCase):
     def test_root_translation_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
-        pechas = [self.root_translation_pecha, self.root_pecha]
-        metadatas = [self.root_translation_pecha_metadata, self.root_pecha_metadata]
+        pechas = [self.root_translation_pecha, self.root_display_pecha]
+        metadatas = [
+            self.root_translation_pecha_metadata,
+            self.root_display_pecha_metadata,
+        ]
 
         serializer = Serializer()
         serializer.serialize(pechas, metadatas)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_translation_pecha, self.root_pecha
+            self.root_translation_pecha, self.root_display_pecha
         )
 
     @mock.patch(
@@ -245,15 +257,15 @@ class TestSerializer(TestCase):
     )
     def test_commentary_pecha(self, mock_commentary_serialize):
         mock_commentary_serialize.return_value = {}
-        pechas = [self.commentary_pecha, self.root_pecha]
-        metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
+        pechas = [self.commentary_pecha, self.root_display_pecha]
+        metadatas = [self.commentary_pecha_metadata, self.root_display_pecha_metadata]
 
         serializer = Serializer()
         serializer.serialize(pechas, metadatas)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
-            self.commentary_pecha, self.root_pecha.metadata.title["EN"]
+            self.commentary_pecha, self.root_display_pecha.metadata.title["EN"]
         )
 
     @mock.patch(
@@ -264,12 +276,12 @@ class TestSerializer(TestCase):
         pechas = [
             self.commentary_translation_pecha,
             self.commentary_pecha,
-            self.root_pecha,
+            self.root_display_pecha,
         ]
         metadatas = [
             self.commentary_translation_pecha_metadata,
             self.commentary_pecha_metadata,
-            self.root_pecha_metadata,
+            self.root_display_pecha_metadata,
         ]
 
         serializer = Serializer()
@@ -278,6 +290,26 @@ class TestSerializer(TestCase):
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_translation_pecha,
-            self.root_pecha.metadata.title["EN"],
+            self.root_display_pecha.metadata.title["EN"],
             self.commentary_pecha,
+        )
+
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.PreAlignedCommentarySerializer.serialize"
+    )
+    def test_prealigned_commentary_pecha(self, mock_commentary_serialize):
+        mock_commentary_serialize.return_value = {}
+        pechas = [self.commentary_pecha, self.root_pecha, self.root_display_pecha]
+        metadatas = [
+            self.commentary_pecha_metadata,
+            self.root_pecha_metadata,
+            self.root_display_pecha_metadata,
+        ]
+
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas)
+
+        mock_commentary_serialize.assert_called_once()
+        mock_commentary_serialize.assert_called_with(
+            self.root_display_pecha, self.root_pecha, self.commentary_pecha
         )

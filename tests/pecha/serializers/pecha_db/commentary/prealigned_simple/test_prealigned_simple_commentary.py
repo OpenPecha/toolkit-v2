@@ -43,7 +43,7 @@ class TestPreAlignedCommentarySerializer(TestCase):
     @mock.patch(
         "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.CommentaryAlignmentTransfer.get_serialized_commentary",
     )
-    def test_serialize(self, mock_get_serialized_commentary):
+    def test_prealigned_commentary_pecha(self, mock_get_serialized_commentary):
         mock_get_serialized_commentary.return_value = (
             self.expected_serialized_commentary
         )
@@ -58,3 +58,9 @@ class TestPreAlignedCommentarySerializer(TestCase):
 
     def tearDown(self):
         self.patcher.stop()
+
+
+work = TestPreAlignedCommentarySerializer()
+work.setUp()
+work.test_prealigned_commentary_pecha()
+work.tearDown()

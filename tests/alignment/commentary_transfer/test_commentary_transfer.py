@@ -13,6 +13,24 @@ class TestCommentaryAlignmentTransfer(TestCase):
         self.root_display_pecha = Pecha.from_path(self.DATA_DIR / "P1/IA6E66F92")
         self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "P3/I77BD6EA9")
 
+    def test_get_root_pechas_mapping(self):
+        serializer = CommentaryAlignmentTransfer()
+        mapping = serializer.get_root_pechas_mapping(
+            self.root_display_pecha, self.root_pecha
+        )
+        expected_mapping = {
+            1: [1],
+            2: [2],
+            3: [3],
+            4: [4],
+            5: [4, 5],
+            6: [6],
+            7: [6, 7],
+            8: [8, 9],
+            9: [10],
+        }
+        assert mapping == expected_mapping
+
     def test_get_serialized_commentary(self):
         serializer = CommentaryAlignmentTransfer()
         serialized_json = serializer.get_serialized_commentary(
