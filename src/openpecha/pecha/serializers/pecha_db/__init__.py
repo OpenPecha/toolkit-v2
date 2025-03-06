@@ -10,6 +10,9 @@ from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary impor
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
+from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
+    PreAlignedRootTranslationSerializer,
+)
 from openpecha.pecha.serializers.pecha_db.root import RootSerializer
 
 logger = get_logger(__name__)
@@ -145,4 +148,12 @@ class Serializer:
             commentary_pecha = pechas[0]
             return PreAlignedCommentarySerializer().serialize(
                 root_display_pecha, root_pecha, commentary_pecha
+            )
+
+        if pecha_type == PechaType.prealigned_root_translation_pecha:
+            root_display_pecha = pechas[2]
+            root_pecha = pechas[1]
+            translation_pecha = pechas[0]
+            return PreAlignedRootTranslationSerializer().serialize(
+                root_display_pecha, root_pecha, translation_pecha
             )
