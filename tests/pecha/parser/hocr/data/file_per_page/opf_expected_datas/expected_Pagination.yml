@@ -1,0 +1,64 @@
+id: 39ddb8a06dba4bb2b95179608e603d8e
+annotation_type: Pagination
+revision: '00001'
+annotations:
+  dac0b285d77c42528c5c08f976cac45b:
+    span:
+      start: 0
+      end: 584
+    imgnum: 1
+    reference: I1KG101950001.jpg
+  2253d07ba62340a98a5e1af7469f257b:
+    span:
+      start: 585
+      end: 625
+    imgnum: 3
+    reference: I1KG101950003.jpg
+  880accb85de841a6a0a71ca75be0e0e1:
+    span:
+      start: 626
+      end: 749
+    imgnum: 5
+    reference: I1KG101950005.jpg
+  ca0974c478e84f129a3980c34d4cb09c:
+    span:
+      start: 750
+      end: 950
+    imgnum: 6
+    reference: I1KG101950006.jpg
+  6829d92e00bb485a8951fa56aec8cbb1:
+    span:
+      start: 951
+      end: 1062
+    imgnum: 7
+    reference: I1KG101950007.jpg
+  9da7fdbab002468193dca3f36c430a8d:
+    span:
+      start: 1063
+      end: 1143
+    imgnum: 9
+    reference: I1KG101950009.jpg
+  a8c1ab1f62884a59bc805c735559b1b6:
+    span:
+      start: 1144
+      end: 1754
+    imgnum: 10
+    reference: I1KG101950010.jpg
+  e2ff89eed03a4d97ba7d15b8664771d6:
+    span:
+      start: 1755
+      end: 2380
+    imgnum: 11
+    reference: I1KG101950011.jpg
+  be5fb56cdba94ab79eaf0084b9020b81:
+    span:
+      start: 2381
+      end: 3185
+    imgnum: 12
+    reference: I1KG101950012.jpg
+  be5fb56cdba94ab79eaf0084b9022b81:
+    span:
+      start: 3186
+      end: 4455
+    imgnum: 13
+    reference: I1KG101950013.jpg

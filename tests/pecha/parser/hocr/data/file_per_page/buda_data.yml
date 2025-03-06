@@ -1,0 +1,58 @@
+source_metadata:
+  id: http://purl.bdrc.io/resource/W1KG10193
+  status: http://purl.bdrc.io/admindata/StatusReleased
+  access: http://purl.bdrc.io/admindata/AccessOpen
+  geo_restriction:
+  - CN
+  reproduction_of: http://purl.bdrc.io/resource/MW1KG10193
+  copyright_status: http://purl.bdrc.io/resource/CopyrightPublicDomain
+  title: གསུང་འབུམ། འཇིགས་མེད་གླིང་པ།
+  languages:
+  - bo
+  author: ཀུན་མཁྱེན་འཇིགས་མེད་གླིང་པ།
+image_groups:
+  I1KG10199:
+    id: http://purl.bdrc.io/resource/I1KG10199
+    total_pages: 898
+    volume_number: 5
+    volume_pages_bdrc_intro: 2
+  I1KG10200:
+    id: http://purl.bdrc.io/resource/I1KG10200
+    total_pages: 521
+    volume_number: 6
+    volume_pages_bdrc_intro: 2
+  I1KG10198:
+    id: http://purl.bdrc.io/resource/I1KG10198
+    total_pages: 923
+    volume_number: 4
+    volume_pages_bdrc_intro: 2
+  I1KG10197:
+    id: http://purl.bdrc.io/resource/I1KG10197
+    total_pages: 883
+    volume_number: 3
+    volume_pages_bdrc_intro: 2
+  I1KG10202:
+    id: http://purl.bdrc.io/resource/I1KG10202
+    total_pages: 1424
+    volume_number: 8
+    volume_pages_bdrc_intro: 2
+  I1KG10195:
+    id: http://purl.bdrc.io/resource/I1KG10195
+    total_pages: 935
+    volume_number: 1
+    volume_pages_bdrc_intro: 2
+  I1KG10196:
+    id: http://purl.bdrc.io/resource/I1KG10196
+    total_pages: 1007
+    volume_number: 2
+    volume_pages_bdrc_intro: 2
+  I1KG10203:
+    id: http://purl.bdrc.io/resource/I1KG10203
+    total_pages: 867
+    volume_number: 9
+    volume_pages_bdrc_intro: 2
+  I1KG10201:
+    id: http://purl.bdrc.io/resource/I1KG10201
+    total_pages: 1296
+    volume_number: 7
+    volume_pages_bdrc_intro: 2
