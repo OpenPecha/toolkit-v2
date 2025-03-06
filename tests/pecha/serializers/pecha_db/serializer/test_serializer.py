@@ -313,3 +313,24 @@ class TestSerializer(TestCase):
         mock_commentary_serialize.assert_called_with(
             self.root_display_pecha, self.root_pecha, self.commentary_pecha
         )
+
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
+    )
+    def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
+        mock_translation_serialize.return_value = {}
+
+        pechas = [self.root_translation_pecha, self.root_pecha, self.root_display_pecha]
+        metadatas = [
+            self.root_translation_pecha_metadata,
+            self.root_pecha_metadata,
+            self.root_display_pecha_metadata,
+        ]
+
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas)
+
+        mock_translation_serialize.assert_called_once()
+        mock_translation_serialize.assert_called_with(
+            self.root_display_pecha, self.root_pecha, self.root_translation_pecha
+        )
