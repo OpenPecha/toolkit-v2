@@ -1,22 +1,18 @@
-from typing import Any, Dict, Union
+from typing import Any, Dict, List
 
 from pecha_org_tools.extract import CategoryExtractor
-from stam import AnnotationStore
 
+from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
-from openpecha.exceptions import (
-    MetaDataValidationError,
-    PechaCategoryNotFoundError,
-    RootPechaNotFoundError,
-)
-from openpecha.pecha import Pecha, get_anns, get_first_layer_file
+from openpecha.exceptions import MetaDataValidationError, PechaCategoryNotFoundError
+from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
 logger = get_logger(__name__)
 
 
-class SimpleCommentarySerializer:
+class PreAlignedCommentarySerializer:
     def extract_metadata(self, pecha: Pecha):
         """
         Extract neccessary metadata from opf for serialization to json
@@ -104,84 +100,46 @@ class SimpleCommentarySerializer:
 
         return (category["en"], category["bo"])  # source and target category
 
-    def get_content(self, pecha: Pecha, layer_path: str):
-        """
-        Prepare content in the sapche annotations to the required format(Tree like structure)
-        """
-        ann_layer_path = pecha.pecha_path.parent.joinpath(layer_path)
-        if not ann_layer_path.exists():
-            logger.error(f"The layer path {str(ann_layer_path)} does not exist.")
-            raise FileNotFoundError(
-                f"[Error] The layer path '{str(ann_layer_path)}' does not exist."
+    def get_pecha_en_title(self, pecha: Pecha):
+        metadata: PechaMetaData = pecha.metadata
+
+        if not isinstance(metadata.title, dict):
+            logger.error(
+                f"Title data type is not dictionary in the Root Pecha {pecha.id}."
             )
-        segment_layer = AnnotationStore(file=str(ann_layer_path))
+            raise MetaDataValidationError(
+                f"[Error] Root Pecha {pecha.id} title data type is not dictionary."
+            )
 
-        anns = get_anns(segment_layer)
-        contents = [self.format_commentary_ann(ann) for ann in anns]
-        return contents
+        if "en" not in metadata.title and "EN" not in metadata.title:
+            logger.error(
+                f"English title is not available in the Root Pecha {pecha.id}."
+            )
+            raise MetaDataValidationError(
+                f"[Error] Root Pecha {pecha.id} has no English Title."
+            )
 
-    @staticmethod
-    def format_commentary_ann(ann: Dict[str, Any], chapter_num: int = 1) -> str:
-        """
-        Format the commentary meaning segment annotation to the required format
-        Input: ann: meaning segment annotation
-        Required Format:
-        <a><b>Text, where a is chapter number, b is root mapping number,
-                    and Text is the meaning segment text
-
-                    If root mapping number is not available, then just return the text
-        Output Format: string
-        """
-        if "root_idx_mapping" in ann:
-            return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
-        return ann["text"].strip()
+        root_en_title = metadata.title.get("en") or metadata.title.get("EN")
+        return root_en_title
 
     def serialize(
-        self,
-        pecha: Pecha,
-        root_title: str,
-        commentary_pecha: Union[Pecha, None] = None,
+        self, root_display_pecha: Pecha, root_pecha: Pecha, commentary_pecha: Pecha
     ):
-        """
-        Commentary Pecha can be i) Commentary Pecha ii) Translation of Commentary Pecha
-        if Commentary Pecha,
-            pecha: Commentary Pecha
-            root_title: Root Pecha title
-            commentary_pecha: None
-
-        if Translation of Commentary Pecha,
-            pecha: Translation of Commentary Pecha
-            root_title: Root Pecha title
-            commentary_pecha: Commentary Pecha
-
-        Output: Serialized JSON of Commentary Pecha
-        """
-
         src_book, tgt_book = [], []
-        src_metadata, tgt_metadata = self.extract_metadata(pecha)
+        src_metadata, tgt_metadata = self.extract_metadata(commentary_pecha)
         src_book.append(src_metadata)
         tgt_book.append(tgt_metadata)
 
-        src_category, tgt_category = self.get_categories(pecha, root_title)
+        root_en_title = self.get_pecha_en_title(root_display_pecha)
+        src_category, tgt_category = self.get_categories(
+            commentary_pecha, root_en_title
+        )
 
-        pecha_metadata = pecha.metadata.source_metadata
+        src_content: List[List[str]] = []
+        tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
+            root_display_pecha, root_pecha, commentary_pecha
+        )
 
-        if "translation_of" in pecha_metadata and pecha_metadata["translation_of"]:
-            if not commentary_pecha or not isinstance(commentary_pecha, Pecha):
-                logger.error(
-                    "Root pecha is not passed during Commentary Translation Serialization."
-                )
-                raise RootPechaNotFoundError(
-                    "Root pecha is not passed during Commentary Translation Serialization."
-                )
-            translation_path = get_first_layer_file(pecha)
-            commentary_path = get_first_layer_file(commentary_pecha)
-            src_content = self.get_content(pecha, translation_path)
-            tgt_content = self.get_content(commentary_pecha, commentary_path)
-        else:
-            tgt_layer_path = get_first_layer_file(pecha)
-            src_content = []
-            tgt_content = self.get_content(pecha, tgt_layer_path)
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content
 
@@ -189,5 +147,5 @@ class SimpleCommentarySerializer:
             "source": {"categories": src_category, "books": src_book},
             "target": {"categories": tgt_category, "books": tgt_book},
         }
-        logger.info(f"Pecha {pecha.id} is serialized successfully.")
+        logger.info(f"Pecha {commentary_pecha.id} is serialized successfully.")
         return serialized_json
