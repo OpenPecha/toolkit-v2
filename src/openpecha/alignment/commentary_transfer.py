@@ -125,18 +125,26 @@ class CommentaryAlignmentTransfer:
 
             # Dont include mapping if root is empty
             idx_not_in_root = root_idx not in root_anns
+            if idx_not_in_root:
+                serialized_content.append(commentary_text)
+                continue
+
             is_root_empty = is_empty(root_anns[root_idx]["text"])
-            if is_commentary_empty or idx_not_in_root or is_root_empty:
+            if is_root_empty:
                 serialized_content.append(commentary_text)
                 continue
 
             # Dont include mapping if root_display is empty
             root_display_idx = root_map[root_idx][0]
             idx_not_in_root_display = root_display_idx not in root_display_anns
+            if idx_not_in_root_display:
+                serialized_content.append(commentary_text)
+                continue
+
             is_root_display_empty = is_empty(
                 root_display_anns[root_display_idx]["text"]
             )
-            if idx_not_in_root_display or is_root_display_empty:
+            if is_root_display_empty:
                 serialized_content.append(commentary_text)
                 continue
 
