@@ -178,10 +178,18 @@ class SimpleCommentarySerializer:
             commentary_path = get_first_layer_file(commentary_pecha)
             src_content = self.get_content(pecha, translation_path)
             tgt_content = self.get_content(commentary_pecha, commentary_path)
+
+            # Chapterize content
+            src_content = [src_content]
+            tgt_content = [tgt_content]
         else:
             tgt_layer_path = get_first_layer_file(pecha)
             src_content = []
             tgt_content = self.get_content(pecha, tgt_layer_path)
+
+            # Chapterize content
+            tgt_content = [tgt_content]
+
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content
 
