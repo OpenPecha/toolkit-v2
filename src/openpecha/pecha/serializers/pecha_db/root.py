@@ -189,12 +189,17 @@ class RootSerializer:
             translation_content = self.get_translation_content(
                 translation_pecha, translation_layer_path
             )
+            # Chapterize content
+            root_content = [root_content]
+            translation_content = [translation_content]
         else:
             root_pecha = pecha
             translation_pecha = None
             root_layer_path = get_first_layer_file(root_pecha)
             root_content = self.get_root_content(root_pecha, root_layer_path)
             translation_content = []
+            # Chapterize content
+            root_content = [root_content]
 
         # Get pecha category from pecha_org_tools package and set to JSON
         bo_category, en_category = self.get_pecha_category(root_pecha)
