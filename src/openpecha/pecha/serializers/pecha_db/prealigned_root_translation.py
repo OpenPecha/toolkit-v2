@@ -172,10 +172,17 @@ class PreAlignedRootTranslationSerializer:
         root_layer_path = get_first_layer_file(root_display_pecha)
         tgt_content = self.get_root_content(root_display_pecha, root_layer_path)
 
+        # Chapterize content
+        chapterized_src_content: List[List[str]] = [src_content]
+        chapterized_tgt_content: List[List[str]] = [tgt_content]
+
         tgt_json: Dict[str, List] = {
             "categories": bo_category,
             "books": [
-                {**self.get_metadata_for_pecha_org(root_pecha), "content": tgt_content}
+                {
+                    **self.get_metadata_for_pecha_org(root_pecha),
+                    "content": chapterized_tgt_content,
+                }
             ],
         }
 
@@ -185,7 +192,7 @@ class PreAlignedRootTranslationSerializer:
         )
         src_json = {
             "categories": en_category,
-            "books": [{**translation_metadata, "content": src_content}],
+            "books": [{**translation_metadata, "content": chapterized_src_content}],
         }
 
         # Set the content for source and target and set it to JSON
