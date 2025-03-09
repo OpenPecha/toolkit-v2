@@ -140,12 +140,15 @@ class PreAlignedCommentarySerializer:
         tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
             root_display_pecha, root_pecha, commentary_pecha
         )
+
+        # Chapterize content
+        chapterized_tgt_content = [tgt_content]
         logger.info(
             f"Alignment transfered content is extracted successfully for {commentary_pecha.id}."
         )
 
         src_book[0]["content"] = src_content
-        tgt_book[0]["content"] = tgt_content
+        tgt_book[0]["content"] = chapterized_tgt_content
 
         serialized_json = {
             "source": {"categories": src_category, "books": src_book},
