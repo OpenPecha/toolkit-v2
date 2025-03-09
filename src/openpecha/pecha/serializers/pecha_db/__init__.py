@@ -123,6 +123,7 @@ class Serializer:
         pecha = pechas[0]
 
         pecha_type = get_pecha_type(metadatas)
+        logger.info(f"Serializing Pecha {pecha.id}, Type: {pecha_type}")
 
         if pecha_type == PechaType.root_pecha:
             return RootSerializer().serialize(pecha)
