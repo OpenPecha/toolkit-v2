@@ -11,7 +11,6 @@ from openpecha.exceptions import (
     StamAnnotationStoreLoadError,
 )
 from openpecha.pecha import Pecha, get_first_layer_file
-from openpecha.pecha.metadata import Language
 from openpecha.utils import get_text_direction_with_lang
 
 logger = get_logger(__name__)
@@ -156,14 +155,12 @@ class PreAlignedRootTranslationSerializer:
 
     def serialize(
         self,
-        # pecha: Pecha,
-        # root_pecha: Union[Pecha, None] = None,
         root_display_pecha: Pecha,
         root_pecha: Pecha,
         translation_pecha: Pecha,
     ) -> Dict:
         # Get pecha category from pecha_org_tools package and set to JSON
-        bo_category, en_category = self.get_pecha_category(root_pecha)
+        bo_category, en_category = self.get_pecha_category(root_display_pecha)
 
         src_content = TranslationAlignmentTransfer().get_serialized_translation(
             root_display_pecha, root_pecha, translation_pecha
@@ -180,16 +177,13 @@ class PreAlignedRootTranslationSerializer:
             "categories": bo_category,
             "books": [
                 {
-                    **self.get_metadata_for_pecha_org(root_pecha),
+                    **self.get_metadata_for_pecha_org(root_display_pecha),
                     "content": chapterized_tgt_content,
                 }
             ],
         }
 
-        translation_metadata = self.get_metadata_for_pecha_org(
-            translation_pecha if translation_pecha else root_pecha,
-            Language.english.value,
-        )
+        translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
         src_json = {
             "categories": en_category,
             "books": [{**translation_metadata, "content": chapterized_src_content}],
