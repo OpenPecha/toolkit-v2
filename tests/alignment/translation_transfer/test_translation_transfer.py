@@ -40,3 +40,8 @@ class TestTranslationAlignmentTransfer(TestCase):
         )
         expected_serialized_json = read_json(DATA_DIR / "serialized_translation.json")
         assert serialized_json == expected_serialized_json
+
+
+work = TestTranslationAlignmentTransfer()
+work.setUp()
+work.test_get_serialized_translation()

@@ -105,52 +105,34 @@ class TranslationAlignmentTransfer:
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_display_pecha)
 
-        root_display_layer_path = self.get_first_layer_path(root_display_pecha)
-        root_display_anns = self.extract_root_anns(
-            AnnotationStore(file=str(root_display_layer_path))
-        )
-
-        root_layer_path = self.get_first_layer_path(root_pecha)
-        root_anns = self.extract_root_anns(AnnotationStore(file=str(root_layer_path)))
-
         translation_layer_path = self.get_first_layer_path(root_translation_pecha)
         translation_anns = self.extract_root_anns(
             AnnotationStore(file=str(translation_layer_path))
         )
-        serialized_content = []
+        mapped_segment = {}
         for idx, ann in translation_anns.items():
             root_idx = ann["root_idx_mapping"]
             translation_text = ann["text"]
 
-            # Skip if translation is empty
-            is_commentary_empty = is_empty(translation_text)
-            if is_commentary_empty:
-                continue
-
-            # Dont include mapping if root is empty
-            idx_not_in_root = root_idx not in root_anns
-            if idx_not_in_root:
-                serialized_content.append(translation_text)
-                continue
-
-            is_root_empty = is_empty(root_anns[root_idx]["text"])
-            if is_root_empty:
-                serialized_content.append(translation_text)
-                continue
-
-            # Dont include mapping if root_display is empty
             root_display_idx = root_map[root_idx][0]
-            idx_not_in_root_display = root_display_idx not in root_display_anns
-            if idx_not_in_root_display:
-                serialized_content.append(translation_text)
-                continue
 
-            is_root_display_empty = is_empty(
-                root_display_anns[root_display_idx]["text"]
-            )
-            if is_root_display_empty:
-                serialized_content.append(translation_text)
-                continue
+            if root_display_idx not in mapped_segment:
+                mapped_segment[root_display_idx] = [translation_text]
 
-            serialized_content.append(f"<1><{root_display_idx}>{translation_text}")
+            else:
+                mapped_segment[root_display_idx].append(translation_text)
+
+        max_root_idx = max(mapped_segment.keys())
+
+        serialized_content = []
+        for i in range(1, max_root_idx + 1):
+            if i not in mapped_segment:
+                serialized_content.append("")
+            else:
+                text = "\n".join(mapped_segment[i])
+                if is_empty(text):
+                    serialized_content.append("")
+                else:
+                    serialized_content.append(text)
+
         return serialized_content
