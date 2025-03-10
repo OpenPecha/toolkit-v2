@@ -49,3 +49,8 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
 
     def tearDown(self):
         self.patcher.stop()
+
+
+work = TestPreAlignedRootTranslationSerializer()
+work.setUp()
+work.test_root_translation_pecha()
