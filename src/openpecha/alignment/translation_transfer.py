@@ -114,6 +114,9 @@ class TranslationAlignmentTransfer:
             root_idx = ann["root_idx_mapping"]
             translation_text = ann["text"]
 
+            if root_map[root_idx] == []:
+                continue
+
             root_display_idx = root_map[root_idx][0]
 
             if root_display_idx not in mapped_segment:
