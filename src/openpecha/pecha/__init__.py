@@ -182,7 +182,7 @@ class Pecha:
             if not isinstance(ann_name, str):
                 raise ValueError("The annotation metadata key should be a string.")
 
-            if not isinstance(ann_value, (str, int, List, Dict)):
+            if not isinstance(ann_value, (str, int, List, Dict, float)):
                 raise ValueError(
                     "The annotation value should be either a string, int or a Span Dictionary."
                 )
@@ -237,24 +237,7 @@ class Pecha:
             )
         return ann_store
 
-    def set_metadata(self, pecha_metadata: Dict):
-        # Retrieve parser name
-        parser_name = self.metadata.parser if self.metadata else None
-        if "parser" not in pecha_metadata:
-            pecha_metadata["parser"] = parser_name
-
-        # Retrieve initial creation type name
-        initial_creation_type = (
-            self.metadata.initial_creation_type if self.metadata else None
-        )
-        if "initial_creation_type" not in pecha_metadata:
-            pecha_metadata["initial_creation_type"] = initial_creation_type
-
-        try:
-            pecha_metadata = PechaMetaData(**pecha_metadata)
-        except Exception as e:
-            raise ValueError(f"Invalid metadata: {e}")
-
+    def set_metadata(self, pecha_metadata: PechaMetaData):
         self.metadata = pecha_metadata
         with open(self.metadata_path, "w") as f:
             json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)
