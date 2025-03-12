@@ -106,7 +106,10 @@ def chunk_strings(strings: List[str], chunk_size=100):
 def get_chapter_num_from_segment_num(
     segment_num: int, no_of_chapter_segment: int = NO_OF_CHAPTER_SEGMENT
 ) -> int:
-    return math.ceil(segment_num / NO_OF_CHAPTER_SEGMENT)
+    """
+    For commentary pecha, get the chapter number from the segment number(root mapping).
+    """
+    return math.ceil(segment_num / no_of_chapter_segment)
 
 
 def read_csv(file_path) -> List[List[str]]:
