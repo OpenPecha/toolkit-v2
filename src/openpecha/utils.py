@@ -86,7 +86,7 @@ def parse_root_mapping(root_mapping) -> List[int]:
     return root_mapping_list
 
 
-def chunk_strings(strings, chunk_size=100):
+def chunk_strings(strings: List[str], chunk_size=100):
     """
     Splits a list of strings into smaller lists of at most chunk_size elements each.
 
