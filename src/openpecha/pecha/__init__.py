@@ -237,7 +237,24 @@ class Pecha:
             )
         return ann_store
 
-    def set_metadata(self, pecha_metadata: PechaMetaData):
+    def set_metadata(self, pecha_metadata: Dict):
+        # Retrieve parser name
+        parser_name = self.metadata.parser if self.metadata else None
+        if "parser" not in pecha_metadata:
+            pecha_metadata["parser"] = parser_name
+
+        # Retrieve initial creation type name
+        initial_creation_type = (
+            self.metadata.initial_creation_type if self.metadata else None
+        )
+        if "initial_creation_type" not in pecha_metadata:
+            pecha_metadata["initial_creation_type"] = initial_creation_type
+
+        try:
+            pecha_metadata = PechaMetaData(**pecha_metadata)
+        except Exception as e:
+            raise ValueError(f"Invalid metadata: {e}")
+
         self.metadata = pecha_metadata
         with open(self.metadata_path, "w") as f:
             json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)
@@ -408,11 +425,6 @@ class Pecha:
             layer.save()
 
 
-def get_pecha_with_id(pecha_id: str) -> Pecha:
-    root_pecha = Pecha.from_id(pecha_id=pecha_id)
-    return root_pecha
-
-
 def get_first_layer_file(pecha: Pecha) -> str:
     """
     1. Get the first layer file from the pecha
@@ -424,15 +436,12 @@ def get_first_layer_file(pecha: Pecha) -> str:
     return relative_layer_path
 
 
-def get_pecha_alignment_data(pecha: Pecha) -> Union[Dict[str, str], None]:
-    for key in ("commentary_of", "translation_of", "version_of"):
-        if key in pecha.metadata.source_metadata:
-            root_pecha = get_pecha_with_id(pecha.metadata.source_metadata[key])
-            return {
-                "source": get_first_layer_file(root_pecha),  # Root pecha layer file
-                "target": get_first_layer_file(
-                    pecha
-                ),  # Commentary/Translation/Version pecha layer file
-            }
-
-    return None
+def get_anns(ann_store: AnnotationStore):
+    anns = []
+    for ann in ann_store:
+        ann_data = {}
+        for data in ann:
+            ann_data[data.key().id()] = data.value().get()
+        curr_ann = {**ann_data, "text": str(ann)}
+        anns.append(curr_ann)
+    return anns
