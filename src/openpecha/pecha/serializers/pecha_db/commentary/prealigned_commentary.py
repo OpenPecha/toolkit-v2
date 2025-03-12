@@ -7,7 +7,7 @@ from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataValidationError, PechaCategoryNotFoundError
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.utils import get_text_direction_with_lang
+from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 logger = get_logger(__name__)
 
@@ -142,7 +142,7 @@ class PreAlignedCommentarySerializer:
         )
 
         # Chapterize content
-        chapterized_tgt_content = [tgt_content]
+        chapterized_tgt_content = chunk_strings(tgt_content)
         logger.info(
             f"Alignment transfered content is extracted successfully for {commentary_pecha.id}."
         )
