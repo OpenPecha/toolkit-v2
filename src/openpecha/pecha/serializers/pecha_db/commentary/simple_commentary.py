@@ -3,7 +3,7 @@ from typing import Any, Dict, Union
 from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
-from openpecha.config import NO_OF_CHAPTER_SEGMENT, get_logger
+from openpecha.config import get_logger
 from openpecha.exceptions import (
     MetaDataValidationError,
     PechaCategoryNotFoundError,
@@ -187,15 +187,15 @@ class SimpleCommentarySerializer:
             tgt_content = self.get_content(commentary_pecha, commentary_path)
 
             # Chapterize content
-            src_content = chunk_strings(src_content, NO_OF_CHAPTER_SEGMENT)
-            tgt_content = chunk_strings(tgt_content, NO_OF_CHAPTER_SEGMENT)
+            src_content = chunk_strings(src_content)
+            tgt_content = chunk_strings(tgt_content)
         else:
             tgt_layer_path = get_first_layer_file(pecha)
             src_content = []
             tgt_content = self.get_content(pecha, tgt_layer_path)
 
             # Chapterize content
-            tgt_content = chunk_strings(tgt_content, NO_OF_CHAPTER_SEGMENT)
+            tgt_content = chunk_strings(tgt_content)
 
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content
