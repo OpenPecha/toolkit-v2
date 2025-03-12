@@ -18,10 +18,15 @@ from openpecha.core.metadata import (
     Copyright_unknown,
     InitialCreationType,
     InitialPechaMetadata,
-    LicenseType,
-)
+    LicenseType,)
 from openpecha.core.pecha import OpenPechaFS
 from openpecha.pecha.parsers import BaseFormatter
+
+from openpecha.pecha import Pecha
+from typing import Any, Dict, List, Tuple, Union
+from openpecha.exceptions import  MetaDataValidationError
+from openpecha.pecha.metadata import  get_language_by_value, PechaMetaData, get_license_type_by_value, get_copyright_status_by_value, get_initial_creation_type_by_value, get_copyright_by_value
+from openpecha.pecha.layer import get_layer_enum_from_layer_type_v1
 
 # Initialize the logger
 logger = logging.getLogger(__name__)
@@ -747,6 +752,8 @@ class OCRFormatter(BaseFormatter):
             ocr_import_info=ocr_import_info,
         )
         return metadata
+    
+    
 
     def set_base_meta(self, image_group_id, base_file_name, word_confidence_list):
         self.cur_word_confidences = []
@@ -762,6 +769,9 @@ class OCRFormatter(BaseFormatter):
                 ),
                 "ocr_word_mean_confidence_index": statistics.mean(word_confidence_list),
             }
+    
+    
+
 
     def create_opf(
         self, data_provider, pecha_id=None, opf_options={}, ocr_import_info={}
@@ -862,6 +872,7 @@ class OCRFormatter(BaseFormatter):
             path=self.output_path / pecha_id / f"{pecha_id}.opf",
             pecha_id=pecha_id,
         )
+
         total_word_confidence_list = []
 
         for image_group_id, _ in self.source_info["image_groups"].items():
@@ -887,3 +898,129 @@ class OCRFormatter(BaseFormatter):
         pecha.save()
 
         return pecha
+    
+
+    def create_pecha(
+        self, data_provider, pecha_id=None, opf_options={}, ocr_import_info={}
+    ):
+        """Create OPF using Pecha instead of OpenPechaFS"""
+
+        self.data_provider = data_provider
+
+        # Configure options
+        self.remove_non_character_lines = opf_options.get("remove_non_character_lines", True)
+        self.remove_rotated_boxes = opf_options.get("remove_rotated_boxes", True)
+        self.create_language_layer = opf_options.get("create_language_layer", True)
+        self.ocr_confidence_threshold = opf_options.get("ocr_confidence_threshold", ANNOTATION_MINIMAL_CONFIDENCE)
+        self.language_annotation_min_len = opf_options.get("language_annotation_min_len", ANNOTATION_MINIMAL_LEN)
+        self.max_low_conf_per_page = opf_options.get("max_low_conf_per_page", ANNOTATION_MAX_LOW_CONF_PER_PAGE)
+        self.script_to_lang_map = opf_options.get("script_to_lang_map", DEFAULT_SCRIPT_TO_LANG_MAPPING)
+        self.same_line_ratio_threshold = opf_options.get("same_line_ratio_threshold", SAME_LINE_RATIO_THRESHOLD)
+        self.remove_duplicate_symbols = opf_options.get("remove_duplicate_symbols", True)
+
+        # Store import info
+        ocr_import_info["op_import_options"] = opf_options
+        ocr_import_info["op_import_version"] = __version__
+
+        # Determine scan ID and metadata
+        self.bdrc_scan_id = self.data_provider.bdrc_scan_id
+        self.source_info = self.data_provider.get_source_info()
+        self.default_language = ocr_import_info.get("expected_default_language", "bo")
+        if "languages" in self.source_info and self.source_info["languages"]:
+            self.default_language = self.source_info["languages"][0]
+
+        # Generate Pecha ID if not provided
+        pecha_id = ids.get_initial_pecha_id() if pecha_id is None else pecha_id
+
+        # Create metadata object
+        self.metadata = self.get_metadata(pecha_id, ocr_import_info)
+
+        # Create Pecha instance
+        pecha = Pecha.create(output_path=self.output_path, pecha_id=pecha_id)
+
+        total_word_confidence_list = []
+
+        # Process each image group
+        for image_group_id, _ in self.source_info["image_groups"].items():
+            base_id = image_group_id
+            base_text, layers, word_confidence_list = self.build_base(image_group_id)
+            
+            # Set base text
+            pecha.set_base(base_text, base_id)
+
+            # Add layers
+            for layer_type, annotations in layers.items():
+                layer_enum = get_layer_enum_from_layer_type_v1(layer_type.value)
+                layer, layer_path = pecha.add_layer(base_id, layer_enum)
+
+                for ann_id, ann in annotations.annotations.items():
+                    try:
+                        ann_dict = {
+                            layer_enum.value: {  # Using correct key instead of "span"
+                                "start": ann.span.start,
+                                "end": ann.span.end
+                            }
+                        }
+                        if layer_type == LayerEnum.pagination:
+                            ann_dict.update({
+                                "imgnum": ann.imgnum,
+                                "reference": ann.reference
+                            })
+                        elif layer_type == LayerEnum.language:
+                            ann_dict.update({"language": ann.language})
+                        elif layer_type == LayerEnum.ocr_confidence:
+                            ann_dict.update({"confidence": ann.confidence})
+                            if ann.nb_below_threshold is not None:
+                                ann_dict["nb_below_threshold"] = ann.nb_below_threshold
+                        else:
+                            continue  # Skip unknown layer types
+
+                        # Validate annotation before adding
+                        pecha.check_annotation(ann_dict, layer_enum)
+
+                        # Add annotation
+                        pecha.add_annotation(layer, ann_dict, layer_enum)
+
+                    except ValueError as e:
+                        logger.error(f"Skipping invalid annotation {ann_id}: {e}")
+
+                layer.save()
+
+            self.set_base_meta(image_group_id, base_id, word_confidence_list)
+            total_word_confidence_list += word_confidence_list
+        
+        
+         # Convert Toolkit v1 metadata to Toolkit v2 metadata
+        pecha_metadata = self.metadata
+        pecha_metadata.bases = self.base_meta
+        if total_word_confidence_list:
+            pecha_metadata.statistics = {
+                # there are probably more efficient ways to compute those
+                "ocr_word_mean_confidence_index": statistics.mean(
+                    total_word_confidence_list
+                ),
+                "ocr_word_median_confidence_index": statistics.median(
+                    total_word_confidence_list
+                ),
+            }
+        
+        # Replace pecha_metdata v1 with dummy pecha meta of v2 
+        dummy_metadata = PechaMetaData(
+            id=pecha.id,
+            title={"bo": "མདོ་སྡེ་བཀའ་འགྱུར"},
+            author=["Anonymous"],
+            imported=datetime.datetime.now(),
+            toolkit_version="1.0.0",
+            parser="DummyParser",
+            initial_creation_type=get_initial_creation_type_by_value("ocr"),
+            language=get_language_by_value("bo"),
+            source_metadata={"publisher": "Dummy Publisher"},
+            bases=[{"base_id": "B001", "text": "Sample text"}],
+            copyright=get_copyright_by_value("Public domain"),
+            licence=get_license_type_by_value("CC BY"),
+        )
+        pecha.set_metadata(dummy_metadata)
+
+        return pecha
+
+
