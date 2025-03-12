@@ -1,4 +1,8 @@
-from openpecha.utils import chunk_strings, parse_root_mapping
+from openpecha.utils import (
+    chunk_strings,
+    get_chapter_num_from_segment_num,
+    parse_root_mapping,
+)
 
 
 def test_parse_root_mapping():
@@ -45,3 +49,25 @@ def test_chunk_strings():
     chunk_size = 2
     expected = [["1", "2"], ["3", "4"], ["5", "6"], ["7", "8"], ["9", "10"]]
     assert chunk_strings(strings, chunk_size) == expected
+
+
+def test_get_chapter_num_from_segment_num():
+    segment_num = 1
+    no_of_chapter_segment = 100
+    assert get_chapter_num_from_segment_num(segment_num, no_of_chapter_segment) == 1
+
+    segment_num = 100
+    no_of_chapter_segment = 100
+    assert get_chapter_num_from_segment_num(segment_num, no_of_chapter_segment) == 1
+
+    segment_num = 101
+    no_of_chapter_segment = 100
+    assert get_chapter_num_from_segment_num(segment_num, no_of_chapter_segment) == 2
+
+    segment_num = 200
+    no_of_chapter_segment = 100
+    assert get_chapter_num_from_segment_num(segment_num, no_of_chapter_segment) == 2
+
+    segment_num = 893
+    no_of_chapter_segment = 100
+    assert get_chapter_num_from_segment_num(segment_num, no_of_chapter_segment) == 9

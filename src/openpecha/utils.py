@@ -1,8 +1,11 @@
 import csv
 import json
+import math
 import os
 from contextlib import contextmanager
 from typing import List
+
+from openpecha.config import NO_OF_CHAPTER_SEGMENT
 
 
 @contextmanager
@@ -98,6 +101,12 @@ def chunk_strings(strings: List[str], chunk_size=100):
     list of list of str: A list of lists, where each inner list contains up to chunk_size elements.
     """
     return [strings[i : i + chunk_size] for i in range(0, len(strings), chunk_size)]
+
+
+def get_chapter_num_from_segment_num(
+    segment_num: int, no_of_chapter_segment: int = NO_OF_CHAPTER_SEGMENT
+) -> int:
+    return math.ceil(segment_num / NO_OF_CHAPTER_SEGMENT)
 
 
 def read_csv(file_path) -> List[List[str]]:
