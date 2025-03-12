@@ -11,7 +11,11 @@ from openpecha.exceptions import (
 )
 from openpecha.pecha import Pecha, get_anns, get_first_layer_file
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.utils import get_text_direction_with_lang
+from openpecha.utils import (
+    chunk_strings,
+    get_chapter_num_from_segment_num,
+    get_text_direction_with_lang,
+)
 
 logger = get_logger(__name__)
 
@@ -132,8 +136,11 @@ class SimpleCommentarySerializer:
                     If root mapping number is not available, then just return the text
         Output Format: string
         """
+        root_map = int(ann["root_idx_mapping"])
+        chapter_num = get_chapter_num_from_segment_num(root_map)
+
         if "root_idx_mapping" in ann:
-            return f"<{chapter_num}><{ann['root_idx_mapping']}>{ann['text'].strip()}"
+            return f"<{chapter_num}><{root_map}>{ann['text'].strip()}"
         return ann["text"].strip()
 
     def serialize(
@@ -180,15 +187,15 @@ class SimpleCommentarySerializer:
             tgt_content = self.get_content(commentary_pecha, commentary_path)
 
             # Chapterize content
-            src_content = [src_content]
-            tgt_content = [tgt_content]
+            src_content = chunk_strings(src_content)
+            tgt_content = chunk_strings(tgt_content)
         else:
             tgt_layer_path = get_first_layer_file(pecha)
             src_content = []
             tgt_content = self.get_content(pecha, tgt_layer_path)
 
             # Chapterize content
-            tgt_content = [tgt_content]
+            tgt_content = chunk_strings(tgt_content)
 
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content

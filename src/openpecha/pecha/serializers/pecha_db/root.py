@@ -12,7 +12,7 @@ from openpecha.exceptions import (
 )
 from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.metadata import Language
-from openpecha.utils import get_text_direction_with_lang
+from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 logger = get_logger(__name__)
 
@@ -190,8 +190,8 @@ class RootSerializer:
                 translation_pecha, translation_layer_path
             )
             # Chapterize content
-            root_content = [root_content]
-            translation_content = [translation_content]
+            root_content = chunk_strings(root_content)
+            translation_content = chunk_strings(translation_content)
         else:
             root_pecha = pecha
             translation_pecha = None
@@ -199,7 +199,7 @@ class RootSerializer:
             root_content = self.get_root_content(root_pecha, root_layer_path)
             translation_content = []
             # Chapterize content
-            root_content = [root_content]
+            root_content = chunk_strings(root_content)
 
         # Get pecha category from pecha_org_tools package and set to JSON
         bo_category, en_category = self.get_pecha_category(root_pecha)

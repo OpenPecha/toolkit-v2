@@ -11,7 +11,7 @@ from openpecha.exceptions import (
     StamAnnotationStoreLoadError,
 )
 from openpecha.pecha import Pecha, get_first_layer_file
-from openpecha.utils import get_text_direction_with_lang
+from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 logger = get_logger(__name__)
 
@@ -170,8 +170,8 @@ class PreAlignedRootTranslationSerializer:
         tgt_content = self.get_root_content(root_display_pecha, root_layer_path)
 
         # Chapterize content
-        chapterized_src_content: List[List[str]] = [src_content]
-        chapterized_tgt_content: List[List[str]] = [tgt_content]
+        chapterized_src_content: List[List[str]] = chunk_strings(src_content)
+        chapterized_tgt_content: List[List[str]] = chunk_strings(tgt_content)
 
         tgt_json: Dict[str, List] = {
             "categories": bo_category,

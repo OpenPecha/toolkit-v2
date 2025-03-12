@@ -5,6 +5,7 @@ from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha, get_anns
+from openpecha.utils import get_chapter_num_from_segment_num
 
 logger = get_logger(__name__)
 
@@ -148,7 +149,10 @@ class CommentaryAlignmentTransfer:
                 serialized_content.append(commentary_text)
                 continue
 
-            serialized_content.append(f"<1><{root_display_idx}>{commentary_text}")
+            chapter_num = get_chapter_num_from_segment_num(root_display_idx)
+            serialized_content.append(
+                f"<{chapter_num}><{root_display_idx}>{commentary_text}"
+            )
         return serialized_content
 
 
