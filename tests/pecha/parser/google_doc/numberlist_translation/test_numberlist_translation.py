@@ -78,3 +78,8 @@ def test_en_google_doc_translation_parser():
         pecha = parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
         assert isinstance(pecha, Pecha)
+
+
+
+test_bo_google_doc_translation_parser()
+test_en_google_doc_translation_parser

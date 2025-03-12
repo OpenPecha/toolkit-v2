@@ -17,7 +17,7 @@ def test_base_text():
         Path(__file__).parent
         / "data"
         / "file_per_page"
-        / "opf_expected_datas"
+        / "pecha_opf_expected_data"
         / "expected_base_text.txt"
     ).read_text(encoding="utf-8")
     buda_data_path = Path(__file__).parent / "data" / "file_per_page" / "buda_data.yml"
@@ -33,7 +33,7 @@ def test_base_text():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRFormatter(output_path=tmpdirname)
-        pecha = formatter.create_opf(data_provider, pecha_id, {}, ocr_import_info)
+        pecha = formatter.create_pecha(data_provider, pecha_id, {}, ocr_import_info)
         base_text = pecha.bases["I1KG10195"]
         assert expected_base_text == base_text
 
@@ -54,8 +54,8 @@ def test_build_layers():
         Path(__file__).parent
         / "data"
         / "file_per_page"
-        / "opf_expected_datas"
-        / "expected_Pagination.yml"
+        / "pecha_opf_expected_data"
+        / "expected_Pagination.json"
     )
     expected_pagination_layer = Layer(
         annotation_type=LayerEnum.pagination,
@@ -65,8 +65,8 @@ def test_build_layers():
         Path(__file__).parent
         / "data"
         / "file_per_page"
-        / "opf_expected_datas"
-        / "expected_Language.yml"
+        / "pecha_opf_expected_data"
+        / "expected_Language.json"
     )
     expected_language_layer = Layer(
         annotation_type=LayerEnum.language,
@@ -76,8 +76,8 @@ def test_build_layers():
         Path(__file__).parent
         / "data"
         / "file_per_page"
-        / "opf_expected_datas"
-        / "expected_OCRConfidence.yml"
+        / "pecha_opf_expected_data"
+        / "expected_OCRConfidence.json"
     )
     expected_confidence_layer = Layer(
         annotation_type=LayerEnum.ocr_confidence,
@@ -98,7 +98,7 @@ def test_build_layers():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRFormatter(output_path=tmpdirname)
-        pecha = formatter.create_opf(
+        pecha = formatter.create_pecha(
             data_provider, pecha_id, opf_options, ocr_import_info
         )
         pagination_layer = pecha.layers[base_name][LayerEnum.pagination]
