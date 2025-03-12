@@ -112,6 +112,16 @@ def get_chapter_num_from_segment_num(
     return math.ceil(segment_num / no_of_chapter_segment)
 
 
+def process_segment_num_for_chapter(
+    segment_num: int, no_of_chapter_segment: int = NO_OF_CHAPTER_SEGMENT
+) -> int:
+    return (
+        segment_num % no_of_chapter_segment
+        if segment_num % no_of_chapter_segment != 0
+        else no_of_chapter_segment
+    )
+
+
 def read_csv(file_path) -> List[List[str]]:
     with open(file_path, newline="", encoding="utf-8") as file:
         reader = csv.reader(file)

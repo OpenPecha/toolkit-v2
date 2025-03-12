@@ -15,6 +15,7 @@ from openpecha.utils import (
     chunk_strings,
     get_chapter_num_from_segment_num,
     get_text_direction_with_lang,
+    process_segment_num_for_chapter,
 )
 
 logger = get_logger(__name__)
@@ -139,8 +140,9 @@ class SimpleCommentarySerializer:
         root_map = int(ann["root_idx_mapping"])
         chapter_num = get_chapter_num_from_segment_num(root_map)
 
+        processed_root_map = process_segment_num_for_chapter(root_map)
         if "root_idx_mapping" in ann:
-            return f"<{chapter_num}><{root_map}>{ann['text'].strip()}"
+            return f"<{chapter_num}><{processed_root_map}>{ann['text'].strip()}"
         return ann["text"].strip()
 
     def serialize(
