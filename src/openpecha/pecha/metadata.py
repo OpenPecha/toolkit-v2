@@ -18,6 +18,18 @@ class InitialCreationType(Enum):
     json = "json"
     google_docx = "google_docx"
 
+# Create a mapping dictionary for quick lookup
+INITIAL_CREATION_MAP = {creation.value: creation for creation in InitialCreationType}
+
+def get_initial_creation_type_by_value(value: str) -> Optional[InitialCreationType]:
+    """
+    Returns the InitialCreationType enum corresponding to the given value.
+
+    :param value: The string value of the initial creation type.
+    :return: The corresponding InitialCreationType enum, or None if not found.
+    """
+    return INITIAL_CREATION_MAP.get(value)
+
 
 class Language(Enum):
     tibetan = "bo"
@@ -27,11 +39,34 @@ class Language(Enum):
     italian = "it"
     russian = "ru"
 
+# Create a mapping dictionary for quick lookup
+LANGUAGE_MAP = {lang.value: lang for lang in Language}
+
+def get_language_by_value(value: str) -> Language:
+    """
+    Returns the Language enum corresponding to the given value.
+    
+    :param value: The string value of the language.
+    :return: The corresponding Language enum, or None if not found.
+    """
+    return LANGUAGE_MAP.get(value)
 
 class CopyrightStatus(Enum):
     UNKNOWN = "Unknown"
     COPYRIGHTED = "In copyright"
     PUBLIC_DOMAIN = "Public domain"
+
+# Create a mapping dictionary for quick lookup
+COPYRIGHT_MAP = {status.value: status for status in CopyrightStatus}
+
+def get_copyright_status_by_value(value: str) -> Optional[CopyrightStatus]:
+    """
+    Returns the CopyrightStatus enum corresponding to the given value.
+
+    :param value: The string value of the copyright status.
+    :return: The corresponding CopyrightStatus enum, or None if not found.
+    """
+    return COPYRIGHT_MAP.get(value)
 
 
 class Copyright(BaseModel):
@@ -60,6 +95,22 @@ Copyright_public_domain = Copyright(
     info_url="https://creativecommons.org/publicdomain/mark/1.0/",
 )
 
+# Create a mapping dictionary for quick lookup
+COPYRIGHT_OBJECT_MAP = {
+    Copyright_copyrighted.status.value: Copyright_copyrighted,
+    Copyright_unknown.status.value: Copyright_unknown,
+    Copyright_public_domain.status.value: Copyright_public_domain,
+}
+
+def get_copyright_by_value(value: str) -> Optional[Copyright]:
+    """
+    Returns the Copyright object corresponding to the given value.
+
+    :param value: The string value of the copyright status.
+    :return: The corresponding Copyright object, or None if not found.
+    """
+    return COPYRIGHT_OBJECT_MAP.get(value)
+
 
 class LicenseType(Enum):
     # based on https://creativecommons.org/licenses/
@@ -75,6 +126,19 @@ class LicenseType(Enum):
 
     UNDER_COPYRIGHT = "under copyright"
     UNKNOWN = "Unknown"
+
+def get_license_type_by_value(value: str) -> LicenseType:
+    """
+    Returns the LicenseType enum corresponding to the given value.
+
+    :param value: The string value of the license type.
+    :return: The corresponding LicenseType enum, or None if not found.
+    """
+    try:
+        return LicenseType(value)  # Convert string to Enum
+    except ValueError:
+        print(f"⚠️ Error: '{value}' is not a valid LicenseType value.")
+        return None  # Return None if the value is invalid
 
 
 class PechaMetaData(BaseModel):
@@ -94,6 +158,7 @@ class PechaMetaData(BaseModel):
 
     model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
 
+    
     @model_validator(mode="before")
     def set_id(cls, values):
         if "id" not in values or values["id"] is None:
@@ -132,6 +197,7 @@ class PechaMetaData(BaseModel):
             and class_ is not parsers.BaseParser
         ]
         return parser_classes
+
 
     @model_validator(mode="before")
     def validate_parser(cls, values):
@@ -216,7 +282,7 @@ class PechaMetaData(BaseModel):
             del data[field]
 
         return data
-
+    
 
 class KungsangMonlamMetaData(BaseModel):
     author: Optional[Dict[str, str]] = Field(default_factory=dict)
@@ -259,3 +325,5 @@ class KungsangMonlamMetaData(BaseModel):
             source_metadata={},
             **extra_metadata,
         )
+
+
