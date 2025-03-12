@@ -54,3 +54,5 @@ LINE_BREAKERS = [
     "། །།",
     "།།།",
 ]
+
+NO_OF_CHAPTER_SEGMENT = 100
