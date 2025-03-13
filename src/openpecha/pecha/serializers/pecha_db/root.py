@@ -210,11 +210,13 @@ class RootSerializer:
                 {**self.get_metadata_for_pecha_org(root_pecha), "content": root_content}
             ],
         }
+        if translation_pecha:
+            translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
+        else:
+            translation_metadata = self.get_metadata_for_pecha_org(
+                root_pecha, lang=Language.english.value
+            )
 
-        translation_metadata = self.get_metadata_for_pecha_org(
-            translation_pecha if translation_pecha else root_pecha,
-            Language.english.value,
-        )
         translation_json = {
             "categories": en_category,
             "books": [{**translation_metadata, "content": translation_content}],
