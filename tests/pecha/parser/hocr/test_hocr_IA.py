@@ -1,11 +1,12 @@
+import json
 import tempfile
 from pathlib import Path
 
 from test_hocr_data_provider import HOCRIATestFileProvider
 
-from openpecha.core.layer import Layer, LayerEnum
+from openpecha.core.layer import LayerEnum
 from openpecha.pecha.parsers.ocr.hocr import HOCRFormatter
-from openpecha.utils import dump_yaml, load_yaml
+from openpecha.utils import load_json, load_yaml
 
 
 def test_base_text():
@@ -36,7 +37,7 @@ def test_base_text():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRFormatter(mode=mode, output_path=tmpdirname)
-        pecha = formatter.create_opf(data_provider, pecha_id, {}, ocr_import_info)
+        pecha = formatter.create_pecha(data_provider, pecha_id, {}, ocr_import_info)
         base_text = pecha.bases["I0886"]
         base_text_line = base_text.split("\n")
         expected_base_text_line = expected_base_text.split("\n")
@@ -55,41 +56,183 @@ def is_same_ann(expected_ann, ann):
     return False
 
 
+def extract_annotation_values(annotation_store, annotation):
+    """Extract values from annotation data by resolving references"""
+    values = {}
+
+    # Handle direct data format
+    if isinstance(annotation["data"], dict):
+        return annotation["data"]
+
+    # Handle list format with direct values
+    if isinstance(annotation["data"], list):
+        for d in annotation["data"]:
+            if isinstance(d, dict):
+                if "key" in d and "value" in d:
+                    values[d["key"]] = d["value"]
+                elif any(k in d for k in ["imgnum", "language", "confidence"]):
+                    values.update(d)
+
+    # Handle STAM format with references
+    if isinstance(annotation["data"], list) and "@type" in annotation_store:
+        data_map = {}
+        # Build map of data IDs to their values
+        if "annotationsets" in annotation_store:
+            for dataset in annotation_store["annotationsets"]:
+                if "data" in dataset:
+                    for d in dataset["data"]:
+                        if "key" in d and "value" in d:
+                            if isinstance(d["value"], dict) and "value" in d["value"]:
+                                data_map[d["@id"]] = {
+                                    "key": d["key"],
+                                    "value": d["value"]["value"],
+                                }
+                            else:
+                                data_map[d["@id"]] = {
+                                    "key": d["key"],
+                                    "value": d["value"],
+                                }
+
+        # Resolve references in annotation data
+        for d in annotation["data"]:
+            if "@id" in d and d["@id"] in data_map:
+                data = data_map[d["@id"]]
+                values[data["key"]] = data["value"]
+
+    return values
+
+
+def get_annotation_bounds(annotation):
+    """Extract start and end positions from annotation"""
+    offset = annotation["target"].get("offset", {})
+
+    start = (
+        offset.get("begin", {}).get("value", None)
+        if isinstance(offset.get("begin"), dict)
+        else offset.get("start")
+    )
+    end = (
+        offset.get("end", {}).get("value", None)
+        if isinstance(offset.get("end"), dict)
+        else offset.get("end")
+    )
+
+    return start, end
+
+
+def test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
+    """Test pagination layer annotations"""
+    _, pagination_layer_file = pecha.get_layer_by_ann_type(
+        base_name, LayerEnum.pagination
+    )
+    assert pagination_layer_file.exists(), "Pagination layer file should exist"
+    assert pagination_layer_file.name.startswith(
+        "Pagination-"
+    ), "Pagination layer file name should start with 'Pagination-'"
+
+    pagination_layer_content = json.loads(pagination_layer_file.read_text())
+
+    for i, (actual, expected) in enumerate(
+        zip(
+            pagination_layer_content["annotations"],
+            expected_pagination_layer_dict["annotations"],
+        )
+    ):
+        # Compare spans
+        actual_start, actual_end = get_annotation_bounds(actual)
+        expected_start, expected_end = get_annotation_bounds(expected)
+
+        assert (
+            actual_start == expected_start
+        ), f"Pagination start position mismatch at index {i}"
+        assert (
+            actual_end == expected_end
+        ), f"Pagination end position mismatch at index {i}"
+
+        # Compare data
+        actual_data = extract_annotation_values(pagination_layer_content, actual)
+        expected_data = extract_annotation_values(
+            expected_pagination_layer_dict, expected
+        )
+
+        assert actual_data.get("imgnum") == expected_data.get(
+            "imgnum"
+        ), f"Image number mismatch at index {i}"
+        assert actual_data.get("reference") == expected_data.get(
+            "reference"
+        ), f"Reference mismatch at index {i}"
+
+
+def test_confidence_layer(pecha, base_name, expected_confidence_layer_dict):
+    """Test OCR confidence layer annotations"""
+    _, confidence_layer_file = pecha.get_layer_by_ann_type(
+        base_name, LayerEnum.ocr_confidence
+    )
+    assert confidence_layer_file.exists(), "OCR confidence layer file should exist"
+    assert confidence_layer_file.name.startswith(
+        "OCRConfidence-"
+    ), "OCR confidence layer file name should start with 'OCRConfidence-'"
+
+    confidence_layer_content = json.loads(confidence_layer_file.read_text())
+
+    for i, (actual, expected) in enumerate(
+        zip(
+            confidence_layer_content["annotations"],
+            expected_confidence_layer_dict["annotations"],
+        )
+    ):
+        # Compare spans
+        actual_start, actual_end = get_annotation_bounds(actual)
+        expected_start, expected_end = get_annotation_bounds(expected)
+
+        assert (
+            actual_start == expected_start
+        ), f"Confidence start position mismatch at index {i}"
+        assert (
+            actual_end == expected_end
+        ), f"Confidence end position mismatch at index {i}"
+
+        # Compare data
+        actual_data = extract_annotation_values(confidence_layer_content, actual)
+        expected_data = extract_annotation_values(
+            expected_confidence_layer_dict, expected
+        )
+
+        assert actual_data.get("confidence") == expected_data.get(
+            "confidence"
+        ), f"Confidence value mismatch at index {i}"
+
+
 def test_build_layers():
     work_id = "W22084"
     pecha_id = "I9876543"
     mode = "IA"
     base_name = "I0886"
-
+    # Load test data
     ocr_path = Path(__file__).parent / "data" / "file_per_volume" / work_id
-    expected_pagination_layer_dict = load_yaml(
-        Path(__file__).parent
-        / "data"
-        / "file_per_volume"
-        / "opf_expected_datas"
-        / "expected_Pagination.yml"
-    )
-    expected_pagination_layer = Layer(
-        annotation_type=LayerEnum.pagination,
-        annotations=expected_pagination_layer_dict["annotations"],
-    )
-    expected_confidence_layer_dict = load_yaml(
-        Path(__file__).parent
-        / "data"
-        / "file_per_volume"
-        / "opf_expected_datas"
-        / "expected_OCRConfidence.yml"
-    )
-    expected_confidence_layer = Layer(
-        annotation_type=LayerEnum.ocr_confidence,
-        annotations=expected_confidence_layer_dict["annotations"],
-    )
     buda_data_path = (
         Path(__file__).parent / "data" / "file_per_volume" / "buda_data.yml"
     )
     ocr_import_info_path = (
         Path(__file__).parent / "data" / "file_per_volume" / "ocr_import_info.yml"
     )
+
+    # Load expected layer data
+    expected_pagination_layer_dict = load_json(
+        Path(__file__).parent
+        / "data"
+        / "file_per_volume"
+        / "pecha_opf_expected_data"
+        / "expected_Pagination.json"
+    )
+    expected_confidence_layer_dict = load_json(
+        Path(__file__).parent
+        / "data"
+        / "file_per_volume"
+        / "pecha_opf_expected_data"
+        / "expected_OCRConfidence.json"
+    )
+
     ocr_import_info = load_yaml(ocr_import_info_path)
     buda_data = load_yaml(buda_data_path)
     image_list_path = Path(__file__).parent / "data" / "file_per_volume"
@@ -101,27 +244,14 @@ def test_build_layers():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRFormatter(mode=mode, output_path=tmpdirname)
-        pecha = formatter.create_opf(
+        pecha = formatter.create_pecha(
             data_provider, pecha_id, opf_options, ocr_import_info
         )
-        pagination_layer = pecha.layers[base_name][LayerEnum.pagination]
-        confidence_layer = pecha.layers[base_name][LayerEnum.ocr_confidence]
-
-        ###Pagination layer testing
-        for (_, expected_ann), (_, ann) in zip(
-            expected_pagination_layer.get_annotations(),
-            pagination_layer.get_annotations(),
-        ):
-            assert is_same_ann(expected_ann, ann)
-
-        ###Confidence layer testing
-        for (_, expected_ann), (_, ann) in zip(
-            expected_confidence_layer.get_annotations(),
-            confidence_layer.get_annotations(),
-        ):
-            assert is_same_ann(expected_ann, ann)
+        # Test each layer separately
+        test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)
+        test_confidence_layer(pecha, base_name, expected_confidence_layer_dict)
 
 
 if __name__ == "__main__":
-    # test_base_text()
+    test_base_text()
     test_build_layers()

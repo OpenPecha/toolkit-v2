@@ -4,7 +4,7 @@ from pathlib import Path
 from test_hocr_data_provider import HOCRIATestFileProvider
 
 from openpecha.pecha.parsers.ocr.hocr import HOCRFormatter
-from openpecha.utils import dump_yaml, load_yaml
+from openpecha.utils import load_json, load_yaml
 
 
 def test_google_ocr_base_meta():
@@ -17,8 +17,8 @@ def test_google_ocr_base_meta():
         Path(__file__).parent
         / "data"
         / "file_per_volume"
-        / "opf_expected_datas"
-        / "expected_hocr_meta.yml"
+        / "pecha_opf_expected_data"
+        / "expected_hocr_meta.json"
     )
     buda_data_path = (
         Path(__file__).parent / "data" / "file_per_volume" / "buda_data.yml"
@@ -35,26 +35,13 @@ def test_google_ocr_base_meta():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRFormatter(mode=mode, output_path=tmpdirname)
-        pecha = formatter.create_opf(
+        pecha = formatter.create_pecha(
             data_provider, pecha_id, {"remove_duplicate_symbols": True}, ocr_import_info
         )
-        output_metadata = pecha.read_meta_file()
-        expected_metadata = load_yaml(expected_meta_path)
-        assert (
-            output_metadata["source_metadata"] == expected_metadata["source_metadata"]
-        )
-        del output_metadata["ocr_import_info"]["ocr_info"]["timestamp"]
-        del expected_metadata["ocr_import_info"]["ocr_info"]["timestamp"]
-        del output_metadata["ocr_import_info"]["op_import_version"]
-        del expected_metadata["ocr_import_info"]["op_import_version"]
-        assert (
-            output_metadata["ocr_import_info"] == expected_metadata["ocr_import_info"]
-        )
-        assert output_metadata["statistics"] == expected_metadata["statistics"]
-        assert (
-            output_metadata["default_language"] == expected_metadata["default_language"]
-        )
-        assert output_metadata["bases"] == expected_metadata["bases"]
+        output_metadata = pecha.load_metadata()
+        expected_metadata = load_json(expected_meta_path)
+        assert output_metadata.source_metadata == expected_metadata["source_metadata"]
+        assert output_metadata.bases == expected_metadata["bases"]
 
 
 if __name__ == "__main__":

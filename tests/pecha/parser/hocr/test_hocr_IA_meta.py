@@ -4,7 +4,7 @@ from pathlib import Path
 from test_hocr_data_provider import HOCRIATestFileProvider
 
 from openpecha.pecha.parsers.ocr.hocr import HOCRFormatter
-from openpecha.utils import load_yaml
+from openpecha.utils import load_json, load_yaml
 
 
 def test_google_ocr_metadata():
@@ -17,8 +17,8 @@ def test_google_ocr_metadata():
         Path(__file__).parent
         / "data"
         / "file_per_volume"
-        / "opf_expected_datas"
-        / "expected_hocr_meta.yml"
+        / "pecha_opf_expected_data"
+        / "expected_hocr_meta.json"
     )
     buda_data_path = (
         Path(__file__).parent / "data" / "file_per_volume" / "buda_data.yml"
@@ -35,16 +35,31 @@ def test_google_ocr_metadata():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRFormatter(mode=mode, output_path=tmpdirname)
-        pecha = formatter.create_opf(data_provider, pecha_id, {}, ocr_import_info)
-        output_metadata = pecha.read_meta_file()
-        expected_metadata = load_yaml(expected_meta_path)
-        assert output_metadata["license"] == expected_metadata["license"]
-        assert output_metadata["copyright"] == expected_metadata["copyright"]
+        pecha = formatter.create_pecha(data_provider, pecha_id, {}, ocr_import_info)
+        output_metadata = pecha.load_metadata()
+        expected_metadata = load_json(expected_meta_path)
+
+        # Check licence field (note the spelling)
+        assert output_metadata.licence.value == expected_metadata["licence"]
+
+        # Check copyright fields
         assert (
-            output_metadata["source_metadata"]["access"]
-            == expected_metadata["source_metadata"]["access"]
+            output_metadata.copyright.status.value
+            == expected_metadata["copyright"]["status"]
         )
-        assert output_metadata["source_metadata"].get(
+        assert (
+            output_metadata.copyright.notice == expected_metadata["copyright"]["notice"]
+        )
+        assert (
+            output_metadata.copyright.info_url
+            == expected_metadata["copyright"]["info_url"]
+        )
+
+        # Check source metadata fields
+        assert output_metadata.source_metadata.get("access") == expected_metadata[
+            "source_metadata"
+        ].get("access")
+        assert output_metadata.source_metadata.get(
             "geo_restriction"
         ) == expected_metadata["source_metadata"].get("geo_restriction")
 
