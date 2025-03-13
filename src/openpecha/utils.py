@@ -230,6 +230,15 @@ def dump_yaml(data: Dict, output_fn: Path) -> Path:
     return output_fn
 
 
+def load_json(file_path: str):
+    """Loads a JSON file and returns its content as a dictionary."""
+    file_path = Path(file_path)  # Ensure it's a Path object
+    if not file_path.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+    
+    with file_path.open(encoding="utf-8") as f:
+        return json.load(f)  # Parses JSON file content and returns as a dictionary
+
 def load_yaml(fn: Path) -> None:
     return yaml.load(fn.open(encoding="utf-8"), Loader=yaml_loader)
 
