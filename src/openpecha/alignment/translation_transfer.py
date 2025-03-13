@@ -109,6 +109,12 @@ class TranslationAlignmentTransfer:
         translation_anns = self.extract_root_anns(
             AnnotationStore(file=str(translation_layer_path))
         )
+
+        root_display_layer_path = self.get_first_layer_path(root_display_pecha)
+        root_display_anns = self.extract_root_anns(
+            AnnotationStore(file=str(root_display_layer_path))
+        )
+
         mapped_segment = {}
         for idx, ann in translation_anns.items():
             root_idx = ann["root_idx_mapping"]
@@ -125,7 +131,7 @@ class TranslationAlignmentTransfer:
             else:
                 mapped_segment[root_display_idx].append(translation_text)
 
-        max_root_idx = max(mapped_segment.keys())
+        max_root_idx = max(root_display_anns.keys())
 
         serialized_content = []
         for i in range(1, max_root_idx + 1):
