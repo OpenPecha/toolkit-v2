@@ -5,9 +5,8 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from openpecha.ids import get_uuid
-from openpecha.pecha.metadata import PechaMetaData
-
 from openpecha.pecha.annotations import *
+from openpecha.pecha.metadata import PechaMetaData
 
 
 class LayerCollectionEnum(Enum):
