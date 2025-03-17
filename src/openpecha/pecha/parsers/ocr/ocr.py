@@ -7,7 +7,6 @@ from datetime import timezone
 
 from fontTools import unicodedata
 
-from openpecha import __version__
 from openpecha.ids import get_initial_pecha_id
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import Lang, OCRConfidence, Page, Span
@@ -21,6 +20,7 @@ from openpecha.pecha.metadata import (
     LicenseType,
 )
 from openpecha.pecha.parsers import BaseFormatter
+#from openpecha import __version__
 
 # Initialize the logger
 logger = logging.getLogger(__name__)
@@ -796,7 +796,7 @@ class OCRFormatter(BaseFormatter):
 
         # Store import info
         ocr_import_info["op_import_options"] = opf_options
-        ocr_import_info["op_import_version"] = __version__
+        #ocr_import_info["op_import_version"] = __version__
 
         # Determine scan ID and metadata
         self.bdrc_scan_id = self.data_provider.bdrc_scan_id
