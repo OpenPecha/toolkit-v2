@@ -8,11 +8,10 @@ from datetime import timezone
 from fontTools import unicodedata
 
 from openpecha import __version__
-from openpecha.core.annotations import Lang, OCRConfidence, Page, Span
-from openpecha.core.layer import Layer, OCRConfidenceLayer
 from openpecha.ids import get_initial_pecha_id
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.annotations import Lang, OCRConfidence, Page, Span
+from openpecha.pecha.layer import Layer, LayerEnum, OCRConfidenceLayer
 from openpecha.pecha.metadata import (
     Copyright_copyrighted,
     Copyright_public_domain,

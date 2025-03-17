@@ -17,7 +17,7 @@ def test_google_ocr_base_meta():
         Path(__file__).parent
         / "data"
         / "file_per_volume"
-        / "pecha_opf_expected_data"
+        / "pecha_expected_data"
         / "expected_hocr_meta.json"
     )
     buda_data_path = (

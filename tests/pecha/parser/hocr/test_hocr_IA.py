@@ -19,7 +19,7 @@ def test_base_text():
         Path(__file__).parent
         / "data"
         / "file_per_volume"
-        / "opf_expected_datas"
+        / "pecha_expected_data"
         / "expected_base_text.txt"
     ).read_text(encoding="utf-8")
     buda_data_path = (
@@ -222,14 +222,14 @@ def test_build_layers():
         Path(__file__).parent
         / "data"
         / "file_per_volume"
-        / "pecha_opf_expected_data"
+        / "pecha_expected_data"
         / "expected_Pagination.json"
     )
     expected_confidence_layer_dict = load_json(
         Path(__file__).parent
         / "data"
         / "file_per_volume"
-        / "pecha_opf_expected_data"
+        / "pecha_expected_data"
         / "expected_OCRConfidence.json"
     )
 
