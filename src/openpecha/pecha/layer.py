@@ -13,8 +13,8 @@ class LayerCollectionEnum(Enum):
     language_annotation = "language_Annotation"
 
 
-
 class LayerEnum(Enum):
+    # Existing v2 segments
     meaning_segment = "Meaning_Segment"
     root_segment = "Root_Segment"
     commentary_segment = "Commentary_Segment"
@@ -25,14 +25,37 @@ class LayerEnum(Enum):
     italian_segment = "Italian_Segment"
     russian_segment = "Russian_Segment"
     pecha_display_alignment_segment = "Pecha_Display_Alignment_Segment"
+
+    # Common attributes (keeping v2 naming)
     chapter = "Chapter"
-    sapche = "Sapche"
+    sapche = "Sapche"  # Note: v1 had "Sabche"
     metadata = "Meta_Data"
     tsawa = "Tsawa"
     pagination = "Pagination"
     durchen = "Durchen"
     ocr_confidence = "OCRConfidence"
     language = "Language"
+
+    # Additional attributes from v1
+    index = "index"
+    book_title = "BookTitle"
+    sub_title = "SubTitle"
+    book_number = "BookNumber"
+    poti_title = "PotiTitle"
+    author = "Author"
+    topic = "Text"
+    sub_topic = "SubText"
+    citation = "Citation"
+    correction = "Correction"
+    error_candidate = "ErrorCandidate"
+    peydurma = "Peydurma"
+    pedurma_note = "PedurmaNote"
+    yigchung = "Yigchung"
+    archaic = "Archaic"
+    footnote = "Footnote"
+    segment = "Segment"
+    transcription_time_span = "TranscriptionTimeSpan"
+
 
 class LayerGroupEnum(Enum):
     structure_type = "Structure_Type"
@@ -70,10 +93,10 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
 
     if layer_type == LayerEnum.language:
         return LayerGroupEnum.language_type
-    
+
     if layer_type == LayerEnum.ocr_confidence:
         return LayerGroupEnum.ocr_confidence_type
-    
+
     if layer_type == LayerEnum.durchen:
         return LayerGroupEnum.spelling_variation
 
@@ -107,28 +130,14 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
         LayerEnum.pagination,
     ]:
         return LayerCollectionEnum.structure_annotation
-    
+
     if layer_type == LayerEnum.language:
         return LayerCollectionEnum.language_annotation
-    
+
     if layer_type == LayerEnum.ocr_confidence:
         return LayerCollectionEnum.ocr_annotation
-    
+
     if layer_type == LayerEnum.durchen:
         return LayerCollectionEnum.variation_annotation
 
     raise ValueError(f"Layer type {layer_type} has no defined LayerCollectionEnum")
-
-
-def get_layer_enum_from_layer_type_v1(layer_type: str) -> LayerEnum:
-    """Map V1 layer types to V2 LayerEnum values."""
-    v1_to_v2_mapping = {
-        "Pagination": LayerEnum.pagination,
-        "Language": LayerEnum.language,
-        "OCRConfidence": LayerEnum.ocr_confidence
-    }
-
-    if layer_type in v1_to_v2_mapping:
-        return v1_to_v2_mapping[layer_type]
-    
-    raise ValueError(f"Unknown V1 layer type: {layer_type}")

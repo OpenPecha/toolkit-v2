@@ -8,25 +8,22 @@ from datetime import timezone
 from fontTools import unicodedata
 
 from openpecha import __version__
-from openpecha.core import ids
-from openpecha.core.annotation import Page, Span
-from openpecha.core.annotations import Language, OCRConfidence
-from openpecha.core.layer import Layer, LayerEnum, OCRConfidenceLayer
-from openpecha.core.metadata import (
+from openpecha.core.annotations import Lang, OCRConfidence, Page, Span
+from openpecha.core.layer import Layer, OCRConfidenceLayer
+from openpecha.ids import get_initial_pecha_id
+from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import (
     Copyright_copyrighted,
     Copyright_public_domain,
     Copyright_unknown,
     InitialCreationType,
     InitialPechaMetadata,
-    LicenseType,)
-from openpecha.core.pecha import OpenPechaFS
+    Language,
+    LicenseType,
+    PechaMetaData,
+)
 from openpecha.pecha.parsers import BaseFormatter
-
-from openpecha.pecha import Pecha
-from typing import Any, Dict, List, Tuple, Union
-from openpecha.exceptions import  MetaDataValidationError
-from openpecha.pecha.metadata import  get_language_by_value, PechaMetaData, get_license_type_by_value, get_copyright_status_by_value, get_initial_creation_type_by_value, get_copyright_by_value
-from openpecha.pecha.layer import get_layer_enum_from_layer_type_v1
 
 # Initialize the logger
 logger = logging.getLogger(__name__)
@@ -649,7 +646,7 @@ class OCRFormatter(BaseFormatter):
                 ):
                     previous_annotation.span.end = annotation["end"]
                     continue
-            previous_annotation = Language(
+            previous_annotation = Lang(
                 span=Span(start=annotation["start"], end=annotation["end"]),
                 language=annotation["lang"],
             )
@@ -752,8 +749,6 @@ class OCRFormatter(BaseFormatter):
             ocr_import_info=ocr_import_info,
         )
         return metadata
-    
-    
 
     def set_base_meta(self, image_group_id, base_file_name, word_confidence_list):
         self.cur_word_confidences = []
@@ -769,136 +764,6 @@ class OCRFormatter(BaseFormatter):
                 ),
                 "ocr_word_mean_confidence_index": statistics.mean(word_confidence_list),
             }
-    
-    
-
-
-    def create_opf(
-        self, data_provider, pecha_id=None, opf_options={}, ocr_import_info={}
-    ):
-        """Create opf
-
-        Args:
-            data_provider (DataProvider): an instance that will be used to get the necessary data
-            pecha_id (str): pecha id
-            opf_options (Dict): an object with the following keys:
-                create_language_layer: boolean
-                language_annotation_min_len: int
-                ocr_confidence_threshold: float (use -1.0 for no OCR confidence layer)
-                remove_non_character_lines: boolean
-                max_low_conf_per_page: int
-            ocr_import_info (Dict): an object with the following keys:
-                bdrc_scan_id: str
-                source: str
-                ocr_info: Dict
-                batch_id: str
-                software_id: str
-                expected_default_language: str
-
-        Returns:
-            path: opf path
-        """
-
-        self.data_provider = data_provider
-
-        self.remove_non_character_lines = (
-            opf_options["remove_non_character_lines"]
-            if "remove_non_character_lines" in opf_options
-            else True
-        )
-        self.remove_rotated_boxes = (
-            opf_options["remove_rotated_boxes"]
-            if "remove_rotated_boxes" in opf_options
-            else True
-        )
-        self.create_language_layer = (
-            opf_options["create_language_layer"]
-            if "create_language_layer" in opf_options
-            else True
-        )
-        self.ocr_confidence_threshold = (
-            opf_options["ocr_confidence_threshold"]
-            if "ocr_confidence_threshold" in opf_options
-            else ANNOTATION_MINIMAL_CONFIDENCE
-        )
-        self.language_annotation_min_len = (
-            opf_options["language_annotation_min_len"]
-            if "language_annotation_min_len" in opf_options
-            else ANNOTATION_MINIMAL_LEN
-        )
-        self.max_low_conf_per_page = (
-            opf_options["max_low_conf_per_page"]
-            if "max_low_conf_per_page" in opf_options
-            else ANNOTATION_MAX_LOW_CONF_PER_PAGE
-        )
-        self.script_to_lang_map = (
-            opf_options["script_to_lang_map"]
-            if "script_to_lang_map" in opf_options
-            else DEFAULT_SCRIPT_TO_LANG_MAPPING
-        )
-        self.same_line_ratio_threshold = (
-            opf_options["same_line_ratio_threshold"]
-            if "same_line_ratio_threshold" in opf_options
-            else SAME_LINE_RATIO_THRESHOLD
-        )
-        self.remove_duplicate_symbols = (
-            opf_options["remove_duplicate_symbols"]
-            if "remove_duplicate_symbols" in opf_options
-            else True
-        )
-
-        ocr_import_info["op_import_options"] = opf_options
-        ocr_import_info["op_import_version"] = __version__
-
-        # self._build_dirs(None, id_=pecha_id)
-
-        # if the bdrc scan id is not specified, we assume it's the directory namepecha_id
-        self.bdrc_scan_id = self.data_provider.bdrc_scan_id
-        self.source_info = self.data_provider.get_source_info()
-        self.default_language = (
-            "bo"
-            if "expected_default_language" not in ocr_import_info
-            else ocr_import_info["expected_default_language"]
-        )
-        self.default_language = "bo"
-        if "expected_default_language" in ocr_import_info:
-            self.default_language = ocr_import_info["expected_default_language"]
-        elif "languages" in self.source_info and self.source_info["languages"]:
-            self.default_language = self.source_info["languages"][0]
-        pecha_id = ids.get_initial_pecha_id() if pecha_id is None else pecha_id
-        self.metadata = self.get_metadata(pecha_id, ocr_import_info)
-        pecha = OpenPechaFS(
-            metadata=self.metadata,
-            path=self.output_path / pecha_id / f"{pecha_id}.opf",
-            pecha_id=pecha_id,
-        )
-
-        total_word_confidence_list = []
-
-        for image_group_id, _ in self.source_info["image_groups"].items():
-            base_id = image_group_id
-            base_text, layers, word_confidence_list = self.build_base(image_group_id)
-            pecha.bases[base_id] = base_text
-            pecha.layers[base_id] = layers
-            self.set_base_meta(image_group_id, base_id, word_confidence_list)
-            total_word_confidence_list += word_confidence_list
-
-        # we add the rest to metadata:
-        pecha.meta.bases = self.base_meta
-        if total_word_confidence_list:
-            pecha.meta.statistics = {
-                # there are probably more efficient ways to compute those
-                "ocr_word_mean_confidence_index": statistics.mean(
-                    total_word_confidence_list
-                ),
-                "ocr_word_median_confidence_index": statistics.median(
-                    total_word_confidence_list
-                ),
-            }
-        pecha.save()
-
-        return pecha
-    
 
     def create_pecha(
         self, data_provider, pecha_id=None, opf_options={}, ocr_import_info={}
@@ -908,15 +773,29 @@ class OCRFormatter(BaseFormatter):
         self.data_provider = data_provider
 
         # Configure options
-        self.remove_non_character_lines = opf_options.get("remove_non_character_lines", True)
+        self.remove_non_character_lines = opf_options.get(
+            "remove_non_character_lines", True
+        )
         self.remove_rotated_boxes = opf_options.get("remove_rotated_boxes", True)
         self.create_language_layer = opf_options.get("create_language_layer", True)
-        self.ocr_confidence_threshold = opf_options.get("ocr_confidence_threshold", ANNOTATION_MINIMAL_CONFIDENCE)
-        self.language_annotation_min_len = opf_options.get("language_annotation_min_len", ANNOTATION_MINIMAL_LEN)
-        self.max_low_conf_per_page = opf_options.get("max_low_conf_per_page", ANNOTATION_MAX_LOW_CONF_PER_PAGE)
-        self.script_to_lang_map = opf_options.get("script_to_lang_map", DEFAULT_SCRIPT_TO_LANG_MAPPING)
-        self.same_line_ratio_threshold = opf_options.get("same_line_ratio_threshold", SAME_LINE_RATIO_THRESHOLD)
-        self.remove_duplicate_symbols = opf_options.get("remove_duplicate_symbols", True)
+        self.ocr_confidence_threshold = opf_options.get(
+            "ocr_confidence_threshold", ANNOTATION_MINIMAL_CONFIDENCE
+        )
+        self.language_annotation_min_len = opf_options.get(
+            "language_annotation_min_len", ANNOTATION_MINIMAL_LEN
+        )
+        self.max_low_conf_per_page = opf_options.get(
+            "max_low_conf_per_page", ANNOTATION_MAX_LOW_CONF_PER_PAGE
+        )
+        self.script_to_lang_map = opf_options.get(
+            "script_to_lang_map", DEFAULT_SCRIPT_TO_LANG_MAPPING
+        )
+        self.same_line_ratio_threshold = opf_options.get(
+            "same_line_ratio_threshold", SAME_LINE_RATIO_THRESHOLD
+        )
+        self.remove_duplicate_symbols = opf_options.get(
+            "remove_duplicate_symbols", True
+        )
 
         # Store import info
         ocr_import_info["op_import_options"] = opf_options
@@ -930,7 +809,7 @@ class OCRFormatter(BaseFormatter):
             self.default_language = self.source_info["languages"][0]
 
         # Generate Pecha ID if not provided
-        pecha_id = ids.get_initial_pecha_id() if pecha_id is None else pecha_id
+        pecha_id = get_initial_pecha_id() if pecha_id is None else pecha_id
 
         # Create metadata object
         self.metadata = self.get_metadata(pecha_id, ocr_import_info)
@@ -944,13 +823,13 @@ class OCRFormatter(BaseFormatter):
         for image_group_id, _ in self.source_info["image_groups"].items():
             base_id = image_group_id
             base_text, layers, word_confidence_list = self.build_base(image_group_id)
-            
+
             # Set base text
             pecha.set_base(base_text, base_id)
 
             # Add layers
             for layer_type, annotations in layers.items():
-                layer_enum = get_layer_enum_from_layer_type_v1(layer_type.value)
+                layer_enum = layer_type
                 layer, layer_path = pecha.add_layer(base_id, layer_enum)
 
                 for ann_id, ann in annotations.annotations.items():
@@ -958,14 +837,13 @@ class OCRFormatter(BaseFormatter):
                         ann_dict = {
                             layer_enum.value: {  # Using correct key instead of "span"
                                 "start": ann.span.start,
-                                "end": ann.span.end
+                                "end": ann.span.end,
                             }
                         }
                         if layer_type == LayerEnum.pagination:
-                            ann_dict.update({
-                                "imgnum": ann.imgnum,
-                                "reference": ann.reference
-                            })
+                            ann_dict.update(
+                                {"imgnum": ann.imgnum, "reference": ann.reference}
+                            )
                         elif layer_type == LayerEnum.language:
                             ann_dict.update({"language": ann.language})
                         elif layer_type == LayerEnum.ocr_confidence:
@@ -988,9 +866,8 @@ class OCRFormatter(BaseFormatter):
 
             self.set_base_meta(image_group_id, base_id, word_confidence_list)
             total_word_confidence_list += word_confidence_list
-        
-        
-         # Convert Toolkit v1 metadata to Toolkit v2 metadata
+
+        # Convert Toolkit v1 metadata to Toolkit v2 metadata
         pecha_metadata = self.metadata
         pecha_metadata.bases = self.base_meta
         if total_word_confidence_list:
@@ -1003,8 +880,8 @@ class OCRFormatter(BaseFormatter):
                     total_word_confidence_list
                 ),
             }
-        
-        # Replace pecha_metdata v1 with dummy pecha meta of v2 
+
+        # Replace pecha_metdata v1 with dummy pecha meta of v2
         dummy_metadata = PechaMetaData(
             id=pecha.id,
             title={"bo": "མདོ་སྡེ་བཀའ་འགྱུར"},
@@ -1012,15 +889,13 @@ class OCRFormatter(BaseFormatter):
             imported=datetime.datetime.now(),
             toolkit_version="1.0.0",
             parser="DummyParser",
-            initial_creation_type=get_initial_creation_type_by_value("ocr"),
-            language=get_language_by_value("bo"),
+            initial_creation_type=InitialCreationType.ocr,
+            language=Language.tibetan,
             source_metadata={"publisher": "Dummy Publisher"},
             bases=[{"base_id": "B001", "text": "Sample text"}],
-            copyright=get_copyright_by_value("Public domain"),
-            licence=get_license_type_by_value("CC BY"),
+            copyright=Copyright_public_domain,
+            licence=LicenseType.CC_BY,
         )
         pecha.set_metadata(dummy_metadata)
 
         return pecha
-
-

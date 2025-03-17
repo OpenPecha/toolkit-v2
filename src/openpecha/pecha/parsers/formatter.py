@@ -4,7 +4,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from openpecha import config
-from openpecha.core.layer import LayerEnum
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.layers import *
 from openpecha.pecha.parsers.layers import _attr_names
 from openpecha.utils import dump_yaml, load_yaml

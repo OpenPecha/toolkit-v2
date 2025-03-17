@@ -1,43 +1,13 @@
 import json
 from enum import Enum
-from typing import List, Optional
+from typing import Dict, List, Optional
 
-from pydantic.v1 import BaseModel, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from openpecha.core.annotations import *
-from openpecha.core.ids import get_uuid
-from openpecha.core.metadata import PechaMetadata
-
-
-class LayerEnum(Enum):
-    index = "index"
-
-    book_title = "BookTitle"
-    sub_title = "SubTitle"
-    book_number = "BookNumber"
-    poti_title = "PotiTitle"
-    author = "Author"
-    chapter = "Chapter"
-
-    topic = "Text"
-    sub_topic = "SubText"
-
-    pagination = "Pagination"
-    language = "Language"
-    citation = "Citation"
-    correction = "Correction"
-    error_candidate = "ErrorCandidate"
-    peydurma = "Peydurma"
-    pedurma_note = "PedurmaNote"
-    sabche = "Sabche"
-    tsawa = "Tsawa"
-    yigchung = "Yigchung"
-    archaic = "Archaic"
-    durchen = "Durchen"
-    footnote = "Footnote"
-    segment = "Segment"
-    ocr_confidence = "OCRConfidence"
-    transcription_time_span = "TranscriptionTimeSpan"
+from openpecha.ids import get_uuid
+from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.metadata import PechaMetaData
 
 
 def _get_annotation_class(layer_name: LayerEnum):
@@ -61,7 +31,7 @@ def _get_annotation_class(layer_name: LayerEnum):
     elif layer_name == LayerEnum.pagination:
         return Pagination
     elif layer_name == LayerEnum.language:
-        return Language
+        return Lang
     elif layer_name == LayerEnum.citation:
         return Citation
     elif layer_name == LayerEnum.correction:
@@ -70,8 +40,8 @@ def _get_annotation_class(layer_name: LayerEnum):
         return ErrorCandidate
     elif layer_name == LayerEnum.peydurma:
         return Pedurma
-    elif layer_name == LayerEnum.sabche:
-        return Sabche
+    elif layer_name == LayerEnum.sapche:
+        return Sapche
     elif layer_name == LayerEnum.tsawa:
         return Tsawa
     elif layer_name == LayerEnum.yigchung:
@@ -93,16 +63,19 @@ def _get_annotation_class(layer_name: LayerEnum):
 
 
 class Layer(BaseModel):
-    id: str = None
+    id: str = Field(default=None)
     annotation_type: LayerEnum
-    revision: str = "00001"
-    annotations: Dict = {}
+    revision: str = Field(default="00001")
+    annotations: Dict = Field(default_factory=dict)
 
-    @validator("id", pre=True, always=True)
-    def set_id(cls, v):
-        return v or get_uuid()
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    @validator("revision")
+    @model_validator(mode="before")
+    def set_id(cls, values):
+        values["id"] = values.get("id") or get_uuid()
+        return values
+
+    @field_validator("revision")
     def revision_must_int_parsible(cls, v):
         assert v.isdigit(), "must integer parsible like `00002`"
         return v
@@ -118,7 +91,7 @@ class Layer(BaseModel):
         """Yield Annotation Objects"""
         for ann_id, ann_dict in self.annotations.items():
             ann_class = _get_annotation_class(self.annotation_type)
-            ann = ann_class.parse_obj(ann_dict)
+            ann = ann_class.model_validate(ann_dict)
             yield ann_id, ann
 
     def get_annotation(self, annotation_id: str) -> Optional[BaseAnnotation]:
@@ -127,13 +100,13 @@ class Layer(BaseModel):
         if not ann_dict:
             return
         ann_class = _get_annotation_class(self.annotation_type)
-        ann = ann_class.parse_obj(ann_dict)
+        ann = ann_class.model_validate(ann_dict)
         return ann
 
     def set_annotation(self, ann: BaseAnnotation, ann_id=None):
         """Add or Update annotation `ann` to the layer, returns the annotation id"""
         ann_id = ann_id if ann_id is not None else get_uuid()
-        self.annotations[ann_id] = json.loads(ann.json())
+        self.annotations[ann_id] = json.loads(ann.model_dump_json())
         return ann_id
 
     def remove_annotation(self, annotation_id: str):
@@ -145,20 +118,22 @@ class Layer(BaseModel):
 class SpanINFO(BaseModel):
     text: str
     layers: Dict[LayerEnum, List[BaseAnnotation]]
-    metadata: PechaMetadata
+    metadata: PechaMetaData
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class OCRConfidenceLayer(Layer):
     confidence_threshold: float
-    annotation_type: LayerEnum = LayerEnum.ocr_confidence
+    annotation_type: LayerEnum = Field(default=LayerEnum.ocr_confidence)
 
 
 class TranscriptionTimeSpanLayer(Layer):
     media_url: str
     time_unit: str
-    annotation_type: LayerEnum = LayerEnum.transcription_time_span
+    annotation_type: LayerEnum = Field(default=LayerEnum.transcription_time_span)
 
-    @validator("time_unit")
+    @field_validator("time_unit")
     def time_unit_must_be_millisecond_or_microsecond(cls, v):
         if v not in ("millisecond", "microsecond"):
             raise ValueError("time_unit must be either millisecond or microsecond")

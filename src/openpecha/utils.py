@@ -129,10 +129,10 @@ from git import Repo
 from git.cmd import GitCommandError
 
 from openpecha import config
-from openpecha.core import metadata
-from openpecha.core.layer import LayerEnum
 from openpecha.exceptions import PechaNotFound
 from openpecha.github_utils import create_release
+from openpecha.pecha import metadata
+from openpecha.pecha.layer import LayerEnum
 from openpecha.storages import GithubStorage, setup_auth_for_old_repo
 
 INFO = "[INFO] {}"
@@ -235,9 +235,10 @@ def load_json(file_path: str):
     file_path = Path(file_path)  # Ensure it's a Path object
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
-    
+
     with file_path.open(encoding="utf-8") as f:
         return json.load(f)  # Parses JSON file content and returns as a dictionary
+
 
 def load_yaml(fn: Path) -> None:
     return yaml.load(fn.open(encoding="utf-8"), Loader=yaml_loader)

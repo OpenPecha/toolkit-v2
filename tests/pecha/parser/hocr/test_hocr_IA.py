@@ -4,7 +4,7 @@ from pathlib import Path
 
 from test_hocr_data_provider import HOCRIATestFileProvider
 
-from openpecha.core.layer import LayerEnum
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.ocr.hocr import HOCRFormatter
 from openpecha.utils import load_json, load_yaml
 
