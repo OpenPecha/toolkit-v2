@@ -6,7 +6,7 @@ from zipfile import ZipFile
 from bs4 import BeautifulSoup
 
 from openpecha.buda.api import image_group_to_folder_name
-from openpecha.utils import load_yaml
+from openpecha.utils import load_json
 
 
 class BDRCGBTestFileProvider:
@@ -28,7 +28,7 @@ class BDRCGBTestFileProvider:
         self.cur_image_group_id = None
 
     def _get_image_list(self, image_group_id):
-        return load_yaml(self.bdrc_image_list_path / str(image_group_id + ".json"))
+        return load_json(self.bdrc_image_list_path / str(image_group_id + ".json"))
 
     def get_image_list(self, image_group_id):
         self.get_images_info(image_group_id)
@@ -47,7 +47,7 @@ class BDRCGBTestFileProvider:
         image_info_path = (
             Path(f"{self.ocr_disk_path}") / "info" / vol_folder / "gb-bdrc-map.json"
         )
-        self.images_info = load_yaml(image_info_path)
+        self.images_info = load_json(image_info_path)
 
     def get_source_info(self):
         image_group_ids = []
@@ -109,7 +109,7 @@ class HOCRIATestFileProvider:
         return map(lambda ii: ii["filename"], buda_il)
 
     def _get_image_list(self, image_group_id):
-        return load_yaml(self.bdrc_image_list_path / str(image_group_id + ".json"))
+        return load_json(self.bdrc_image_list_path / str(image_group_id + ".json"))
 
     def get_images_info(self, image_group_id):
         curr_image = {}

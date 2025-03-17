@@ -212,3 +212,5 @@ def image_group_to_folder_name(scan_id, image_group_id):
     if pre == "I" and rest.isdigit() and len(rest) == 4:
         image_group_folder_part = rest
     return scan_id + "-" + image_group_folder_part
+
+

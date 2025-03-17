@@ -4,9 +4,9 @@ from pathlib import Path
 
 from test_hocr_data_provider import BDRCGBTestFileProvider
 
-from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.ocr.hocr import HOCRFormatter
-from openpecha.utils import load_json, load_yaml
+from openpecha.utils import load_json
 
 
 def test_base_text():
@@ -21,12 +21,12 @@ def test_base_text():
         / "pecha_expected_data"
         / "expected_base_text.txt"
     ).read_text(encoding="utf-8")
-    buda_data_path = Path(__file__).parent / "data" / "file_per_page" / "buda_data.yml"
+    buda_data_path = Path(__file__).parent / "data" / "file_per_page" / "buda_data.json"
     ocr_import_info_path = (
-        Path(__file__).parent / "data" / "file_per_page" / "ocr_import_info.yml"
+        Path(__file__).parent / "data" / "file_per_page" / "ocr_import_info.json"
     )
-    ocr_import_info = load_yaml(ocr_import_info_path)
-    buda_data = load_yaml(buda_data_path)
+    ocr_import_info = load_json(ocr_import_info_path)
+    buda_data = load_json(buda_data_path)
     bdrc_image_list_path = Path(__file__).parent / "data" / "file_per_page"
     data_provider = BDRCGBTestFileProvider(
         work_id, bdrc_image_list_path, buda_data, ocr_import_info, ocr_path
@@ -238,9 +238,9 @@ def test_build_layers():
 
     # Load test data
     ocr_path = Path(__file__).parent / "data" / "file_per_page" / work_id
-    buda_data_path = Path(__file__).parent / "data" / "file_per_page" / "buda_data.yml"
+    buda_data_path = Path(__file__).parent / "data" / "file_per_page" / "buda_data.json"
     ocr_import_info_path = (
-        Path(__file__).parent / "data" / "file_per_page" / "ocr_import_info.yml"
+        Path(__file__).parent / "data" / "file_per_page" / "ocr_import_info.json"
     )
 
     # Load expected layer data
@@ -267,8 +267,8 @@ def test_build_layers():
     )
 
     # Load configuration data
-    ocr_import_info = load_yaml(ocr_import_info_path)
-    buda_data = load_yaml(buda_data_path)
+    ocr_import_info = load_json(ocr_import_info_path)
+    buda_data = load_json(buda_data_path)
     image_list_path = Path(__file__).parent / "data" / "file_per_page"
 
     # Initialize data provider and formatter

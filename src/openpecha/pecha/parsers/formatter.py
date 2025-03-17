@@ -7,7 +7,7 @@ from openpecha import config
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.layers import *
 from openpecha.pecha.parsers.layers import _attr_names
-from openpecha.utils import dump_yaml, load_yaml
+from openpecha.utils import load_json, dump_json
 
 
 class Global2LocalId:
@@ -147,7 +147,7 @@ class BaseFormatter:
 
     @property
     def meta_fn(self):
-        return self.opf_path / "meta.yml"
+        return self.opf_path / "meta.json"
 
     def normalizeUni(self, strNFC):
         strNFC = strNFC.replace("\u0F00", "\u0F68\u0F7C\u0F7E")  # ༀ
@@ -190,10 +190,10 @@ class BaseFormatter:
         layers = defaultdict(dict)
         for layer in new_layers:
             for vol in self.dirs["layers_path"].iterdir():
-                vol_layer_fn = vol / f"{layer}.yml"
+                vol_layer_fn = vol / f"{layer}.json"
                 if not vol_layer_fn.is_file():
                     continue
-                layers[layer][vol.name] = load_yaml(vol_layer_fn)
+                layers[layer][vol.name] = load_json(vol_layer_fn)
         return layers
 
     def _inc_layer_revision(self, layer):
@@ -332,8 +332,8 @@ class BaseFormatter:
 
         # save layers
         for layer, ann in layers.items():
-            layer_fn = self.dirs["layers_path"] / f"{layer}.yml"
-            dump_yaml(ann, layer_fn)
+            layer_fn = self.dirs["layers_path"] / f"{layer}.json"
+            dump_json(ann, layer_fn)
 
         # save base_text
         (self.dirs["opf_path"] / "base.txt").write_text(base_text)

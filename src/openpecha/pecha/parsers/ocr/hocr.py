@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from openpecha.buda.api import get_image_list, image_group_to_folder_name
 from openpecha.pecha.parsers.ocr.ocr import BBox, OCRFormatter
-from openpecha.utils import load_yaml
+from openpecha.utils import load_json
 
 
 class BDRCGBFileProvider:
@@ -41,7 +41,7 @@ class BDRCGBFileProvider:
         vol_path = Path(f"{self.ocr_disk_path}") / "info" / vol_folder
         if os.path.isdir(vol_path):
             image_info_path = Path(vol_path) / "gb-bdrc-map.json"
-            self.images_info = load_yaml(image_info_path)
+            self.images_info = load_json(image_info_path)
         else:
             return
 
