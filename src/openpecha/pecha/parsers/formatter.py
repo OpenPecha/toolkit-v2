@@ -2,7 +2,6 @@ from collections import defaultdict
 from copy import deepcopy
 from pathlib import Path
 from uuid import uuid4
-from typing import Dict
 
 from openpecha import config
 from openpecha.pecha.layer import LayerEnum
@@ -23,7 +22,7 @@ class Global2LocalId:
         self.last_local_id = self.find_last()
 
     def _initialize(self, local_id_dict):
-        g2lid: Dict[str, Dict[str, bool]] = {}
+        g2lid = {}
         if not local_id_dict:
             return g2lid
         for global_id, local_id in local_id_dict.items():
@@ -107,10 +106,10 @@ class BaseFormatter:
 
         W1OP000001.opf
             ├── base.txt          # plain text, without markups (annotations)
-            │   ├── layers            # layers with annotation's char coordinate
-            │   │   ├── title.yml
-            │   │   ├── yigchung.yml
-            |   │   ├── citation.yml
+            ├── layers            # layers with annotation's char coordinate
+            │   ├── title.yml
+            │   ├── yigchung.yml
+            |   ├── citation.yml
     """
 
     def __init__(self, output_path, metadata):

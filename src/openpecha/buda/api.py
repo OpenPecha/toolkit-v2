@@ -4,7 +4,6 @@ import hashlib
 import io
 import json
 import logging
-from typing import Optional, Any, Dict
 
 import boto3
 import botocore
@@ -28,7 +27,7 @@ BDA = Namespace("http://purl.bdrc.io/admindata/")
 ADM = Namespace("http://purl.bdrc.io/ontology/admin/")
 
 
-def fetch_op_commits(ldspdibaseurl: str = "http://ldspdi.bdrc.io/") -> Dict[str, str]:
+def fetch_op_commits(ldspdibaseurl="http://ldspdi.bdrc.io/"):
     """
     Fetches the list of all openpecha commits on BUDA
     """
@@ -52,7 +51,7 @@ def fetch_op_commits(ldspdibaseurl: str = "http://ldspdi.bdrc.io/") -> Dict[str,
     return res
 
 
-def get_s3_folder_prefix(wlname: str, image_group_lname: str) -> str:
+def get_s3_folder_prefix(wlname, image_group_lname):
     """
     gives the s3 prefix (~folder) in which the volume will be present.
     inpire from https://github.com/buda-base/buda-iiif-presentation/blob/master/src/main/java/
@@ -80,7 +79,7 @@ def get_s3_folder_prefix(wlname: str, image_group_lname: str) -> str:
     )
 
 
-def gets3blob(s3Key: str) -> Optional[io.BytesIO]:
+def gets3blob(s3Key):
     f = io.BytesIO()
     try:
         S3.download_fileobj("archive.tbrc.org", s3Key, f)
@@ -92,7 +91,7 @@ def gets3blob(s3Key: str) -> Optional[io.BytesIO]:
             raise
 
 
-def get_image_list_s3(wlname: str, image_group_lname: str) -> Optional[Dict]:
+def get_image_list_s3(wlname, image_group_lname):
     s3key = get_s3_folder_prefix(wlname, image_group_lname) + "dimensions.json"
     blob = gets3blob(s3key)
     if blob is None:
@@ -105,21 +104,21 @@ def get_image_list_s3(wlname: str, image_group_lname: str) -> Optional[Dict]:
     return data
 
 
-def get_image_list_iiifpres(wlname: str, image_group_lname: str, vol_name: str) -> Dict:
-    r = requests.get(f"http://iiifpres.bdrc.io/il/v:{vol_name}")
+def get_image_list_iiifpres(wlname, image_group_lname):
+    r = requests.get(f"http://iiifpres.bdrc.io/il/v:bdr:{vol_name}")
     return r.json()
 
 
-def get_image_list(wlname: str, image_group_lname: str, source: str = "s3", reorder_with_bvm: bool = False) -> Optional[Dict]:
+def get_image_list(wlname, image_group_lname, source="s3", reorder_with_bvm=False):
     il = None
     if source == "s3":
         il = get_image_list_s3(wlname, image_group_lname)
     else:
-        il = get_image_list_iiifpres(wlname, image_group_lname, vol_name=wlname)
+        il = get_image_list_iiifpres(wlname, image_group_lname)
     return il
 
 
-def _res_from_model(g: Any, wlname: str) -> Dict:
+def _res_from_model(g, wlname):
     res = {
         "source_metadata": {"id": "http://purl.bdrc.io/resource/" + wlname},
         "image_groups": {},
@@ -188,7 +187,7 @@ def _res_from_model(g: Any, wlname: str) -> Dict:
         return res
 
 
-def get_buda_scan_info(wlname: str) -> Optional[Dict]:
+def get_buda_scan_info(wlname):
     headers = {"Accept": "text/turtle"}
     params = {"R_RES": "bdr:" + wlname}
     res = None
@@ -207,9 +206,11 @@ def get_buda_scan_info(wlname: str) -> Optional[Dict]:
         return res
 
 
-def image_group_to_folder_name(scan_id: str, image_group_id: str) -> str:
+def image_group_to_folder_name(scan_id, image_group_id):
     image_group_folder_part = image_group_id
     pre, rest = image_group_id[0], image_group_id[1:]
     if pre == "I" and rest.isdigit() and len(rest) == 4:
         image_group_folder_part = rest
     return scan_id + "-" + image_group_folder_part
+
+

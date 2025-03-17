@@ -42,7 +42,7 @@ class CopyrightStatus(Enum):
 
 
 class Copyright(BaseModel):
-    status: CopyrightStatus = CopyrightStatus.UNKNOWN
+    status: CopyrightStatus = CopyrightStatus.UNKNOWN  # noqa
     notice: Optional[str] = ""
     info_url: Optional[str] = None
 

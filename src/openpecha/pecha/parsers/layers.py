@@ -83,7 +83,7 @@ def Span(start, end):
 
 # ~~~ INDEX Layer ~~~~~
 # Cross vol Span
-cross_vol_span_dict: dict[str, Optional[Any]] = {"vol": None, "span": None}
+CrossVolSpan = {"vol": None, "span": None}
 
 
 def CrossVolSpan(vol, start, end):
@@ -91,7 +91,7 @@ def CrossVolSpan(vol, start, end):
 
 
 # Sub_text annotation
-SubText: dict[str, Optional[list]] = {"work": None, "span": []}  # index of the sub_text  # span of the sub_text
+SubText = {"work": None, "span": []}  # index of the sub_text  # span of the sub_text
 
 # Text annotation
 Text = {
