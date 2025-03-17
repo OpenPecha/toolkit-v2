@@ -1,9 +1,13 @@
 import csv
 import json
+import math
 import os
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, List, Optional, Union
+
+from openpecha.config import NO_OF_CHAPTER_SEGMENT
+
 
 @contextmanager
 def cwd(path):
@@ -74,7 +78,7 @@ def parse_root_mapping(root_mapping) -> List[int]:
     return root_mapping_list
 
 
-def chunk_strings(strings, chunk_size=100):
+def chunk_strings(strings: List[str], chunk_size=NO_OF_CHAPTER_SEGMENT):
     """
     Splits a list of strings into smaller lists of at most chunk_size elements each.
 
@@ -86,6 +90,25 @@ def chunk_strings(strings, chunk_size=100):
     list of list of str: A list of lists, where each inner list contains up to chunk_size elements.
     """
     return [strings[i : i + chunk_size] for i in range(0, len(strings), chunk_size)]
+
+
+def get_chapter_num_from_segment_num(
+    segment_num: int, no_of_chapter_segment: int = NO_OF_CHAPTER_SEGMENT
+) -> int:
+    """
+    For commentary pecha, get the chapter number from the segment number(root mapping).
+    """
+    return math.ceil(segment_num / no_of_chapter_segment)
+
+
+def process_segment_num_for_chapter(
+    segment_num: int, no_of_chapter_segment: int = NO_OF_CHAPTER_SEGMENT
+) -> int:
+    return (
+        segment_num % no_of_chapter_segment
+        if segment_num % no_of_chapter_segment != 0
+        else no_of_chapter_segment
+    )
 
 
 def read_csv(file_path) -> List[List[str]]:
@@ -100,15 +123,6 @@ def write_csv(file_path, data) -> None:
         writer = csv.writer(file)
         writer.writerows(data)
 
-def gzip_str(string_):
-    # taken from https://gist.github.com/Garrett-R/dc6f08fc1eab63f94d2cbb89cb61c33d
-    out = io.BytesIO()
-
-    with gzip.GzipFile(fileobj=out, mode="w") as fo:
-        fo.write(string_.encode())
-
-    bytes_obj = out.getvalue()
-    return bytes_obj
 
 def load_json(fn: Union[str, Path]) -> Optional[Dict]:
     fn = Path(fn)
@@ -116,6 +130,7 @@ def load_json(fn: Union[str, Path]) -> Optional[Dict]:
         return None
     with fn.open(encoding="utf-8") as f:
         return json.load(f)
+
 
 def dump_json(data: Dict, output_fn: Union[str, Path]) -> Path:
     """Dump data to a JSON file."""
@@ -125,16 +140,19 @@ def dump_json(data: Dict, output_fn: Union[str, Path]) -> Path:
         json.dump(data, f, indent=2, ensure_ascii=False)
     return output_fn
 
+
 def load_json_str(s: str) -> Optional[Dict]:
     """Load JSON data from a string."""
     if not s:
         return None
     return json.loads(s)
 
+
 # Keep existing read_json and write_json for backward compatibility
 def read_json(file_path):
     """Deprecated: Use load_json instead"""
     return load_json(file_path)
+
 
 def write_json(file_path, data):
     """Deprecated: Use dump_json instead"""

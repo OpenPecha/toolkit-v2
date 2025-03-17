@@ -109,7 +109,7 @@ def get_annotation_bounds(annotation):
     return start, end
 
 
-def test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
+def _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
     """Test pagination layer annotations"""
     _, pagination_layer_file = pecha.get_layer_by_ann_type(
         base_name, LayerEnum.pagination
@@ -152,7 +152,7 @@ def test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
         ), f"Reference mismatch at index {i}"
 
 
-def test_language_layer(pecha, base_name, expected_language_layer_dict):
+def _test_language_layer(pecha, base_name, expected_language_layer_dict):
     """Test language layer annotations"""
     _, language_layer_file = pecha.get_layer_by_ann_type(base_name, LayerEnum.language)
     assert language_layer_file.exists(), "Language layer file should exist"
@@ -190,7 +190,7 @@ def test_language_layer(pecha, base_name, expected_language_layer_dict):
         ), f"Language value mismatch at index {i}"
 
 
-def test_confidence_layer(pecha, base_name, expected_confidence_layer_dict):
+def _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict):
     """Test OCR confidence layer annotations"""
     _, confidence_layer_file = pecha.get_layer_by_ann_type(
         base_name, LayerEnum.ocr_confidence
@@ -284,9 +284,9 @@ def test_build_layers():
         )
 
         # Test each layer
-        test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)
-        test_language_layer(pecha, base_name, expected_language_layer_dict)
-        test_confidence_layer(pecha, base_name, expected_confidence_layer_dict)
+        _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)
+        _test_language_layer(pecha, base_name, expected_language_layer_dict)
+        _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict)
 
 
 if __name__ == "__main__":

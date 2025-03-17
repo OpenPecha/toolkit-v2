@@ -5,7 +5,24 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from openpecha.ids import get_uuid
-from openpecha.pecha.annotations import *
+from openpecha.pecha.annotations import (
+    Archaic,
+    BaseAnnotation,
+    Citation,
+    Correction,
+    Durchen,
+    ErrorCandidate,
+    Footnote,
+    Lang,
+    OCRConfidence,
+    Pagination,
+    Pedurma,
+    Sapche,
+    Segment,
+    TranscriptionTimeSpan,
+    Tsawa,
+    Yigchung,
+)
 from openpecha.pecha.metadata import PechaMetaData
 
 
@@ -239,7 +256,7 @@ class Layer(BaseModel):
         """Retrieve annotation of id `annotation_id`"""
         ann_dict = self.annotations.get(annotation_id)
         if not ann_dict:
-            return
+            return None
         ann_class = _get_annotation_class(self.annotation_type)
         ann = ann_class.model_validate(ann_dict)
         return ann

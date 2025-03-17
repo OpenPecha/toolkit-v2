@@ -70,12 +70,6 @@ class BaseUpdateFailedError(Exception):
     pass
 
 
-class AlignmentDataKeyMissingError(Exception):
-    """Raised when the alignment information key is missing."""
-
-    pass
-
-
 class InvalidLanguageEnumError(Exception):
     """Raised when the language enum is invalid."""
 
@@ -95,4 +89,16 @@ class StamAddAnnotationError(Exception):
 
 
 class PechaNotFound(Exception):
+    pass
+
+
+class RootPechaNotFoundError(Exception):
+    """Raised when the root pecha is not found."""
+
+    pass
+
+
+class PechaCategoryNotFoundError(Exception):
+    """Raised when the pecha category is not found."""
+
     pass

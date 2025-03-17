@@ -1,0 +1,108 @@
+{
+  "source": {
+    "categories": [
+      {
+        "name": "The Buddha's Teachings",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Vajra Cutter",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Commentaries",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Vajra Cutter",
+        "enDesc": "",
+        "enShortDesc": "",
+        "base_text_titles": [
+          "Vajra Cutter"
+        ],
+        "base_text_mapping": "many_to_one",
+        "link": "Commentary"
+      }
+    ],
+    "books": [
+      {
+        "title": "Vajra Cutter English Commentary Book 2",
+        "language": "en",
+        "versionSource": "",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": {
+          "Vajra Cutter English Commentary Book 2": {
+            "data": [],
+            "The Explanation of the Body of the Sutra": {
+              "data": [
+                "The Explanation of the Body of the Sutra"
+              ],
+              "The teaching of the unceasing continuity of the Buddha’s ultimate wisdom": {
+                "data": [
+                  "The teaching of the unceasing continuity of the Buddha’s ultimate wisdom",
+                  "<1><9>the Buddha acknowledges the previous speaker and praises Subhūti for his understanding, saying \"Excellent, excellent.\" This approval reflects that Subhūti has grasped the essence of the teachings, and the repetition emphasizes the Buddha's endorsement of Subhūti’s comprehension of the Dharma",
+                  "<1><10>the Buddha further emphasizes that he has bestowed the highest benefits and entrusted the bodhisattva mahāsattvas with the greatest responsibilities. These bodhisattvas, who are committed to attaining Buddhahood for the sake of all beings, have received the most profound teachings and tasks to help others achieve enlightenment.",
+                  "<1><11>introduces the Buddha's teaching on how a bodhisattva should live. He instructs Subhūti to listen carefully as he prepares to explain the proper way for someone who has entered the bodhisattva path to live, practice, and control their mind, thus setting the stage for guidance on how to live a life dedicated to benefiting others",
+                  "<1><12>the Buddha begins to explain how the bodhisattva should think and perceive the world. The bodhisattva should recognize the vast diversity of beings, whether they are born in different ways or have various forms, perceptions, or even consciousness. By considering the wide spectrum of sentient beings, the bodhisattva develops a universal compassion, seeing all beings, regardless of their nature, as worthy of care and the potential for liberation."
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "target": {
+    "categories": [
+      {
+        "name": "སངས་རྒྱས་ཀྱི་བཀའ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "འགྲེལ་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "heDesc": "",
+        "heShortDesc": "",
+        "base_text_titles": [
+          "Vajra Cutter"
+        ],
+        "base_text_mapping": "many_to_one",
+        "link": "Commentary"
+      }
+    ],
+    "books": [
+      {
+        "title": "རྡོ་རྗེ་གཅོད་པ་དབྱིན་ཡིག་འགྲེལ་པ་དེབ། ༢",
+        "language": "en",
+        "versionSource": "",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": {
+          "རྡོ་རྗེ་གཅོད་པ་དབྱིན་ཡིག་འགྲེལ་པ་དེབ། ༢": {
+            "data": [],
+            "མདོའི་གཞུང་གི་འགྲེལ་བཤད།": {
+              "data": [],
+              "སངས་རྒྱས་ཀྱི་མཐར་ཐུག་གི་ཡེ་ཤེས་རྒྱུན་མི་ཆད་པའི་བསྟན་པ།": {
+                "data": []
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

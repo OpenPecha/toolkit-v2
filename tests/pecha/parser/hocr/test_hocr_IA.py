@@ -120,7 +120,7 @@ def get_annotation_bounds(annotation):
     return start, end
 
 
-def test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
+def _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
     """Test pagination layer annotations"""
     _, pagination_layer_file = pecha.get_layer_by_ann_type(
         base_name, LayerEnum.pagination
@@ -163,7 +163,7 @@ def test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
         ), f"Reference mismatch at index {i}"
 
 
-def test_confidence_layer(pecha, base_name, expected_confidence_layer_dict):
+def _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict):
     """Test OCR confidence layer annotations"""
     _, confidence_layer_file = pecha.get_layer_by_ann_type(
         base_name, LayerEnum.ocr_confidence
@@ -248,8 +248,8 @@ def test_build_layers():
             data_provider, pecha_id, opf_options, ocr_import_info
         )
         # Test each layer separately
-        test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)
-        test_confidence_layer(pecha, base_name, expected_confidence_layer_dict)
+        _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)
+        _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict)
 
 
 if __name__ == "__main__":

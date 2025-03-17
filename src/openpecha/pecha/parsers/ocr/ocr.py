@@ -18,9 +18,7 @@ from openpecha.pecha.metadata import (
     Copyright_unknown,
     InitialCreationType,
     InitialPechaMetadata,
-    Language,
     LicenseType,
-    PechaMetaData,
 )
 from openpecha.pecha.parsers import BaseFormatter
 
@@ -880,21 +878,26 @@ class OCRFormatter(BaseFormatter):
                 ),
             }
 
-        # Replace pecha_metdata v1 with dummy pecha meta of v2
-        dummy_metadata = PechaMetaData(
-            id=pecha.id,
-            title={"bo": "མདོ་སྡེ་བཀའ་འགྱུར"},
-            author=["Anonymous"],
-            imported=datetime.datetime.now(),
-            toolkit_version="1.0.0",
-            parser="DummyParser",
-            initial_creation_type=InitialCreationType.ocr,
-            language=Language.tibetan,
-            source_metadata={"publisher": "Dummy Publisher"},
-            bases=[{"base_id": "B001", "text": "Sample text"}],
-            copyright=Copyright_public_domain,
-            licence=LicenseType.CC_BY,
-        )
-        pecha.set_metadata(dummy_metadata)
+        pecha_metadata_dict = {
+            "id": "I123456",
+            "title": {"bo": "མདོ་སྡེ་བཀའ་འགྱུར"},
+            "author": ["Anonymous"],
+            "imported": "2025-03-13T12:17:04.377371",
+            "source": None,
+            "toolkit_version": "1.0.0",
+            "parser": "DummyParser",
+            "initial_creation_type": "ocr",
+            "language": "bo",
+            "source_metadata": {"publisher": "Dummy Publisher"},
+            "bases": [{"base_id": "B001", "text": "Sample text"}],
+            "copyright": {
+                "status": "Public domain",
+                "notice": "Public domain",
+                "info_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+            },
+            "licence": "CC BY",
+        }
+
+        pecha.set_metadata(pecha_metadata_dict)
 
         return pecha
