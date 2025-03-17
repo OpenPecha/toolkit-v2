@@ -35,10 +35,10 @@ dependencies = [
   "google-auth-httplib2 >= 0.2.0",
   "google-api-python-client >= 2.156.0",
   "docx2python == 3.3.0",
-  "beautifulsoup4 >= 4.0.0",
-  "boto3>=1.24.50, <2.0",
-  "rdflib>=5.0.0",
-  "fonttools[unicode] >= 4.37.3"
+  "beautifulsoup4",
+  "boto3",
+  "rdflib",
+  "fonttools[unicode]"
 ]
  
 [project.optional-dependencies]
