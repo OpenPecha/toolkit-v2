@@ -140,6 +140,10 @@ class PreAlignedCommentarySerializer:
         tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
             root_display_pecha, root_pecha, commentary_pecha
         )
+        # Preprocess newlines in content
+        tgt_content = [
+            line.replace("\\n", "<br>").replace("\n", "<br>") for line in tgt_content
+        ]
 
         # Chapterize content
         chapterized_tgt_content = chunk_strings(tgt_content)
