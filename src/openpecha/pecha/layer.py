@@ -62,6 +62,8 @@ class LayerGroupEnum(Enum):
     translation_segment = "Translation_Segment"
     associated_alignment = "Associated_Alignment"
     spelling_variation = "Spelling_Variation"
+    ocr_confidence_type = "Ocr_Type"
+    language_type = "Language_Type"
 
 
 def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
