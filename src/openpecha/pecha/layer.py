@@ -14,6 +14,7 @@ class LayerCollectionEnum(Enum):
 
 
 class LayerEnum(Enum):
+    # Existing v2 segments
     meaning_segment = "Meaning_Segment"
     root_segment = "Root_Segment"
     commentary_segment = "Commentary_Segment"
@@ -24,12 +25,36 @@ class LayerEnum(Enum):
     italian_segment = "Italian_Segment"
     russian_segment = "Russian_Segment"
     pecha_display_alignment_segment = "Pecha_Display_Alignment_Segment"
+
+    # Common attributes (keeping v2 naming)
     chapter = "Chapter"
-    sapche = "Sapche"
+    sapche = "Sapche"  # Note: v1 had "Sabche"
     metadata = "Meta_Data"
     tsawa = "Tsawa"
     pagination = "Pagination"
     durchen = "Durchen"
+    ocr_confidence = "OCRConfidence"
+    language = "Language"
+
+    # Additional attributes from v1
+    index = "index"
+    book_title = "BookTitle"
+    sub_title = "SubTitle"
+    book_number = "BookNumber"
+    poti_title = "PotiTitle"
+    author = "Author"
+    topic = "Text"
+    sub_topic = "SubText"
+    citation = "Citation"
+    correction = "Correction"
+    error_candidate = "ErrorCandidate"
+    peydurma = "Peydurma"
+    pedurma_note = "PedurmaNote"
+    yigchung = "Yigchung"
+    archaic = "Archaic"
+    footnote = "Footnote"
+    segment = "Segment"
+    transcription_time_span = "TranscriptionTimeSpan"
 
 
 class LayerGroupEnum(Enum):
