@@ -9,6 +9,8 @@ class LayerCollectionEnum(Enum):
     metadata = "Meta_Data"
     structure_annotation = "Structure_Annotation"
     variation_annotation = "Variation_Annotation"
+    ocr_annotation = "Ocr_Annotation"
+    language_annotation = "language_Annotation"
 
 
 class LayerEnum(Enum):
