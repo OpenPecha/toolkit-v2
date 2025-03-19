@@ -91,6 +91,12 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
     ]:
         return LayerGroupEnum.structure_type
 
+    if layer_type == LayerEnum.language:
+        return LayerGroupEnum.language_type
+
+    if layer_type == LayerEnum.ocr_confidence:
+        return LayerGroupEnum.ocr_confidence_type
+
     if layer_type == LayerEnum.durchen:
         return LayerGroupEnum.spelling_variation
 
