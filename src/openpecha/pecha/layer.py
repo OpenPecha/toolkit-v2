@@ -131,6 +131,12 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
     ]:
         return LayerCollectionEnum.structure_annotation
 
+    if layer_type == LayerEnum.language:
+        return LayerCollectionEnum.language_annotation
+
+    if layer_type == LayerEnum.ocr_confidence:
+        return LayerCollectionEnum.ocr_annotation
+
     if layer_type == LayerEnum.durchen:
         return LayerCollectionEnum.variation_annotation
 
