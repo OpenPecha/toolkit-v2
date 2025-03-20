@@ -6,22 +6,11 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from openpecha.ids import get_uuid
 from openpecha.pecha.annotations import (
-    Archaic,
     BaseAnnotation,
     Citation,
-    Correction,
-    Durchen,
-    ErrorCandidate,
-    Footnote,
     Lang,
     OCRConfidence,
     Pagination,
-    Pedurma,
-    Sapche,
-    Segment,
-    TranscriptionTimeSpan,
-    Tsawa,
-    Yigchung,
 )
 from openpecha.pecha.metadata import PechaMetaData
 
@@ -50,14 +39,14 @@ class LayerEnum(Enum):
     italian_segment = "Italian_Segment"
     russian_segment = "Russian_Segment"
     pecha_display_alignment_segment = "Pecha_Display_Alignment_Segment"
-
-    # Common attributes (keeping v2 naming)
     chapter = "Chapter"
-    sapche = "Sapche"  # Note: v1 had "Sabche"
+    sapche = "Sapche"
     metadata = "Meta_Data"
     tsawa = "Tsawa"
     pagination = "Pagination"
     durchen = "Durchen"
+
+    # Common attributes (keeping v2 naming)
     ocr_confidence = "OCRConfidence"
     language = "Language"
 
@@ -71,15 +60,6 @@ class LayerEnum(Enum):
     topic = "Text"
     sub_topic = "SubText"
     citation = "Citation"
-    correction = "Correction"
-    error_candidate = "ErrorCandidate"
-    peydurma = "Peydurma"
-    pedurma_note = "PedurmaNote"
-    yigchung = "Yigchung"
-    archaic = "Archaic"
-    footnote = "Footnote"
-    segment = "Segment"
-    transcription_time_span = "TranscriptionTimeSpan"
 
 
 class LayerGroupEnum(Enum):
@@ -192,30 +172,8 @@ def _get_annotation_class(layer_name: LayerEnum):
         return Lang
     elif layer_name == LayerEnum.citation:
         return Citation
-    elif layer_name == LayerEnum.correction:
-        return Correction
-    elif layer_name == LayerEnum.error_candidate:
-        return ErrorCandidate
-    elif layer_name == LayerEnum.peydurma:
-        return Pedurma
-    elif layer_name == LayerEnum.sapche:
-        return Sapche
-    elif layer_name == LayerEnum.tsawa:
-        return Tsawa
-    elif layer_name == LayerEnum.yigchung:
-        return Yigchung
-    elif layer_name == LayerEnum.archaic:
-        return Archaic
-    elif layer_name == LayerEnum.durchen:
-        return Durchen
-    elif layer_name == LayerEnum.footnote:
-        return Footnote
-    elif layer_name == LayerEnum.segment:
-        return Segment
     elif layer_name == LayerEnum.ocr_confidence:
         return OCRConfidence
-    elif layer_name == LayerEnum.transcription_time_span:
-        return TranscriptionTimeSpan
     else:
         return BaseAnnotation
 
@@ -284,15 +242,3 @@ class SpanINFO(BaseModel):
 class OCRConfidenceLayer(Layer):
     confidence_threshold: float
     annotation_type: LayerEnum = Field(default=LayerEnum.ocr_confidence)
-
-
-class TranscriptionTimeSpanLayer(Layer):
-    media_url: str
-    time_unit: str
-    annotation_type: LayerEnum = Field(default=LayerEnum.transcription_time_span)
-
-    @field_validator("time_unit")
-    def time_unit_must_be_millisecond_or_microsecond(cls, v):
-        if v not in ("millisecond", "microsecond"):
-            raise ValueError("time_unit must be either millisecond or microsecond")
-        return v

@@ -72,53 +72,5 @@ class OCRConfidence(BaseAnnotation):
     nb_below_threshold: Optional[int] = None
 
 
-class TranscriptionTimeSpan(BaseAnnotation):
-    time_span: Span
-
-
 class Citation(BaseAnnotation):
-    pass
-
-
-class Correction(BaseAnnotation):
-    pass
-
-
-class ErrorCandidate(BaseAnnotation):
-    pass
-
-
-class Pedurma(BaseAnnotation):
-    pass
-
-
-class Sapche(BaseAnnotation):
-    pass
-
-
-class Tsawa(BaseAnnotation):
-    pass
-
-
-class Yigchung(BaseAnnotation):
-    pass
-
-
-class Archaic(BaseAnnotation):
-    pass
-
-
-class Durchen(BaseAnnotation):
-    default: str = Field(..., description="text_name of the default option")
-    options: Dict[str, str] = Field(
-        ..., description="all other spell options in dict of {text_name, option}"
-    )
-    printable: bool = Field(default=True)
-
-
-class Footnote(BaseAnnotation):
-    pass
-
-
-class Segment(BaseAnnotation):
     pass
