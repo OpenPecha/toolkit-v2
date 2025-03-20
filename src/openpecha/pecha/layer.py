@@ -49,6 +49,7 @@ class LayerEnum(Enum):
     ocr_confidence = "OCRConfidence"
     language = "Language"
     citation = "Citation"
+    book_title = "BookTitle"
 
 
 class LayerGroupEnum(Enum):
