@@ -169,6 +169,14 @@ class PreAlignedRootTranslationSerializer:
         root_layer_path = get_first_layer_file(root_display_pecha)
         tgt_content = self.get_root_content(root_display_pecha, root_layer_path)
 
+        # Preprocess newlines in content
+        src_content = [
+            line.replace("\\n", "<br>").replace("\n", "<br>") for line in src_content
+        ]
+        tgt_content = [
+            line.replace("\\n", "<br>").replace("\n", "<br>") for line in tgt_content
+        ]
+
         # Chapterize content
         chapterized_src_content: List[List[str]] = chunk_strings(src_content)
         chapterized_tgt_content: List[List[str]] = chunk_strings(tgt_content)

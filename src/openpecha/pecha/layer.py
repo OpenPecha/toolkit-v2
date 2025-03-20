@@ -43,11 +43,13 @@ class LayerEnum(Enum):
     metadata = "Meta_Data"
     pagination = "Pagination"
     durchen = "Durchen"
+    sapche = "Sapche"
 
     # Common attributes (keeping v2 naming)
     ocr_confidence = "OCRConfidence"
     language = "Language"
     citation = "Citation"
+    book_title = "BookTitle"
 
 
 class LayerGroupEnum(Enum):
@@ -77,6 +79,7 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
 
     if layer_type in [
         LayerEnum.chapter,
+        LayerEnum.sapche,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
     ]:
@@ -115,6 +118,7 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
 
     if layer_type in [
         LayerEnum.chapter,
+        LayerEnum.sapche,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
     ]:
