@@ -3,7 +3,8 @@ import json
 import math
 import os
 from contextlib import contextmanager
-from typing import List
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 from openpecha.config import NO_OF_CHAPTER_SEGMENT
 
@@ -14,24 +15,12 @@ def cwd(path):
     A context manager which changes the working directory to the given
     path, and then changes it back to its previous value on exit.
     """
-
     prev_cwd = os.getcwd()
     os.chdir(path)
     try:
         yield
     finally:
         os.chdir(prev_cwd)
-
-
-def read_json(file_path):
-    with open(file_path) as f:
-        data = json.load(f)
-    return data
-
-
-def write_json(file_path, data):
-    with open(file_path, "w") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def get_text_direction_with_lang(lang):
@@ -133,3 +122,38 @@ def write_csv(file_path, data) -> None:
     with open(file_path, mode="w", newline="", encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerows(data)
+
+
+def load_json(fn: Union[str, Path]) -> Optional[Dict]:
+    fn = Path(fn)
+    if not fn.is_file():
+        return None
+    with fn.open(encoding="utf-8") as f:
+        return json.load(f)
+
+
+def dump_json(data: Dict, output_fn: Union[str, Path]) -> Path:
+    """Dump data to a JSON file."""
+    output_fn = Path(output_fn)
+    output_fn.parent.mkdir(exist_ok=True, parents=True)
+    with output_fn.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+    return output_fn
+
+
+def load_json_str(s: str) -> Optional[Dict]:
+    """Load JSON data from a string."""
+    if not s:
+        return None
+    return json.loads(s)
+
+
+# Keep existing read_json and write_json for backward compatibility
+def read_json(file_path):
+    """Deprecated: Use load_json instead"""
+    return load_json(file_path)
+
+
+def write_json(file_path, data):
+    """Deprecated: Use dump_json instead"""
+    return dump_json(data, file_path)
