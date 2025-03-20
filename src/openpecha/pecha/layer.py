@@ -40,25 +40,13 @@ class LayerEnum(Enum):
     russian_segment = "Russian_Segment"
     pecha_display_alignment_segment = "Pecha_Display_Alignment_Segment"
     chapter = "Chapter"
-    sapche = "Sapche"
     metadata = "Meta_Data"
-    tsawa = "Tsawa"
     pagination = "Pagination"
     durchen = "Durchen"
 
     # Common attributes (keeping v2 naming)
     ocr_confidence = "OCRConfidence"
     language = "Language"
-
-    # Additional attributes from v1
-    index = "index"
-    book_title = "BookTitle"
-    sub_title = "SubTitle"
-    book_number = "BookNumber"
-    poti_title = "PotiTitle"
-    author = "Author"
-    topic = "Text"
-    sub_topic = "SubText"
     citation = "Citation"
 
 
@@ -89,8 +77,6 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
 
     if layer_type in [
         LayerEnum.chapter,
-        LayerEnum.sapche,
-        LayerEnum.tsawa,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
     ]:
@@ -129,8 +115,6 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
 
     if layer_type in [
         LayerEnum.chapter,
-        LayerEnum.sapche,
-        LayerEnum.tsawa,
         LayerEnum.meaning_segment,
         LayerEnum.pagination,
     ]:
@@ -150,23 +134,8 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
 
 def _get_annotation_class(layer_name: LayerEnum):
     """Maps LayerEnum to Annotation class"""
-    if layer_name == LayerEnum.book_title:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.sub_title:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.book_number:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.poti_title:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.author:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.chapter:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.topic:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.sub_topic:
-        return BaseAnnotation
-    elif layer_name == LayerEnum.pagination:
+
+    if layer_name == LayerEnum.pagination:
         return Pagination
     elif layer_name == LayerEnum.language:
         return Lang
