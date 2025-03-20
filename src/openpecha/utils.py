@@ -124,36 +124,21 @@ def write_csv(file_path, data) -> None:
         writer.writerows(data)
 
 
-def load_json(fn: Union[str, Path]) -> Optional[Dict]:
+def read_json(fn: Union[str, Path]) -> Optional[Dict]:
     fn = Path(fn)
     if not fn.is_file():
         return None
-    with fn.open(encoding="utf-8") as f:
+    with fn.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def dump_json(data: Dict, output_fn: Union[str, Path]) -> Path:
+def write_json(
+    output_fn: Union[str, Path],
+    data: Dict,
+) -> Path:
     """Dump data to a JSON file."""
     output_fn = Path(output_fn)
     output_fn.parent.mkdir(exist_ok=True, parents=True)
     with output_fn.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     return output_fn
-
-
-def load_json_str(s: str) -> Optional[Dict]:
-    """Load JSON data from a string."""
-    if not s:
-        return None
-    return json.loads(s)
-
-
-# Keep existing read_json and write_json for backward compatibility
-def read_json(file_path):
-    """Deprecated: Use load_json instead"""
-    return load_json(file_path)
-
-
-def write_json(file_path, data):
-    """Deprecated: Use dump_json instead"""
-    return dump_json(data, file_path)
