@@ -3,16 +3,9 @@ import inspect
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
-from pydantic import (
-    AnyHttpUrl,
-    BaseModel,
-    ConfigDict,
-    Field,
-    field_serializer,
-    model_validator,
-)
+from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
 from openpecha.ids import get_diplomatic_id, get_initial_pecha_id, get_open_pecha_id
 
@@ -87,35 +80,27 @@ class LicenseType(Enum):
 class PechaMetaData(BaseModel):
     # Required fields
     id: str
-
-    # Optional fields from both classes
     legacy_id: Optional[str] = None
     title: Optional[Union[Dict[str, str], str]] = None
     author: Optional[Union[List[str], Dict[str, str], str]] = None
     imported: Optional[datetime] = None
     source: Optional[str] = None
     source_file: Optional[str] = None
-    parser: Optional[Union[AnyHttpUrl, str]] = None
-    toolkit_version: Optional[str] = None
+    toolkit_version: str
+    parser: str
+    initial_creation_type: InitialCreationType
+    language: Language
+    source_metadata: Dict = {}
+    bases: List[Dict] = []
+    copyright: Copyright = Copyright()
+    licence: LicenseType = LicenseType.UNKNOWN
 
     # Type-specific fields
-    initial_creation_type: Optional[InitialCreationType] = None
-    language: Optional[Language] = None
-    default_language: Optional[str] = None
 
     # Metadata fields
-    source_metadata: Optional[Dict] = {}
     ocr_import_info: Optional[Dict] = None
     statistics: Optional[Dict] = None
     quality: Optional[Dict] = None
-
-    # Base information
-    bases: Optional[Union[Dict[str, Dict], List[Dict]]] = {}
-
-    # Copyright and license fields (supporting both spellings)
-    copyright: Optional[Copyright] = None
-    license: Optional[LicenseType] = None
-    licence: Optional[LicenseType] = None
 
     # Time tracking
     last_modified: Optional[datetime] = None
@@ -276,7 +261,7 @@ class PechaMetaData(BaseModel):
 
 
 class InitialPechaMetadata(PechaMetaData):
-    bases: Dict = {}
+    bases: List[Dict[Any, Any]] = []
 
     @model_validator(mode="before")
     def set_id(cls, values):
@@ -286,6 +271,8 @@ class InitialPechaMetadata(PechaMetaData):
 
 
 class OpenPechaMetadata(PechaMetaData):
+    bases: List[Dict[Any, Any]] = []
+
     @model_validator(mode="before")
     def set_id(cls, values):
         if "id" not in values or values["id"] is None:
