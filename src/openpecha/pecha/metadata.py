@@ -26,6 +26,7 @@ class Language(Enum):
     sanskrit = "sa"
     italian = "it"
     russian = "ru"
+    hindi = "hi"
 
 
 class CopyrightStatus(Enum):

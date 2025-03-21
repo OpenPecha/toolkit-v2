@@ -85,6 +85,9 @@ class DocxNumberListTranslationParser(BaseParser):
         if lang == Language.russian.value:
             return LayerEnum.russian_segment
 
+        if lang == Language.hindi.value:
+            return LayerEnum.hindi_segment
+
         logger.error(f"The language {lang} does not included in Language Enum.")  # noqa
         raise InvalidLanguageEnumError(
             f"[Error] The language enum '{lang}' from metadata is invalid."
