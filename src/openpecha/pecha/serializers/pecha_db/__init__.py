@@ -125,36 +125,49 @@ class Serializer:
         pecha_type = get_pecha_type(metadatas)
         logger.info(f"Serializing Pecha {pecha.id}, Type: {pecha_type}")
 
-        if pecha_type == PechaType.root_pecha:
-            return RootSerializer().serialize(pecha)
+        match pecha_type:
+            case PechaType.root_pecha:
+                return RootSerializer().serialize(pecha)
 
-        if pecha_type == PechaType.root_translation_pecha:
-            root_pecha = pechas[-1]
-            return RootSerializer().serialize(pecha, root_pecha)
+            case PechaType.root_translation_pecha:
+                root_pecha = pechas[-1]
+                return RootSerializer().serialize(pecha, root_pecha)
 
-        if pecha_type == PechaType.commentary_pecha:
-            root_en_title = self.get_root_en_title(metadatas, pechas)
-            return SimpleCommentarySerializer().serialize(pecha, root_en_title)
+            case PechaType.commentary_pecha:
+                root_en_title = self.get_root_en_title(metadatas, pechas)
+                return SimpleCommentarySerializer().serialize(pecha, root_en_title)
 
-        if pecha_type == PechaType.commentary_translation_pecha:
-            root_en_title = self.get_root_en_title(metadatas, pechas)
-            commentary_pecha = pechas[1]
-            return SimpleCommentarySerializer().serialize(
-                pecha, root_en_title, commentary_pecha
-            )
+            case PechaType.commentary_translation_pecha:
+                root_en_title = self.get_root_en_title(metadatas, pechas)
+                commentary_pecha = pechas[1]
+                return SimpleCommentarySerializer().serialize(
+                    pecha, root_en_title, commentary_pecha
+                )
 
-        if pecha_type == PechaType.prealigned_commentary_pecha:
-            root_display_pecha = pechas[2]
-            root_pecha = pechas[1]
-            commentary_pecha = pechas[0]
-            return PreAlignedCommentarySerializer().serialize(
-                root_display_pecha, root_pecha, commentary_pecha
-            )
+            case PechaType.prealigned_commentary_pecha:
+                root_display_pecha = pechas[2]
+                root_pecha = pechas[1]
+                commentary_pecha = pechas[0]
+                return PreAlignedCommentarySerializer().serialize(
+                    root_display_pecha, root_pecha, commentary_pecha
+                )
 
-        if pecha_type == PechaType.prealigned_root_translation_pecha:
-            root_display_pecha = pechas[2]
-            root_pecha = pechas[1]
-            translation_pecha = pechas[0]
-            return PreAlignedRootTranslationSerializer().serialize(
-                root_display_pecha, root_pecha, translation_pecha
-            )
+            case PechaType.prealigned_root_translation_pecha:
+                root_display_pecha = pechas[2]
+                root_pecha = pechas[1]
+                translation_pecha = pechas[0]
+                return PreAlignedRootTranslationSerializer().serialize(
+                    root_display_pecha, root_pecha, translation_pecha
+                )
+
+            case PechaType.prealigned_commentary_translation_pecha:
+                root_display_pecha = pechas[3]
+                root_pecha = pechas[2]
+                commentary_pecha = pechas[1]
+                translation_pecha = pechas[0]
+                return PreAlignedCommentarySerializer().serialize(
+                    root_display_pecha, root_pecha, commentary_pecha
+                )
+
+            case _:
+                raise ValueError(f"Unsupported pecha type: {pecha_type}")

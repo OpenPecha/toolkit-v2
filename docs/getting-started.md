@@ -4,7 +4,7 @@
 
 ## 1. Prerequisites
 
-- Python version >=3.9
+- Python version >=3.10
 
 ## 2. Installation
 ```bash
