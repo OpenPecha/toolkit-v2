@@ -188,9 +188,14 @@ class SimpleCommentarySerializer:
             src_content = self.get_content(pecha, translation_path)
             tgt_content = self.get_content(commentary_pecha, commentary_path)
         else:
-            tgt_layer_path = get_first_layer_file(pecha)
-            src_content = []
-            tgt_content = self.get_content(pecha, tgt_layer_path)
+            layer_path = get_first_layer_file(pecha)
+            content = self.get_content(pecha, layer_path)
+            if pecha.metadata.language.value == "bo":
+                src_content = []
+                tgt_content = content
+            else:
+                tgt_content = []
+                src_content = content
 
         # Preprocess newlines in content
         src_content = [

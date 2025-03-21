@@ -5,9 +5,16 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_serializer,
+    model_validator,
+)
 
-from openpecha.ids import get_initial_pecha_id
+from openpecha.ids import get_diplomatic_id, get_initial_pecha_id, get_open_pecha_id
 
 
 class InitialCreationType(Enum):
@@ -79,27 +86,131 @@ class LicenseType(Enum):
 
 
 class PechaMetaData(BaseModel):
+    # Required fields
     id: str
+
+    # Optional fields from both classes
+    legacy_id: Optional[str] = None
     title: Optional[Union[Dict[str, str], str]] = None
     author: Optional[Union[List[str], Dict[str, str], str]] = None
     imported: Optional[datetime] = None
     source: Optional[str] = None
-    toolkit_version: str
-    parser: str
-    initial_creation_type: InitialCreationType
-    language: Language
-    source_metadata: Dict = {}
-    bases: List[Dict] = []
-    copyright: Copyright = Copyright()
-    licence: LicenseType = LicenseType.UNKNOWN
+    source_file: Optional[str] = None
+    parser: Optional[Union[AnyHttpUrl, str]] = None
+    toolkit_version: Optional[str] = None
+
+    # Type-specific fields
+    initial_creation_type: Optional[InitialCreationType] = None
+    language: Optional[Language] = None
+    default_language: Optional[str] = None
+
+    # Metadata fields
+    source_metadata: Optional[Dict] = {}
+    ocr_import_info: Optional[Dict] = None
+    statistics: Optional[Dict] = None
+    quality: Optional[Dict] = None
+
+    # Base information
+    bases: Optional[Union[Dict[str, Dict], List[Dict]]] = {}
+
+    # Copyright and license fields (supporting both spellings)
+    copyright: Optional[Copyright] = None
+    license: Optional[LicenseType] = None
+    licence: Optional[LicenseType] = None
+
+    # Time tracking
+    last_modified: Optional[datetime] = None
 
     model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
 
+    # Validators from both classes
     @model_validator(mode="before")
     def set_id(cls, values):
         if "id" not in values or values["id"] is None:
             values["id"] = get_initial_pecha_id()
         return values
+
+    @model_validator(mode="before")
+    def validate_parser(cls, values):
+        if "parser" in values and values["parser"]:
+            parser_classes = cls.get_toolkit_parsers()
+            if values["parser"] not in [name for name, _ in parser_classes]:
+                raise ValueError(
+                    f"Parser {values['parser']} not in the Toolkit parsers."
+                )
+        return values
+
+    @model_validator(mode="before")
+    def set_toolkit_version(cls, values):
+        if "toolkit_version" not in values or values["toolkit_version"] is None:
+            try:
+                from importlib.metadata import PackageNotFoundError, version
+
+                toolkit_version = version("openpecha")
+                values["toolkit_version"] = toolkit_version
+            except PackageNotFoundError as e:
+                raise RuntimeError("Package 'openpecha' not found.") from e
+            except Exception as e:
+                raise RuntimeError(f"Error fetching toolkit version: {str(e)}") from e
+        return values
+
+    @model_validator(mode="before")
+    def set_imported(cls, values):
+        if "imported" not in values or values["imported"] is None:
+            values["imported"] = datetime.now()
+        return values
+
+    @model_validator(mode="before")
+    def set_last_modified(cls, values):
+        if "last_modified" not in values or values["last_modified"] is None:
+            values["last_modified"] = datetime.now()
+        return values
+
+    @model_validator(mode="before")
+    def set_copyright_info(cls, values):
+        if "copyright" not in values or values["copyright"] is None:
+            values["copyright"] = Copyright()
+        return values
+
+    # Serializers for complex types
+    @field_serializer("imported", mode="plain")
+    def serialize_imported(self, value: Optional[datetime]) -> Optional[str]:
+        return value.isoformat() if value else None
+
+    @field_serializer("last_modified", mode="plain")
+    def serialize_last_modified(self, value: Optional[datetime]) -> Optional[str]:
+        return value.isoformat() if value else None
+
+    @field_serializer("licence", mode="plain")
+    def serialize_licence(self, value: Optional[LicenseType]) -> Optional[str]:
+        return value.value if value else None
+
+    @field_serializer("license", mode="plain")
+    def serialize_license(self, value: Optional[LicenseType]) -> Optional[str]:
+        return value.value if value else None
+
+    @field_serializer("language", mode="plain")
+    def serialize_language(self, value: Optional[Language]) -> Optional[str]:
+        return value.value if value else None
+
+    @field_serializer("initial_creation_type", mode="plain")
+    def serialize_initial_creation_type(
+        self, value: Optional[InitialCreationType]
+    ) -> Optional[str]:
+        return value.value if value else None
+
+    @field_serializer("copyright", mode="plain")
+    def serialize_copyright(self, value: Optional[Copyright]) -> Optional[Dict]:
+        if not value:
+            return None
+        return {
+            "status": value.status.value,
+            "notice": value.notice,
+            "info_url": value.info_url,
+        }
+
+    def update_last_modified_date(self):
+        self.last_modified = datetime.now()
 
     @classmethod
     def get_toolkit_parsers(cls):
@@ -134,62 +245,6 @@ class PechaMetaData(BaseModel):
         ]
         return parser_classes
 
-    @model_validator(mode="before")
-    def validate_parser(cls, values):
-        parser_classes = cls.get_toolkit_parsers()
-        if values["parser"] not in [name for name, _ in parser_classes]:
-            raise ValueError(f"Parser {values['parser']} not in the Toolkit parsers.")
-        return values
-
-    @model_validator(mode="before")
-    def set_toolkit_version(cls, values):
-        if "toolkit_version" not in values or values["toolkit_version"] is None:
-            try:
-                from importlib.metadata import PackageNotFoundError, version
-
-                # Fetch the version of the package directly
-                toolkit_version = version("openpecha")
-                values["toolkit_version"] = toolkit_version
-            except PackageNotFoundError as e:
-                # Handle the case where the package is not installed
-                raise RuntimeError("Package 'openpecha' not found.") from e
-            except Exception as e:
-                # Handle unexpected exceptions
-                raise RuntimeError(f"Error fetching toolkit version: {str(e)}") from e
-
-        return values
-
-    @model_validator(mode="before")
-    def set_imported(cls, values):
-        if "imported" not in values or values["imported"] is None:
-            values["imported"] = datetime.now()
-        return values
-
-    # Custom serializers using field_serializer
-    @field_serializer("imported", mode="plain")
-    def serialize_imported(self, value: Optional[datetime]) -> Optional[str]:
-        return value.isoformat() if value else None
-
-    @field_serializer("licence", mode="plain")
-    def serialize_licence(self, value: LicenseType) -> str:
-        return value.value
-
-    @field_serializer("language", mode="plain")
-    def serialize_language(self, value: Language) -> str:
-        return value.value
-
-    @field_serializer("initial_creation_type", mode="plain")
-    def serialize_inital_creation_type(self, value: InitialCreationType) -> str:
-        return value.value
-
-    @field_serializer("copyright", mode="plain")
-    def serialize_copyright(self, value: Copyright) -> Dict:
-        return {
-            "status": value.status.value,
-            "notice": value.notice,
-            "info_url": value.info_url,
-        }
-
     def to_dict(self):
         """
         Prepare PechaMetaData attribute to be JSON serializable
@@ -210,6 +265,8 @@ class PechaMetaData(BaseModel):
                 else:
                     extra_fields[k] = v
 
+        if "source_metadata" not in data:
+            data["source_metadata"] = {}
         data["source_metadata"].update(extra_fields)
 
         # Remove extra fields from the top-level data
@@ -217,6 +274,32 @@ class PechaMetaData(BaseModel):
             del data[field]
 
         return data
+
+
+class InitialPechaMetadata(PechaMetaData):
+    bases: Dict = {}
+
+    @model_validator(mode="before")
+    def set_id(cls, values):
+        if "id" not in values or values["id"] is None:
+            values["id"] = get_initial_pecha_id()
+        return values
+
+
+class OpenPechaMetadata(PechaMetaData):
+    @model_validator(mode="before")
+    def set_id(cls, values):
+        if "id" not in values or values["id"] is None:
+            values["id"] = get_open_pecha_id()
+        return values
+
+
+class DiplomaticPechaMetadata(PechaMetaData):
+    @model_validator(mode="before")
+    def set_id(cls, values):
+        if "id" not in values or values["id"] is None:
+            values["id"] = get_diplomatic_id()
+        return values
 
 
 class KungsangMonlamMetaData(BaseModel):
