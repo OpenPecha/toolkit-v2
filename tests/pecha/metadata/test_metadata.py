@@ -91,8 +91,9 @@ def test_initial_pecha_metadata():
     metadata = InitialPechaMetadata(
         initial_creation_type=InitialCreationType.ocr,
         statistics={"ocr_word_median_confidence_index": 0.9},
-        bases={
-            "529C": {
+        bases=[
+            {
+                "id": "529C",
                 "source_metadata": {
                     "image_group_id": "I3CN8548",
                     "title": "",
@@ -104,19 +105,23 @@ def test_initial_pecha_metadata():
                     "ocr_word_median_confidence_index": 0.9,
                 },
             }
-        },
+        ],
+        parser=DummyParser().name,  # Add parser field.
     )
 
     assert metadata.initial_creation_type.value == InitialCreationType.ocr.value
     assert metadata.id.startswith("I")
 
+    assert metadata.statistics is not None
     assert metadata.statistics["ocr_word_median_confidence_index"] == 0.9
-    assert "529C" in metadata.bases
+    assert metadata.bases is not None
+    assert metadata.bases[0]["id"] == "529C"
 
 
 def test_diplomatic_pecha_metadata():
     metadata = DiplomaticPechaMetadata(
         initial_creation_type=InitialCreationType.ocr,
+        parser=DummyParser().name,  # Add parser field.
     )
 
     assert metadata.initial_creation_type.value == InitialCreationType.ocr.value
@@ -126,6 +131,7 @@ def test_diplomatic_pecha_metadata():
 def test_open_pecha_metadata():
     metadata = OpenPechaMetadata(
         initial_creation_type=InitialCreationType.ocr,
+        parser=DummyParser().name,  # Add parser field.
     )
 
     assert metadata.initial_creation_type.value == InitialCreationType.ocr.value
@@ -142,9 +148,12 @@ def test_pecha_copyright():
     )
 
     metadata = InitialPechaMetadata(
-        initial_creation_type=InitialCreationType.ocr, copyright=copyright
+        initial_creation_type=InitialCreationType.ocr,
+        copyright=copyright,
+        parser=DummyParser().name,  # Add parser field.
     )
 
+    assert metadata.copyright is not None
     assert metadata.copyright.status == copyright_status
 
 
@@ -152,7 +161,10 @@ def test_pecha_licence():
     license_type = LicenseType.CC_BY_NC_SA
 
     metadata = InitialPechaMetadata(
-        initial_creation_type=InitialCreationType.ocr, license=license_type
+        initial_creation_type=InitialCreationType.ocr,
+        license=license_type,
+        parser=DummyParser().name,  # Add parser field.
     )
 
+    assert metadata.license is not None
     assert metadata.license == license_type
