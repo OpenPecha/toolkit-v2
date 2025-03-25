@@ -4,97 +4,7 @@ from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 from openpecha import config
-from openpecha.pecha.parsers.layers import _attr_names
 from openpecha.utils import read_json, write_json
-
-
-class Global2LocalId:
-    """Map global id of annotation in a layer to local id of a layer."""
-
-    def __init__(self, local_id_dict: Optional[Dict[str, int]] = None):
-        self.start_local_id = 200_000
-        self.global2local_id: Dict[str, Any] = self._initialize(local_id_dict)
-        self.local2global_id: Dict[int, str] = {
-            l_id["local_id"]: g_id for g_id, l_id in self.global2local_id.items()
-        }
-        self.last_local_id = self.find_last()
-
-    def _initialize(self, local_id_dict: Optional[Dict[str, int]]) -> Dict[str, Any]:
-        g2lid: Dict[str, Any] = {}
-        if not local_id_dict:
-            return g2lid
-        for global_id, local_id in local_id_dict.items():
-            g2lid[global_id] = {"local_id": local_id, "is_found": False}
-        return g2lid
-
-    def find_last(self) -> int:
-        """Return last local id in a layer."""
-        if self.global2local_id:
-            return list(self.global2local_id.values()).pop()["local_id"]
-        return self.start_local_id - 1
-
-    def add(self, global_id: str) -> None:
-        """Map given `global_id` to the last local id."""
-        next_local_id = self.last_local_id + 1
-        self.global2local_id[global_id] = next_local_id
-        self.last_local_id = next_local_id
-
-    def get_local_id(self, global_id: str) -> Optional[Any]:
-        """Return `local_id` associated to given `global_id`."""
-        return self.global2local_id.get(global_id, None)
-
-    def get_global_id(self, local_id: int) -> Optional[str]:
-        """Return `global_id` associated to given `local_id`."""
-        global_id = self.local2global_id.get(local_id, None)
-        if not global_id:
-            return None
-        self.global2local_id[global_id]["is_found"] = True
-        return global_id
-
-    def serialize(self) -> Dict[str, Any]:
-        """Return just the global and local id pairs."""
-        result: Dict[str, Any] = {}
-        for global_id, id_obj in self.global2local_id.items():
-            if isinstance(id_obj, int):
-                result[global_id] = id_obj
-            elif id_obj["is_found"]:
-                result[global_id] = id_obj["is_found"]
-        return result
-
-
-class LocalIdManager:
-    """Maintains local_id to uuid map for echa layer."""
-
-    def __init__(self, layers: Dict[str, Dict[str, Dict[str, Any]]]):
-        self.map_name = _attr_names.LOCAL_ID
-        self.maps: Dict[str, Dict[str, Global2LocalId]] = self._get_local_id_maps(
-            layers
-        )
-
-    def _get_local_id_maps(
-        self, layers: Dict[str, Dict[str, Dict[str, Any]]]
-    ) -> Dict[str, Dict[str, Global2LocalId]]:
-        maps: Dict[str, Dict[str, Global2LocalId]] = defaultdict(dict)
-        for layer in layers:
-            for vol in layers[layer]:
-                maps[layer][vol] = Global2LocalId(
-                    layers[layer][vol].get(self.map_name, {})
-                )
-        return maps
-
-    def add(self, layer_name: str, vol_id: str, global_id: str) -> None:
-        """Add `global_id` to layer's global2local id map."""
-        if layer_name not in self.maps or vol_id not in self.maps[layer_name]:
-            self.maps[layer_name][vol_id] = Global2LocalId()
-        self.maps[layer_name][vol_id].add(global_id)
-
-    def get_serialized_global2local_id(
-        self, layer_name: str, vol_id: str
-    ) -> Dict[str, Any]:
-        """Convert map of given `layer_name` in global and local id pairs."""
-        serialized_dict = self.maps[layer_name][vol_id].serialize()
-        del self.maps[layer_name][vol_id]
-        return serialized_dict
 
 
 class BaseFormatter:
@@ -206,7 +116,7 @@ class BaseFormatter:
                                   should be implemented in sub-class."
         )
 
-    def create_opf(self, input_path):
+    def create_pecha(self, input_path):
         input_path = Path(input_path)
         self._build_dirs(input_path)
 
