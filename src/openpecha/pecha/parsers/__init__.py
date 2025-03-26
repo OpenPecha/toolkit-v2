@@ -5,9 +5,6 @@ from typing import Any, Dict, Union
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 
-# from .empty import EmptyEbook
-from .formatter import BaseFormatter
-
 
 class BaseParser(ABC):
     @property
