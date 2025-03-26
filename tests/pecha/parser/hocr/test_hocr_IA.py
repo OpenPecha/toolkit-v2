@@ -5,7 +5,7 @@ from pathlib import Path
 from test_hocr_data_provider import HOCRIATestFileProvider
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.ocr.hocr import HOCRFormatter
+from openpecha.pecha.parsers.ocr.hocr import HOCRParser
 from openpecha.utils import read_json
 
 
@@ -36,8 +36,8 @@ def test_base_text():
     )
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        formatter = HOCRFormatter(mode=mode, output_path=tmpdirname)
-        pecha = formatter.create_pecha(data_provider, pecha_id, {}, ocr_import_info)
+        formatter = HOCRParser(mode=mode, output_path=tmpdirname)
+        pecha = formatter.parse(data_provider, pecha_id, {}, ocr_import_info)
         base_text = pecha.bases["I0886"]
         base_text_line = base_text.split("\n")
         expected_base_text_line = expected_base_text.split("\n")
@@ -243,10 +243,8 @@ def test_build_layers():
     opf_options = {"ocr_confidence_threshold": 0.9, "max_low_conf_per_page": 50}
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        formatter = HOCRFormatter(mode=mode, output_path=tmpdirname)
-        pecha = formatter.create_pecha(
-            data_provider, pecha_id, opf_options, ocr_import_info
-        )
+        formatter = HOCRParser(mode=mode, output_path=tmpdirname)
+        pecha = formatter.parse(data_provider, pecha_id, opf_options, ocr_import_info)
         # Test each layer separately
         _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)
         _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict)

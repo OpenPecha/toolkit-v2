@@ -97,7 +97,7 @@ class HOCRIAFileProvider:
             return None
 
 
-class HOCRFormatter(OCRParser):
+class HOCRParser(OCRParser):
     """
     OpenPecha Formatter for Google OCR HOCR output of scanned pecha.
     """
