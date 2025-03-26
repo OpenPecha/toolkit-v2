@@ -1,97 +1,9 @@
-import os
 from pathlib import Path
-from typing import Any
-from zipfile import ZipFile
 
 from bs4 import BeautifulSoup
 
-from openpecha.buda.api import get_image_list, image_group_to_folder_name
+from openpecha.buda.api import get_image_list
 from openpecha.pecha.parsers.ocr.ocr import BBox, OCRFormatter
-from openpecha.utils import read_json
-
-
-class BDRCGBFileProvider:
-    def __init__(self, bdrc_scan_id, buda_data, ocr_import_info, ocr_disk_path):
-        self.ocr_import_info = ocr_import_info
-        # disk path is the path to a directory that contains "info" and "output" subfolders
-        self.ocr_disk_path = ocr_disk_path
-        self.bdrc_scan_id = bdrc_scan_id
-        self.buda_data = buda_data
-        self.images_info = {}
-        self.cur_zip = None
-        self.cur_image_group_id = None
-
-    def get_image_list(self, image_group_id):
-        """call get_images_info and return the image_list of the image_group_id
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-        """
-        self.get_images_info(image_group_id)
-        buda_il = get_image_list(self.bdrc_scan_id, image_group_id)
-        # format should be a list of image_id (/ file names)
-        return map(lambda ii: ii["filename"], buda_il)
-
-    def get_images_info(self, image_group_id):
-        """load page_filename with image_filename mapping to images.info
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-        """
-        vol_folder = image_group_to_folder_name(self.bdrc_scan_id, image_group_id)
-        vol_path = Path(f"{self.ocr_disk_path}") / "info" / vol_folder
-        if os.path.isdir(vol_path):
-            image_info_path = Path(vol_path) / "gb-bdrc-map.json"
-            self.images_info = read_json(image_info_path) or {}
-        else:
-            return
-
-    def get_source_info(self):
-        return self.buda_data
-
-    def get_hocr_filename(self, image_id):
-        """return the filename of the image_id from the images_info dict"""
-        for filename, img_ref in self.images_info.items():
-            img_id = img_ref
-            if img_id == image_id:
-                return filename
-
-    def get_image_group_data(self, image_group_id):
-        """unzip the html.zip of the image_group_id and return it
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-
-        Returns:
-            self.cur_zip: unzip content of the html.zip
-        """
-        if image_group_id == self.cur_image_group_id and self.cur_zip is not None:
-            return self.cur_zip
-        vol_folder = image_group_to_folder_name(self.bdrc_scan_id, image_group_id)
-        zip_path = Path(f"{self.ocr_disk_path}") / "output" / vol_folder / "html.zip"
-        self.cur_zip = ZipFile(zip_path)
-        return self.cur_zip
-
-    def get_image_data(self, image_group_id, image_filename):
-        """get hocr_filename using image_filename,
-           use volume folder and hocr_filename to read the hocr_html file for the image_filename or the page
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-
-        Returns:
-            hocr_html: html file of the image_filename
-        """
-        hocr_filename = self.get_hocr_filename(image_filename) + ".html"
-        zf = self.get_image_group_data(image_group_id)
-        try:
-            for filename in zf.filelist:
-                if filename.filename.split("/")[-1] == hocr_filename:
-                    with zf.open(filename.filename) as hocr_file:
-                        return hocr_file.read()
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            return
 
 
 class HOCRIAFileProvider:
@@ -178,7 +90,7 @@ class HOCRIAFileProvider:
             page_hocr = self.images_info[image_filename]["page_info"]
             return page_hocr
         except KeyError:
-            print(f"Error: {image_filename} not found in images_info.")
+            print(f"Error: {image_filename} not in images_info.")
             return None
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
@@ -320,8 +232,3 @@ class HOCRFormatter(OCRFormatter):
             else:
                 bboxes = self.get_boxes(hocr_page_html)
         return bboxes, None
-
-    def parse(
-        self, input: Any, metadata: dict[Any, Any], output_path: Path = ...
-    ) -> Any:
-        pass
