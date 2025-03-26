@@ -221,18 +221,12 @@ class TestSerializer(TestCase):
             **self.commentary_translation_pecha.metadata.to_dict(),
         }
         self.pecha_category = {
-            "bo": [
-                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-            ],
-            "en": [
-                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-            ],
+            "description": {
+                "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
+                "en": "Madhyamaka treatises",
+            },
+            "name": {"bo": "དབུ་མ།", "en": "Madhyamaka"},
+            "short_description": {"bo": "", "en": ""},
         }
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
