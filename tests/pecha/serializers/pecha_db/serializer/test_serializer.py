@@ -330,7 +330,10 @@ class TestSerializer(TestCase):
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
-            self.root_display_pecha, self.root_pecha, self.commentary_pecha
+            self.root_display_pecha,
+            self.root_pecha,
+            self.commentary_pecha,
+            self.pecha_category,
         )
 
     @mock.patch(

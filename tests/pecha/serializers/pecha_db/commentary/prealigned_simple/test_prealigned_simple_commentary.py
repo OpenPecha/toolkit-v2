@@ -20,25 +20,20 @@ class TestPreAlignedCommentarySerializer(TestCase):
         )
 
         # Create the patcher and set return_value
-        self.patcher = mock.patch(
-            "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.PreAlignedCommentarySerializer.get_category",
-            return_value={
-                "bo": [
-                    {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
-                    {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                    {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                    {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                ],
-                "en": [
-                    {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                    {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                    {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
-                    {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                ],
-            },
-        )
-        # Start the patch
-        self.mock_get_category = self.patcher.start()
+        self.pecha_category = {
+            "bo": [
+                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+            ],
+            "en": [
+                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+            ],
+        }
 
     @mock.patch(
         "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.CommentaryAlignmentTransfer.get_serialized_commentary",
@@ -50,14 +45,17 @@ class TestPreAlignedCommentarySerializer(TestCase):
 
         serializer = PreAlignedCommentarySerializer()
         serialized_json = serializer.serialize(
-            self.root_display_pecha, self.root_pecha, self.commentary_pecha
+            self.root_display_pecha,
+            self.root_pecha,
+            self.commentary_pecha,
+            self.pecha_category,
         )
 
         expected_json = Path(__file__).parent / "data/expected_serialized.json"
         assert read_json(expected_json) == serialized_json
 
     def tearDown(self):
-        self.patcher.stop()
+        pass
 
 
 work = TestPreAlignedCommentarySerializer()

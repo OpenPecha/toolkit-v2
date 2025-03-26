@@ -156,7 +156,7 @@ class Serializer:
                 root_pecha = pechas[1]
                 commentary_pecha = pechas[0]
                 return PreAlignedCommentarySerializer().serialize(
-                    root_display_pecha, root_pecha, commentary_pecha
+                    root_display_pecha, root_pecha, commentary_pecha, pecha_category
                 )
 
             case PechaType.prealigned_root_translation_pecha:
@@ -173,7 +173,7 @@ class Serializer:
                 commentary_pecha = pechas[1]
                 translation_pecha = pechas[0]
                 return PreAlignedCommentarySerializer().serialize(
-                    root_display_pecha, root_pecha, commentary_pecha
+                    root_display_pecha, root_pecha, commentary_pecha, pecha_category
                 )
 
             case _:
