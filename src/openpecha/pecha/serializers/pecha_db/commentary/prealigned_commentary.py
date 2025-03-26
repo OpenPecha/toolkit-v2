@@ -1,10 +1,8 @@
 from typing import Any, Dict, List
 
-from pecha_org_tools.extract import CategoryExtractor
-
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataValidationError, PechaCategoryNotFoundError
+from openpecha.exceptions import MetaDataValidationError
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
@@ -55,24 +53,6 @@ class PreAlignedCommentarySerializer:
         }
 
         return src_metadata, tgt_metadata
-
-    def get_category(self, category_name: str):
-        """
-        Input: title: Title of the pecha commentary which will be used to get the category format
-        Process: Get the category format from the pecha.org categorizer package
-        """
-
-        try:
-            categorizer = CategoryExtractor()
-            category = categorizer.get_category(category_name)
-        except Exception as e:
-            logger.error(
-                f"Category not found for pecha title: {category_name}. {str(e)}"
-            )
-            raise PechaCategoryNotFoundError(
-                f"Category not found for pecha title: {category_name}. {str(e)}"
-            )
-        return category
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
