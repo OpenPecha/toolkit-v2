@@ -281,7 +281,9 @@ class TestSerializer(TestCase):
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
-            self.commentary_pecha, self.root_display_pecha.metadata.title["EN"]
+            self.commentary_pecha,
+            self.pecha_category,
+            self.root_display_pecha.metadata.title["EN"],
         )
 
     @mock.patch(
@@ -306,6 +308,7 @@ class TestSerializer(TestCase):
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_translation_pecha,
+            self.pecha_category,
             self.root_display_pecha.metadata.title["EN"],
             self.commentary_pecha,
         )
