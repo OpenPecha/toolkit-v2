@@ -36,7 +36,8 @@ dependencies = [
   "docx2python == 3.3.0",
   "boto3 >= 1.7.84",
   "rdflib>=5.0.0",
-  "fonttools[unicode] >= 4.37.3"
+  "fonttools[unicode] >= 4.37.3",
+  "bs4==0.0.2"
 ]
 
 [project.optional-dependencies]
