@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from fontTools import unicodedata
 
-from openpecha import config
+from openpecha.config import PECHAS_PATH, get_logger
 from openpecha.ids import get_initial_pecha_id
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import Lang, OCRConfidence, Page, Span
@@ -25,11 +25,8 @@ from openpecha.pecha.metadata import (
 )
 from openpecha.pecha.parsers import BaseParser
 
-# from openpecha import __version__
-
 # Initialize the logger
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.ERROR)
+logger = get_logger(__name__)
 
 ANNOTATION_MINIMAL_LEN = 20
 ANNOTATION_MINIMAL_CONFIDENCE = 0.8
@@ -137,7 +134,7 @@ class OCRFormatter(BaseParser):
     """
 
     def __init__(self, output_path=None, metadata=None):
-        self.output_path = Path(output_path if output_path else config.PECHAS_PATH)
+        self.output_path = Path(output_path if output_path else PECHAS_PATH)
         self.metadata = metadata
         self.n_page_breaker_char = 3
         self.page_break = "\n" * self.n_page_breaker_char
@@ -264,12 +261,12 @@ class OCRFormatter(BaseParser):
         prev_x2 = -1
         # orig_str = ""
         for i, bbox in enumerate(sorted_line):
-            curr_bbox = bboxes[f"{bbox[0]},{bbox[1]}"]
+            curr_bbox = bboxes[f"{bbox[0]},{bbox[1]}"]  # noqa
             if curr_bbox.x1 <= prev_x2:
                 # check if there is overlap with a previous box on this line:
                 duplicate = False
                 for j in reversed(range(0, i)):
-                    bbox_j = bboxes[f"{sorted_line[j][0]},{sorted_line[j][1]}"]
+                    bbox_j = bboxes[f"{sorted_line[j][0]},{sorted_line[j][1]}"]  # noqa
                     if curr_bbox.x1 > bbox_j.x2:
                         continue
                     if curr_bbox.x2 < bbox_j.x1:
@@ -335,7 +332,7 @@ class OCRFormatter(BaseParser):
         avg_box_height = self.get_avg_bbox_height(main_region_bboxes)
         for bbox in main_region_bboxes:
             centroid = bbox.get_centriod()
-            bboxes[f"{centroid[0]},{centroid[1]}"] = bbox
+            bboxes[f"{centroid[0]},{centroid[1]}"] = bbox  # noqa
             bbox_centriods.append(centroid)
         if len(bbox_centriods) == 0:
             return []
@@ -347,7 +344,9 @@ class OCRFormatter(BaseParser):
             sort_on_y_bboxs, avg_box_height, bboxes
         )
         for bbox_centriod in sorted_bbox_centriods:
-            sorted_bboxes.append(bboxes[f"{bbox_centriod[0]},{bbox_centriod[1]}"])
+            sorted_bboxes.append(
+                bboxes[f"{bbox_centriod[0]},{bbox_centriod[1]}"]  # noqa
+            )
         return sorted_bboxes
 
     def has_space_attached(self, symbol):
@@ -725,7 +724,7 @@ class OCRFormatter(BaseParser):
 
     def get_metadata(self, pecha_id: str, ocr_import_info=None) -> InitialPechaMetadata:
         source_metadata = {
-            "id": f"http://purl.bdrc.io/resource/{self.bdrc_scan_id}",
+            "id": f"http://purl.bdrc.io/resource/{self.bdrc_scan_id}",  # noqa
             "title": "",
             "author": "",
         }
