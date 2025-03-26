@@ -1,6 +1,5 @@
 from typing import Any, Dict, List
 
-from pecha_org_tools.extract import CategoryExtractor
 from pecha_org_tools.translation import (
     get_bo_content_translation,
     get_en_content_translation,
@@ -38,23 +37,13 @@ class ComplexCommentarySerializer:
 
         tgt_metadata = {
             "title": target_title,
-            "language": metadata.language.value,
+            "language": metadata.language.value if metadata.language else "bo",
             "versionSource": metadata.source if metadata.source else "",
             "direction": get_text_direction_with_lang(metadata.language),
             "completestatus": "done",
         }
 
         return src_metadata, tgt_metadata
-
-    def get_category(self, category_name: str):
-        """
-        Input: title: Title of the pecha commentary which will be used to get the category format
-        Process: Get the category format from the pecha.org categorizer package
-        """
-
-        categorizer = CategoryExtractor()
-        category = categorizer.get_category(category_name)
-        return category
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
@@ -70,17 +59,6 @@ class ComplexCommentarySerializer:
                 }
             )
         return category
-
-    def get_categories(self, pecha: Pecha, root_title: str):
-        """
-        Set the category format to self.category attribute
-        """
-
-        title = pecha.metadata.title.get("bo") or pecha.metadata.title.get("BO")
-        category = self.get_category(title)
-        category = self.add_root_reference_to_category(category, root_title)
-
-        return (category["en"], category["bo"])  # source and target category
 
     def get_sapche_anns(self, pecha: Pecha):
         """
@@ -276,7 +254,9 @@ class ComplexCommentarySerializer:
             }
         return (src_content, tgt_content)
 
-    def serialize(self, pecha: Pecha, root_title: str):
+    def serialize(
+        self, pecha: Pecha, pecha_category: Dict[str, List[Dict]], root_title: str
+    ):
         """
         Serialize the commentary pecha to json format
         """
@@ -286,7 +266,8 @@ class ComplexCommentarySerializer:
         src_book.append(src_metadata)
         tgt_book.append(tgt_metadata)
 
-        src_category, tgt_category = self.get_categories(pecha, root_title)
+        category = self.add_root_reference_to_category(pecha_category, root_title)
+        src_category, tgt_category = category["en"], category["bo"]
 
         src_content, tgt_content = self.get_json_content(pecha)
         src_book[0]["content"] = src_content
