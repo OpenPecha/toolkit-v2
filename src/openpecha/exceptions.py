@@ -92,9 +92,3 @@ class RootPechaNotFoundError(Exception):
     """Raised when the root pecha is not found."""
 
     pass
-
-
-class PechaCategoryNotFoundError(Exception):
-    """Raised when the pecha category is not found."""
-
-    pass

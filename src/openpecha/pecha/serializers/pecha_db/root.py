@@ -1,12 +1,10 @@
 from typing import Dict, List, Union
 
-from pecha_org_tools.extract import CategoryExtractor
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.exceptions import (
     FileNotFoundError,
-    PechaCategoryNotFoundError,
     RootPechaNotFoundError,
     StamAnnotationStoreLoadError,
 )
@@ -18,33 +16,6 @@ logger = get_logger(__name__)
 
 
 class RootSerializer:
-    def get_pecha_category(self, pecha: Pecha):
-        """
-        Set pecha category both in english and tibetan in the JSON output.
-        """
-        pecha_title = self.get_pecha_bo_title(pecha)
-
-        try:
-            category_extractor = CategoryExtractor()
-            categories = category_extractor.get_category(pecha_title)
-            bo_category = categories.get("bo")
-            en_category = categories.get("en")
-
-            if bo_category is None or en_category is None:
-                raise KeyError(
-                    f"bo or en category is missing in pecha category for title {pecha_title}."
-                )
-
-        except Exception as e:
-            logger.error(
-                f"Failed getting Category for pecha {pecha.id} title: {pecha_title}. {str(e)}"
-            )
-            raise PechaCategoryNotFoundError(
-                f"Failed gettting Category for pecha {pecha.id} title: {pecha_title}. {str(e)}"
-            )
-        else:
-            return bo_category, en_category
-
     def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
         Extract required metadata from opf
@@ -157,6 +128,7 @@ class RootSerializer:
     def serialize(
         self,
         pecha: Pecha,
+        pecha_category: Dict[str, List[Dict[str, str]]],
         root_pecha: Union[Pecha, None] = None,
     ) -> Dict:
         """
@@ -209,8 +181,7 @@ class RootSerializer:
         root_content = chunk_strings(root_content)
         translation_content = chunk_strings(translation_content)
 
-        # Get pecha category from pecha_org_tools package and set to JSON
-        bo_category, en_category = self.get_pecha_category(root_pecha)
+        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
 
         root_json: Dict[str, List] = {
             "categories": bo_category,
