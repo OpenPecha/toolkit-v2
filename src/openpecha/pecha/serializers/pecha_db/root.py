@@ -157,6 +157,7 @@ class RootSerializer:
     def serialize(
         self,
         pecha: Pecha,
+        pecha_category: Dict[str, List[Dict[str, str]]],
         root_pecha: Union[Pecha, None] = None,
     ) -> Dict:
         """
@@ -210,7 +211,7 @@ class RootSerializer:
         translation_content = chunk_strings(translation_content)
 
         # Get pecha category from pecha_org_tools package and set to JSON
-        bo_category, en_category = self.get_pecha_category(root_pecha)
+        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
 
         root_json: Dict[str, List] = {
             "categories": bo_category,

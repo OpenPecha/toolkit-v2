@@ -220,6 +220,20 @@ class TestSerializer(TestCase):
             "version_of": None,
             **self.commentary_translation_pecha.metadata.to_dict(),
         }
+        self.pecha_category = {
+            "bo": [
+                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+            ],
+            "en": [
+                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+            ],
+        }
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_pecha(self, mock_translation_serialize):
@@ -229,10 +243,12 @@ class TestSerializer(TestCase):
         metadatas = [self.root_pecha_metadata]
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas)
+        serializer.serialize(pechas, metadatas, self.pecha_category)
 
         mock_translation_serialize.assert_called_once()
-        mock_translation_serialize.assert_called_with(self.root_pecha)
+        mock_translation_serialize.assert_called_with(
+            self.root_pecha, self.pecha_category
+        )
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_translation_pecha(self, mock_translation_serialize):
@@ -245,11 +261,11 @@ class TestSerializer(TestCase):
         ]
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas)
+        serializer.serialize(pechas, metadatas, self.pecha_category)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_translation_pecha, self.root_display_pecha
+            self.root_translation_pecha, self.pecha_category, self.root_display_pecha
         )
 
     @mock.patch(
@@ -261,7 +277,7 @@ class TestSerializer(TestCase):
         metadatas = [self.commentary_pecha_metadata, self.root_display_pecha_metadata]
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas)
+        serializer.serialize(pechas, metadatas, self.pecha_category)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
@@ -285,7 +301,7 @@ class TestSerializer(TestCase):
         ]
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas)
+        serializer.serialize(pechas, metadatas, self.pecha_category)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
@@ -307,7 +323,7 @@ class TestSerializer(TestCase):
         ]
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas)
+        serializer.serialize(pechas, metadatas, self.pecha_category)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
@@ -328,7 +344,7 @@ class TestSerializer(TestCase):
         ]
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas)
+        serializer.serialize(pechas, metadatas, self.pecha_category)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
