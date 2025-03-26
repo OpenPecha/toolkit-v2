@@ -216,7 +216,7 @@ class OCRFileProvider:
         pass
 
 
-class OCRFormatter(BaseParser):
+class OCRParser(BaseParser):
     """
     General OpenPecha Formatter for OCR, must
     """
@@ -828,7 +828,7 @@ class OCRFormatter(BaseParser):
             initial_creation_type=InitialCreationType.ocr,
             imported=datetime.datetime.now(timezone.utc),
             last_modified=datetime.datetime.now(timezone.utc),
-            parser="OCRFormatter",
+            parser="OCRParser",
             copyright=copyright,
             license=license,
             source_metadata=source_metadata,

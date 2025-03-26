@@ -3,7 +3,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 
 from openpecha.buda.api import get_image_list
-from openpecha.pecha.parsers.ocr.ocr import BBox, OCRFormatter
+from openpecha.pecha.parsers.ocr.ocr import BBox, OCRParser
 
 
 class HOCRIAFileProvider:
@@ -97,7 +97,7 @@ class HOCRIAFileProvider:
             return None
 
 
-class HOCRFormatter(OCRFormatter):
+class HOCRFormatter(OCRParser):
     """
     OpenPecha Formatter for Google OCR HOCR output of scanned pecha.
     """
