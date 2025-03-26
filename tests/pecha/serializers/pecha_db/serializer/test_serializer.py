@@ -348,5 +348,8 @@ class TestSerializer(TestCase):
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_display_pecha, self.root_pecha, self.root_translation_pecha
+            self.root_display_pecha,
+            self.root_pecha,
+            self.root_translation_pecha,
+            self.pecha_category,
         )

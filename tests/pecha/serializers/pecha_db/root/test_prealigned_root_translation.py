@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest import TestCase, mock
+from unittest import TestCase
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
@@ -15,31 +15,28 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         self.root_pecha = Pecha.from_path(self.DATA_DIR / "P2/I73078576")
         self.translation_pecha = Pecha.from_path(self.DATA_DIR / "P3/I4FA57826")
 
-        # Create the patcher and set return_value
-        self.patcher = mock.patch(
-            "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.get_pecha_category",
-            return_value={
-                "bo": [
-                    {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
-                    {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                    {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                    {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                ],
-                "en": [
-                    {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                    {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                    {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
-                    {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                ],
-            },
-        )
-        # Start the patch
-        self.mock_get_category = self.patcher.start()
+        self.pecha_category = {
+            "bo": [
+                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+            ],
+            "en": [
+                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
+                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+            ],
+        }
 
     def test_root_translation_pecha(self):
         serializer = PreAlignedRootTranslationSerializer()
         serialized_json = serializer.serialize(
-            self.root_display_pecha, self.root_pecha, self.translation_pecha
+            self.root_display_pecha,
+            self.root_pecha,
+            self.translation_pecha,
+            self.pecha_category,
         )
 
         expected_json = (
@@ -48,7 +45,7 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         assert read_json(expected_json) == serialized_json
 
     def tearDown(self):
-        self.patcher.stop()
+        pass
 
 
 work = TestPreAlignedRootTranslationSerializer()

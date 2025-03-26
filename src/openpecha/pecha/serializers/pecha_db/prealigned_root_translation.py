@@ -158,9 +158,10 @@ class PreAlignedRootTranslationSerializer:
         root_display_pecha: Pecha,
         root_pecha: Pecha,
         translation_pecha: Pecha,
+        pecha_category: Dict[str, List[Dict[str, str]]],
     ) -> Dict:
         # Get pecha category from pecha_org_tools package and set to JSON
-        bo_category, en_category = self.get_pecha_category(root_display_pecha)
+        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
 
         src_content = TranslationAlignmentTransfer().get_serialized_translation(
             root_display_pecha, root_pecha, translation_pecha
