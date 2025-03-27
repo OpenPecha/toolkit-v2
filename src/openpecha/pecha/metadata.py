@@ -220,7 +220,9 @@ class PechaMetaData(BaseModel):
             (name, class_)
             for name, class_ in all_classes
             if issubclass(class_, parsers.BaseParser)
+            or issubclass(class_, parsers.OCRBaseParser)
             and class_ is not parsers.BaseParser
+            and class_ is not parsers.OCRBaseParser
         ]
         return parser_classes
 

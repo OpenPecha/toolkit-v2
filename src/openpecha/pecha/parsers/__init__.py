@@ -21,6 +21,19 @@ class BaseParser(ABC):
         pass
 
 
+class OCRBaseParser(ABC):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
+    @abstractmethod
+    def parse(
+        self,
+        dataprovider: Any,
+    ) -> Pecha:
+        pass
+
+
 class DummyParser(BaseParser):
     def parse(
         self,

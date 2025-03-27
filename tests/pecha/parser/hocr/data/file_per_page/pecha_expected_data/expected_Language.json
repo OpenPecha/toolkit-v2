@@ -1,0 +1,111 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "I123456",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "I1KG10195",
+      "@include": "../../base/I1KG10195.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "language_Annotation",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "language"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "Language_Type"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "4F3B55D5",
+          "key": "language",
+          "value": {
+            "@type": "String",
+            "value": "en"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "B38A982F",
+          "key": "Language_Type",
+          "value": {
+            "@type": "String",
+            "value": "Language"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "!A0",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "I1KG10195",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 39
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 170
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "4F3B55D5",
+          "set": "language_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "B38A982F",
+          "set": "language_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "!A1",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "I1KG10195",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 199
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 949
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "4F3B55D5",
+          "set": "language_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "B38A982F",
+          "set": "language_Annotation"
+        }
+      ]
+    }
+  ]
+}

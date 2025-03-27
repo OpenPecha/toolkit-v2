@@ -1,0 +1,30 @@
+{
+  "id": "I123456",
+  "title": {
+    "bo": "མདོ་སྡེ་བཀའ་འགྱུར"
+  },
+  "author": [
+    "Anonymous"
+  ],
+  "imported": "2025-03-13T14:04:37.159019",
+  "source": null,
+  "toolkit_version": "1.0.0",
+  "parser": "DummyParser",
+  "initial_creation_type": "ocr",
+  "language": "bo",
+  "source_metadata": {
+    "publisher": "Dummy Publisher"
+  },
+  "bases": [
+    {
+      "base_id": "B001",
+      "text": "Sample text"
+    }
+  ],
+  "copyright": {
+    "status": "Public domain",
+    "notice": "Public domain",
+    "info_url": "https://creativecommons.org/publicdomain/mark/1.0/"
+  },
+  "licence": "CC BY"
+}
