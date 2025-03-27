@@ -26,7 +26,7 @@ from openpecha.pecha.metadata import (
     InitialPechaMetadata,
     LicenseType,
 )
-from openpecha.pecha.parsers import BaseParser
+from openpecha.pecha.parsers import OCRBaseParser
 from openpecha.utils import read_json
 
 # Initialize the logger
@@ -216,7 +216,7 @@ class OCRFileProvider:
         pass
 
 
-class OCRParser(BaseParser):
+class OCRParser(OCRBaseParser):
     """
     General OpenPecha Formatter for OCR, must
     """
