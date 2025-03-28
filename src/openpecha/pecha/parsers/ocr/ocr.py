@@ -1,18 +1,15 @@
 import datetime
 import logging
-import os
 import re
 import statistics
 from abc import abstractmethod
 from datetime import timezone
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 from uuid import uuid4
-from zipfile import ZipFile
 
 from fontTools import unicodedata
 
-from openpecha.buda.api import get_image_list, image_group_to_folder_name
 from openpecha.config import PECHAS_PATH, get_logger
 from openpecha.ids import get_initial_pecha_id
 from openpecha.pecha import Pecha
@@ -27,7 +24,6 @@ from openpecha.pecha.metadata import (
     LicenseType,
 )
 from openpecha.pecha.parsers import OCRBaseParser
-from openpecha.utils import read_json
 
 # Initialize the logger
 logger = get_logger(__name__)
@@ -55,90 +51,6 @@ UNKNOWN_LANG = "und"
 UNICODE_CHARCAT_FOR_WIDTH = ["Ll", "Lu", "Lo", "Nd", "No", "Nl", "Lt"]
 UNICODE_CHARCAT_NOT_NOISE = ["Ll", "Lu", "Lo", "Nd", "No", "Nl", "Lt"]
 SAME_LINE_RATIO_THRESHOLD = 0.2
-
-
-class BDRCGBFileProvider:
-    def __init__(self, bdrc_scan_id, buda_data, ocr_import_info, ocr_disk_path):
-        self.ocr_import_info = ocr_import_info
-        # disk path is the path to a directory that contains "info" and "output" subfolders
-        self.ocr_disk_path = ocr_disk_path
-        self.bdrc_scan_id = bdrc_scan_id
-        self.buda_data = buda_data
-        self.images_info = {}
-        self.cur_zip = None
-        self.cur_image_group_id = None
-
-    def get_image_list(self, image_group_id):
-        """call get_images_info and return the image_list of the image_group_id
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-        """
-        self.get_images_info(image_group_id)
-        buda_il = get_image_list(self.bdrc_scan_id, image_group_id)
-        # format should be a list of image_id (/ file names)
-        return map(lambda ii: ii["filename"], buda_il)
-
-    def get_images_info(self, image_group_id):
-        """load page_filename with image_filename mapping to images.info
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-        """
-        vol_folder = image_group_to_folder_name(self.bdrc_scan_id, image_group_id)
-        vol_path = Path(f"{self.ocr_disk_path}") / "info" / vol_folder
-        if os.path.isdir(vol_path):
-            image_info_path = Path(vol_path) / "gb-bdrc-map.json"
-            self.images_info = read_json(image_info_path) or {}
-        else:
-            return
-
-    def get_source_info(self):
-        return self.buda_data
-
-    def get_hocr_filename(self, image_id):
-        """return the filename of the image_id from the images_info dict"""
-        for filename, img_ref in self.images_info.items():
-            img_id = img_ref
-            if img_id == image_id:
-                return filename
-
-    def get_image_group_data(self, image_group_id):
-        """unzip the html.zip of the image_group_id and return it
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-
-        Returns:
-            self.cur_zip: unzip content of the html.zip
-        """
-        if image_group_id == self.cur_image_group_id and self.cur_zip is not None:
-            return self.cur_zip
-        vol_folder = image_group_to_folder_name(self.bdrc_scan_id, image_group_id)
-        zip_path = Path(f"{self.ocr_disk_path}") / "output" / vol_folder / "html.zip"
-        self.cur_zip = ZipFile(zip_path)
-        return self.cur_zip
-
-    def get_image_data(self, image_group_id, image_filename):
-        """get hocr_filename using image_filename,
-           use volume folder and hocr_filename to read the hocr_html file for the image_filename or the page
-
-        Args:
-            image_group_id (str): image_group_id of the volume
-
-        Returns:
-            hocr_html: html file of the image_filename
-        """
-        hocr_filename = self.get_hocr_filename(image_filename) + ".html"
-        zf = self.get_image_group_data(image_group_id)
-        try:
-            for filename in zf.filelist:
-                if filename.filename.split("/")[-1] == hocr_filename:
-                    with zf.open(filename.filename) as hocr_file:
-                        return hocr_file.read()
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            return
 
 
 class BBox:
@@ -817,11 +729,18 @@ class OCRParser(OCRBaseParser):
             "author": "",
         }
         copyright = {}
-        license = None
+        licence = None
         if self.source_info is not None:
             source_metadata = self.source_info["source_metadata"]
-            copyright, license = self.get_copyright_and_license_info(self.source_info)
+            copyright, licence = self.get_copyright_and_license_info(self.source_info)
+            language = self.default_language
+            # Lift fields from source_metadata and remove them
+        lifted_fields = {}
+        for key in ["title", "author", "languages"]:
+            if key in source_metadata:
+                lifted_fields[key] = source_metadata.pop(key)
 
+        # Prepare the metadata object
         metadata = InitialPechaMetadata(
             id=pecha_id,
             source="https://library.bdrc.io",
@@ -830,9 +749,11 @@ class OCRParser(OCRBaseParser):
             last_modified=datetime.datetime.now(timezone.utc),
             parser="OCRParser",
             copyright=copyright,
-            license=license,
+            licence=licence,
             source_metadata=source_metadata,
             ocr_import_info=ocr_import_info,
+            language=language,
+            **lifted_fields,  # these are added as top-level fields
         )
 
         return metadata
@@ -854,7 +775,7 @@ class OCRParser(OCRBaseParser):
 
     def parse(
         self,
-        data_provider: BDRCGBFileProvider,
+        data_provider: Any,
         pecha_id=None,
         opf_options={},
         ocr_import_info={},
@@ -962,7 +883,7 @@ class OCRParser(OCRBaseParser):
         pecha_metadata = self.metadata
         if pecha_metadata.bases is None:
             pecha_metadata.bases = []
-        pecha_metadata.bases.extend(self.base_meta)
+        pecha_metadata.bases = [{k: v} for k, v in self.base_meta.items()]
 
         if total_word_confidence_list:
             pecha_metadata.statistics = {
@@ -975,26 +896,7 @@ class OCRParser(OCRBaseParser):
                 ),
             }
 
-        pecha_metadata_dict = {
-            "id": "I123456",
-            "title": {"bo": "མདོ་སྡེ་བཀའ་འགྱུར"},
-            "author": ["Anonymous"],
-            "imported": "2025-03-13T12:17:04.377371",
-            "source": None,
-            "toolkit_version": "1.0.0",
-            "parser": "DummyParser",
-            "initial_creation_type": "ocr",
-            "language": "bo",
-            "source_metadata": {"publisher": "Dummy Publisher"},
-            "bases": [{"base_id": "B001", "text": "Sample text"}],
-            "copyright": {
-                "status": "Public domain",
-                "notice": "Public domain",
-                "info_url": "https://creativecommons.org/publicdomain/mark/1.0/",
-            },
-            "licence": "CC BY",
-        }
-
+        pecha_metadata_dict = pecha_metadata.to_dict()
         pecha.set_metadata(pecha_metadata_dict)
 
         return pecha

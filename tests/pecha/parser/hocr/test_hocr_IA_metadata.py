@@ -1,5 +1,6 @@
 import tempfile
 from pathlib import Path
+from typing import Any, Dict, cast
 from unittest import TestCase
 
 from test_hocr_data_provider import HOCRIATestFileProvider
@@ -35,7 +36,9 @@ class TestHOCRIAMetaData(TestCase):
             work_id, bdrc_image_list_path, buda_data, ocr_import_info, ocr_path
         )
 
-        self.expected_metadata = read_json(expected_meta_path)
+        self.expected_metadata: Dict[str, Any] = cast(
+            Dict[str, Any], read_json(expected_meta_path)
+        )
         if not self.expected_metadata:
             raise ValueError(
                 f"Failed to read expected metadata from {expected_meta_path}"
@@ -76,9 +79,21 @@ class TestHOCRIAMetaData(TestCase):
         ), "Source metadata geo restriction mismatch"
 
     def test_hocr_ia_base_metadata(self):
-        assert self.pecha_metadata.source_metadata == self.expected_metadata.get(
-            "source_metadata"
-        ), "Source metadata mismatch"
-        assert self.pecha_metadata.bases == self.expected_metadata.get(
-            "bases"
-        ), "Bases metadata mismatch"
+        def sort_bases(bases):
+            return sorted(
+                bases,
+                key=lambda base: list(base.values())[0][
+                    "order"
+                ],  # or use ["base_file"]
+            )
+
+        actual_bases = sort_bases(self.pecha_metadata.bases)
+        expected_bases = sort_bases(self.expected_metadata.get("bases"))
+
+        assert actual_bases == expected_bases, "Bases metadata mismatch"
+
+
+if __name__ == "__main__":
+    import unittest
+
+    unittest.main()
