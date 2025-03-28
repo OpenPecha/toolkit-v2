@@ -2,7 +2,7 @@
   "id": "I9876543",
   "title": "བཀའ་འགྱུར ༼སྡེ་དགེ་པར་ཕུད༽",
   "author": null,
-  "imported": "2025-03-28T11:24:43.811327+00:00",
+  "imported": "2025-03-28T12:35:27.249533+00:00",
   "source": "https://library.bdrc.io",
   "toolkit_version": "0.0.1",
   "parser": "OCRParser",
@@ -76,5 +76,5 @@
     "ocr_word_median_confidence_index": 0.29
   },
   "quality": null,
-  "last_modified": "2025-03-28T11:24:43.811331+00:00"
+  "last_modified": "2025-03-28T12:35:27.249544+00:00"
 }

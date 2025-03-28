@@ -5,7 +5,11 @@ from zipfile import ZipFile
 from bs4 import BeautifulSoup
 
 from openpecha.buda.api import image_group_to_folder_name
+from openpecha.config import get_logger
 from openpecha.utils import read_json
+
+# Initialize the logger
+logger = get_logger(__name__)
 
 
 class BDRCGBTestFileProvider:
@@ -36,10 +40,18 @@ class BDRCGBTestFileProvider:
         return map(lambda ii: ii["filename"], buda_il)
 
     def get_hocr_filename(self, image_id):
+        if not self.images_info:
+            logger.error(
+                "images_info is None or empty. Did you forget to call get_images_info()?"
+            )
+            return None
+
         for filename, img_ref in self.images_info.items():
-            img_id = img_ref
-            if img_id == image_id:
+            if img_ref == image_id:
                 return filename
+
+        logger.warning(f"No matching filename found for image_id: {image_id}")
+        return None
 
     def get_images_info(self, image_group_id):
         vol_folder = image_group_to_folder_name(self.bdrc_scan_id, image_group_id)
@@ -81,10 +93,10 @@ class BDRCGBTestFileProvider:
                     with zf.open(filename.filename) as hocr_file:
                         return hocr_file.read()
         except KeyError:
-            print(f"Error: {image_filename} not found in image_info.")
+            logger.error(f"Error: {image_filename} not found in image_info.")
             return None
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             return None
 
 
@@ -139,10 +151,10 @@ class HOCRIATestFileProvider:
             hocr_html = image_group_hocr_path.read_text(encoding="utf-8")
             return hocr_html
         except FileNotFoundError:
-            print(f"Error: {image_group_hocr_path} not found.")
+            logger.error(f"Error: {image_group_hocr_path} not found.")
             return None
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             return None
 
     def get_source_info(self):
@@ -168,8 +180,8 @@ class HOCRIATestFileProvider:
             page_hocr = self.image_info[image_filename]["page_info"]
             return page_hocr
         except KeyError:
-            print(f"Error: {image_filename} not found in image_info.")
+            logger.error(f"Error: {image_filename} not found in image_info.")
             return None
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             return None

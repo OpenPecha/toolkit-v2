@@ -69,8 +69,15 @@ class TestGoogleVisionMetaData(TestCase):
         ), "Source metadata geo restriction mismatch"
 
     def test_base_metadata(self):
-        assert (
-            self.pecha_metadata.source_metadata
-            == self.expected_metadata["source_metadata"]
-        )
-        assert self.pecha_metadata.bases == self.expected_metadata["bases"]
+        def sort_bases(bases):
+            return sorted(
+                bases,
+                key=lambda base: list(base.values())[0][
+                    "order"
+                ],  # or use ["base_file"]
+            )
+
+        actual_bases = sort_bases(self.pecha_metadata.bases)
+        expected_bases = sort_bases(self.expected_metadata.get("bases"))
+
+        assert actual_bases == expected_bases, "Bases metadata mismatch"

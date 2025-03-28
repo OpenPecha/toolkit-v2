@@ -5,8 +5,12 @@ from zipfile import ZipFile
 from bs4 import BeautifulSoup
 
 from openpecha.buda.api import get_image_list, image_group_to_folder_name
+from openpecha.config import get_logger
 from openpecha.pecha.parsers.ocr.ocr import BBox, OCRParser
 from openpecha.utils import read_json
+
+# Initialize the logger
+logger = get_logger(__name__)
 
 
 class BDRCGBFileProvider:
@@ -89,7 +93,7 @@ class BDRCGBFileProvider:
                     with zf.open(filename.filename) as hocr_file:
                         return hocr_file.read()
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             return
 
 
@@ -158,10 +162,10 @@ class HOCRIAFileProvider:
             hocr_html = image_group_hocr_path.read_text(encoding="utf-8")
             return hocr_html
         except FileNotFoundError:
-            print(f"Error: {image_group_hocr_path} not found.")
+            logger.error(f"Error: {image_group_hocr_path} not found.")
             return None
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             return None
 
     def get_source_info(self):
@@ -177,10 +181,10 @@ class HOCRIAFileProvider:
             page_hocr = self.images_info[image_filename]["page_info"]
             return page_hocr
         except KeyError:
-            print(f"Error: {image_filename} not in images_info.")
+            logger.error(f"Error: {image_filename} not in images_info.")
             return None
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logger.error(f"An unexpected error occurred: {e}")
             return None
 
 

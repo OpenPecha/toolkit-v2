@@ -1,9 +1,12 @@
 import gzip
 import json
-import logging
 
 from openpecha.buda.api import image_group_to_folder_name
+from openpecha.config import get_logger
 from openpecha.utils import read_json
+
+# Initialize the logger
+logger = get_logger(__name__)
 
 
 class GoogleVisionTestFileProvider:
@@ -40,5 +43,5 @@ class GoogleVisionTestFileProvider:
         try:
             ocr_object = json.load(gzip.open(str(image_ocr_path), "rb"))
         except Exception as e:
-            logging.exception(f"could not read {image_ocr_path}: {e}")
+            logger.exception(f"could not read {image_ocr_path}: {e}")
         return ocr_object
