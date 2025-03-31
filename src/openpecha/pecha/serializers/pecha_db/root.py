@@ -162,17 +162,14 @@ class RootSerializer:
         Output: JSON format for pecha_org
         """
 
+        root_layer_path = get_first_layer_file(pecha)
+        root_content = self.get_root_content(pecha, root_layer_path)
         if translation_pecha:
-            root_layer_path = get_first_layer_file(pecha)
-            root_content = self.get_root_content(pecha, root_layer_path)
-
             translation_layer_path = get_first_layer_file(translation_pecha)
             translation_content = self.get_translation_content(
                 translation_pecha, translation_layer_path
             )
         else:
-            root_layer_path = get_first_layer_file(pecha)
-            root_content = self.get_root_content(pecha, root_layer_path)
             translation_content = []
 
         # Preprocess newlines in content
