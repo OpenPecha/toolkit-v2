@@ -3,7 +3,11 @@ from typing import Dict, List, Union
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
+from openpecha.exceptions import (
+    FileNotFoundError,
+    MetaDataMissingError,
+    StamAnnotationStoreLoadError,
+)
 from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
@@ -123,23 +127,19 @@ class RootSerializer:
 
             return translation_segments
 
-    def get_pecha_bo_title(self, pecha: Pecha):
-        """
-        Get tibetan title from the Pecha metadata
-        """
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get("bo") or title.get("BO")
+    def get_pecha_title(self, pecha: Pecha, lang: str):
+        pecha_title = pecha.metadata.title
 
-        return title
+        if isinstance(pecha_title, dict):
+            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
 
-    def get_pecha_en_title(self, pecha: Pecha):
-        """
-        Get english title from the Pecha metadata
-        """
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get("en") or title.get("EN")
+        if title is None or title == "":
+            logger.error(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+            raise MetaDataMissingError(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
 
         return title
 
@@ -153,11 +153,11 @@ class RootSerializer:
         Root Pecha can be i) Root Pecha ii) Translation of Root Pecha
         if Root Pecha,
             pecha: Root Pecha
-            root_pecha: None
+            translation_pecha: None
 
         if Translation of Root Pecha,
-            pecha: Translation of Root Pecha
-            root_pecha: Root Pecha
+            pecha: Root Pecha
+            translation_pecha: Translation of Root Pecha
 
         Output: JSON format for pecha_org
         """
@@ -193,8 +193,8 @@ class RootSerializer:
         bo_category.append(self.bo_root_category_section)
         en_category.append(self.en_root_category_section)
 
-        bo_title = self.get_pecha_bo_title(pecha)
-        en_title = self.get_pecha_en_title(pecha)
+        bo_title = self.get_pecha_title(pecha, "bo")
+        en_title = self.get_pecha_title(pecha, "en")
 
         bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
