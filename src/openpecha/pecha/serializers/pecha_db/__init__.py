@@ -141,7 +141,7 @@ class Serializer:
             case PechaType.root_translation_pecha:
                 root_pecha = pechas[-1]
                 return RootSerializer().serialize(
-                    pecha, formatted_pecha_category, root_pecha
+                    root_pecha, formatted_pecha_category, pecha
                 )
 
             case PechaType.commentary_pecha:

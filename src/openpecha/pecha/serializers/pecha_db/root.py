@@ -147,7 +147,7 @@ class RootSerializer:
         self,
         pecha: Pecha,
         pecha_category: Dict[str, List[Dict[str, str]]],
-        root_pecha: Union[Pecha, None] = None,
+        translation_pecha: Union[Pecha, None] = None,
     ) -> Dict:
         """
         Root Pecha can be i) Root Pecha ii) Translation of Root Pecha
@@ -162,20 +162,17 @@ class RootSerializer:
         Output: JSON format for pecha_org
         """
 
-        if root_pecha:
-            root_layer_path = get_first_layer_file(root_pecha)
-            root_content = self.get_root_content(root_pecha, root_layer_path)
+        if translation_pecha:
+            root_layer_path = get_first_layer_file(pecha)
+            root_content = self.get_root_content(pecha, root_layer_path)
 
-            translation_pecha = pecha
             translation_layer_path = get_first_layer_file(translation_pecha)
             translation_content = self.get_translation_content(
                 translation_pecha, translation_layer_path
             )
         else:
-            root_pecha = pecha
-            translation_pecha = None
-            root_layer_path = get_first_layer_file(root_pecha)
-            root_content = self.get_root_content(root_pecha, root_layer_path)
+            root_layer_path = get_first_layer_file(pecha)
+            root_content = self.get_root_content(pecha, root_layer_path)
             translation_content = []
 
         # Preprocess newlines in content
@@ -196,12 +193,8 @@ class RootSerializer:
         bo_category.append(self.bo_root_category_section)
         en_category.append(self.en_root_category_section)
 
-        if root_pecha:
-            bo_title = self.get_pecha_bo_title(root_pecha)
-            en_title = self.get_pecha_en_title(root_pecha)
-        else:
-            bo_title = self.get_pecha_bo_title(pecha)
-            en_title = self.get_pecha_en_title(pecha)
+        bo_title = self.get_pecha_bo_title(pecha)
+        en_title = self.get_pecha_en_title(pecha)
 
         bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
@@ -209,14 +202,14 @@ class RootSerializer:
         root_json: Dict[str, List] = {
             "categories": bo_category,
             "books": [
-                {**self.get_metadata_for_pecha_org(root_pecha), "content": root_content}
+                {**self.get_metadata_for_pecha_org(pecha), "content": root_content}
             ],
         }
         if translation_pecha:
             translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
         else:
             translation_metadata = self.get_metadata_for_pecha_org(
-                root_pecha, lang=Language.english.value
+                pecha, lang=Language.english.value
             )
 
         translation_json = {
