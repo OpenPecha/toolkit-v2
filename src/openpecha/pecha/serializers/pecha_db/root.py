@@ -166,19 +166,6 @@ class RootSerializer:
         pecha_category: Dict[str, List[Dict[str, str]]],
         translation_pecha: Union[Pecha, None] = None,
     ) -> Dict:
-        """
-        Root Pecha can be i) Root Pecha ii) Translation of Root Pecha
-        if Root Pecha,
-            pecha: Root Pecha
-            translation_pecha: None
-
-        if Translation of Root Pecha,
-            pecha: Root Pecha
-            translation_pecha: Translation of Root Pecha
-
-        Output: JSON format for pecha_org
-        """
-
         root_layer_path = get_first_layer_file(pecha)
         root_content = self.get_root_content(pecha, root_layer_path)
         if translation_pecha:

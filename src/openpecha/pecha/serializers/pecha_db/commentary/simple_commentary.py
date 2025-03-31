@@ -143,21 +143,6 @@ class SimpleCommentarySerializer:
         root_title: str,
         translation_pecha: Union[Pecha, None] = None,
     ):
-        """
-        Commentary Pecha can be i) Commentary Pecha ii) Translation of Commentary Pecha
-        if Commentary Pecha,
-            pecha: Commentary Pecha
-            root_title: Root Pecha title
-            translation_pecha: None
-
-        if Translation of Commentary Pecha,
-            pecha: Commentary Pecha
-            root_title: Root Pecha title
-            translation_pecha: Translation of Commentary Pecha
-
-        Output: Serialized JSON of Commentary Pecha
-        """
-
         src_book, tgt_book = [], []
 
         if translation_pecha:
