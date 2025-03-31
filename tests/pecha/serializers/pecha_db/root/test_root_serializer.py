@@ -8,7 +8,7 @@ from openpecha.utils import read_json
 DATA_DIR = Path(__file__).parent / "data"
 
 
-class TestTranslationSerializer(TestCase):
+class TestRootSerializer(TestCase):
     def setUp(self):
         self.category = {
             "bo": [
@@ -52,9 +52,3 @@ class TestTranslationSerializer(TestCase):
 
     def tearDown(self):
         pass
-
-
-if __name__ == "__main__":
-    work = TestTranslationSerializer()
-    work.setUp()
-    work.test_root_translation_pecha()
