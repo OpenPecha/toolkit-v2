@@ -729,11 +729,18 @@ class OCRParser(OCRBaseParser):
             "author": "",
         }
         copyright = {}
-        license = None
+        licence = None
         if self.source_info is not None:
             source_metadata = self.source_info["source_metadata"]
-            copyright, license = self.get_copyright_and_license_info(self.source_info)
+            copyright, licence = self.get_copyright_and_license_info(self.source_info)
+            language = self.default_language
+            # Lift fields from source_metadata and remove them
+        lifted_fields = {}
+        for key in ["title", "author", "languages"]:
+            if key in source_metadata:
+                lifted_fields[key] = source_metadata.pop(key)
 
+        # Prepare the metadata object
         metadata = InitialPechaMetadata(
             id=pecha_id,
             source="https://library.bdrc.io",
@@ -742,9 +749,11 @@ class OCRParser(OCRBaseParser):
             last_modified=datetime.datetime.now(timezone.utc),
             parser="OCRParser",
             copyright=copyright,
-            license=license,
+            licence=licence,
             source_metadata=source_metadata,
             ocr_import_info=ocr_import_info,
+            language=language,
+            **lifted_fields,  # these are added as top-level fields
         )
 
         return metadata
@@ -874,7 +883,7 @@ class OCRParser(OCRBaseParser):
         pecha_metadata = self.metadata
         if pecha_metadata.bases is None:
             pecha_metadata.bases = []
-        pecha_metadata.bases.extend(self.base_meta)
+        pecha_metadata.bases = [{k: v} for k, v in self.base_meta.items()]
 
         if total_word_confidence_list:
             pecha_metadata.statistics = {
@@ -887,26 +896,7 @@ class OCRParser(OCRBaseParser):
                 ),
             }
 
-        pecha_metadata_dict = {
-            "id": "I123456",
-            "title": {"bo": "མདོ་སྡེ་བཀའ་འགྱུར"},
-            "author": ["Anonymous"],
-            "imported": "2025-03-13T12:17:04.377371",
-            "source": None,
-            "toolkit_version": "1.0.0",
-            "parser": "DummyParser",
-            "initial_creation_type": "ocr",
-            "language": "bo",
-            "source_metadata": {"publisher": "Dummy Publisher"},
-            "bases": [{"base_id": "B001", "text": "Sample text"}],
-            "copyright": {
-                "status": "Public domain",
-                "notice": "Public domain",
-                "info_url": "https://creativecommons.org/publicdomain/mark/1.0/",
-            },
-            "licence": "CC BY",
-        }
-
+        pecha_metadata_dict = pecha_metadata.to_dict()
         pecha.set_metadata(pecha_metadata_dict)
 
         return pecha

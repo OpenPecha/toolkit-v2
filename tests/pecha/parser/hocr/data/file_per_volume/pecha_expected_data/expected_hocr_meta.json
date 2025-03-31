@@ -1,24 +1,55 @@
 {
-  "id": "I123456",
-  "title": {
-    "bo": "མདོ་སྡེ་བཀའ་འགྱུར"
-  },
-  "author": [
-    "Anonymous"
-  ],
-  "imported": "2025-03-13T14:04:37.159019",
-  "source": null,
-  "toolkit_version": "1.0.0",
-  "parser": "DummyParser",
+  "id": "I9876543",
+  "title": "བཀའ་འགྱུར ༼སྡེ་དགེ་པར་ཕུད༽",
+  "author": null,
+  "imported": "2025-03-28T12:35:27.249533+00:00",
+  "source": "https://library.bdrc.io",
+  "toolkit_version": "0.0.1",
+  "parser": "OCRParser",
   "initial_creation_type": "ocr",
   "language": "bo",
   "source_metadata": {
-    "publisher": "Dummy Publisher"
+    "id": "http://purl.bdrc.io/resource/W22084",
+    "status": "http://purl.bdrc.io/admindata/StatusReleased",
+    "access": "http://purl.bdrc.io/admindata/AccessOpen",
+    "reproduction_of": "http://purl.bdrc.io/resource/MW22084",
+    "copyright_status": "http://purl.bdrc.io/resource/CopyrightPublicDomain",
+    "languages": [
+      "bo"
+    ]
   },
   "bases": [
     {
-      "base_id": "B001",
-      "text": "Sample text"
+      "I0886": {
+        "source_metadata": {
+          "id": "http://purl.bdrc.io/resource/I0886",
+          "total_pages": 624,
+          "volume_number": 1,
+          "volume_pages_bdrc_intro": 2
+        },
+        "order": 1,
+        "base_file": "I0886.txt",
+        "statistics": {
+          "ocr_word_median_confidence_index": 0.3,
+          "ocr_word_mean_confidence_index": 0.35191304347826086
+        }
+      }
+    },
+    {
+      "I0887": {
+        "source_metadata": {
+          "id": "http://purl.bdrc.io/resource/I0887",
+          "total_pages": 636,
+          "volume_number": 2,
+          "volume_pages_bdrc_intro": 2
+        },
+        "order": 2,
+        "base_file": "I0887.txt",
+        "statistics": {
+          "ocr_word_median_confidence_index": 0.27,
+          "ocr_word_mean_confidence_index": 0.33192634560906514
+        }
+      }
     }
   ],
   "copyright": {
@@ -26,5 +57,24 @@
     "notice": "Public domain",
     "info_url": "https://creativecommons.org/publicdomain/mark/1.0/"
   },
-  "licence": "CC BY"
+  "licence": "CC0",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": {
+    "source": "bdrc",
+    "software": "google_books",
+    "batch": "batch_2022",
+    "expected_default_language": "bo",
+    "bdrc_scan_id": "W22084",
+    "ocr_info": {
+      "timestamp": null
+    },
+    "op_import_options": {}
+  },
+  "statistics": {
+    "ocr_word_mean_confidence_index": 0.3408977361436378,
+    "ocr_word_median_confidence_index": 0.29
+  },
+  "quality": null,
+  "last_modified": "2025-03-28T12:35:27.249544+00:00"
 }
