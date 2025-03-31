@@ -1,0 +1,142 @@
+{
+  "@type": "AnnotationStore",
+  "@id": "I123456",
+  "resources": [
+    {
+      "@type": "TextResource",
+      "@id": "I3852",
+      "@include": "../../base/I3852.txt"
+    }
+  ],
+  "annotationsets": [
+    {
+      "@type": "AnnotationDataSet",
+      "@id": "language_Annotation",
+      "keys": [
+        {
+          "@type": "DataKey",
+          "@id": "language"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "Language_Type"
+        }
+      ],
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "84858693",
+          "key": "language",
+          "value": {
+            "@type": "String",
+            "value": "en"
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "FFE17703",
+          "key": "Language_Type",
+          "value": {
+            "@type": "String",
+            "value": "Language"
+          }
+        }
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "@type": "Annotation",
+      "@id": "!A0",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "I3852",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 35
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 160
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "84858693",
+          "set": "language_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "FFE17703",
+          "set": "language_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "!A1",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "I3852",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 215
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 282
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "84858693",
+          "set": "language_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "FFE17703",
+          "set": "language_Annotation"
+        }
+      ]
+    },
+    {
+      "@type": "Annotation",
+      "@id": "!A2",
+      "target": {
+        "@type": "TextSelector",
+        "resource": "I3852",
+        "offset": {
+          "@type": "Offset",
+          "begin": {
+            "@type": "BeginAlignedCursor",
+            "value": 306
+          },
+          "end": {
+            "@type": "BeginAlignedCursor",
+            "value": 2492
+          }
+        }
+      },
+      "data": [
+        {
+          "@type": "AnnotationData",
+          "@id": "84858693",
+          "set": "language_Annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "FFE17703",
+          "set": "language_Annotation"
+        }
+      ]
+    }
+  ]
+}
