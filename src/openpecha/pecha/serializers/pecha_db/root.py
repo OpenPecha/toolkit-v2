@@ -17,12 +17,12 @@ logger = get_logger(__name__)
 
 class RootSerializer:
     def __init__(self):
-        self.bo_root_category_section = {
+        self.bo_root_category = {
             "name": "རྩ་བ།",
             "heDesc": "",
             "heShortDesc": "",
         }
-        self.en_root_category_section = {
+        self.en_root_category = {
             "name": "Root text",
             "enDesc": "",
             "enShortDesc": "",
@@ -147,8 +147,8 @@ class RootSerializer:
         self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]
     ):
         bo_category, en_category = category["bo"], category["en"]
-        bo_category.append(self.bo_root_category_section)
-        en_category.append(self.en_root_category_section)
+        bo_category.append(self.bo_root_category)
+        en_category.append(self.en_root_category)
 
         bo_title = self.get_pecha_title(pecha, "bo")
         en_title = self.get_pecha_title(pecha, "en")
