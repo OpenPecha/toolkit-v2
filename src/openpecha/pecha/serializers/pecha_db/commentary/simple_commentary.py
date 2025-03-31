@@ -187,8 +187,8 @@ class SimpleCommentarySerializer:
         if translation_pecha:
             translation_path = get_first_layer_file(translation_pecha)
             commentary_path = get_first_layer_file(pecha)
-            src_content = self.get_content(pecha, commentary_path)
-            tgt_content = self.get_content(translation_pecha, translation_path)
+            src_content = self.get_content(translation_pecha, translation_path)
+            tgt_content = self.get_content(pecha, commentary_path)
         else:
             layer_path = get_first_layer_file(pecha)
             content = self.get_content(pecha, layer_path)
