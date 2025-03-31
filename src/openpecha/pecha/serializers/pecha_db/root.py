@@ -143,6 +143,21 @@ class RootSerializer:
 
         return title
 
+    def add_title_to_category(
+        self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]
+    ):
+        bo_category, en_category = category["bo"], category["en"]
+        bo_category.append(self.bo_root_category_section)
+        en_category.append(self.en_root_category_section)
+
+        bo_title = self.get_pecha_title(pecha, "bo")
+        en_title = self.get_pecha_title(pecha, "en")
+
+        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return {"bo": bo_category, "en": en_category}
+
     def serialize(
         self,
         pecha: Pecha,
@@ -186,18 +201,10 @@ class RootSerializer:
         translation_content = chunk_strings(translation_content)
 
         # Format Category
-        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
-        bo_category.append(self.bo_root_category_section)
-        en_category.append(self.en_root_category_section)
-
-        bo_title = self.get_pecha_title(pecha, "bo")
-        en_title = self.get_pecha_title(pecha, "en")
-
-        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+        formatted_category = self.add_title_to_category(pecha, pecha_category)
 
         root_json: Dict[str, List] = {
-            "categories": bo_category,
+            "categories": formatted_category["bo"],
             "books": [
                 {**self.get_metadata_for_pecha_org(pecha), "content": root_content}
             ],
@@ -210,7 +217,7 @@ class RootSerializer:
             )
 
         translation_json = {
-            "categories": en_category,
+            "categories": formatted_category["en"],
             "books": [{**translation_metadata, "content": translation_content}],
         }
 
