@@ -5,7 +5,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
-from openpecha.utils import read_json
+from openpecha.utils import read_json, write_json
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -14,16 +14,12 @@ class TestSimpleCommentarySerializer(TestCase):
     def setUp(self):
         self.pecha_category = {
             "bo": [
-                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "དབུ་མ་ལ་འཇུག་པ།", "heDesc": "", "heShortDesc": ""},
             ],
             "en": [
-                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+                {"name": "Madhyamaka", "enDesc": "", "enShortDesc": ""},
+                {"name": "Entering the Middle Way", "enDesc": "", "enShortDesc": ""},
             ],
         }
 
@@ -32,9 +28,11 @@ class TestSimpleCommentarySerializer(TestCase):
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
-            pecha, self.pecha_category, "Vajra Cutter"
+            pecha,
+            self.pecha_category,
+            "Entering the Middle Way Chapter 6, verses 1 to 64",
         )
-
+        write_json("bo_commentary_serialized.json", serialized_json)
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
@@ -44,8 +42,12 @@ class TestSimpleCommentarySerializer(TestCase):
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
-            pecha, self.pecha_category, "Vajra Cutter", root_pecha
+            pecha,
+            self.pecha_category,
+            "Entering the Middle Way Chapter 6, verses 1 to 64",
+            root_pecha,
         )
+        write_json("en_commentary_serialized.json", serialized_json)
 
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -57,11 +59,17 @@ class TestSimpleCommentarySerializer(TestCase):
         serializer = SimpleCommentarySerializer()
 
         serialized_json = serializer.serialize(
-            pecha, self.pecha_category, "Vajra Cutter", root_pecha
+            pecha,
+            self.pecha_category,
+            "Entering the Middle Way Chapter 6, verses 1 to 64",
+            root_pecha,
         )
-
+        write_json("zh_commentary_serialized.json", serialized_json)
         expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
 
-    def tearDown(self):
-        pass
+
+if __name__ == "__main__":
+    import unittest
+
+    unittest.main()

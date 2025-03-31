@@ -3,7 +3,11 @@ from typing import Any, Dict, List, Union
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataValidationError, RootPechaNotFoundError
+from openpecha.exceptions import (
+    MetaDataMissingError,
+    MetaDataValidationError,
+    RootPechaNotFoundError,
+)
 from openpecha.pecha import Pecha, get_anns, get_first_layer_file
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import (
@@ -17,6 +21,19 @@ logger = get_logger(__name__)
 
 
 class SimpleCommentarySerializer:
+    def __init__(self):
+        self.bo_commentary_category = {
+            "name": "འགྲེལ་བ།",
+            "heDesc": "",
+            "heShortDesc": "",
+        }
+        self.en_commentary_category = {
+            "name": "Commentary text",
+            "enDesc": "",
+            "enShortDesc": "",
+        }
+        pass
+
     def extract_metadata(self, pecha: Pecha):
         """
         Extract neccessary metadata from opf for serialization to json
@@ -111,6 +128,22 @@ class SimpleCommentarySerializer:
             return f"<{chapter_num}><{processed_root_map}>{ann['text'].strip()}"
         return ann["text"].strip()
 
+    def get_pecha_title(self, pecha: Pecha, lang: str):
+        pecha_title = pecha.metadata.title
+
+        if isinstance(pecha_title, dict):
+            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
+
+        if title is None or title == "":
+            logger.error(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+            raise MetaDataMissingError(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+
+        return title
+
     def serialize(
         self,
         pecha: Pecha,
@@ -138,6 +171,22 @@ class SimpleCommentarySerializer:
         src_book.append(src_metadata)
         tgt_book.append(tgt_metadata)
 
+        # Add Commentary section to Category
+        pecha_category["bo"].append(self.bo_commentary_category)
+        pecha_category["en"].append(self.en_commentary_category)
+
+        # Add title to category
+        if commentary_pecha:
+            bo_title = self.get_pecha_title(commentary_pecha, "bo")
+            en_title = self.get_pecha_title(commentary_pecha, "en")
+        else:
+            bo_title = self.get_pecha_title(pecha, "bo")
+            en_title = self.get_pecha_title(pecha, "en")
+
+        pecha_category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        pecha_category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        # Add root reference to category
         category = self.add_root_reference_to_category(pecha_category, root_title)
         src_category, tgt_category = category["en"], category["bo"]
         pecha_metadata = pecha.metadata.source_metadata
