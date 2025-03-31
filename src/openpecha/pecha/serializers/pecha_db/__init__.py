@@ -154,7 +154,7 @@ class Serializer:
                 root_en_title = self.get_root_en_title(metadatas, pechas)
                 commentary_pecha = pechas[1]
                 return SimpleCommentarySerializer().serialize(
-                    pecha, formatted_pecha_category, root_en_title, commentary_pecha
+                    commentary_pecha, formatted_pecha_category, root_en_title, pecha
                 )
 
             case PechaType.prealigned_commentary_pecha:
