@@ -14,13 +14,9 @@ class TestTranslationSerializer(TestCase):
             "bo": [
                 {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
                 {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
             ],
             "en": [
                 {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
                 {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
             ],
         }
@@ -56,3 +52,9 @@ class TestTranslationSerializer(TestCase):
 
     def tearDown(self):
         pass
+
+
+if __name__ == "__main__":
+    work = TestTranslationSerializer()
+    work.setUp()
+    work.test_root_translation_pecha()

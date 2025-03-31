@@ -3,11 +3,7 @@ from typing import Dict, List, Union
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.exceptions import (
-    FileNotFoundError,
-    RootPechaNotFoundError,
-    StamAnnotationStoreLoadError,
-)
+from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
 from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
@@ -16,6 +12,18 @@ logger = get_logger(__name__)
 
 
 class RootSerializer:
+    def __init__(self):
+        self.bo_root_category_section = {
+            "name": "རྩ་བ།",
+            "heDesc": "",
+            "heShortDesc": "",
+        }
+        self.en_root_category_section = {
+            "name": "Root text",
+            "enDesc": "",
+            "enShortDesc": "",
+        }
+
     def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
         Extract required metadata from opf
@@ -125,6 +133,16 @@ class RootSerializer:
 
         return title
 
+    def get_pecha_en_title(self, pecha: Pecha):
+        """
+        Get english title from the Pecha metadata
+        """
+        title = pecha.metadata.title
+        if isinstance(title, dict):
+            title = title.get("en") or title.get("EN")
+
+        return title
+
     def serialize(
         self,
         pecha: Pecha,
@@ -145,14 +163,6 @@ class RootSerializer:
         """
 
         if root_pecha:
-            if not root_pecha or not isinstance(root_pecha, Pecha):
-                logger.error(
-                    "Root pecha is not passed during Root Translation Serialization."
-                )
-                raise RootPechaNotFoundError(
-                    "Root pecha is not passed during Root Translation Serialization."
-                )
-
             root_layer_path = get_first_layer_file(root_pecha)
             root_content = self.get_root_content(root_pecha, root_layer_path)
 
@@ -181,7 +191,20 @@ class RootSerializer:
         root_content = chunk_strings(root_content)
         translation_content = chunk_strings(translation_content)
 
+        # Format Category
         bo_category, en_category = pecha_category["bo"], pecha_category["en"]
+        bo_category.append(self.bo_root_category_section)
+        en_category.append(self.en_root_category_section)
+
+        if root_pecha:
+            bo_title = self.get_pecha_bo_title(root_pecha)
+            en_title = self.get_pecha_en_title(root_pecha)
+        else:
+            bo_title = self.get_pecha_bo_title(pecha)
+            en_title = self.get_pecha_en_title(pecha)
+
+        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
 
         root_json: Dict[str, List] = {
             "categories": bo_category,
