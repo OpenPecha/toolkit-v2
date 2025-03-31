@@ -143,9 +143,11 @@ class RootSerializer:
 
         return title
 
-    def add_title_to_category(
-        self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]
-    ):
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        Add Root section ie "རྩ་བ།" or "Root text" to category
+        Add pecha title to category
+        """
         bo_category, en_category = category["bo"], category["en"]
         bo_category.append(self.bo_root_category)
         en_category.append(self.en_root_category)
@@ -200,8 +202,7 @@ class RootSerializer:
         root_content = chunk_strings(root_content)
         translation_content = chunk_strings(translation_content)
 
-        # Format Category
-        formatted_category = self.add_title_to_category(pecha, pecha_category)
+        formatted_category = self.format_category(pecha, pecha_category)
 
         root_json: Dict[str, List] = {
             "categories": formatted_category["bo"],

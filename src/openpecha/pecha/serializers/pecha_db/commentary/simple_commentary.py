@@ -140,6 +140,23 @@ class SimpleCommentarySerializer:
 
         return title
 
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
+        Add pecha title to category
+        """
+
+        category["bo"].append(self.bo_commentary_category)
+        category["en"].append(self.en_commentary_category)
+
+        bo_title = self.get_pecha_title(pecha, "bo")
+        en_title = self.get_pecha_title(pecha, "en")
+
+        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return category
+
     def serialize(
         self,
         pecha: Pecha,
@@ -166,21 +183,6 @@ class SimpleCommentarySerializer:
         src_metadata, tgt_metadata = self.extract_metadata(pecha)
         src_book.append(src_metadata)
         tgt_book.append(tgt_metadata)
-
-        # Add Commentary section to Category
-        pecha_category["bo"].append(self.bo_commentary_category)
-        pecha_category["en"].append(self.en_commentary_category)
-
-        # Add title to category
-        bo_title = self.get_pecha_title(pecha, "bo")
-        en_title = self.get_pecha_title(pecha, "en")
-
-        pecha_category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        pecha_category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-
-        # Add root reference to category
-        category = self.add_root_reference_to_category(pecha_category, root_title)
-        src_category, tgt_category = category["en"], category["bo"]
 
         if translation_pecha:
             translation_path = get_first_layer_file(translation_pecha)
@@ -211,6 +213,12 @@ class SimpleCommentarySerializer:
 
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content
+
+        formatted_category = self.format_category(pecha, pecha_category)
+        formatted_category = self.add_root_reference_to_category(
+            formatted_category, root_title
+        )
+        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
 
         serialized_json = {
             "source": {"categories": src_category, "books": src_book},
