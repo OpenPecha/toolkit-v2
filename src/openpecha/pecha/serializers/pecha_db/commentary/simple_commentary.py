@@ -3,9 +3,8 @@ from typing import Any, Dict, List, Union
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
+from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha, get_anns, get_first_layer_file
-from openpecha.pecha.metadata import PechaMetaData
 from openpecha.utils import (
     chunk_strings,
     get_chapter_num_from_segment_num,
@@ -30,48 +29,28 @@ class SimpleCommentarySerializer:
         }
         pass
 
-    def extract_metadata(self, pecha: Pecha):
+    def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
-        Extract neccessary metadata from opf for serialization to json
+        Extract required metadata from opf
         """
-        metadata: PechaMetaData = pecha.metadata
-
-        if not isinstance(metadata.title, dict):
-            logger.error(f"Title is not available in the Commentary Pecha {pecha.id}.")
-            raise MetaDataValidationError(
-                f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
+        if not lang:
+            lang = pecha.metadata.language.value
+        direction = get_text_direction_with_lang(lang)
+        title = pecha.metadata.title
+        if isinstance(title, dict):
+            title = title.get(lang.lower(), None) or title.get(  # type: ignore
+                lang.upper(), None  # type: ignore
             )
+        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
+        source = pecha.metadata.source if pecha.metadata.source else ""
 
-        pecha_lang = pecha.metadata.language.value
-        src_lang = "en" if pecha_lang == "bo" else pecha_lang
-        source_title = metadata.title.get(src_lang.lower()) or metadata.title.get(
-            src_lang.upper()
-        )
-        source_title = (
-            source_title if src_lang == "en" else f"{source_title}[{src_lang}]"
-        )
-        target_lang = "bo"
-        target_title = metadata.title.get(target_lang.lower()) or metadata.title.get(
-            target_lang.upper()
-        )
-
-        src_metadata = {
-            "title": source_title,
-            "language": src_lang,
-            "versionSource": metadata.source if metadata.source else "",
-            "direction": get_text_direction_with_lang("en"),
+        return {
+            "title": title,
+            "language": lang,
+            "versionSource": source,
+            "direction": direction,
             "completestatus": "done",
         }
-
-        tgt_metadata = {
-            "title": target_title,
-            "language": target_lang,
-            "versionSource": metadata.source if metadata.source else "",
-            "direction": get_text_direction_with_lang("bo"),
-            "completestatus": "done",
-        }
-
-        return src_metadata, tgt_metadata
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
@@ -180,11 +159,12 @@ class SimpleCommentarySerializer:
         """
 
         src_book, tgt_book = [], []
-        src_metadata, tgt_metadata = self.extract_metadata(pecha)
-        src_book.append(src_metadata)
-        tgt_book.append(tgt_metadata)
 
         if translation_pecha:
+
+            src_metadata = self.get_metadata_for_pecha_org(translation_pecha)
+            tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+
             translation_path = get_first_layer_file(translation_pecha)
             commentary_path = get_first_layer_file(pecha)
             src_content = self.get_content(translation_pecha, translation_path)
@@ -193,11 +173,20 @@ class SimpleCommentarySerializer:
             layer_path = get_first_layer_file(pecha)
             content = self.get_content(pecha, layer_path)
             if pecha.metadata.language.value == "bo":
+                src_metadata = self.get_metadata_for_pecha_org(pecha, "en")
+                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+
                 src_content = []
                 tgt_content = content
             else:
+                src_metadata = self.get_metadata_for_pecha_org(pecha)
+                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+
                 tgt_content = []
                 src_content = content
+
+        src_book.append(src_metadata)
+        tgt_book.append(tgt_metadata)
 
         # Preprocess newlines in content
         src_content = [
