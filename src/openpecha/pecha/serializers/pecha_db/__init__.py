@@ -14,7 +14,9 @@ from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
     PreAlignedRootTranslationSerializer,
 )
 from openpecha.pecha.serializers.pecha_db.root import RootSerializer
-from openpecha.pecha.serializers.pecha_db.utils import format_pecha_category
+from openpecha.pecha.serializers.pecha_db.utils import (
+    format_pecha_category_from_backend,
+)
 
 logger = get_logger(__name__)
 
@@ -132,7 +134,7 @@ class Serializer:
         logger.info(f"Serializing Pecha {pecha.id}, Type: {pecha_type}")
 
         # Format pecha category
-        formatted_pecha_category = format_pecha_category(pecha_category)
+        formatted_pecha_category = format_pecha_category_from_backend(pecha_category)
 
         match pecha_type:
             case PechaType.root_pecha:

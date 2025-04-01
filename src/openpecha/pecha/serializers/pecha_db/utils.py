@@ -1,9 +1,12 @@
 from typing import Dict, List
 
 
-def format_pecha_category(
+def format_pecha_category_from_backend(
     category: List[Dict[str, Dict[str, str]]]
 ) -> Dict[str, List[Dict[str, str]]]:
+    """
+    Format the category recieved from backend to our required format.
+    """
     formatted_category: Dict[str, List[Dict[str, str]]] = {"en": [], "bo": []}
     for item in category:
         en_category = {
