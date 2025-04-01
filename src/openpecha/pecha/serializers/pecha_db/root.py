@@ -28,9 +28,42 @@ class RootSerializer:
             "enShortDesc": "",
         }
 
+    def get_pecha_title(self, pecha: Pecha, lang: str):
+        pecha_title = pecha.metadata.title
+
+        if isinstance(pecha_title, dict):
+            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
+
+        if title is None or title == "":
+            logger.error(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+            raise MetaDataMissingError(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+
+        return title
+
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        1.Add Root section ie "རྩ་བ།" or "Root text" to category
+        2.Add pecha title to category
+        """
+        bo_category, en_category = category["bo"], category["en"]
+        bo_category.append(self.bo_root_category)
+        en_category.append(self.en_root_category)
+
+        bo_title = self.get_pecha_title(pecha, "bo")
+        en_title = self.get_pecha_title(pecha, "en")
+
+        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return {"bo": bo_category, "en": en_category}
+
     def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
-        Extract required metadata from opf
+        Extract required metadata from Pecha for `pecha.org` serialization
         """
         if not lang:
             lang = pecha.metadata.language.value
@@ -127,39 +160,6 @@ class RootSerializer:
 
             return translation_segments
 
-    def get_pecha_title(self, pecha: Pecha, lang: str):
-        pecha_title = pecha.metadata.title
-
-        if isinstance(pecha_title, dict):
-            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
-
-        if title is None or title == "":
-            logger.error(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-            raise MetaDataMissingError(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-
-        return title
-
-    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
-        """
-        Add Root section ie "རྩ་བ།" or "Root text" to category
-        Add pecha title to category
-        """
-        bo_category, en_category = category["bo"], category["en"]
-        bo_category.append(self.bo_root_category)
-        en_category.append(self.en_root_category)
-
-        bo_title = self.get_pecha_title(pecha, "bo")
-        en_title = self.get_pecha_title(pecha, "en")
-
-        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-
-        return {"bo": bo_category, "en": en_category}
-
     def serialize(
         self,
         pecha: Pecha,
@@ -173,6 +173,15 @@ class RootSerializer:
             formatted_category["bo"],
             formatted_category["en"],
         )
+        # Get the metadata for root and translation pecha
+        root_metadata = self.get_metadata_for_pecha_org(pecha)
+
+        if translation_pecha:
+            translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
+        else:
+            translation_metadata = self.get_metadata_for_pecha_org(
+                pecha, lang=Language.english.value
+            )
 
         # Get content from root and translation pecha
         root_content = self.get_root_content(pecha, pecha.get_segmentation_layer_path())
@@ -195,16 +204,6 @@ class RootSerializer:
         # Chapterize content
         root_content = chunk_strings(root_content)
         translation_content = chunk_strings(translation_content)
-
-        # Get the metadata for root and translation pecha
-        root_metadata = self.get_metadata_for_pecha_org(pecha)
-
-        if translation_pecha:
-            translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
-        else:
-            translation_metadata = self.get_metadata_for_pecha_org(
-                pecha, lang=Language.english.value
-            )
 
         root_json: Dict[str, List] = {
             "categories": root_category,
