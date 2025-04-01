@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
@@ -23,48 +23,61 @@ class PreAlignedCommentarySerializer:
             "enShortDesc": "",
         }
 
-    def extract_metadata(self, pecha: Pecha):
-        """
-        Extract neccessary metadata from opf for serialization to json
-        """
-        metadata: PechaMetaData = pecha.metadata
+    def get_pecha_title(self, pecha: Pecha, lang: str):
+        pecha_title = pecha.metadata.title
 
-        if not isinstance(metadata.title, dict):
-            logger.error(f"Title is not available in the Commentary Pecha {pecha.id}.")
-            raise MetaDataValidationError(
-                f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
+        if isinstance(pecha_title, dict):
+            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
+
+        if title is None or title == "":
+            logger.error(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+            raise MetaDataMissingError(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
             )
 
-        pecha_lang = pecha.metadata.language.value
-        src_lang = "en" if pecha_lang == "bo" else pecha_lang
-        source_title = metadata.title.get(src_lang.lower()) or metadata.title.get(
-            src_lang.upper()
-        )
-        source_title = (
-            source_title if src_lang == "en" else f"{source_title}[{src_lang}]"
-        )
-        target_lang = "bo"
-        target_title = metadata.title.get(target_lang.lower()) or metadata.title.get(
-            target_lang.upper()
-        )
+        return title
 
-        src_metadata = {
-            "title": source_title,
-            "language": src_lang,
-            "versionSource": metadata.source if metadata.source else "",
-            "direction": get_text_direction_with_lang("en"),
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
+        Add pecha title to category
+        """
+
+        category["bo"].append(self.bo_commentary_category)
+        category["en"].append(self.en_commentary_category)
+
+        bo_title = self.get_pecha_title(pecha, "bo")
+        en_title = self.get_pecha_title(pecha, "en")
+
+        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return category
+
+    def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
+        """
+        Extract required metadata from opf
+        """
+        if not lang:
+            lang = pecha.metadata.language.value
+        direction = get_text_direction_with_lang(lang)
+        title = pecha.metadata.title
+        if isinstance(title, dict):
+            title = title.get(lang.lower(), None) or title.get(  # type: ignore
+                lang.upper(), None  # type: ignore
+            )
+        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
+        source = pecha.metadata.source if pecha.metadata.source else ""
+
+        return {
+            "title": title,
+            "language": lang,
+            "versionSource": source,
+            "direction": direction,
             "completestatus": "done",
         }
-
-        tgt_metadata = {
-            "title": target_title,
-            "language": target_lang,
-            "versionSource": metadata.source if metadata.source else "",
-            "direction": get_text_direction_with_lang("bo"),
-            "completestatus": "done",
-        }
-
-        return src_metadata, tgt_metadata
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
@@ -103,39 +116,6 @@ class PreAlignedCommentarySerializer:
         root_en_title = metadata.title.get("en") or metadata.title.get("EN")
         return root_en_title
 
-    def get_pecha_title(self, pecha: Pecha, lang: str):
-        pecha_title = pecha.metadata.title
-
-        if isinstance(pecha_title, dict):
-            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
-
-        if title is None or title == "":
-            logger.error(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-            raise MetaDataMissingError(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-
-        return title
-
-    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
-        """
-        Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
-        Add pecha title to category
-        """
-
-        category["bo"].append(self.bo_commentary_category)
-        category["en"].append(self.en_commentary_category)
-
-        bo_title = self.get_pecha_title(pecha, "bo")
-        en_title = self.get_pecha_title(pecha, "en")
-
-        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-
-        return category
-
     def serialize(
         self,
         root_display_pecha: Pecha,
@@ -154,7 +134,8 @@ class PreAlignedCommentarySerializer:
         logger.info(f"Category is extracted successfully for {commentary_pecha.id}.")
 
         # Get metadata
-        src_metadata, tgt_metadata = self.extract_metadata(commentary_pecha)
+        src_metadata = self.get_metadata_for_pecha_org(commentary_pecha)
+        tgt_metadata = self.get_metadata_for_pecha_org(commentary_pecha, "bo")
 
         # Get content
         src_content: List[List[str]] = []
