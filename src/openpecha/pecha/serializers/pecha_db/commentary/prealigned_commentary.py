@@ -153,6 +153,13 @@ class PreAlignedCommentarySerializer:
         src_category, tgt_category = category["en"], category["bo"]
         logger.info(f"Category is extracted successfully for {commentary_pecha.id}.")
 
+        # Get metadata
+        src_book, tgt_book = [], []
+        src_metadata, tgt_metadata = self.extract_metadata(commentary_pecha)
+        src_book.append(src_metadata)
+        tgt_book.append(tgt_metadata)
+
+        # Get content
         src_content: List[List[str]] = []
         tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
             root_display_pecha, root_pecha, commentary_pecha
@@ -167,11 +174,6 @@ class PreAlignedCommentarySerializer:
         logger.info(
             f"Alignment transfered content is extracted successfully for {commentary_pecha.id}."
         )
-
-        src_book, tgt_book = [], []
-        src_metadata, tgt_metadata = self.extract_metadata(commentary_pecha)
-        src_book.append(src_metadata)
-        tgt_book.append(tgt_metadata)
 
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = chapterized_tgt_content
