@@ -142,8 +142,30 @@ class SimpleCommentarySerializer:
         root_title: str,
         translation_pecha: Union[Pecha, None] = None,
     ):
-        src_book, tgt_book = [], []
+        # Format Category
+        formatted_category = self.format_category(pecha, pecha_category)
+        formatted_category = self.add_root_reference_to_category(
+            formatted_category, root_title
+        )
+        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
 
+        # Get the metadata for Commentary and Commentary Translation pecha
+        src_book, tgt_book = [], []
+        if translation_pecha:
+            src_metadata = self.get_metadata_for_pecha_org(translation_pecha)
+            tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+        else:
+            if pecha.metadata.language.value == "bo":
+                src_metadata = self.get_metadata_for_pecha_org(pecha, "en")
+                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+            else:
+                src_metadata = self.get_metadata_for_pecha_org(pecha)
+                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+
+        src_book.append(src_metadata)
+        tgt_book.append(tgt_metadata)
+
+        # Get the metadata for Commentary and Commentary Translation pecha
         if translation_pecha:
 
             src_metadata = self.get_metadata_for_pecha_org(translation_pecha)
@@ -156,20 +178,11 @@ class SimpleCommentarySerializer:
         else:
             content = self.get_content(pecha, pecha.get_segmentation_layer_path())
             if pecha.metadata.language.value == "bo":
-                src_metadata = self.get_metadata_for_pecha_org(pecha, "en")
-                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
-
                 src_content = []
                 tgt_content = content
             else:
-                src_metadata = self.get_metadata_for_pecha_org(pecha)
-                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
-
                 tgt_content = []
                 src_content = content
-
-        src_book.append(src_metadata)
-        tgt_book.append(tgt_metadata)
 
         # Preprocess newlines in content
         src_content = [
@@ -185,12 +198,6 @@ class SimpleCommentarySerializer:
 
         src_book[0]["content"] = src_content
         tgt_book[0]["content"] = tgt_content
-
-        formatted_category = self.format_category(pecha, pecha_category)
-        formatted_category = self.add_root_reference_to_category(
-            formatted_category, root_title
-        )
-        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
 
         serialized_json = {
             "source": {"categories": src_category, "books": src_book},
