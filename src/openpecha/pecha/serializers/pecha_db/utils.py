@@ -1,7 +1,11 @@
 from typing import Dict, List, Union
 
+from openpecha.config import get_logger
+from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha
 from openpecha.utils import get_text_direction_with_lang
+
+logger = get_logger(__name__)
 
 
 def format_pecha_category_from_backend(
@@ -50,3 +54,19 @@ def get_metadata_for_pecha_org(pecha: Pecha, lang: Union[str, None] = None):
         "direction": direction,
         "completestatus": "done",
     }
+
+
+def get_pecha_title(pecha: Pecha, lang: str):
+    pecha_title = pecha.metadata.title
+    if isinstance(pecha_title, dict):
+        title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
+
+    if title is None or title == "":
+        logger.error(
+            f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+        )
+        raise MetaDataMissingError(
+            f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+        )
+
+    return title

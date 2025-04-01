@@ -2,10 +2,13 @@ from typing import Any, Dict, List
 
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
+from openpecha.exceptions import MetaDataValidationError
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
+from openpecha.pecha.serializers.pecha_db.utils import (
+    get_metadata_for_pecha_org,
+    get_pecha_title,
+)
 from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
@@ -24,22 +27,6 @@ class PreAlignedCommentarySerializer:
             "enShortDesc": "",
         }
 
-    def get_pecha_title(self, pecha: Pecha, lang: str):
-        pecha_title = pecha.metadata.title
-
-        if isinstance(pecha_title, dict):
-            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
-
-        if title is None or title == "":
-            logger.error(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-            raise MetaDataMissingError(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-
-        return title
-
     def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
         """
         Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
@@ -49,8 +36,8 @@ class PreAlignedCommentarySerializer:
         category["bo"].append(self.bo_commentary_category)
         category["en"].append(self.en_commentary_category)
 
-        bo_title = self.get_pecha_title(pecha, "bo")
-        en_title = self.get_pecha_title(pecha, "en")
+        bo_title = get_pecha_title(pecha, "bo")
+        en_title = get_pecha_title(pecha, "en")
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})

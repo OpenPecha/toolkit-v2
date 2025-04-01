@@ -3,14 +3,13 @@ from typing import Dict, List, Union
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.exceptions import (
-    FileNotFoundError,
-    MetaDataMissingError,
-    StamAnnotationStoreLoadError,
-)
+from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import Language
-from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
+from openpecha.pecha.serializers.pecha_db.utils import (
+    get_metadata_for_pecha_org,
+    get_pecha_title,
+)
 from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
@@ -29,22 +28,6 @@ class RootSerializer:
             "enShortDesc": "",
         }
 
-    def get_pecha_title(self, pecha: Pecha, lang: str):
-        pecha_title = pecha.metadata.title
-
-        if isinstance(pecha_title, dict):
-            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
-
-        if title is None or title == "":
-            logger.error(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-            raise MetaDataMissingError(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-
-        return title
-
     def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
         """
         1.Add Root section ie "རྩ་བ།" or "Root text" to category
@@ -54,8 +37,8 @@ class RootSerializer:
         bo_category.append(self.bo_root_category)
         en_category.append(self.en_root_category)
 
-        bo_title = self.get_pecha_title(pecha, "bo")
-        en_title = self.get_pecha_title(pecha, "en")
+        bo_title = get_pecha_title(pecha, "bo")
+        en_title = get_pecha_title(pecha, "en")
 
         bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
