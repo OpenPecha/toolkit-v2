@@ -293,7 +293,7 @@ class Pecha:
         """
         1. Get the first layer file from the pecha
         2. Get the relative path of the layer file
-        TODO: Modify this function in future
+        TODO: Modify this function in future in case of more layers in a Pecha
         """
         layer_path = list(self.layer_path.rglob("*.json"))[0]
         relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()

@@ -175,8 +175,9 @@ class PreAlignedRootTranslationSerializer:
             root_display_pecha, root_pecha, translation_pecha
         )
 
-        root_layer_path = root_display_pecha.get_segmentation_layer_path()
-        tgt_content = self.get_root_content(root_display_pecha, root_layer_path)
+        tgt_content = self.get_root_content(
+            root_display_pecha, root_display_pecha.get_segmentation_layer_path()
+        )
 
         # Preprocess newlines in content
         src_content = [

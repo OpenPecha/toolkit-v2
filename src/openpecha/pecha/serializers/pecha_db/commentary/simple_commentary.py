@@ -149,13 +149,12 @@ class SimpleCommentarySerializer:
             src_metadata = self.get_metadata_for_pecha_org(translation_pecha)
             tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
 
-            translation_path = translation_pecha.get_segmentation_layer_path()
-            commentary_path = pecha.get_segmentation_layer_path()
-            src_content = self.get_content(translation_pecha, translation_path)
-            tgt_content = self.get_content(pecha, commentary_path)
+            src_content = self.get_content(
+                translation_pecha, translation_pecha.get_segmentation_layer_path()
+            )
+            tgt_content = self.get_content(pecha, pecha.get_segmentation_layer_path())
         else:
-            layer_path = pecha.get_segmentation_layer_path()
-            content = self.get_content(pecha, layer_path)
+            content = self.get_content(pecha, pecha.get_segmentation_layer_path())
             if pecha.metadata.language.value == "bo":
                 src_metadata = self.get_metadata_for_pecha_org(pecha, "en")
                 tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")

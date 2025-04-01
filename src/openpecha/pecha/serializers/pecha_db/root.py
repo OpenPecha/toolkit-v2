@@ -166,12 +166,10 @@ class RootSerializer:
         pecha_category: Dict[str, List[Dict[str, str]]],
         translation_pecha: Union[Pecha, None] = None,
     ) -> Dict:
-        root_layer_path = pecha.get_segmentation_layer_path()
-        root_content = self.get_root_content(pecha, root_layer_path)
+        root_content = self.get_root_content(pecha, pecha.get_segmentation_layer_path())
         if translation_pecha:
-            translation_layer_path = translation_pecha.get_segmentation_layer_path()
             translation_content = self.get_translation_content(
-                translation_pecha, translation_layer_path
+                translation_pecha, translation_pecha.get_segmentation_layer_path()
             )
         else:
             translation_content = []
