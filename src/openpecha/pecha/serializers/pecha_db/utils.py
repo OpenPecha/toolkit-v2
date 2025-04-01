@@ -39,11 +39,13 @@ def get_metadata_for_pecha_org(pecha: Pecha, lang: Union[str, None] = None):
     if not lang:
         lang = pecha.metadata.language.value
     direction = get_text_direction_with_lang(lang)
-    title = pecha.metadata.title
-    if isinstance(title, dict):
-        title = title.get(lang.lower(), None) or title.get(  # type: ignore
-            lang.upper(), None  # type: ignore
-        )
+
+    title = (
+        get_pecha_title(pecha, lang)
+        if lang
+        else get_pecha_title(pecha, pecha.metadata.language.value)
+    )
+
     title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
     source = pecha.metadata.source if pecha.metadata.source else ""
 
