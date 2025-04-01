@@ -166,6 +166,15 @@ class RootSerializer:
         pecha_category: Dict[str, List[Dict[str, str]]],
         translation_pecha: Union[Pecha, None] = None,
     ) -> Dict:
+
+        # Format Category
+        formatted_category = self.format_category(pecha, pecha_category)
+        root_category, translation_category = (
+            formatted_category["bo"],
+            formatted_category["en"],
+        )
+
+        # Get content from root and translation pecha
         root_content = self.get_root_content(pecha, pecha.get_segmentation_layer_path())
         if translation_pecha:
             translation_content = self.get_translation_content(
@@ -187,14 +196,9 @@ class RootSerializer:
         root_content = chunk_strings(root_content)
         translation_content = chunk_strings(translation_content)
 
-        formatted_category = self.format_category(pecha, pecha_category)
+        # Get the metadata for root and translation pecha
+        root_metadata = self.get_metadata_for_pecha_org(pecha)
 
-        root_json: Dict[str, List] = {
-            "categories": formatted_category["bo"],
-            "books": [
-                {**self.get_metadata_for_pecha_org(pecha), "content": root_content}
-            ],
-        }
         if translation_pecha:
             translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
         else:
@@ -202,8 +206,13 @@ class RootSerializer:
                 pecha, lang=Language.english.value
             )
 
+        root_json: Dict[str, List] = {
+            "categories": root_category,
+            "books": [{**root_metadata, "content": root_content}],
+        }
+
         translation_json = {
-            "categories": formatted_category["en"],
+            "categories": translation_category,
             "books": [{**translation_metadata, "content": translation_content}],
         }
 
