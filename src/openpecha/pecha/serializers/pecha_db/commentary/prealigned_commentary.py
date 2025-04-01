@@ -2,9 +2,7 @@ from typing import Any, Dict, List
 
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataValidationError
 from openpecha.pecha import Pecha
-from openpecha.pecha.metadata import PechaMetaData
 from openpecha.pecha.serializers.pecha_db.utils import (
     get_metadata_for_pecha_org,
     get_pecha_title,
@@ -59,28 +57,6 @@ class PreAlignedCommentarySerializer:
             )
         return category
 
-    def get_pecha_en_title(self, pecha: Pecha):
-        metadata: PechaMetaData = pecha.metadata
-
-        if not isinstance(metadata.title, dict):
-            logger.error(
-                f"Title data type is not dictionary in the Root Pecha {pecha.id}."
-            )
-            raise MetaDataValidationError(
-                f"[Error] Root Pecha {pecha.id} title data type is not dictionary."
-            )
-
-        if "en" not in metadata.title and "EN" not in metadata.title:
-            logger.error(
-                f"English title is not available in the Root Pecha {pecha.id}."
-            )
-            raise MetaDataValidationError(
-                f"[Error] Root Pecha {pecha.id} has no English Title."
-            )
-
-        root_en_title = metadata.title.get("en") or metadata.title.get("EN")
-        return root_en_title
-
     def serialize(
         self,
         root_display_pecha: Pecha,
@@ -90,8 +66,7 @@ class PreAlignedCommentarySerializer:
     ):
         # Format Category
         formatted_category = self.format_category(commentary_pecha, pecha_category)
-
-        root_en_title = self.get_pecha_en_title(root_display_pecha)
+        root_en_title = get_pecha_title(root_pecha, "en")
         category = self.add_root_reference_to_category(
             formatted_category, root_en_title
         )
