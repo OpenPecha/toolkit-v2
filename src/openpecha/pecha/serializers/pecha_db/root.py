@@ -8,7 +8,7 @@ from openpecha.exceptions import (
     MetaDataMissingError,
     StamAnnotationStoreLoadError,
 )
-from openpecha.pecha import Pecha, get_first_layer_file
+from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import Language
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
@@ -166,10 +166,10 @@ class RootSerializer:
         pecha_category: Dict[str, List[Dict[str, str]]],
         translation_pecha: Union[Pecha, None] = None,
     ) -> Dict:
-        root_layer_path = get_first_layer_file(pecha)
+        root_layer_path = pecha.get_segmentation_layer_path()
         root_content = self.get_root_content(pecha, root_layer_path)
         if translation_pecha:
-            translation_layer_path = get_first_layer_file(translation_pecha)
+            translation_layer_path = translation_pecha.get_segmentation_layer_path()
             translation_content = self.get_translation_content(
                 translation_pecha, translation_layer_path
             )

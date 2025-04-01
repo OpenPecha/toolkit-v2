@@ -289,6 +289,17 @@ class Pecha:
                 self.layers[base_name][rel_layer_fn.name] = store
                 yield layer_fn.name, store
 
+    def get_segmentation_layer_path(self) -> str:
+        """
+        1. Get the first layer file from the pecha
+        2. Get the relative path of the layer file
+        TODO: Modify this function in future
+        """
+        layer_path = list(self.layer_path.rglob("*.json"))[0]
+        relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()
+
+        return relative_layer_path
+
     def get_layer_by_ann_type(self, base_name: str, layer_type: LayerEnum):
         """
         Get layers by annotation type i.e Chapter, Sabche, Segment,...
@@ -423,17 +434,6 @@ class Pecha:
             layer_output_path = self.layer_path / target_base_name / layer_name
             layer.set_filename(layer_output_path.as_posix())
             layer.save()
-
-
-def get_first_layer_file(pecha: Pecha) -> str:
-    """
-    1. Get the first layer file from the pecha
-    2. Get the relative path of the layer file
-    """
-    layer_path = list(pecha.layer_path.rglob("*.json"))[0]
-    relative_layer_path = layer_path.relative_to(pecha.pecha_path.parent).as_posix()
-
-    return relative_layer_path
 
 
 def get_anns(ann_store: AnnotationStore):

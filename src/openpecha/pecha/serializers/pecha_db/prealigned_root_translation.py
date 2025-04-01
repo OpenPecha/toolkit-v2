@@ -9,7 +9,7 @@ from openpecha.exceptions import (
     MetaDataMissingError,
     StamAnnotationStoreLoadError,
 )
-from openpecha.pecha import Pecha, get_first_layer_file
+from openpecha.pecha import Pecha
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
 logger = get_logger(__name__)
@@ -175,7 +175,7 @@ class PreAlignedRootTranslationSerializer:
             root_display_pecha, root_pecha, translation_pecha
         )
 
-        root_layer_path = get_first_layer_file(root_display_pecha)
+        root_layer_path = root_display_pecha.get_segmentation_layer_path()
         tgt_content = self.get_root_content(root_display_pecha, root_layer_path)
 
         # Preprocess newlines in content
