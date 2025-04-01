@@ -28,6 +28,39 @@ class SimpleCommentarySerializer:
             "enShortDesc": "",
         }
 
+    def get_pecha_title(self, pecha: Pecha, lang: str):
+        pecha_title = pecha.metadata.title
+
+        if isinstance(pecha_title, dict):
+            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
+
+        if title is None or title == "":
+            logger.error(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+            raise MetaDataMissingError(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+
+        return title
+
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
+        Add pecha title to category
+        """
+
+        category["bo"].append(self.bo_commentary_category)
+        category["en"].append(self.en_commentary_category)
+
+        bo_title = self.get_pecha_title(pecha, "bo")
+        en_title = self.get_pecha_title(pecha, "en")
+
+        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return category
+
     def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
         Extract required metadata from opf
@@ -101,39 +134,6 @@ class SimpleCommentarySerializer:
         if "root_idx_mapping" in ann:
             return f"<{chapter_num}><{processed_root_map}>{ann['text'].strip()}"
         return ann["text"].strip()
-
-    def get_pecha_title(self, pecha: Pecha, lang: str):
-        pecha_title = pecha.metadata.title
-
-        if isinstance(pecha_title, dict):
-            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
-
-        if title is None or title == "":
-            logger.error(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-            raise MetaDataMissingError(
-                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
-            )
-
-        return title
-
-    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
-        """
-        Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
-        Add pecha title to category
-        """
-
-        category["bo"].append(self.bo_commentary_category)
-        category["en"].append(self.en_commentary_category)
-
-        bo_title = self.get_pecha_title(pecha, "bo")
-        en_title = self.get_pecha_title(pecha, "en")
-
-        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-
-        return category
 
     def serialize(
         self,
