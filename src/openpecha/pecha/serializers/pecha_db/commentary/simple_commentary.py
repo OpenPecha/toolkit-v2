@@ -150,7 +150,6 @@ class SimpleCommentarySerializer:
         src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
 
         # Get the metadata for Commentary and Commentary Translation pecha
-        src_book, tgt_book = [], []
         if translation_pecha:
             src_metadata = self.get_metadata_for_pecha_org(translation_pecha)
             tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
@@ -161,9 +160,6 @@ class SimpleCommentarySerializer:
             else:
                 src_metadata = self.get_metadata_for_pecha_org(pecha)
                 tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
-
-        src_book.append(src_metadata)
-        tgt_book.append(tgt_metadata)
 
         # Get the metadata for Commentary and Commentary Translation pecha
         if translation_pecha:
@@ -196,12 +192,19 @@ class SimpleCommentarySerializer:
         src_content = chunk_strings(src_content)
         tgt_content = chunk_strings(tgt_content)
 
-        src_book[0]["content"] = src_content
-        tgt_book[0]["content"] = tgt_content
+        commentary_json = {
+            "categories": tgt_category,
+            "books": [{**tgt_metadata, "content": tgt_content}],
+        }
+
+        translation_json = {
+            "categories": src_category,
+            "books": [{**src_metadata, "content": src_content}],
+        }
 
         serialized_json = {
-            "source": {"categories": src_category, "books": src_book},
-            "target": {"categories": tgt_category, "books": tgt_book},
+            "source": translation_json,
+            "target": commentary_json,
         }
         logger.info(f"Pecha {pecha.id} is serialized successfully.")
         return serialized_json
