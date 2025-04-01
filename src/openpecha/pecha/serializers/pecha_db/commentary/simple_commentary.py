@@ -27,7 +27,6 @@ class SimpleCommentarySerializer:
             "enDesc": "",
             "enShortDesc": "",
         }
-        pass
 
     def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
