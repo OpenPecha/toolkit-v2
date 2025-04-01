@@ -4,7 +4,11 @@ from stam import AnnotationStore
 
 from openpecha.alignment.translation_transfer import TranslationAlignmentTransfer
 from openpecha.config import get_logger
-from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
+from openpecha.exceptions import (
+    FileNotFoundError,
+    MetaDataMissingError,
+    StamAnnotationStoreLoadError,
+)
 from openpecha.pecha import Pecha, get_first_layer_file
 from openpecha.utils import chunk_strings, get_text_direction_with_lang
 
@@ -12,6 +16,18 @@ logger = get_logger(__name__)
 
 
 class PreAlignedRootTranslationSerializer:
+    def __init__(self):
+        self.bo_root_category = {
+            "name": "རྩ་བ།",
+            "heDesc": "",
+            "heShortDesc": "",
+        }
+        self.en_root_category = {
+            "name": "Root text",
+            "enDesc": "",
+            "enShortDesc": "",
+        }
+
     def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
         """
         Extract required metadata from opf
@@ -111,15 +127,38 @@ class PreAlignedRootTranslationSerializer:
 
             return translation_segments
 
-    def get_pecha_bo_title(self, pecha: Pecha):
-        """
-        Get tibetan title from the Pecha metadata
-        """
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get("bo") or title.get("BO")
+    def get_pecha_title(self, pecha: Pecha, lang: str):
+        pecha_title = pecha.metadata.title
+
+        if isinstance(pecha_title, dict):
+            title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
+
+        if title is None or title == "":
+            logger.error(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
+            raise MetaDataMissingError(
+                f"[Error] {lang.upper()} title not available inside metadata for {pecha.id} for Serialization."
+            )
 
         return title
+
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        Add Root section ie "རྩ་བ།" or "Root text" to category
+        Add pecha title to category
+        """
+        bo_category, en_category = category["bo"], category["en"]
+        bo_category.append(self.bo_root_category)
+        en_category.append(self.en_root_category)
+
+        bo_title = self.get_pecha_title(pecha, "bo")
+        en_title = self.get_pecha_title(pecha, "en")
+
+        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return {"bo": bo_category, "en": en_category}
 
     def serialize(
         self,
@@ -128,7 +167,9 @@ class PreAlignedRootTranslationSerializer:
         translation_pecha: Pecha,
         pecha_category: Dict[str, List[Dict[str, str]]],
     ) -> Dict:
-        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
+
+        formatted_category = self.format_category(root_display_pecha, pecha_category)
+        bo_category, en_category = formatted_category["bo"], formatted_category["en"]
 
         src_content = TranslationAlignmentTransfer().get_serialized_translation(
             root_display_pecha, root_pecha, translation_pecha
