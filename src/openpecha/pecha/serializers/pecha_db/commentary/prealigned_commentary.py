@@ -1,11 +1,12 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.utils import chunk_strings, get_text_direction_with_lang
+from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
+from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
 
@@ -55,29 +56,6 @@ class PreAlignedCommentarySerializer:
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
 
         return category
-
-    def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
-        """
-        Extract required metadata from opf
-        """
-        if not lang:
-            lang = pecha.metadata.language.value
-        direction = get_text_direction_with_lang(lang)
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get(lang.lower(), None) or title.get(  # type: ignore
-                lang.upper(), None  # type: ignore
-            )
-        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
-        source = pecha.metadata.source if pecha.metadata.source else ""
-
-        return {
-            "title": title,
-            "language": lang,
-            "versionSource": source,
-            "direction": direction,
-            "completestatus": "done",
-        }
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
@@ -134,8 +112,8 @@ class PreAlignedCommentarySerializer:
         logger.info(f"Category is extracted successfully for {commentary_pecha.id}.")
 
         # Get metadata
-        src_metadata = self.get_metadata_for_pecha_org(commentary_pecha)
-        tgt_metadata = self.get_metadata_for_pecha_org(commentary_pecha, "bo")
+        src_metadata = get_metadata_for_pecha_org(commentary_pecha)
+        tgt_metadata = get_metadata_for_pecha_org(commentary_pecha, "bo")
 
         # Get content
         src_content: List[List[str]] = []

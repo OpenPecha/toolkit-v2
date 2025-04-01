@@ -10,7 +10,8 @@ from openpecha.exceptions import (
 )
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import Language
-from openpecha.utils import chunk_strings, get_text_direction_with_lang
+from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
+from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
 
@@ -60,29 +61,6 @@ class RootSerializer:
         en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
 
         return {"bo": bo_category, "en": en_category}
-
-    def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
-        """
-        Extract required metadata from Pecha for `pecha.org` serialization
-        """
-        if not lang:
-            lang = pecha.metadata.language.value
-        direction = get_text_direction_with_lang(lang)
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get(lang.lower(), None) or title.get(  # type: ignore
-                lang.upper(), None  # type: ignore
-            )
-        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
-        source = pecha.metadata.source if pecha.metadata.source else ""
-
-        return {
-            "title": title,
-            "language": lang,
-            "versionSource": source,
-            "direction": direction,
-            "completestatus": "done",
-        }
 
     @staticmethod
     def get_texts_from_layer(layer: AnnotationStore):
@@ -174,12 +152,12 @@ class RootSerializer:
             formatted_category["en"],
         )
         # Get the metadata for root and translation pecha
-        root_metadata = self.get_metadata_for_pecha_org(pecha)
+        root_metadata = get_metadata_for_pecha_org(pecha)
 
         if translation_pecha:
-            translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
+            translation_metadata = get_metadata_for_pecha_org(translation_pecha)
         else:
-            translation_metadata = self.get_metadata_for_pecha_org(
+            translation_metadata = get_metadata_for_pecha_org(
                 pecha, lang=Language.english.value
             )
 

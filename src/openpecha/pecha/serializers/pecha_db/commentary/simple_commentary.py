@@ -5,10 +5,10 @@ from stam import AnnotationStore
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha, get_anns
+from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
 from openpecha.utils import (
     chunk_strings,
     get_chapter_num_from_segment_num,
-    get_text_direction_with_lang,
     process_segment_num_for_chapter,
 )
 
@@ -60,29 +60,6 @@ class SimpleCommentarySerializer:
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
 
         return category
-
-    def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
-        """
-        Extract required metadata from opf
-        """
-        if not lang:
-            lang = pecha.metadata.language.value
-        direction = get_text_direction_with_lang(lang)
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get(lang.lower(), None) or title.get(  # type: ignore
-                lang.upper(), None  # type: ignore
-            )
-        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
-        source = pecha.metadata.source if pecha.metadata.source else ""
-
-        return {
-            "title": title,
-            "language": lang,
-            "versionSource": source,
-            "direction": direction,
-            "completestatus": "done",
-        }
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
@@ -151,21 +128,21 @@ class SimpleCommentarySerializer:
 
         # Get the metadata for Commentary and Commentary Translation pecha
         if translation_pecha:
-            src_metadata = self.get_metadata_for_pecha_org(translation_pecha)
-            tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+            src_metadata = get_metadata_for_pecha_org(translation_pecha)
+            tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
         else:
             if pecha.metadata.language.value == "bo":
-                src_metadata = self.get_metadata_for_pecha_org(pecha, "en")
-                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+                src_metadata = get_metadata_for_pecha_org(pecha, "en")
+                tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
             else:
-                src_metadata = self.get_metadata_for_pecha_org(pecha)
-                tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+                src_metadata = get_metadata_for_pecha_org(pecha)
+                tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
 
         # Get the metadata for Commentary and Commentary Translation pecha
         if translation_pecha:
 
-            src_metadata = self.get_metadata_for_pecha_org(translation_pecha)
-            tgt_metadata = self.get_metadata_for_pecha_org(pecha, "bo")
+            src_metadata = get_metadata_for_pecha_org(translation_pecha)
+            tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
 
             src_content = self.get_content(
                 translation_pecha, translation_pecha.get_segmentation_layer_path()
