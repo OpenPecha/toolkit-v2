@@ -8,19 +8,15 @@ from openpecha.utils import read_json
 DATA_DIR = Path(__file__).parent / "data"
 
 
-class TestTranslationSerializer(TestCase):
+class TestRootSerializer(TestCase):
     def setUp(self):
         self.category = {
             "bo": [
                 {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
                 {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
             ],
             "en": [
                 {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
                 {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
             ],
         }
@@ -33,7 +29,6 @@ class TestTranslationSerializer(TestCase):
         json_output = serializer.serialize(
             pecha=root_pecha, pecha_category=self.category
         )
-
         expected_json_path = DATA_DIR / "expected_root_output.json"
         assert json_output == read_json(expected_json_path)
 
@@ -45,14 +40,7 @@ class TestTranslationSerializer(TestCase):
         translation_pecha = Pecha.from_path(translation_opf)
 
         serializer = RootSerializer()
-        json_output = serializer.serialize(
-            pecha=translation_pecha,
-            root_pecha=root_pecha,
-            pecha_category=self.category,
-        )
+        json_output = serializer.serialize(root_pecha, self.category, translation_pecha)
 
         expected_json_path = DATA_DIR / "expected_translation_output.json"
         assert json_output == read_json(expected_json_path)
-
-    def tearDown(self):
-        pass

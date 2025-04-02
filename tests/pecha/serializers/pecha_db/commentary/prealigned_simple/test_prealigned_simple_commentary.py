@@ -22,16 +22,12 @@ class TestPreAlignedCommentarySerializer(TestCase):
         # Create the patcher and set return_value
         self.pecha_category = {
             "bo": [
-                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "དབུ་མ་ལ་འཇུག་པ།", "heDesc": "", "heShortDesc": ""},
             ],
             "en": [
-                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
+                {"name": "Madhyamaka", "enDesc": "", "enShortDesc": ""},
+                {"name": "Entering the Middle Way", "enDesc": "", "enShortDesc": ""},
             ],
         }
 
@@ -53,12 +49,3 @@ class TestPreAlignedCommentarySerializer(TestCase):
 
         expected_json = Path(__file__).parent / "data/expected_serialized.json"
         assert read_json(expected_json) == serialized_json
-
-    def tearDown(self):
-        pass
-
-
-work = TestPreAlignedCommentarySerializer()
-work.setUp()
-work.test_prealigned_commentary_pecha()
-work.tearDown()

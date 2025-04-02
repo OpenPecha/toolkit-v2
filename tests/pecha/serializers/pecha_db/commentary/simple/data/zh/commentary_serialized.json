@@ -2,26 +2,26 @@
   "source": {
     "categories": [
       {
-        "name": "The Buddha's Teachings",
+        "name": "Madhyamaka",
         "enDesc": "",
         "enShortDesc": ""
       },
       {
-        "name": "Vajra Cutter",
+        "name": "Entering the Middle Way",
         "enDesc": "",
         "enShortDesc": ""
       },
       {
-        "name": "Commentaries",
+        "name": "Commentary text",
         "enDesc": "",
         "enShortDesc": ""
       },
       {
-        "name": "Vajra Cutter",
+        "name": "Illuminating the Intent Chapter 6, verses 1 to 64",
         "enDesc": "",
         "enShortDesc": "",
         "base_text_titles": [
-          "Vajra Cutter"
+          "Entering the Middle Way Chapter 6, verses 1 to 64"
         ],
         "base_text_mapping": "many_to_one",
         "link": "Commentary"
@@ -49,26 +49,26 @@
   "target": {
     "categories": [
       {
-        "name": "སངས་རྒྱས་ཀྱི་བཀའ།",
+        "name": "དབུ་མ།",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "name": "དབུ་མ་ལ་འཇུག་པ།",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "འགྲེལ་པ།",
+        "name": "འགྲེལ་བ།",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "name": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡ ནས་ ༦༤",
         "heDesc": "",
         "heShortDesc": "",
         "base_text_titles": [
-          "Vajra Cutter"
+          "Entering the Middle Way Chapter 6, verses 1 to 64"
         ],
         "base_text_mapping": "many_to_one",
         "link": "Commentary"

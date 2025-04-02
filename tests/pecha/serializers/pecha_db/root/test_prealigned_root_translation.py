@@ -19,13 +19,9 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
             "bo": [
                 {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
                 {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "འགྲེལ་པ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
             ],
             "en": [
                 {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-                {"name": "Commentaries", "enDesc": "", "enShortDesc": ""},
                 {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
             ],
         }
@@ -38,16 +34,13 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
             self.translation_pecha,
             self.pecha_category,
         )
-
         expected_json = (
             Path(__file__).parent / "data/expected_prealigned_root_translation.json"
         )
         assert read_json(expected_json) == serialized_json
 
-    def tearDown(self):
-        pass
 
+if __name__ == "__main__":
+    import unittest
 
-work = TestPreAlignedRootTranslationSerializer()
-work.setUp()
-work.test_root_translation_pecha()
+    unittest.main()

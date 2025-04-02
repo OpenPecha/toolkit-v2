@@ -1,39 +1,49 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from stam import AnnotationStore
 
 from openpecha.alignment.translation_transfer import TranslationAlignmentTransfer
 from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
-from openpecha.pecha import Pecha, get_first_layer_file
-from openpecha.utils import chunk_strings, get_text_direction_with_lang
+from openpecha.pecha import Pecha
+from openpecha.pecha.serializers.pecha_db.utils import (
+    get_metadata_for_pecha_org,
+    get_pecha_title,
+)
+from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
 
 
 class PreAlignedRootTranslationSerializer:
-    def get_metadata_for_pecha_org(self, pecha: Pecha, lang: Union[str, None] = None):
-        """
-        Extract required metadata from opf
-        """
-        if not lang:
-            lang = pecha.metadata.language.value
-        direction = get_text_direction_with_lang(lang)
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get(lang.lower(), None) or title.get(  # type: ignore
-                lang.upper(), None  # type: ignore
-            )
-        title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
-        source = pecha.metadata.source if pecha.metadata.source else ""
-
-        return {
-            "title": title,
-            "language": lang,
-            "versionSource": source,
-            "direction": direction,
-            "completestatus": "done",
+    def __init__(self):
+        self.bo_root_category = {
+            "name": "རྩ་བ།",
+            "heDesc": "",
+            "heShortDesc": "",
         }
+        self.en_root_category = {
+            "name": "Root text",
+            "enDesc": "",
+            "enShortDesc": "",
+        }
+
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        Add Root section ie "རྩ་བ།" or "Root text" to category
+        Add pecha title to category
+        """
+        bo_category, en_category = category["bo"], category["en"]
+        bo_category.append(self.bo_root_category)
+        en_category.append(self.en_root_category)
+
+        bo_title = get_pecha_title(pecha, "bo")
+        en_title = get_pecha_title(pecha, "en")
+
+        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return {"bo": bo_category, "en": en_category}
 
     @staticmethod
     def get_texts_from_layer(layer: AnnotationStore):
@@ -111,16 +121,6 @@ class PreAlignedRootTranslationSerializer:
 
             return translation_segments
 
-    def get_pecha_bo_title(self, pecha: Pecha):
-        """
-        Get tibetan title from the Pecha metadata
-        """
-        title = pecha.metadata.title
-        if isinstance(title, dict):
-            title = title.get("bo") or title.get("BO")
-
-        return title
-
     def serialize(
         self,
         root_display_pecha: Pecha,
@@ -128,14 +128,21 @@ class PreAlignedRootTranslationSerializer:
         translation_pecha: Pecha,
         pecha_category: Dict[str, List[Dict[str, str]]],
     ) -> Dict:
-        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
+        # Format Category
+        formatted_category = self.format_category(root_display_pecha, pecha_category)
+        bo_category, en_category = formatted_category["bo"], formatted_category["en"]
+        # Get the metadata for root and translation pecha
+        root_metadata = get_metadata_for_pecha_org(root_display_pecha)
+        translation_metadata = get_metadata_for_pecha_org(translation_pecha)
 
+        # Get content from root and translation pecha
         src_content = TranslationAlignmentTransfer().get_serialized_translation(
             root_display_pecha, root_pecha, translation_pecha
         )
 
-        root_layer_path = get_first_layer_file(root_display_pecha)
-        tgt_content = self.get_root_content(root_display_pecha, root_layer_path)
+        tgt_content = self.get_root_content(
+            root_display_pecha, root_display_pecha.get_segmentation_layer_path()
+        )
 
         # Preprocess newlines in content
         src_content = [
@@ -153,13 +160,12 @@ class PreAlignedRootTranslationSerializer:
             "categories": bo_category,
             "books": [
                 {
-                    **self.get_metadata_for_pecha_org(root_display_pecha),
+                    **root_metadata,
                     "content": chapterized_tgt_content,
                 }
             ],
         }
 
-        translation_metadata = self.get_metadata_for_pecha_org(translation_pecha)
         src_json = {
             "categories": en_category,
             "books": [{**translation_metadata, "content": chapterized_src_content}],

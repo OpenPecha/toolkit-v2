@@ -3,13 +3,14 @@ from typing import Any, Dict, List, Union
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataValidationError, RootPechaNotFoundError
-from openpecha.pecha import Pecha, get_anns, get_first_layer_file
-from openpecha.pecha.metadata import PechaMetaData
+from openpecha.pecha import Pecha, get_anns
+from openpecha.pecha.serializers.pecha_db.utils import (
+    get_metadata_for_pecha_org,
+    get_pecha_title,
+)
 from openpecha.utils import (
     chunk_strings,
     get_chapter_num_from_segment_num,
-    get_text_direction_with_lang,
     process_segment_num_for_chapter,
 )
 
@@ -17,48 +18,34 @@ logger = get_logger(__name__)
 
 
 class SimpleCommentarySerializer:
-    def extract_metadata(self, pecha: Pecha):
-        """
-        Extract neccessary metadata from opf for serialization to json
-        """
-        metadata: PechaMetaData = pecha.metadata
-
-        if not isinstance(metadata.title, dict):
-            logger.error(f"Title is not available in the Commentary Pecha {pecha.id}.")
-            raise MetaDataValidationError(
-                f"[Error] Commentary Pecha {pecha.id} has no English or Tibetan Title."
-            )
-
-        pecha_lang = pecha.metadata.language.value
-        src_lang = "en" if pecha_lang == "bo" else pecha_lang
-        source_title = metadata.title.get(src_lang.lower()) or metadata.title.get(
-            src_lang.upper()
-        )
-        source_title = (
-            source_title if src_lang == "en" else f"{source_title}[{src_lang}]"
-        )
-        target_lang = "bo"
-        target_title = metadata.title.get(target_lang.lower()) or metadata.title.get(
-            target_lang.upper()
-        )
-
-        src_metadata = {
-            "title": source_title,
-            "language": src_lang,
-            "versionSource": metadata.source if metadata.source else "",
-            "direction": get_text_direction_with_lang("en"),
-            "completestatus": "done",
+    def __init__(self):
+        self.bo_commentary_category = {
+            "name": "འགྲེལ་བ།",
+            "heDesc": "",
+            "heShortDesc": "",
+        }
+        self.en_commentary_category = {
+            "name": "Commentary text",
+            "enDesc": "",
+            "enShortDesc": "",
         }
 
-        tgt_metadata = {
-            "title": target_title,
-            "language": target_lang,
-            "versionSource": metadata.source if metadata.source else "",
-            "direction": get_text_direction_with_lang("bo"),
-            "completestatus": "done",
-        }
+    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
+        """
+        Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
+        Add pecha title to category
+        """
 
-        return src_metadata, tgt_metadata
+        category["bo"].append(self.bo_commentary_category)
+        category["en"].append(self.en_commentary_category)
+
+        bo_title = get_pecha_title(pecha, "bo")
+        en_title = get_pecha_title(pecha, "en")
+
+        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+
+        return category
 
     def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
         """
@@ -116,47 +103,39 @@ class SimpleCommentarySerializer:
         pecha: Pecha,
         pecha_category: Dict[str, List[Dict]],
         root_title: str,
-        commentary_pecha: Union[Pecha, None] = None,
+        translation_pecha: Union[Pecha, None] = None,
     ):
-        """
-        Commentary Pecha can be i) Commentary Pecha ii) Translation of Commentary Pecha
-        if Commentary Pecha,
-            pecha: Commentary Pecha
-            root_title: Root Pecha title
-            commentary_pecha: None
+        # Format Category
+        formatted_category = self.format_category(pecha, pecha_category)
+        formatted_category = self.add_root_reference_to_category(
+            formatted_category, root_title
+        )
+        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
 
-        if Translation of Commentary Pecha,
-            pecha: Translation of Commentary Pecha
-            root_title: Root Pecha title
-            commentary_pecha: Commentary Pecha
-
-        Output: Serialized JSON of Commentary Pecha
-        """
-
-        src_book, tgt_book = [], []
-        src_metadata, tgt_metadata = self.extract_metadata(pecha)
-        src_book.append(src_metadata)
-        tgt_book.append(tgt_metadata)
-
-        category = self.add_root_reference_to_category(pecha_category, root_title)
-        src_category, tgt_category = category["en"], category["bo"]
-        pecha_metadata = pecha.metadata.source_metadata
-
-        if "translation_of" in pecha_metadata and pecha_metadata["translation_of"]:
-            if not commentary_pecha or not isinstance(commentary_pecha, Pecha):
-                logger.error(
-                    "Root pecha is not passed during Commentary Translation Serialization."
-                )
-                raise RootPechaNotFoundError(
-                    "Root pecha is not passed during Commentary Translation Serialization."
-                )
-            translation_path = get_first_layer_file(pecha)
-            commentary_path = get_first_layer_file(commentary_pecha)
-            src_content = self.get_content(pecha, translation_path)
-            tgt_content = self.get_content(commentary_pecha, commentary_path)
+        # Get the metadata for Commentary and Commentary Translation pecha
+        if translation_pecha:
+            src_metadata = get_metadata_for_pecha_org(translation_pecha)
+            tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
         else:
-            layer_path = get_first_layer_file(pecha)
-            content = self.get_content(pecha, layer_path)
+            if pecha.metadata.language.value == "bo":
+                src_metadata = get_metadata_for_pecha_org(pecha, "en")
+                tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
+            else:
+                src_metadata = get_metadata_for_pecha_org(pecha)
+                tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
+
+        # Get the metadata for Commentary and Commentary Translation pecha
+        if translation_pecha:
+
+            src_metadata = get_metadata_for_pecha_org(translation_pecha)
+            tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
+
+            src_content = self.get_content(
+                translation_pecha, translation_pecha.get_segmentation_layer_path()
+            )
+            tgt_content = self.get_content(pecha, pecha.get_segmentation_layer_path())
+        else:
+            content = self.get_content(pecha, pecha.get_segmentation_layer_path())
             if pecha.metadata.language.value == "bo":
                 src_content = []
                 tgt_content = content
@@ -176,12 +155,19 @@ class SimpleCommentarySerializer:
         src_content = chunk_strings(src_content)
         tgt_content = chunk_strings(tgt_content)
 
-        src_book[0]["content"] = src_content
-        tgt_book[0]["content"] = tgt_content
+        commentary_json = {
+            "categories": tgt_category,
+            "books": [{**tgt_metadata, "content": tgt_content}],
+        }
+
+        translation_json = {
+            "categories": src_category,
+            "books": [{**src_metadata, "content": src_content}],
+        }
 
         serialized_json = {
-            "source": {"categories": src_category, "books": src_book},
-            "target": {"categories": tgt_category, "books": tgt_book},
+            "source": translation_json,
+            "target": commentary_json,
         }
         logger.info(f"Pecha {pecha.id} is serialized successfully.")
         return serialized_json

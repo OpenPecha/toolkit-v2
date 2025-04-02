@@ -14,7 +14,9 @@ from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
     PreAlignedRootTranslationSerializer,
 )
 from openpecha.pecha.serializers.pecha_db.root import RootSerializer
-from openpecha.pecha.serializers.pecha_db.utils import format_pecha_category
+from openpecha.pecha.serializers.pecha_db.utils import (
+    format_pecha_category_from_backend,
+)
 
 logger = get_logger(__name__)
 
@@ -132,7 +134,7 @@ class Serializer:
         logger.info(f"Serializing Pecha {pecha.id}, Type: {pecha_type}")
 
         # Format pecha category
-        formatted_pecha_category = format_pecha_category(pecha_category)
+        formatted_pecha_category = format_pecha_category_from_backend(pecha_category)
 
         match pecha_type:
             case PechaType.root_pecha:
@@ -141,7 +143,7 @@ class Serializer:
             case PechaType.root_translation_pecha:
                 root_pecha = pechas[-1]
                 return RootSerializer().serialize(
-                    pecha, formatted_pecha_category, root_pecha
+                    root_pecha, formatted_pecha_category, pecha
                 )
 
             case PechaType.commentary_pecha:
@@ -154,7 +156,7 @@ class Serializer:
                 root_en_title = self.get_root_en_title(metadatas, pechas)
                 commentary_pecha = pechas[1]
                 return SimpleCommentarySerializer().serialize(
-                    pecha, formatted_pecha_category, root_en_title, commentary_pecha
+                    commentary_pecha, formatted_pecha_category, root_en_title, pecha
                 )
 
             case PechaType.prealigned_commentary_pecha:

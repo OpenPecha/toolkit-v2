@@ -1,6 +1,8 @@
 from unittest import TestCase
 
-from openpecha.pecha.serializers.pecha_db.utils import format_pecha_category
+from openpecha.pecha.serializers.pecha_db.utils import (
+    format_pecha_category_from_backend,
+)
 
 
 class TestPechaCategoryFormatter(TestCase):
@@ -15,7 +17,7 @@ class TestPechaCategoryFormatter(TestCase):
                 "short_description": {"bo": "", "en": ""},
             }
         ]
-        formatted_category = format_pecha_category(single_category)
+        formatted_category = format_pecha_category_from_backend(single_category)
         expected_category = {
             "en": [
                 {
@@ -46,7 +48,7 @@ class TestPechaCategoryFormatter(TestCase):
                 "short_description": {"bo": "", "en": ""},
             },
         ]
-        formatted_category = format_pecha_category(multiple_category)
+        formatted_category = format_pecha_category_from_backend(multiple_category)
         expected_category = {
             "en": [
                 {
