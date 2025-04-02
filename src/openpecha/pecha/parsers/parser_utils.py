@@ -3,7 +3,6 @@ from typing import Dict
 
 import openpyxl
 
-from openpecha.buda.api import get_buda_scan_info
 from openpecha.config import get_logger
 from openpecha.utils import read_json
 
@@ -52,12 +51,11 @@ def extract_metadata_from_xlsx(input: Path):
     return metadata
 
 
-def extract_metadata_for_work(bdrc_scan_id: str, work_path: Path) -> Dict:
+def extract_metadata_for_work(work_path: Path) -> Dict:
     metadata = {}
-
     ocr_import_info = read_json(work_path / "ocr_import_info.json")
     metadata["ocr_import_info"] = ocr_import_info
-    buda_data = get_buda_scan_info(bdrc_scan_id)
+    buda_data = read_json(work_path / "buda_data.json")
     metadata["buda_data"] = buda_data
 
     return metadata

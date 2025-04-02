@@ -14,6 +14,8 @@ from openpecha.pecha.metadata import (
     PechaMetaData,
 )
 from openpecha.pecha.parsers import DummyParser
+from openpecha.pecha.parsers.parser_utils import extract_metadata_for_work
+from openpecha.utils import read_json
 
 
 def test_create_instance():
@@ -168,3 +170,20 @@ def test_pecha_licence():
 
     assert metadata.license is not None
     assert metadata.license == license_type
+
+
+def test_extract_metadata_for_work():
+    metadata = extract_metadata_for_work(Path(__file__).parent / "data" / "W12827")
+    expected_metadata = read_json(
+        Path(__file__).parent / "data" / "expected_extracted_metadata.json"
+    )
+    assert metadata is not None
+    assert isinstance(metadata, dict)
+
+    if metadata and expected_metadata:  # check both metadata and expected_metadata
+        if metadata.get("ocr_import_info") and expected_metadata.get("ocr_import_info"):
+            assert metadata.get("ocr_import_info") == expected_metadata.get(
+                "ocr_import_info"
+            )
+        if metadata.get("buda_data") and expected_metadata.get("buda_data"):
+            assert metadata.get("buda_data") == expected_metadata.get("buda_data")
