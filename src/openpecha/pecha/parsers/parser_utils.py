@@ -3,6 +3,11 @@ from typing import Dict
 
 import openpyxl
 
+from openpecha.config import get_logger
+from openpecha.utils import read_json
+
+logger = get_logger(__name__)
+
 
 def extract_metadata_from_xlsx(input: Path):
     workbook = openpyxl.load_workbook(input)
@@ -42,5 +47,15 @@ def extract_metadata_from_xlsx(input: Path):
 
     if "commentary_of" in metadata and isinstance(metadata["commentary_of"], dict):
         metadata["commentary_of"] = list(metadata["commentary_of"].values())[0]
+
+    return metadata
+
+
+def extract_metadata_for_work(work_path: Path) -> Dict:
+    metadata = {}
+    ocr_import_info = read_json(work_path / "ocr_import_info.json")
+    metadata["ocr_import_info"] = ocr_import_info
+    buda_data = read_json(work_path / "buda_data.json")
+    metadata["buda_data"] = buda_data
 
     return metadata
