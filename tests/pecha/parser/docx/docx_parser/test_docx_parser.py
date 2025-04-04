@@ -16,6 +16,7 @@ extra_fields = {
     },
     "usage_title": {"en": "Illuminating the Intent Chapter 6"},
 }
+
 MetadataType = Dict[str, Union[str, Dict[str, str], Collection[str], None]]
 
 

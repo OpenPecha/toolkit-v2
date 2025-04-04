@@ -1,0 +1,31 @@
+{
+  "source_metadata": {
+    "id": "http://purl.bdrc.io/resource/W1KG10193",
+    "status": "http://purl.bdrc.io/admindata/StatusReleased",
+    "access": "http://purl.bdrc.io/admindata/AccessOpen",
+    "geo_restriction": [
+      "CN"
+    ],
+    "reproduction_of": "http://purl.bdrc.io/resource/MW1KG10193",
+    "copyright_status": "http://purl.bdrc.io/resource/CopyrightPublicDomain",
+    "title": "གསུང་འབུམ། འཇིགས་མེད་གླིང་པ།",
+    "languages": [
+      "bo"
+    ],
+    "author": "ཀུན་མཁྱེན་འཇིགས་མེད་གླིང་པ།"
+  },
+  "image_groups": {
+    "I1KG10195": {
+      "id": "http://purl.bdrc.io/resource/I1KG10195",
+      "total_pages": 935,
+      "volume_number": 1,
+      "volume_pages_bdrc_intro": 2
+    },
+    "I1KG10196": {
+      "id": "http://purl.bdrc.io/resource/I1KG10196",
+      "total_pages": 1007,
+      "volume_number": 2,
+      "volume_pages_bdrc_intro": 2
+    }
+  }
+}

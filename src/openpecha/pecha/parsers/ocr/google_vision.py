@@ -1,58 +1,12 @@
-import gzip
-import json
-import logging
 import statistics
 
 from fontTools import unicodedata
 
-from openpecha.buda.api import (
-    get_buda_scan_info,
-    get_image_list,
-    image_group_to_folder_name,
-)
 from openpecha.config import get_logger
-from openpecha.pecha.parsers.ocr.ocr import (
-    UNICODE_CHARCAT_FOR_WIDTH,
-    BBox,
-    OCRFileProvider,
-    OCRParser,
-)
+from openpecha.pecha.parsers.ocr.ocr import UNICODE_CHARCAT_FOR_WIDTH, BBox, OCRParser
 
 # Initialize the logger
 logger = get_logger(__name__)
-
-
-class GoogleVisionBDRCFileProvider(OCRFileProvider):
-    def __init__(self, bdrc_scan_id, ocr_import_info, ocr_disk_path=None, mode="local"):
-        # ocr_base_path should be the output/ folder in the case of BDRC OCR files
-        self.ocr_import_info = ocr_import_info
-        self.ocr_disk_path = ocr_disk_path
-        self.bdrc_scan_id = bdrc_scan_id
-        self.mode = mode
-
-    def get_image_list(self, image_group_id):
-        buda_il = get_image_list(self.bdrc_scan_id, image_group_id)
-        # format should be a list of image_id (/ file names)
-        return map(lambda ii: ii["filename"], buda_il)
-
-    def get_source_info(self):
-        return get_buda_scan_info(self.bdrc_scan_id)
-
-    def get_image_data(self, image_group_id, image_id):
-        # TODO: implement the following modes:
-        #  - "s3" (just read images from s3)
-        #  - "s3-localcache" (cache s3 files on disk)
-        # TODO: handle case where only zip archives are present on s3, one per volume.
-        #       This should be indicated in self.ocr_import_info["ocr_info"]
-        vol_folder = image_group_to_folder_name(self.bdrc_scan_id, image_group_id)
-        expected_ocr_filename = image_id[: image_id.rfind(".")] + ".json.gz"
-        expected_ocr_path = self.ocr_disk_path / vol_folder / expected_ocr_filename
-        ocr_object = None
-        try:
-            ocr_object = json.load(gzip.open(str(expected_ocr_path), "rb"))
-        except Exception as e:
-            logger.exception(f"could not read {expected_ocr_path}: {e}")
-        return ocr_object
 
 
 class GoogleVisionParser(OCRParser):
@@ -227,7 +181,7 @@ class GoogleVisionParser(OCRParser):
                             cur_line_boxes.append(bbox)
                 bboxes.append(cur_line_boxes)
         avg_width = statistics.mean(widths) if widths else None
-        logging.debug("average char width: %f", avg_width)
+        logger.debug("average char width: %f", avg_width)
         return bboxes, avg_width
 
     def get_bboxes_for_page(self, image_group_id, image_filename):

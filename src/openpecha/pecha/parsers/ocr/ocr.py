@@ -722,7 +722,9 @@ class OCRParser(OCRBaseParser):
             return Copyright_unknown, None
         return Copyright_copyrighted, LicenseType.UNDER_COPYRIGHT
 
-    def get_metadata(self, pecha_id: str, ocr_import_info=None) -> InitialPechaMetadata:
+    def get_initial_metadata(
+        self, pecha_id: str, ocr_import_info=None
+    ) -> InitialPechaMetadata:
         source_metadata = {
             "id": f"http://purl.bdrc.io/resource/{self.bdrc_scan_id}",  # noqa
             "title": "",
@@ -747,7 +749,7 @@ class OCRParser(OCRBaseParser):
             initial_creation_type=InitialCreationType.ocr,
             imported=datetime.datetime.now(timezone.utc),
             last_modified=datetime.datetime.now(timezone.utc),
-            parser="OCRParser",
+            parser=self.name,
             copyright=copyright,
             licence=licence,
             source_metadata=source_metadata,
@@ -779,6 +781,7 @@ class OCRParser(OCRBaseParser):
         pecha_id=None,
         opf_options={},
         ocr_import_info={},
+        mode=None,
     ):
         """Create OPF using Pecha instead of OpenPechaFS"""
 
@@ -823,8 +826,7 @@ class OCRParser(OCRBaseParser):
         # Generate Pecha ID if not provided
         pecha_id = get_initial_pecha_id() if pecha_id is None else pecha_id
 
-        # Create metadata object
-        self.metadata = self.get_metadata(pecha_id, ocr_import_info)
+        self.metadata = self.get_initial_metadata(pecha_id, ocr_import_info)
 
         # Create Pecha instance
         pecha = Pecha.create(output_path=self.output_path, pecha_id=pecha_id)
