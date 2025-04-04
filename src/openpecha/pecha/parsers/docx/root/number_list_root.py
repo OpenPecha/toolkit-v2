@@ -126,7 +126,7 @@ class DocxRootParser(BaseParser):
             curr_segment_ann = {
                 layer_enum.value: {
                     "start": char_count,
-                    "end": char_count + len(segment) + 1,
+                    "end": char_count + len(segment),
                 },
                 "root_idx_mapping": root_idx_mapping,
             }
