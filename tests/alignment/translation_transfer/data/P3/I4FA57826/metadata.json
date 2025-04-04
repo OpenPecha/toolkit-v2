@@ -11,7 +11,7 @@
   "imported": "2025-02-03T06:50:58.218004",
   "source": "http://purl.bdrc.io/resource/WA1NLM688",
   "toolkit_version": "0.0.1",
-  "parser": "GoogleDocTranslationParser",
+  "parser": "DocxManualNumRootParser",
   "initial_creation_type": "google_docx",
   "language": "en",
   "source_metadata": {

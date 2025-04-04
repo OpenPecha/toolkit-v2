@@ -8,7 +8,7 @@
   "imported": "2025-01-03T16:12:21.284641",
   "source": null,
   "toolkit_version": "0.0.1",
-  "parser": "GoogleDocTranslationParser",
+  "parser": "DocxManualNumRootParser",
   "initial_creation_type": "google_docx",
   "language": "bo",
   "source_metadata": {
