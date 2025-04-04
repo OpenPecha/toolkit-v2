@@ -18,7 +18,7 @@ class DocxAnnotationParser:
         ann_title: str,
         docx_url: str,
         docx_file: Path,
-        metadata_chain: List[Dict],
+        metadatas: List[Dict],
         relation_ship_map: Tuple[pecha_id, layer_name] | None = None,
     ):
         pass
