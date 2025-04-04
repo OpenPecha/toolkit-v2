@@ -5,17 +5,14 @@ from typing import Dict, List
 from openpecha.config import get_logger
 from openpecha.exceptions import GithubRepoError
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.pecha_db import (
-    is_commentary_pecha,
-    is_translation_pecha,
-)
+from openpecha.pecha.pecha_types import is_commentary_pecha, is_translation_pecha
 from openpecha.utils import read_json
 
 logger = get_logger(__name__)
 
 
 class UpdateSerializeJson:
-    def get_pecha_json(self, pecha: Pecha) -> Dict:
+    def get_pecha_json(self, pecha: Pecha):
         pecha_id = pecha.id
         pecha_path = pecha.pecha_path.__str__()
         try:
