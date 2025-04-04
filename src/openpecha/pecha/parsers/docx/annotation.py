@@ -1,9 +1,8 @@
 from pathlib import Path
-from typing import Tuple
+from typing import Dict, List, Tuple
 
 from openpecha.pecha import Pecha
 
-relationship = str
 pecha_id = str
 layer_name = str
 
@@ -18,7 +17,8 @@ class DocxAnnotationParser:
         ann_name: str,
         ann_title: str,
         docx_url: str,
-        relation_ship_map: Tuple[relationship, pecha_id, layer_name],
         docx_file: Path,
+        metadata_chain: List[Dict],
+        relation_ship_map: Tuple[pecha_id, layer_name] | None = None,
     ):
         pass
