@@ -99,7 +99,7 @@ class DocxSimpleCommentaryParser(BaseParser):
             curr_segment_ann = {
                 LayerEnum.meaning_segment.value: {
                     "start": char_count,
-                    "end": char_count + len(segment) + 1,
+                    "end": char_count + len(segment),
                 },
                 "root_idx_mapping": root_idx_mapping,
             }

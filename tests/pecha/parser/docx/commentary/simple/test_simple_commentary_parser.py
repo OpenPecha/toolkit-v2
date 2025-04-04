@@ -7,7 +7,7 @@ from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryP
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
-class TestNumberListCommentaryParser(TestCase):
+class TestDocxSimpleCommentaryParser(TestCase):
     def setUp(self):
         self.data_dir = Path(__file__).parent / "data"
         self.input = self.data_dir / "དབུ་མ་_bo_commentary.docx"
@@ -15,12 +15,12 @@ class TestNumberListCommentaryParser(TestCase):
             self.data_dir / "དབུ་མ་_bo_commentary_metadata.xlsx"
         )
         self.expected_anns = [
-            {"Meaning_Segment": {"start": 0, "end": 66}, "root_idx_mapping": "1"},
-            {"Meaning_Segment": {"start": 66, "end": 331}, "root_idx_mapping": "2"},
-            {"Meaning_Segment": {"start": 331, "end": 759}, "root_idx_mapping": "2,3"},
-            {"Meaning_Segment": {"start": 759, "end": 1076}, "root_idx_mapping": "3-5"},
+            {"Meaning_Segment": {"start": 0, "end": 65}, "root_idx_mapping": "1"},
+            {"Meaning_Segment": {"start": 66, "end": 330}, "root_idx_mapping": "2"},
+            {"Meaning_Segment": {"start": 331, "end": 758}, "root_idx_mapping": "2,3"},
+            {"Meaning_Segment": {"start": 759, "end": 1075}, "root_idx_mapping": "3-5"},
             {
-                "Meaning_Segment": {"start": 1076, "end": 1471},
+                "Meaning_Segment": {"start": 1076, "end": 1470},
                 "root_idx_mapping": "2,4-5",
             },
         ]
@@ -48,6 +48,3 @@ class TestNumberListCommentaryParser(TestCase):
             )
             pecha = parser.parse(self.input, self.metadata, Path(tempdir))
             assert isinstance(pecha, Pecha)
-
-    def tearDown(self):
-        pass
