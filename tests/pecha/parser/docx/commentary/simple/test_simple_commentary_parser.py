@@ -7,7 +7,7 @@ from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryP
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
-class TestNumberListCommentaryParser(TestCase):
+class TestDocxSimpleCommentaryParser(TestCase):
     def setUp(self):
         self.data_dir = Path(__file__).parent / "data"
         self.input = self.data_dir / "དབུ་མ་_bo_commentary.docx"
@@ -48,12 +48,3 @@ class TestNumberListCommentaryParser(TestCase):
             )
             pecha = parser.parse(self.input, self.metadata, Path(tempdir))
             assert isinstance(pecha, Pecha)
-
-    def tearDown(self):
-        pass
-
-
-if __name__ == "__main__":
-    import unittest
-
-    unittest.main()
