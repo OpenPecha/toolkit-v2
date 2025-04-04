@@ -5,7 +5,7 @@ from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
 from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
-from openpecha.pecha.parsers.docx.root import DocxRootParser
+from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 
 logger = get_logger(__name__)
 

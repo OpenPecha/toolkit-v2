@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.docx.manual_num_root import DocxManualNumRootParser
+from openpecha.pecha.parsers.docx.root.manual_num_root import DocxManualNumRootParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -32,7 +32,7 @@ def test_bo_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for bo data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.manual_num_root.DocxManualNumRootParser.extract_root_idx"
+        "openpecha.pecha.parsers.docx.root.manual_num_root.DocxManualNumRootParser.extract_root_idx"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
@@ -65,7 +65,7 @@ def test_en_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for en data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.manual_num_root.DocxManualNumRootParser.extract_root_idx"
+        "openpecha.pecha.parsers.docx.root.manual_num_root.DocxManualNumRootParser.extract_root_idx"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
@@ -97,7 +97,7 @@ def test_zh_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for zh data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.manual_num_root.DocxManualNumRootParser.extract_root_idx"
+        "openpecha.pecha.parsers.docx.root.manual_num_root.DocxManualNumRootParser.extract_root_idx"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
