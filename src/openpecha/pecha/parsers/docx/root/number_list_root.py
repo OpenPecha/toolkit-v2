@@ -19,7 +19,7 @@ from openpecha.pecha.parsers import BaseParser
 logger = get_logger(__name__)
 
 
-class DocxNumberListTranslationParser(BaseParser):
+class DocxRootParser(BaseParser):
     def __init__(self):
         self.number_list_regex = r"^(\d+)\)\t(.*)"
 

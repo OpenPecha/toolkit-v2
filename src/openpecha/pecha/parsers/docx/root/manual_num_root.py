@@ -13,7 +13,7 @@ from openpecha.pecha.metadata import InitialCreationType, Language
 from openpecha.pecha.parsers import BaseParser
 
 
-class GoogleDocTranslationParser(BaseParser):
+class DocxManualNumRootParser(BaseParser):
     def __init__(self):
         """
         source_path: Normaly, Tibetan file is the source i.e other lang files are translated based
@@ -202,7 +202,7 @@ class GoogleDocTranslationParser(BaseParser):
         pecha.set_metadata(
             {
                 "id": pecha.id,
-                "parser": "GoogleDocTranslationParser",
+                "parser": "DocxManualNumRootParser",
                 **metadata,
                 "bases": bases,
                 "initial_creation_type": InitialCreationType.google_docx,

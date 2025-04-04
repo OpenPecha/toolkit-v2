@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.docx.translation import GoogleDocTranslationParser
+from openpecha.pecha.parsers.docx.root.manual_num_root import DocxManualNumRootParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -13,7 +13,7 @@ def test_bo_google_doc_translation_parser():
     bo_docx_file = DATA_DIR / "bo" / "Tibetan Root text Translation .docx"
     bo_metadata = DATA_DIR / "bo" / "Tibetan Root text Translation Metadata.xlsx"
 
-    parser = GoogleDocTranslationParser()
+    parser = DocxManualNumRootParser()
 
     expected_anns = [
         {"Tibetan_Segment": {"start": 0, "end": 158}, "root_idx_mapping": "1"},
@@ -32,7 +32,7 @@ def test_bo_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for bo data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.translation.GoogleDocTranslationParser.extract_root_idx"
+        "openpecha.pecha.parsers.docx.root.manual_num_root.DocxManualNumRootParser.extract_root_idx"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
@@ -45,7 +45,7 @@ def test_en_google_doc_translation_parser():
     en_docx_file = DATA_DIR / "en" / "English aligned Root Text Translation.docx"
     en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
 
-    parser = GoogleDocTranslationParser()
+    parser = DocxManualNumRootParser()
 
     expected_anns = [
         {"English_Segment": {"start": 0, "end": 154}, "root_idx_mapping": "1"},
@@ -65,7 +65,7 @@ def test_en_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for en data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.translation.GoogleDocTranslationParser.extract_root_idx"
+        "openpecha.pecha.parsers.docx.root.manual_num_root.DocxManualNumRootParser.extract_root_idx"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
@@ -78,7 +78,7 @@ def test_zh_google_doc_translation_parser():
     zh_docx_file = DATA_DIR / "zh" / "Chinese aligned Root Text Translation.docx"
     zh_metadata = DATA_DIR / "zh" / "Chinese Root text Translation Metadata.xlsx"
 
-    parser = GoogleDocTranslationParser()
+    parser = DocxManualNumRootParser()
     expected_anns = [
         {"Chinese_Segment": {"start": 0, "end": 72}, "root_idx_mapping": "1"},
         {"Chinese_Segment": {"start": 73, "end": 81}, "root_idx_mapping": "2"},
@@ -97,7 +97,7 @@ def test_zh_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for zh data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.translation.GoogleDocTranslationParser.extract_root_idx"
+        "openpecha.pecha.parsers.docx.root.manual_num_root.DocxManualNumRootParser.extract_root_idx"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
