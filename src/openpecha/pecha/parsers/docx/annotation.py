@@ -3,6 +3,10 @@ from typing import Tuple
 
 from openpecha.pecha import Pecha
 
+relationship = str
+pecha_id = str
+layer_name = str
+
 
 class DocxAnnotationParser:
     def __init__(self):
@@ -14,7 +18,7 @@ class DocxAnnotationParser:
         ann_name: str,
         ann_title: str,
         docx_url: str,
-        relation_ship_data: Tuple[str, str, str],
+        relation_ship_map: Tuple[relationship, pecha_id, layer_name],
         docx_file: Path,
     ):
         pass
