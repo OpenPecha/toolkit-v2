@@ -15,12 +15,12 @@ class TestNumberListCommentaryParser(TestCase):
             self.data_dir / "དབུ་མ་_bo_commentary_metadata.xlsx"
         )
         self.expected_anns = [
-            {"Meaning_Segment": {"start": 0, "end": 66}, "root_idx_mapping": "1"},
-            {"Meaning_Segment": {"start": 66, "end": 331}, "root_idx_mapping": "2"},
-            {"Meaning_Segment": {"start": 331, "end": 759}, "root_idx_mapping": "2,3"},
-            {"Meaning_Segment": {"start": 759, "end": 1076}, "root_idx_mapping": "3-5"},
+            {"Meaning_Segment": {"start": 0, "end": 65}, "root_idx_mapping": "1"},
+            {"Meaning_Segment": {"start": 66, "end": 330}, "root_idx_mapping": "2"},
+            {"Meaning_Segment": {"start": 331, "end": 758}, "root_idx_mapping": "2,3"},
+            {"Meaning_Segment": {"start": 759, "end": 1075}, "root_idx_mapping": "3-5"},
             {
-                "Meaning_Segment": {"start": 1076, "end": 1471},
+                "Meaning_Segment": {"start": 1076, "end": 1470},
                 "root_idx_mapping": "2,4-5",
             },
         ]
@@ -51,3 +51,9 @@ class TestNumberListCommentaryParser(TestCase):
 
     def tearDown(self):
         pass
+
+
+if __name__ == "__main__":
+    import unittest
+
+    unittest.main()
