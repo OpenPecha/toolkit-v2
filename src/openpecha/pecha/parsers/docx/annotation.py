@@ -1,7 +1,8 @@
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from openpecha.pecha import Pecha
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 
 pecha_id = str
@@ -36,12 +37,11 @@ class DocxAnnotationParser:
     def add_annotation(
         self,
         pecha: Pecha,
-        ann_name: str,
+        ann_type: LayerEnum,
         ann_title: str,
-        docx_url: str,
         docx_file: Path,
         metadatas: List[Dict],
-        relation_ship_map: Tuple[pecha_id, layer_name] | None = None,
+        parent_layer_path: str | None = None,
     ):
         pecha_type: PechaType = get_pecha_type(metadatas)
 
