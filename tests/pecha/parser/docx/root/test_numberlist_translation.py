@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.docx.root import DocxNumberListTranslationParser
+from openpecha.pecha.parsers.docx.root import DocxRootParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -13,7 +13,7 @@ def test_bo_google_doc_translation_parser():
     bo_docx_file = DATA_DIR / "bo/entering_middle_way.docx"
     bo_metadata = DATA_DIR / "bo/Tibetan Root text Translation Metadata.xlsx"
 
-    parser = DocxNumberListTranslationParser()
+    parser = DocxRootParser()
 
     expected_anns = [
         {"Tibetan_Segment": {"start": 0, "end": 42}, "root_idx_mapping": "1"},
@@ -34,7 +34,7 @@ def test_bo_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for bo data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.root.DocxNumberListTranslationParser.extract_root_segments_anns"
+        "openpecha.pecha.parsers.docx.root.DocxRootParser.extract_root_segments_anns"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
@@ -47,7 +47,7 @@ def test_en_google_doc_translation_parser():
     en_docx_file = DATA_DIR / "en" / "entering the middle way english.docx"
     en_metadata = DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
 
-    parser = DocxNumberListTranslationParser()
+    parser = DocxRootParser()
 
     expected_anns = [
         {"English_Segment": {"start": 0, "end": 51}, "root_idx_mapping": "1"},
@@ -69,7 +69,7 @@ def test_en_google_doc_translation_parser():
     ), "Translation Parser failed preparing base text properly for en data"
 
     with tempfile.TemporaryDirectory() as tmpdirname, patch(
-        "openpecha.pecha.parsers.docx.root.DocxNumberListTranslationParser.extract_root_segments_anns"
+        "openpecha.pecha.parsers.docx.root.DocxRootParser.extract_root_segments_anns"
     ) as mock_extract_root_idx:
         OUTPUT_DIR = Path(tmpdirname)
         mock_extract_root_idx.return_value = (expected_anns, expected_base)
