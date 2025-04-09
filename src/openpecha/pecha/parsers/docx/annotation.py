@@ -51,6 +51,7 @@ class DocxAnnotationParser:
             segmentation_coords = parser.extract_segmentation_coordinates(  # noqa
                 docx_file
             )
+
             pass
         elif self.is_commentary_related_pecha(pecha_type):
             pass
