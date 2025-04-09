@@ -87,3 +87,9 @@ class TestDocxRootParser(TestCase):
             pecha = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
+
+
+work = TestDocxRootParser()
+work.setUp()
+work.test_bo_google_doc_translation_parser()
+work.test_en_google_doc_translation_parser()

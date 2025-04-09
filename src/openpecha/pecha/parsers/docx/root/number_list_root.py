@@ -137,18 +137,18 @@ class DocxRootParser(BaseParser):
         return (positions, base)
 
     def extract_segmentation_anns(
-        self, positions: List[Dict[str, int]], metadata: Dict
+        self, positions: List[Dict[str, int]], lang: str
     ) -> List[Dict]:
         """Create segment annotations from position information.
 
         Args:
             positions: List of dicts containing start/end positions and root index mappings
-            metadata: Dictionary containing metadata including language
+            lang
 
         Returns:
             List of annotation dictionaries
         """
-        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
+        layer_enum = self.get_layer_enum_with_lang(lang)
         return [
             {
                 layer_enum.value: {"start": pos["start"], "end": pos["end"]},
@@ -201,7 +201,9 @@ class DocxRootParser(BaseParser):
         positions, base = self.extract_segmentation_coordinates(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        pecha, _ = self.add_segmentation_annotations(pecha, positions, metadata)
+        pecha, _ = self.add_segmentation_annotations(
+            pecha, positions, metadata["language"]
+        )
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return pecha
@@ -231,18 +233,15 @@ class DocxRootParser(BaseParser):
         return pecha
 
     def add_segmentation_annotations(
-        self,
-        pecha: Pecha,
-        positions: List[Dict],
-        metadata: Dict,
+        self, pecha: Pecha, positions: List[Dict], lang: str
     ) -> Tuple[Pecha, Path]:
 
-        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
+        layer_enum = self.get_layer_enum_with_lang(lang)
 
         # Add meaning_segment layer
         basename = list(pecha.bases.keys())[0]
         meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
-        anns = self.extract_segmentation_anns(positions, metadata)
+        anns = self.extract_segmentation_anns(positions, lang)
         for ann in anns:
             pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
@@ -257,7 +256,7 @@ class DocxRootParser(BaseParser):
             }
         ]
         pecha_metadata = pecha.metadata.to_dict()
-        pecha_metadata["bases"].append(bases)
+        pecha_metadata["bases"].extend(bases)
         pecha.set_metadata(pecha_metadata)
 
         # Get layer path relative to Pecha Path
