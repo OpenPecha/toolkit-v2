@@ -257,7 +257,7 @@ class DocxRootParser(BaseParser):
             }
         ]
         pecha_metadata = pecha.metadata.to_dict()
-        pecha_metadata["bases"] = bases
+        pecha_metadata["bases"].append(bases)
         pecha.set_metadata(pecha_metadata)
 
         # Get layer path relative to Pecha Path
