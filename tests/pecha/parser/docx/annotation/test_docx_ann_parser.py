@@ -54,4 +54,11 @@ class TestDocxAnnotationParser(TestCase):
         )
         metadatas = [self.root_display_pecha_metadata]
 
-        self.parser.add_annotation(ann_type, ann_title, docx_file, metadatas)
+        self.parser.add_annotation(
+            self.root_display_pecha, ann_type, ann_title, docx_file, metadatas
+        )
+
+
+work = TestDocxAnnotationParser()
+work.setUp()
+work.test_root_pecha()
