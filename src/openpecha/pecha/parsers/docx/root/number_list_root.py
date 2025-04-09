@@ -106,7 +106,7 @@ class DocxRootParser(BaseParser):
             f"[Error] The language enum '{lang}' from metadata is invalid."
         )
 
-    def calculate_segment_positions(
+    def calculate_segment_coordinates(
         self, segments: Dict[str, str]
     ) -> Tuple[List[Dict], str]:
         """Calculate start and end positions for each segment and build base text.
@@ -173,7 +173,7 @@ class DocxRootParser(BaseParser):
         # Extract and normalize text
         text = self.extract_text_from_docx(docx_file)
         numbered_text = self.extract_numbered_list(text)
-        return self.calculate_segment_positions(numbered_text)
+        return self.calculate_segment_coordinates(numbered_text)
 
     def parse(
         self,
@@ -200,27 +200,49 @@ class DocxRootParser(BaseParser):
 
         positions, base = self.extract_segmentation_coordinates(input)
 
-        pecha, _ = self.create_pecha(positions, base, metadata, output_path, pecha_id)
+        pecha = self.create_pecha(base, output_path, metadata, pecha_id)
+        pecha, _ = self.add_segmentation_annotations(pecha, positions, metadata)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return pecha
 
     def create_pecha(
-        self,
-        positions: List[Dict],
-        base: str,
-        metadata: Dict,
-        output_path: Path,
-        pecha_id: str | None = None,
-    ) -> Tuple[Pecha, Path]:
+        self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
+    ) -> Pecha:
         pecha = Pecha.create(output_path, pecha_id)
-        basename = pecha.set_base(base)
+        pecha.set_base(base)
+
+        try:
+            pecha_metadata = PechaMetaData(
+                id=pecha.id,
+                parser=self.name,
+                **metadata,
+                bases=[],
+                initial_creation_type=InitialCreationType.google_docx,
+            )
+        except Exception as e:
+            logger.error(f"The metadata given was not valid. {str(e)}")
+            raise MetaDataValidationError(
+                f"[Error] The metadata given was not valid. {str(e)}"
+            )
+        else:
+            pecha.set_metadata(pecha_metadata.to_dict())
+
+        return pecha
+
+    def add_segmentation_annotations(
+        self,
+        pecha: Pecha,
+        positions: List[Dict],
+        metadata: Dict,
+    ) -> Tuple[Pecha, Path]:
 
         layer_enum = self.get_layer_enum_with_lang(metadata["language"])
 
         # Add meaning_segment layer
-        anns = self.extract_segmentation_anns(positions, metadata)
+        basename = list(pecha.bases.keys())[0]
         meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
+        anns = self.extract_segmentation_anns(positions, metadata)
         for ann in anns:
             pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
@@ -234,25 +256,12 @@ class DocxRootParser(BaseParser):
                 }
             }
         ]
+        pecha_metadata = pecha.metadata.to_dict()
+        pecha_metadata["bases"] = bases
+        pecha.set_metadata(pecha_metadata)
 
         # Get layer path relative to Pecha Path
         index = layer_path.parts.index(pecha.id)
         relative_layer_path = Path(*layer_path.parts[index:])
-
-        try:
-            pecha_metadata = PechaMetaData(
-                id=pecha.id,
-                parser=self.name,
-                **metadata,
-                bases=bases,
-                initial_creation_type=InitialCreationType.google_docx,
-            )
-        except Exception as e:
-            logger.error(f"The metadata given was not valid. {str(e)}")
-            raise MetaDataValidationError(
-                f"[Error] The metadata given was not valid. {str(e)}"
-            )
-        else:
-            pecha.set_metadata(pecha_metadata.to_dict())
 
         return (pecha, relative_layer_path)
