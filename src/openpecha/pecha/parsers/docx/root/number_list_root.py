@@ -43,6 +43,19 @@ class DocxRootParser(BaseParser):
         """
         return re.sub(r"\n{3,}", "\n\n", text)
 
+    def extract_text_from_docx(self, docx_file: Path) -> str:
+        text = docx2python(docx_file).text
+        if not text:
+            logger.warning(
+                f"The docx file {str(docx_file)} is empty or contains only whitespace."
+            )
+            raise EmptyFileError(
+                f"[Error] The document '{str(docx_file)}' is empty or contains only whitespace."
+            )
+
+        text = self.normalize_text(text)
+        return text
+
     def extract_numbered_list(self, text: str) -> Dict[str, str]:
         """
         Extract number list from the extracted text from docx.
@@ -158,16 +171,7 @@ class DocxRootParser(BaseParser):
             - Base text containing all segments
         """
         # Extract and normalize text
-        text = docx2python(docx_file).text
-        if not text:
-            logger.warning(
-                f"The docx file {str(docx_file)} is empty or contains only whitespace."
-            )
-            raise EmptyFileError(
-                f"[Error] The document '{str(docx_file)}' is empty or contains only whitespace."
-            )
-
-        text = self.normalize_text(text)
+        text = self.extract_text_from_docx(docx_file)
         numbered_text = self.extract_numbered_list(text)
         return self.calculate_segment_positions(numbered_text)
 
