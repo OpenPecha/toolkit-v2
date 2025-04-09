@@ -17,7 +17,7 @@ class TestDocxRootParser(TestCase):
         bo_docx_file = self.DATA_DIR / "bo/entering_middle_way.docx"
         bo_metadata = self.DATA_DIR / "bo/Tibetan Root text Translation Metadata.xlsx"
 
-        expected_segmentation_coordinates = [
+        expected_segmentation_coords = [
             {"start": 0, "end": 41, "root_idx_mapping": "1"},
             {"start": 42, "end": 200, "root_idx_mapping": "2"},
             {"start": 201, "end": 353, "root_idx_mapping": "3"},
@@ -31,7 +31,7 @@ class TestDocxRootParser(TestCase):
         )
 
         assert (
-            segmentation_coordinates == expected_segmentation_coordinates
+            segmentation_coordinates == expected_segmentation_coords
         ), "TestDocxRootParser failed extract segmentation coordinates for bo data."
         assert (
             base == expected_base
@@ -42,7 +42,7 @@ class TestDocxRootParser(TestCase):
         ) as mock_extract_root_idx:
             OUTPUT_DIR = Path(tmpdirname)
             mock_extract_root_idx.return_value = (
-                expected_segmentation_coordinates,
+                expected_segmentation_coords,
                 expected_base,
             )
             pecha = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
@@ -55,7 +55,7 @@ class TestDocxRootParser(TestCase):
             self.DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
         )
 
-        expected_segmentation_coordinates = [
+        expected_segmentation_coords = [
             {"start": 0, "end": 50, "root_idx_mapping": "1"},
             {"start": 51, "end": 281, "root_idx_mapping": "2"},
             {"start": 282, "end": 500, "root_idx_mapping": "3"},
@@ -70,7 +70,7 @@ class TestDocxRootParser(TestCase):
         )
 
         assert (
-            segmentation_coordinates == expected_segmentation_coordinates
+            segmentation_coordinates == expected_segmentation_coords
         ), "TestDocxRootParser failed extract segmentation coordinates for en data."
         assert (
             base == expected_base
@@ -81,7 +81,7 @@ class TestDocxRootParser(TestCase):
         ) as mock_extract_root_idx:
             OUTPUT_DIR = Path(tmpdirname)
             mock_extract_root_idx.return_value = (
-                expected_segmentation_coordinates,
+                expected_segmentation_coords,
                 expected_base,
             )
             pecha = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
