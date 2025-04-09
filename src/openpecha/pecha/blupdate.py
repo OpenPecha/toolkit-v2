@@ -186,23 +186,32 @@ class Blupdate:
             return self.get_updated_with_dmp(srcblcoord, cctvforcoord[0])
 
 
+class DiffMatchPatch:
+    def __init__(self, old_base: str, new_base: str):
+        self.dmp = diff_match_patch()
+        self.dmp.Diff_Timeout = 60
+        self.diffs = self.dmp.diff_main(old_base, new_base, checklines=False)
+
+    def get_updated_coord(self, coordinate: int):
+        return self.dmp.diff_xIndex(self.diffs, coordinate)
+
+
 def get_updated_layer_anns(old_base, new_base: str, layer: AnnotationStore):
     """
     1.Read all the annotations in layer
     2.Compute the updated coordinate of ann based on new  base
     3.Return the updated annotations
     """
-    dmp = diff_match_patch()
-    dmp.Diff_Timeout = 60
-    diffs = dmp.diff_main(old_base, new_base, checklines=False)
+
+    diff_update = DiffMatchPatch(old_base, new_base)
 
     updated_anns = []
     for ann in layer.annotations():
         old_begin = ann.offset().begin().value()
         old_end = ann.offset().end().value()
 
-        new_begin = dmp.diff_xIndex(diffs, old_begin)
-        new_end = dmp.diff_xIndex(diffs, old_end)
+        new_begin = diff_update.get_updated_coord(old_begin)
+        new_end = diff_update.get_updated_coord(old_end)
 
         if new_begin < 0 or new_end < 0:
             raise BaseUpdateFailedError("Failed to update the layer using Blupdate.")

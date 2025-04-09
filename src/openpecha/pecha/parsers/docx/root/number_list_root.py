@@ -93,15 +93,71 @@ class DocxRootParser(BaseParser):
             f"[Error] The language enum '{lang}' from metadata is invalid."
         )
 
-    def extract_root_segments_anns(
-        self, docx_file: Path, metadata: Dict
+    def calculate_segment_positions(
+        self, segments: Dict[str, str]
     ) -> Tuple[List[Dict], str]:
+        """Calculate start and end positions for each segment and build base text.
+
+        Args:
+            segments: Dictionary mapping root indices to segment text
+
+        Returns:
+            Tuple containing:
+            - List of dicts with start/end positions for each segment
+            - Combined base text with all segments
         """
-        1.Loop through numbered text
-        2.If text contains root index indentifier, save it
-        3.Else save the numberlist as it is
+        positions = []
+        base = ""
+        char_count = 0
+
+        for root_idx_mapping, segment in segments.items():
+            positions.append(
+                {
+                    "start": char_count,
+                    "end": char_count + len(segment),
+                    "root_idx_mapping": root_idx_mapping,
+                }
+            )
+            base += f"{segment}\n"
+            char_count += len(segment) + 1
+
+        return (positions, base)
+
+    def extract_segmentation_anns(
+        self, positions: List[Dict[str, int]], metadata: Dict
+    ) -> List[Dict]:
+        """Create segment annotations from position information.
+
+        Args:
+            positions: List of dicts containing start/end positions and root index mappings
+            metadata: Dictionary containing metadata including language
+
+        Returns:
+            List of annotation dictionaries
         """
-        # Normalize text
+        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
+        return [
+            {
+                layer_enum.value: {"start": pos["start"], "end": pos["end"]},
+                "root_idx_mapping": pos["root_idx_mapping"],
+            }
+            for pos in positions
+        ]
+
+    def extract_segmentation_coordinates(
+        self, docx_file: Path
+    ) -> Tuple[List[Dict[str, int]], str]:
+        """Extract text from docx and calculate coordinates for segments.
+
+        Args:
+            docx_file: Path to the docx file
+
+        Returns:
+            Tuple containing:
+            - List of dicts with segment positions and root index mappings
+            - Base text containing all segments
+        """
+        # Extract and normalize text
         text = docx2python(docx_file).text
         if not text:
             logger.warning(
@@ -112,29 +168,8 @@ class DocxRootParser(BaseParser):
             )
 
         text = self.normalize_text(text)
-
-        # Extract text with numbered list from docx file
-        numbered_text: Dict[str, str] = self.extract_numbered_list(text)
-
-        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
-
-        anns = []
-        base = ""
-        char_count = 0
-        for root_idx_mapping, segment in numbered_text.items():
-
-            curr_segment_ann = {
-                layer_enum.value: {
-                    "start": char_count,
-                    "end": char_count + len(segment),
-                },
-                "root_idx_mapping": root_idx_mapping,
-            }
-            anns.append(curr_segment_ann)
-            base += f"{segment}\n"
-
-            char_count += len(segment) + 1
-        return (anns, base)
+        numbered_text = self.extract_numbered_list(text)
+        return self.calculate_segment_positions(numbered_text)
 
     def parse(
         self,
@@ -142,7 +177,14 @@ class DocxRootParser(BaseParser):
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
         pecha_id: Union[str, None] = None,
-    ):
+    ) -> Pecha:
+        """Parse a docx file and create a pecha.
+
+        The process is split into three main steps:
+        1. Extract text and calculate coordinates
+        2. Extract segmentation annotations
+        3. Initialize pecha with annotations and metadata
+        """
         input = Path(input)
         if not input.exists():
             logger.error(f"The input docx file {str(input)} does not exist.")
@@ -152,8 +194,11 @@ class DocxRootParser(BaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        anns, base = self.extract_root_segments_anns(input, metadata)
-        pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
+        positions, base = self.extract_segmentation_coordinates(input)
+        # Extract segmentation annotations
+        anns = self.extract_segmentation_anns(positions, metadata)
+        pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)
+
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return pecha
 
@@ -163,7 +208,7 @@ class DocxRootParser(BaseParser):
         base: str,
         metadata: Dict,
         output_path: Path,
-        pecha_id: str,
+        pecha_id: str | None = None,
     ) -> Tuple[Pecha, Path]:
         pecha = Pecha.create(output_path, pecha_id)
         basename = pecha.set_base(base)
