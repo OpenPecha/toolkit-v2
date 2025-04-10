@@ -8,11 +8,7 @@ from openpecha.utils import get_text_direction_with_lang
 logger = get_logger(__name__)
 
 class FormatPechaCategory:
-
     def __init__(self):
-        self.bo_category = []
-        self.en_category = []
-        self.pecha = None
         self.bo_root_category = {
             "name": "རྩ་བ།",
             "heDesc": "",
@@ -35,13 +31,46 @@ class FormatPechaCategory:
         }
 
 
-    def assign_category(self, type: str):
+    def get_category(self, pecha_category: List[Dict[str, Dict]]):
+        """
+        Get the category of the Pecha
+        """
+        category = {}
+        for cate_info in pecha_category:
+            bo_name = cate_info["name"].get("bo")
+            en_name = cate_info["name"].get("en")
+
+            bo_desc = cate_info["description"].get("bo")
+            en_desc = cate_info["description"].get("en")
+
+            bo_short_desc = cate_info["short_description"].get("bo")
+            en_short_desc = cate_info["short_description"].get("en")
+            if category == {}:
+                category = {
+                    "bo": [],
+                    "en": [],
+                }
+            category["bo"].append({
+                "name": bo_name,
+                "heDesc": bo_desc,
+                "heShortDesc": bo_short_desc,
+            })
+            category["en"].append({
+                "name": en_name,
+                "enDesc": en_desc,
+                "enShortDesc": en_short_desc,
+            })
+        return category
+
+
+    def assign_category(self, category, type: str):
         if type == "root":
-            self.bo_category.append(self.bo_root_category)
-            self.en_category.append(self.en_root_category)
+            category["bo"].append(self.bo_root_category)
+            category["en"].append(self.en_root_category)
         else:
-            self.bo_category.append(self.bo_commentary_category)
-            self.en_category.append(self.en_commentary_category)
+            category["bo"].append(self.bo_commentary_category)
+            category["en"].append(self.en_commentary_category)
+        return category
 
 
     def format_root_category(self, pecha: Pecha, pecha_category: Dict[str, List[Dict[str, str]]]):
@@ -49,19 +78,17 @@ class FormatPechaCategory:
         1.Add Root section ie "རྩ་བ།" or "Root text" to category
         2.Add pecha title to category
         """
-        self.bo_category = pecha_category["bo"]
-        self.en_category = pecha_category["en"]
-        self.pecha = pecha
+        category = self.get_category(pecha_category)
 
-        bo_title = get_pecha_title(self.pecha, "bo")
-        en_title = get_pecha_title(self.pecha, "en")
+        bo_title = get_pecha_title(pecha, "bo")
+        en_title = get_pecha_title(pecha, "en")
         
-        self.assign_category("root")
+        category = self.assign_category(category, "root")
 
-        self.bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        self.en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
 
-        return {"bo": self.bo_category, "en": self.en_category}
+        return category
 
 
     def format_commentary_category(self, pecha: Pecha, pecha_category: Dict[str, List[Dict[str, str]]], root_title: str):
@@ -69,17 +96,15 @@ class FormatPechaCategory:
         1.Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
         2.Add pecha title to category
         """
-        self.bo_category = pecha_category["bo"]
-        self.en_category = pecha_category["en"]
-        self.pecha = pecha
+        category = self.get_category(pecha_category)
         
-        bo_title = get_pecha_title(self.pecha, "bo")
-        en_title = get_pecha_title(self.pecha, "en")
+        bo_title = get_pecha_title(pecha, "bo")
+        en_title = get_pecha_title(pecha, "en")
         
-        self.assign_category("commentary")
+        category = self.assign_category(category, "commentary")
 
-        self.bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        self.en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
 
         mapping = {
             "base_text_titles": [root_title],
@@ -87,10 +112,10 @@ class FormatPechaCategory:
             "link": "Commentary",
         }
 
-        self.bo_category[-1].update(mapping)
-        self.en_category[-1].update(mapping)
+        category["bo"][-1].update(mapping)
+        category["en"][-1].update(mapping)
 
-        return {"bo": self.bo_category, "en": self.en_category}
+        return category
 
 def get_metadata_for_pecha_org(pecha: Pecha, lang: Union[str, None] = None):
     """

@@ -4,7 +4,7 @@ from unittest import TestCase, mock
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db import Serializer
 
-
+null = None
 
 class TestSerializer(TestCase):
     def setUp(self):
@@ -53,17 +53,39 @@ class TestSerializer(TestCase):
             "version_of": None,
             **self.commentary_translation_pecha.metadata.to_dict(),
         }
-        self.pecha_category = {
-            "bo": [
-                {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "heDesc": "", "heShortDesc": ""},
-            ],
-            "en": [
-                {"name": "Madhyamaka", "enDesc": "", "enShortDesc": ""},
-                {"name": "Madhyamaka treatises", "enDesc": "", "enShortDesc": ""},
-            ],
-        }
-
+        self.pecha_category = [
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "Madhyamaka",
+                    "bo": "དབུ་མ།"
+                },
+                "parent": null
+            },
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "Madhyamaka treatises",
+                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"
+                },
+                "parent": "madhyamaka"
+            }
+        ]
+        
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}

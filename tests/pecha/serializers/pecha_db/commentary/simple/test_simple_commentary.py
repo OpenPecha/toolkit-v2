@@ -8,20 +8,42 @@ from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
-
+null = None
 
 class TestSimpleCommentarySerializer(TestCase):
     def setUp(self):
-        self.pecha_category = {
-            "bo": [
-                {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "དབུ་མ་ལ་འཇུག་པ།", "heDesc": "", "heShortDesc": ""},
-            ],
-            "en": [
-                {"name": "Madhyamaka", "enDesc": "", "enShortDesc": ""},
-                {"name": "Entering the Middle Way", "enDesc": "", "enShortDesc": ""},
-            ],
-        }
+        self.pecha_category = [
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "Madhyamaka",
+                    "bo": "དབུ་མ།"
+                },
+                "parent": null
+            },
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "Entering the Middle Way",
+                    "bo": "དབུ་མ་ལ་འཇུག་པ།"
+                },
+                "parent": "madhyamaka"
+            }
+        ]
 
     def test_bo_commentary_serializer(self):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")

@@ -1,32 +1,97 @@
-from unittest import TestCase
-
 from openpecha.pecha.serializers.pecha_db.utils import (
     FormatPechaCategory,
 )
 
+null = None
 
-class TestPechaCategoryFormatter(TestCase):
-    def setUp(self):
-        self.formatter = FormatPechaCategory()
+pecha_category = [
+    {
+        "description": {
+            "en": "",
+            "bo": ""
+        },
+        "short_description": {
+            "en": "",
+            "bo": ""
+        },
+        "name": {
+            "en": "Madhyamaka",
+            "bo": "དབུ་མ།"
+        },
+        "parent": None
+    },
+    {
+        "description": {
+            "en": "",
+            "bo": ""
+        },
+        "short_description": {
+            "en": "",
+            "bo": ""
+        },
+        "name": {
+            "en": "Madhyamaka treatises",
+            "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"
+        },
+        "parent": "madhyamaka"
+    }
+]
+
+expected_category = {
+    'bo': [
+        {
+            'name': 'དབུ་མ།', 
+            'heDesc': '', 
+            'heShortDesc': ''
+            }, 
+        {
+            'name': 'དབུ་མའི་གཞུང་སྣ་ཚོགས།', 
+            'heDesc': '', 
+            'heShortDesc': ''
+            }
+        ], 
+    'en': [
+        {
+            'name': 'Madhyamaka', 
+            'enDesc': '', 
+            'enShortDesc': ''
+            }, 
+        {
+            'name': 'Madhyamaka treatises', 
+            'enDesc': '', 
+            'enShortDesc': ''
+            }
+        ]
+    }
+
+
+class TestPechaCategoryFormatter:
+    def __init__(self):
+        self.category = {}
+
+    def test_get_category(self):
+        formatter = FormatPechaCategory()
+        category = formatter.get_category(pecha_category)
+        self.assertEqual(category, expected_category)
 
     def test_assign_category_root(self):
-        self.formatter.assign_category("root")
-        self.assertEqual(len(self.formatter.bo_category), 1)
-        self.assertEqual(len(self.formatter.en_category), 1)
+        formatter = FormatPechaCategory()   
+        category = formatter.get_category(pecha_category)
+        new_category = formatter.assign_category(category, "root")
         self.assertEqual(
-            self.formatter.bo_category[0]["name"], "རྩ་བ།"
+            new_category["bo"][0]["name"], "རྩ་བ།"
         )
         self.assertEqual(
-            self.formatter.en_category[0]["name"], "Root text"
+            new_category["en"][0]["name"], "Root text"
         )
 
     def test_assign_category_commentary(self):
-        self.formatter.assign_category("commentary")
-        self.assertEqual(len(self.formatter.bo_category), 1)
-        self.assertEqual(len(self.formatter.en_category), 1)
+        formatter = FormatPechaCategory()
+        category = formatter.get_category(pecha_category)
+        new_category = formatter.assign_category(category, "commentary")
         self.assertEqual(
-            self.formatter.bo_category[0]["name"], "འགྲེལ་བ།"
+            new_category["bo"][0]["name"], "འགྲེལ་བ།"
         )
         self.assertEqual(
-            self.formatter.en_category[0]["name"], "Commentary text"
+            new_category["en"][0]["name"], "Commentary text"
         )
