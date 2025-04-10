@@ -186,14 +186,11 @@ class DocxManualNumRootParser(BaseParser):
         meaning_segment_layer.save()
 
         # set base metadata
-        bases = [
-            {
-                basename: {
-                    "source_metadata": {"total_segments": len(anns)},
-                    "base_file": f"{basename}.txt",
-                }
-            }
-        ]
+        bases: Dict = {}
+        bases[basename] = {
+            "source_metadata": {"total_segments": len(anns)},
+            "base_file": f"{basename}.txt",
+        }
 
         # Get layer path relative to Pecha Path
         index = layer_path.parts.index(pecha.id)
