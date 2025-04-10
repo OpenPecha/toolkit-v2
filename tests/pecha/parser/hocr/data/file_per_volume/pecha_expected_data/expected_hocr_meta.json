@@ -18,8 +18,7 @@
       "bo"
     ]
   },
-  "bases": [
-    {
+  "bases": {
       "I0886": {
         "source_metadata": {
           "id": "http://purl.bdrc.io/resource/I0886",
@@ -33,9 +32,7 @@
           "ocr_word_median_confidence_index": 0.3,
           "ocr_word_mean_confidence_index": 0.35191304347826086
         }
-      }
-    },
-    {
+      },
       "I0887": {
         "source_metadata": {
           "id": "http://purl.bdrc.io/resource/I0887",
@@ -50,8 +47,7 @@
           "ocr_word_mean_confidence_index": 0.33192634560906514
         }
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Public domain",
     "notice": "Public domain",

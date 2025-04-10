@@ -115,3 +115,8 @@ class TestDocxManualNumRootParser(TestCase):
             pecha = parser.parse(zh_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
+
+
+work = TestDocxManualNumRootParser()
+work.setUp()
+work.test_bo_google_doc_translation_parser()
