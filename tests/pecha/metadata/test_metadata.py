@@ -93,21 +93,19 @@ def test_initial_pecha_metadata():
     metadata = InitialPechaMetadata(
         initial_creation_type=InitialCreationType.ocr,
         statistics={"ocr_word_median_confidence_index": 0.9},
-        bases=[
-            {
-                "id": "529C",
-                "source_metadata": {
-                    "image_group_id": "I3CN8548",
-                    "title": "",
-                    "total_pages": 62,
-                },
-                "order": 1,
-                "base_file": "529C.txt",
-                "statistics": {
-                    "ocr_word_median_confidence_index": 0.9,
-                },
-            }
-        ],
+        bases={
+            "id": "529C",
+            "source_metadata": {
+                "image_group_id": "I3CN8548",
+                "title": "",
+                "total_pages": 62,
+            },
+            "order": 1,
+            "base_file": "529C.txt",
+            "statistics": {
+                "ocr_word_median_confidence_index": 0.9,
+            },
+        },
         parser=DummyParser().name,  # Add parser field.
     )
 
@@ -117,7 +115,7 @@ def test_initial_pecha_metadata():
     assert metadata.statistics is not None
     assert metadata.statistics["ocr_word_median_confidence_index"] == 0.9
     assert metadata.bases is not None
-    assert metadata.bases[0]["id"] == "529C"
+    assert metadata.bases["id"] == "529C"
 
 
 def test_diplomatic_pecha_metadata():

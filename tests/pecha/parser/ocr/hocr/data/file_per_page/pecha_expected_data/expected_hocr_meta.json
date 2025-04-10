@@ -21,8 +21,7 @@
       "bo"
     ]
   },
-  "bases": [
-    {
+  "bases": {
       "I1KG10196": {
         "source_metadata": {
           "id": "http://purl.bdrc.io/resource/I1KG10196",
@@ -36,9 +35,7 @@
           "ocr_word_median_confidence_index": 1.0,
           "ocr_word_mean_confidence_index": 0.9718181818181818
         }
-      }
-    },
-    {
+      },
       "I1KG10195": {
         "source_metadata": {
           "id": "http://purl.bdrc.io/resource/I1KG10195",
@@ -53,8 +50,7 @@
           "ocr_word_mean_confidence_index": 0.96736568457539
         }
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Public domain",
     "notice": "Public domain",

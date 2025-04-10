@@ -17,15 +17,7 @@ class TestDocxRootParser(TestCase):
         bo_docx_file = self.DATA_DIR / "bo/entering_middle_way.docx"
         bo_metadata = self.DATA_DIR / "bo/Tibetan Root text Translation Metadata.xlsx"
 
-        expected_anns = [
-            {"Tibetan_Segment": {"start": 0, "end": 41}, "root_idx_mapping": "1"},
-            {"Tibetan_Segment": {"start": 42, "end": 200}, "root_idx_mapping": "2"},
-            {"Tibetan_Segment": {"start": 201, "end": 353}, "root_idx_mapping": "3"},
-            {"Tibetan_Segment": {"start": 354, "end": 500}, "root_idx_mapping": "4"},
-            {"Tibetan_Segment": {"start": 501, "end": 667}, "root_idx_mapping": "5"},
-        ]
-
-        expected_segmentation_coordinates = [
+        expected_segmentation_coords = [
             {"start": 0, "end": 41, "root_idx_mapping": "1"},
             {"start": 42, "end": 200, "root_idx_mapping": "2"},
             {"start": 201, "end": 353, "root_idx_mapping": "3"},
@@ -39,17 +31,20 @@ class TestDocxRootParser(TestCase):
         )
 
         assert (
-            segmentation_coordinates == expected_segmentation_coordinates
+            segmentation_coordinates == expected_segmentation_coords
         ), "TestDocxRootParser failed extract segmentation coordinates for bo data."
         assert (
             base == expected_base
         ), "TestDocxRootParser failed preparing base text properly for bo data"
 
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
-            "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_anns"
+            "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coordinates"
         ) as mock_extract_root_idx:
             OUTPUT_DIR = Path(tmpdirname)
-            mock_extract_root_idx.return_value = expected_anns
+            mock_extract_root_idx.return_value = (
+                expected_segmentation_coords,
+                expected_base,
+            )
             pecha = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
@@ -60,15 +55,7 @@ class TestDocxRootParser(TestCase):
             self.DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
         )
 
-        expected_anns = [
-            {"English_Segment": {"start": 0, "end": 50}, "root_idx_mapping": "1"},
-            {"English_Segment": {"start": 51, "end": 281}, "root_idx_mapping": "2"},
-            {"English_Segment": {"start": 282, "end": 500}, "root_idx_mapping": "3"},
-            {"English_Segment": {"start": 501, "end": 707}, "root_idx_mapping": "4"},
-            {"English_Segment": {"start": 708, "end": 907}, "root_idx_mapping": "5"},
-        ]
-
-        expected_segmentation_coordinates = [
+        expected_segmentation_coords = [
             {"start": 0, "end": 50, "root_idx_mapping": "1"},
             {"start": 51, "end": 281, "root_idx_mapping": "2"},
             {"start": 282, "end": 500, "root_idx_mapping": "3"},
@@ -83,17 +70,26 @@ class TestDocxRootParser(TestCase):
         )
 
         assert (
-            segmentation_coordinates == expected_segmentation_coordinates
+            segmentation_coordinates == expected_segmentation_coords
         ), "TestDocxRootParser failed extract segmentation coordinates for en data."
         assert (
             base == expected_base
         ), "TestDocxRootParser failed preparing base text properly for en data"
 
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
-            "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_anns"
+            "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coordinates"
         ) as mock_extract_root_idx:
             OUTPUT_DIR = Path(tmpdirname)
-            mock_extract_root_idx.return_value = expected_anns
+            mock_extract_root_idx.return_value = (
+                expected_segmentation_coords,
+                expected_base,
+            )
             pecha = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
+
+
+work = TestDocxRootParser()
+work.setUp()
+work.test_bo_google_doc_translation_parser()
+work.test_en_google_doc_translation_parser()

@@ -883,8 +883,10 @@ class OCRParser(OCRBaseParser):
         # Convert Toolkit v1 metadata to Toolkit v2 metadata
         pecha_metadata = self.metadata
         if pecha_metadata.bases is None:
-            pecha_metadata.bases = []
-        pecha_metadata.bases = [{k: v} for k, v in self.base_meta.items()]
+            pecha_metadata.bases = {}
+
+        for k, v in self.base_meta.items():
+            pecha_metadata.bases[k] = v
 
         if total_word_confidence_list:
             pecha_metadata.statistics = {

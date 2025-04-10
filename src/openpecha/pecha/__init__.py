@@ -261,6 +261,27 @@ class Pecha:
 
         return self.metadata
 
+    def add_annotation_metadata(
+        self, basename: str, layer_name: str, ann_metadata: Dict
+    ):
+        """
+        Add Annotation Metadata in Pecha Metadata bases
+        """
+        bases_count = len(list(self.metadata.bases.keys()))
+        order = bases_count + 1
+
+        if basename in self.metadata.bases:
+            self.metadata.bases[basename]["source_metadata"]["annotations"][
+                layer_name
+            ] = {**ann_metadata}
+        else:
+            self.metadata.bases[basename] = {
+                "basefilename": f"{basename}.txt",
+                "source_metadata": {"annotations": {layer_name: {**ann_metadata}}},
+                "order": order,
+            }
+        self.set_metadata(self.metadata.to_dict())
+
     def get_layers(
         self, base_name, from_cache=False
     ) -> Generator[Tuple[str, AnnotationStore], None, None]:

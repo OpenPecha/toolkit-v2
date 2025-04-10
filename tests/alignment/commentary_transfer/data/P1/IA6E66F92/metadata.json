@@ -15,16 +15,19 @@
   "initial_creation_type": "google_docx",
   "language": "en",
   "source_metadata": {},
-  "bases": [
-    {
+  "bases": {
       "B8B3": {
+        "base_file": "B8B3.txt",
         "source_metadata": {
-          "total_segments": 9
+          "annotations": {
+             "English_Segment-74F4":{
+              "annotation_type":"Root_Segment"
+             }
+          }
         },
-        "base_file": "B8B3.txt"
+        "ordrer":1
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Unknown",
     "notice": "",

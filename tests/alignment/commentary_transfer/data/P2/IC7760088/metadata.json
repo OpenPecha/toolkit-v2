@@ -17,16 +17,14 @@
   "source_metadata": {
     "version_of": "IA6E66F92"
   },
-  "bases": [
-    {
+  "bases": {
       "A389": {
         "source_metadata": {
           "total_segments": 10
         },
         "base_file": "A389.txt"
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Unknown",
     "notice": "",

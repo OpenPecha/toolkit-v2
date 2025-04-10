@@ -26,16 +26,14 @@
       "BO": "རྡོ་རྗེ་སུམ་བརྒྱ་པའམ་རྡོ་རྗེ་གཅོད་པ།"
     }
   },
-  "bases": [
-    {
+  "bases": {
       "3635": {
         "source_metadata": {
           "total_segments": 29
         },
         "base_file": "3635.txt"
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Unknown",
     "notice": "",

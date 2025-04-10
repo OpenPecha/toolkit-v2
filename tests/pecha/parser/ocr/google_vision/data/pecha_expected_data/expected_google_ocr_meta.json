@@ -18,8 +18,7 @@
       "bo"
     ]
   },
-  "bases": [
-    {
+  "bases": {
       "I3852": {
         "source_metadata": {
           "id": "http://purl.bdrc.io/resource/I3852",
@@ -33,9 +32,8 @@
           "ocr_word_median_confidence_index": 0.949999988079071,
           "ocr_word_mean_confidence_index": 0.8434858081116097
         }
-      }
-    },
-    {
+      },
+    
       "I3853": {
         "source_metadata": {
           "id": "http://purl.bdrc.io/resource/I3853",
@@ -49,9 +47,7 @@
           "ocr_word_median_confidence_index": 0.9800000190734863,
           "ocr_word_mean_confidence_index": 0.917140417030617
         }
-      }
-    },
-    {
+      },
       "I3854": {
         "source_metadata": {
           "id": "http://purl.bdrc.io/resource/I3854",
@@ -66,8 +62,7 @@
           "ocr_word_mean_confidence_index": 0.8736526030115783
         }
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Public domain",
     "notice": "Public domain",

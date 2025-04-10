@@ -28,16 +28,14 @@
     "translation_of": "IE60BBDE8"
     
   },
-  "bases": [
-    {
+  "bases": {
       "D93E": {
         "source_metadata": {
           "total_segments": 29
         },
         "base_file": "D93E.txt"
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Unknown",
     "notice": "",

@@ -43,6 +43,19 @@ class DocxRootParser(BaseParser):
         """
         return re.sub(r"\n{3,}", "\n\n", text)
 
+    def extract_text_from_docx(self, docx_file: Path) -> str:
+        text = docx2python(docx_file).text
+        if not text:
+            logger.warning(
+                f"The docx file {str(docx_file)} is empty or contains only whitespace."
+            )
+            raise EmptyFileError(
+                f"[Error] The document '{str(docx_file)}' is empty or contains only whitespace."
+            )
+
+        text = self.normalize_text(text)
+        return text
+
     def extract_numbered_list(self, text: str) -> Dict[str, str]:
         """
         Extract number list from the extracted text from docx.
@@ -93,7 +106,7 @@ class DocxRootParser(BaseParser):
             f"[Error] The language enum '{lang}' from metadata is invalid."
         )
 
-    def calculate_segment_positions(
+    def calculate_segment_coordinates(
         self, segments: Dict[str, str]
     ) -> Tuple[List[Dict], str]:
         """Calculate start and end positions for each segment and build base text.
@@ -124,18 +137,18 @@ class DocxRootParser(BaseParser):
         return (positions, base)
 
     def extract_segmentation_anns(
-        self, positions: List[Dict[str, int]], metadata: Dict
+        self, positions: List[Dict[str, int]], lang: str
     ) -> List[Dict]:
         """Create segment annotations from position information.
 
         Args:
             positions: List of dicts containing start/end positions and root index mappings
-            metadata: Dictionary containing metadata including language
+            lang
 
         Returns:
             List of annotation dictionaries
         """
-        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
+        layer_enum = self.get_layer_enum_with_lang(lang)
         return [
             {
                 layer_enum.value: {"start": pos["start"], "end": pos["end"]},
@@ -158,18 +171,9 @@ class DocxRootParser(BaseParser):
             - Base text containing all segments
         """
         # Extract and normalize text
-        text = docx2python(docx_file).text
-        if not text:
-            logger.warning(
-                f"The docx file {str(docx_file)} is empty or contains only whitespace."
-            )
-            raise EmptyFileError(
-                f"[Error] The document '{str(docx_file)}' is empty or contains only whitespace."
-            )
-
-        text = self.normalize_text(text)
+        text = self.extract_text_from_docx(docx_file)
         numbered_text = self.extract_numbered_list(text)
-        return self.calculate_segment_positions(numbered_text)
+        return self.calculate_segment_coordinates(numbered_text)
 
     def parse(
         self,
@@ -195,52 +199,35 @@ class DocxRootParser(BaseParser):
         output_path.mkdir(parents=True, exist_ok=True)
 
         positions, base = self.extract_segmentation_coordinates(input)
-        # Extract segmentation annotations
-        anns = self.extract_segmentation_anns(positions, metadata)
-        pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)
+
+        pecha = self.create_pecha(base, output_path, metadata, pecha_id)
+        layer_path = self.add_segmentation_annotations(
+            pecha, positions, metadata["language"]
+        )
+        basename = list(pecha.bases.keys())[0]
+        pecha.add_annotation_metadata(
+            basename,
+            layer_path.stem,
+            {
+                "annotation_type": LayerEnum.root_segment.value,
+            },
+        )
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return pecha
 
     def create_pecha(
-        self,
-        anns: List[Dict],
-        base: str,
-        metadata: Dict,
-        output_path: Path,
-        pecha_id: str | None = None,
-    ) -> Tuple[Pecha, Path]:
+        self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
+    ) -> Pecha:
         pecha = Pecha.create(output_path, pecha_id)
-        basename = pecha.set_base(base)
-
-        layer_enum = self.get_layer_enum_with_lang(metadata["language"])
-
-        # Add meaning_segment layer
-        meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
-        for ann in anns:
-            pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
-        meaning_segment_layer.save()
-
-        # set base metadata
-        bases = [
-            {
-                basename: {
-                    "source_metadata": {"total_segments": len(anns)},
-                    "base_file": f"{basename}.txt",
-                }
-            }
-        ]
-
-        # Get layer path relative to Pecha Path
-        index = layer_path.parts.index(pecha.id)
-        relative_layer_path = Path(*layer_path.parts[index:])
+        pecha.set_base(base)
 
         try:
             pecha_metadata = PechaMetaData(
                 id=pecha.id,
                 parser=self.name,
                 **metadata,
-                bases=bases,
+                bases={},
                 initial_creation_type=InitialCreationType.google_docx,
             )
         except Exception as e:
@@ -251,4 +238,20 @@ class DocxRootParser(BaseParser):
         else:
             pecha.set_metadata(pecha_metadata.to_dict())
 
-        return (pecha, relative_layer_path)
+        return pecha
+
+    def add_segmentation_annotations(
+        self, pecha: Pecha, positions: List[Dict], lang: str
+    ) -> Path:
+
+        layer_enum = self.get_layer_enum_with_lang(lang)
+
+        # Add meaning_segment layer
+        basename = list(pecha.bases.keys())[0]
+        meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
+        anns = self.extract_segmentation_anns(positions, lang)
+        for ann in anns:
+            pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
+        meaning_segment_layer.save()
+
+        return layer_path
