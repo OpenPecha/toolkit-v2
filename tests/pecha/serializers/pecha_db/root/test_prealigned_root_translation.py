@@ -6,7 +6,7 @@ from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
     PreAlignedRootTranslationSerializer,
 )
 from openpecha.utils import read_json
-
+null = None
 
 class TestPreAlignedRootTranslationSerializer(TestCase):
     def setUp(self):
@@ -14,17 +14,38 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         self.root_display_pecha = Pecha.from_path(self.DATA_DIR / "P1/I15C4AA72")
         self.root_pecha = Pecha.from_path(self.DATA_DIR / "P2/I73078576")
         self.translation_pecha = Pecha.from_path(self.DATA_DIR / "P3/I4FA57826")
-
-        self.pecha_category = {
-            "bo": [
-                {"name": "སངས་རྒྱས་ཀྱི་བཀའ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-            ],
-            "en": [
-                {"name": "The Buddha's Teachings", "enDesc": "", "enShortDesc": ""},
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-            ],
-        }
+        self.pecha_category = [
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "The Buddha's Teachings",
+                    "bo": "སངས་རྒྱས་ཀྱི་བཀའ།"
+                },
+                "parent": null
+            },
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "Vajra Cutter",
+                    "bo": "རྡོ་རྗེ་གཅོད་པ།"
+                },
+                "parent": "the-buddha's-teachings"
+            }
+        ]
 
     def test_root_translation_pecha(self):
         serializer = PreAlignedRootTranslationSerializer()

@@ -12,6 +12,7 @@ class FormatPechaCategory:
     def __init__(self):
         self.bo_category = []
         self.en_category = []
+        self.category = {}
         self.pecha = None
         self.bo_root_category = {
             "name": "རྩ་བ།",
@@ -34,6 +35,36 @@ class FormatPechaCategory:
             "enShortDesc": "",
         }
 
+    def get_category(self, pecha_category: Dict[str, List[Dict[str, str]]]):
+        """
+        Get the category of the Pecha
+        """
+        for cat_info in pecha_category:
+            bo_name = cat_info["name"].get("bo")
+            en_name = cat_info["name"].get("en")
+
+            bo_desc = cat_info["description"].get("bo")
+            en_desc = cat_info["description"].get("en")
+
+            bo_short_desc = cat_info["short_description"].get("bo")
+            en_short_desc = cat_info["short_description"].get("en")
+            if self.category == {}:
+                self.category = {
+                    "bo": [],
+                    "en": [],
+                }
+            self.category["bo"].append({
+                "name": bo_name,
+                "heDesc": bo_desc,
+                "heShortDesc": bo_short_desc,
+            })
+            self.category["en"].append({
+                "name": en_name,
+                "enDesc": en_desc,
+                "enShortDesc": en_short_desc,
+            })
+        return self.category
+
 
     def assign_category(self, type: str):
         if type == "root":
@@ -49,8 +80,9 @@ class FormatPechaCategory:
         1.Add Root section ie "རྩ་བ།" or "Root text" to category
         2.Add pecha title to category
         """
-        self.bo_category = pecha_category["bo"]
-        self.en_category = pecha_category["en"]
+        self.get_category(pecha_category)
+        self.bo_category = self.category["bo"]
+        self.en_category = self.category["en"]
         self.pecha = pecha
 
         bo_title = get_pecha_title(self.pecha, "bo")
@@ -69,8 +101,9 @@ class FormatPechaCategory:
         1.Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
         2.Add pecha title to category
         """
-        self.bo_category = pecha_category["bo"]
-        self.en_category = pecha_category["en"]
+        self.get_category(pecha_category)
+        self.bo_category = self.category["bo"]
+        self.en_category = self.category["en"]
         self.pecha = pecha
         
         bo_title = get_pecha_title(self.pecha, "bo")
@@ -87,10 +120,10 @@ class FormatPechaCategory:
             "link": "Commentary",
         }
 
-        self.bo_category[-1].update(mapping)
-        self.en_category[-1].update(mapping)
+        self.category["bo"][-1].update(mapping)
+        self.category["en"][-1].update(mapping)
 
-        return {"bo": self.bo_category, "en": self.en_category}
+        return self.category
 
 def get_metadata_for_pecha_org(pecha: Pecha, lang: Union[str, None] = None):
     """
@@ -132,3 +165,40 @@ def get_pecha_title(pecha: Pecha, lang: str):
         )
 
     return title
+
+
+# if __name__ == "__main__":
+#     pecha_category = [
+#             {
+#                 "description": {
+#                     "en": "",
+#                     "bo": ""
+#                 },
+#                 "short_description": {
+#                     "en": "",
+#                     "bo": ""
+#                 },
+#                 "name": {
+#                     "en": "Madhyamaka",
+#                     "bo": "དབུ་མ།"
+#                 },
+#                 "parent": None
+#             },
+#             {
+#                 "description": {
+#                     "en": "",
+#                     "bo": ""
+#                 },
+#                 "short_description": {
+#                     "en": "",
+#                     "bo": ""
+#                 },
+#                 "name": {
+#                     "en": "Madhyamaka treatises",
+#                     "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"
+#                 },
+#                 "parent": "madhyamaka"
+#             }
+#         ]
+#     FormatPechaCategory().get_category(pecha_category)
+#     print(FormatPechaCategory().category)

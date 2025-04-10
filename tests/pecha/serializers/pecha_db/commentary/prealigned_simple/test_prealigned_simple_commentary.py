@@ -7,6 +7,7 @@ from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary impor
 )
 from openpecha.utils import read_json
 
+null = None
 
 class TestPreAlignedCommentarySerializer(TestCase):
     def setUp(self):
@@ -20,16 +21,38 @@ class TestPreAlignedCommentarySerializer(TestCase):
         )
 
         # Create the patcher and set return_value
-        self.pecha_category = {
-            "bo": [
-                {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
-                {"name": "དབུ་མ་ལ་འཇུག་པ།", "heDesc": "", "heShortDesc": ""},
-            ],
-            "en": [
-                {"name": "Madhyamaka", "enDesc": "", "enShortDesc": ""},
-                {"name": "Entering the Middle Way", "enDesc": "", "enShortDesc": ""},
-            ],
-        }
+        self.pecha_category = [
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "Madhyamaka",
+                    "bo": "དབུ་མ།"
+                },
+                "parent": null
+            },
+            {
+                "description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "short_description": {
+                    "en": "",
+                    "bo": ""
+                },
+                "name": {
+                    "en": "Entering the Middle Way",
+                    "bo": "དབུ་མ་ལ་འཇུག་པ།"
+                },
+                "parent": "madhyamaka"
+            }
+        ]
 
     @mock.patch(
         "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.CommentaryAlignmentTransfer.get_serialized_commentary",
