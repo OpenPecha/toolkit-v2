@@ -26,7 +26,7 @@
     },
     "root_path": "opf_id/layers/basename/layer_file.json"
   },
-  "bases": [],
+  "bases": {},
   "copyright": {
     "status": "Unknown",
     "notice": "",
