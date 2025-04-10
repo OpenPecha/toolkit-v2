@@ -9,8 +9,7 @@
   "initial_creation_type": "ebook",
   "language": "bo",
   "source_metadata": {},
-  "bases": [
-    {
+  "bases": {
       "C502": {
         "source_metadata": {
           "source_id": "BO_K01_D0001_H0001",
@@ -19,9 +18,7 @@
         },
         "base_file": "C502",
         "order": 1
-      }
-    },
-    {
+      },
       "DF47": {
         "source_metadata": {
           "source_id": "BO_K01_D0001-2_H0001-2",
@@ -32,7 +29,7 @@
         "order": 2
       }
     }
-  ],
+  ,
   "copyright": {
     "status": "Unknown",
     "notice": "",
