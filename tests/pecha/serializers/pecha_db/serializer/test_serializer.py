@@ -3,9 +3,7 @@ from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db import Serializer
-from openpecha.pecha.serializers.pecha_db.utils import (
-    format_pecha_category_from_backend,
-)
+
 
 
 class TestSerializer(TestCase):
@@ -55,16 +53,16 @@ class TestSerializer(TestCase):
             "version_of": None,
             **self.commentary_translation_pecha.metadata.to_dict(),
         }
-        self.pecha_category = [
-            {
-                "description": {
-                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
-                    "en": "Madhyamaka treatises",
-                },
-                "name": {"bo": "དབུ་མ།", "en": "Madhyamaka"},
-                "short_description": {"bo": "", "en": ""},
-            }
-        ]
+        self.pecha_category = {
+            "bo": [
+                {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
+                {"name": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "heDesc": "", "heShortDesc": ""},
+            ],
+            "en": [
+                {"name": "Madhyamaka", "enDesc": "", "enShortDesc": ""},
+                {"name": "Madhyamaka treatises", "enDesc": "", "enShortDesc": ""},
+            ],
+        }
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_pecha(self, mock_translation_serialize):
@@ -78,7 +76,7 @@ class TestSerializer(TestCase):
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_pecha, format_pecha_category_from_backend(self.pecha_category)
+            self.root_pecha, self.pecha_category
         )
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
@@ -97,7 +95,7 @@ class TestSerializer(TestCase):
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
             self.root_display_pecha,
-            format_pecha_category_from_backend(self.pecha_category),
+            self.pecha_category,
             self.root_translation_pecha,
         )
 
@@ -115,7 +113,7 @@ class TestSerializer(TestCase):
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_pecha,
-            format_pecha_category_from_backend(self.pecha_category),
+            self.pecha_category,
             self.root_display_pecha.metadata.title["EN"],
         )
 
@@ -141,7 +139,7 @@ class TestSerializer(TestCase):
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_pecha,
-            format_pecha_category_from_backend(self.pecha_category),
+            self.pecha_category,
             self.root_display_pecha.metadata.title["EN"],
             self.commentary_translation_pecha,
         )
@@ -166,7 +164,7 @@ class TestSerializer(TestCase):
             self.root_display_pecha,
             self.root_pecha,
             self.commentary_pecha,
-            format_pecha_category_from_backend(self.pecha_category),
+            self.pecha_category,
         )
 
     @mock.patch(
@@ -190,5 +188,5 @@ class TestSerializer(TestCase):
             self.root_display_pecha,
             self.root_pecha,
             self.root_translation_pecha,
-            format_pecha_category_from_backend(self.pecha_category),
+            self.pecha_category,
         )

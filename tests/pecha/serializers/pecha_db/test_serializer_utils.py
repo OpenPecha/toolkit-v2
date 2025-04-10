@@ -1,70 +1,32 @@
 from unittest import TestCase
 
 from openpecha.pecha.serializers.pecha_db.utils import (
-    format_pecha_category_from_backend,
+    FormatPechaCategory,
 )
 
 
 class TestPechaCategoryFormatter(TestCase):
-    def test_single_category(self):
-        single_category = [
-            {
-                "description": {
-                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
-                    "en": "Madhyamaka treatises",
-                },
-                "name": {"bo": "དབུ་མ།", "en": "Madhyamaka"},
-                "short_description": {"bo": "", "en": ""},
-            }
-        ]
-        formatted_category = format_pecha_category_from_backend(single_category)
-        expected_category = {
-            "en": [
-                {
-                    "name": "Madhyamaka",
-                    "enDesc": "Madhyamaka treatises",
-                    "enShortDesc": "",
-                }
-            ],
-            "bo": [
-                {"name": "དབུ་མ།", "heDesc": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "heShortDesc": ""}
-            ],
-        }
-        self.assertEqual(formatted_category, expected_category)
+    def setUp(self):
+        self.formatter = FormatPechaCategory()
 
-    def test_multiple_categories(self):
-        multiple_category = [
-            {
-                "description": {
-                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
-                    "en": "Madhyamaka treatises",
-                },
-                "name": {"bo": "དབུ་མ།", "en": "Madhyamaka"},
-                "short_description": {"bo": "", "en": ""},
-            },
-            {
-                "description": {"bo": "", "en": ""},
-                "name": {"bo": "རྡོ་རྗེ་གཅོད་པ།", "en": "Vajra Cutter"},
-                "short_description": {"bo": "", "en": ""},
-            },
-        ]
-        formatted_category = format_pecha_category_from_backend(multiple_category)
-        expected_category = {
-            "en": [
-                {
-                    "name": "Madhyamaka",
-                    "enDesc": "Madhyamaka treatises",
-                    "enShortDesc": "",
-                },
-                {"name": "Vajra Cutter", "enDesc": "", "enShortDesc": ""},
-            ],
-            "bo": [
-                {
-                    "name": "དབུ་མ།",
-                    "heDesc": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
-                    "heShortDesc": "",
-                },
-                {"name": "རྡོ་རྗེ་གཅོད་པ།", "heDesc": "", "heShortDesc": ""},
-            ],
-        }
-        self.assertEqual(formatted_category, expected_category)
+    def test_assign_category_root(self):
+        self.formatter.assign_category("root")
+        self.assertEqual(len(self.formatter.bo_category), 1)
+        self.assertEqual(len(self.formatter.en_category), 1)
+        self.assertEqual(
+            self.formatter.bo_category[0]["name"], "རྩ་བ།"
+        )
+        self.assertEqual(
+            self.formatter.en_category[0]["name"], "Root text"
+        )
+
+    def test_assign_category_commentary(self):
+        self.formatter.assign_category("commentary")
+        self.assertEqual(len(self.formatter.bo_category), 1)
+        self.assertEqual(len(self.formatter.en_category), 1)
+        self.assertEqual(
+            self.formatter.bo_category[0]["name"], "འགྲེལ་བ།"
+        )
+        self.assertEqual(
+            self.formatter.en_category[0]["name"], "Commentary text"
+        )
