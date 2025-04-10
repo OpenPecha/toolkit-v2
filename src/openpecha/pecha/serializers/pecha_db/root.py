@@ -9,6 +9,7 @@ from openpecha.pecha.metadata import Language
 from openpecha.pecha.serializers.pecha_db.utils import (
     get_metadata_for_pecha_org,
     get_pecha_title,
+    FormatPechaCategory
 )
 from openpecha.utils import chunk_strings
 
@@ -16,34 +17,6 @@ logger = get_logger(__name__)
 
 
 class RootSerializer:
-    def __init__(self):
-        self.bo_root_category = {
-            "name": "རྩ་བ།",
-            "heDesc": "",
-            "heShortDesc": "",
-        }
-        self.en_root_category = {
-            "name": "Root text",
-            "enDesc": "",
-            "enShortDesc": "",
-        }
-
-    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
-        """
-        1.Add Root section ie "རྩ་བ།" or "Root text" to category
-        2.Add pecha title to category
-        """
-        bo_category, en_category = category["bo"], category["en"]
-        bo_category.append(self.bo_root_category)
-        en_category.append(self.en_root_category)
-
-        bo_title = get_pecha_title(pecha, "bo")
-        en_title = get_pecha_title(pecha, "en")
-
-        bo_category.append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        en_category.append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-
-        return {"bo": bo_category, "en": en_category}
 
     @staticmethod
     def get_texts_from_layer(layer: AnnotationStore):
@@ -129,7 +102,7 @@ class RootSerializer:
     ) -> Dict:
 
         # Format Category
-        formatted_category = self.format_category(pecha, pecha_category)
+        formatted_category = FormatPechaCategory().format_root_category(pecha, pecha_category)
         root_category, translation_category = (
             formatted_category["bo"],
             formatted_category["en"],

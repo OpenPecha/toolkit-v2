@@ -171,7 +171,7 @@ def test_pecha_licence():
 
 
 def test_extract_metadata_for_work():
-    metadata = extract_metadata_for_work(Path(__file__).parent / "data" / "W12827")
+    metadata = extract_metadata_for_work(Path(__file__).parent / "data" / "W24767")
     expected_metadata = read_json(
         Path(__file__).parent / "data" / "expected_extracted_metadata.json"
     )
@@ -190,7 +190,7 @@ def test_extract_metadata_for_work():
 def test_format_metadata_for_op_api():
     """Test that BDRC metadata is correctly formatted for OpenPecha API."""
     # Load test input data
-    metadata = extract_metadata_for_work(Path(__file__).parent / "data" / "W12827")
+    metadata = extract_metadata_for_work(Path(__file__).parent / "data" / "W24767")
 
     # Call the function under test
     formatted_data = format_metadata_for_op_api(metadata)

@@ -1,0 +1,85 @@
+{
+  "id": "I123456",
+  "title": "གསུང་འབུམ། འཇིགས་མེད་གླིང་པ།",
+  "author": "ཀུན་མཁྱེན་འཇིགས་མེད་གླིང་པ།",
+  "imported": "2025-03-28T10:24:52.465778+00:00",
+  "source": "https://library.bdrc.io",
+  "toolkit_version": "0.0.1",
+  "parser": "HOCRParser",
+  "initial_creation_type": "ocr",
+  "language": "bo",
+  "source_metadata": {
+    "id": "http://purl.bdrc.io/resource/W1KG10193",
+    "status": "http://purl.bdrc.io/admindata/StatusReleased",
+    "access": "http://purl.bdrc.io/admindata/AccessOpen",
+    "geo_restriction": [
+      "CN"
+    ],
+    "reproduction_of": "http://purl.bdrc.io/resource/MW1KG10193",
+    "copyright_status": "http://purl.bdrc.io/resource/CopyrightPublicDomain",
+    "languages": [
+      "bo"
+    ]
+  },
+  "bases": {
+      "I1KG10196": {
+        "source_metadata": {
+          "id": "http://purl.bdrc.io/resource/I1KG10196",
+          "total_pages": 1007,
+          "volume_number": 2,
+          "volume_pages_bdrc_intro": 2
+        },
+        "order": 2,
+        "base_file": "I1KG10196.txt",
+        "statistics": {
+          "ocr_word_median_confidence_index": 1.0,
+          "ocr_word_mean_confidence_index": 0.9718181818181818
+        }
+      },
+      "I1KG10195": {
+        "source_metadata": {
+          "id": "http://purl.bdrc.io/resource/I1KG10195",
+          "total_pages": 935,
+          "volume_number": 1,
+          "volume_pages_bdrc_intro": 2
+        },
+        "order": 1,
+        "base_file": "I1KG10195.txt",
+        "statistics": {
+          "ocr_word_median_confidence_index": 1.0,
+          "ocr_word_mean_confidence_index": 0.96736568457539
+        }
+      }
+    },
+  "copyright": {
+    "status": "Public domain",
+    "notice": "Public domain",
+    "info_url": "https://creativecommons.org/publicdomain/mark/1.0/"
+  },
+  "licence": "CC0",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": {
+    "source": "bdrc",
+    "software": "google_books",
+    "batch": "batch_2022",
+    "expected_default_language": "bo",
+    "bdrc_scan_id": "W1KG10193",
+    "ocr_info": {
+      "timestamp": "11/04/22T20:33:39",
+      "html": "html.zip",
+      "txt": "txt.zip",
+      "images": "images.zip"
+    },
+    "op_import_options": {
+      "ocr_confidence_threshold": 0.9,
+      "max_low_conf_per_page": 50
+    }
+  },
+  "statistics": {
+    "ocr_word_mean_confidence_index": 0.9698547955674436,
+    "ocr_word_median_confidence_index": 1.0
+  },
+  "quality": null,
+  "last_modified": "2025-03-28T10:24:52.465788+00:00"
+}

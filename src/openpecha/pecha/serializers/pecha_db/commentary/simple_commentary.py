@@ -7,6 +7,7 @@ from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.serializers.pecha_db.utils import (
     get_metadata_for_pecha_org,
     get_pecha_title,
+    FormatPechaCategory
 )
 from openpecha.utils import (
     chunk_strings,
@@ -18,49 +19,6 @@ logger = get_logger(__name__)
 
 
 class SimpleCommentarySerializer:
-    def __init__(self):
-        self.bo_commentary_category = {
-            "name": "འགྲེལ་བ།",
-            "heDesc": "",
-            "heShortDesc": "",
-        }
-        self.en_commentary_category = {
-            "name": "Commentary text",
-            "enDesc": "",
-            "enShortDesc": "",
-        }
-
-    def format_category(self, pecha: Pecha, category: Dict[str, List[Dict[str, str]]]):
-        """
-        Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
-        Add pecha title to category
-        """
-
-        category["bo"].append(self.bo_commentary_category)
-        category["en"].append(self.en_commentary_category)
-
-        bo_title = get_pecha_title(pecha, "bo")
-        en_title = get_pecha_title(pecha, "en")
-
-        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
-        category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-
-        return category
-
-    def add_root_reference_to_category(self, category: Dict[str, Any], root_title: str):
-        """
-        Modify the category format to the required format for pecha.org commentary
-        """
-        for lang in ["bo", "en"]:
-            last_category = category[lang][-1]
-            last_category.update(
-                {
-                    "base_text_titles": [root_title],
-                    "base_text_mapping": "many_to_one",
-                    "link": "Commentary",
-                }
-            )
-        return category
 
     def get_content(self, pecha: Pecha, layer_path: str):
         """
@@ -106,10 +64,7 @@ class SimpleCommentarySerializer:
         translation_pecha: Union[Pecha, None] = None,
     ):
         # Format Category
-        formatted_category = self.format_category(pecha, pecha_category)
-        formatted_category = self.add_root_reference_to_category(
-            formatted_category, root_title
-        )
+        formatted_category = FormatPechaCategory().format_commentary_category(pecha, pecha_category, root_title)
         src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
 
         # Get the metadata for Commentary and Commentary Translation pecha
