@@ -51,11 +51,11 @@ class DocxAnnotationParser:
             parser = DocxRootParser()
             segmentation_coords, _ = parser.extract_segmentation_coordinates(docx_file)
 
-            old_basename = list(pecha.bases.keys())[0]
-            old_base = pecha.get_base(old_basename)
-            new_base = parser.extract_text_from_docx(docx_file)
+            new_basename = list(pecha.bases.keys())[0]
+            new_base = pecha.get_base(new_basename)
+            old_base = parser.extract_text_from_docx(docx_file)
 
-            diff_update = DiffMatchPatch(new_base, old_base)
+            diff_update = DiffMatchPatch(old_base, new_base)
 
             updated_coords = []
             for coord in segmentation_coords:
@@ -70,9 +70,11 @@ class DocxAnnotationParser:
                     }
                 )
             lang = pecha.metadata.language.value
-            pecha, layer_path = parser.add_segmentation_annotations(
+            layer_path = parser.add_segmentation_annotations(
                 pecha, updated_coords, lang
             )
+            layer_path.unlink()
+
             pass
         elif self.is_commentary_related_pecha(pecha_type):
             pass
