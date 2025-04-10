@@ -30,3 +30,6 @@ def test_dharmanexus():
         assert dharmanexus.state["BO_K01_D0001-2_H0001-2"]["annotations"]["pages"][
             "58a"
         ]["span"] == {"start": 123317, "end": 124350}
+
+
+test_dharmanexus()

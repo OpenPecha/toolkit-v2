@@ -22,9 +22,8 @@ class PechaDBSerializer(BaseSerializer):
         in the Pecha bases attribute.
         """
         chapter_dict = {}
-        for base_metadata in pecha.metadata.bases:
-            basename = next(iter(base_metadata.keys()))
-            base_order = base_metadata[basename].get("order")
+        for basename, base_metadata in pecha.metadata.bases.items():
+            base_order = base_metadata["order"]
             if base_order:
                 chapter_dict[base_order] = basename
 

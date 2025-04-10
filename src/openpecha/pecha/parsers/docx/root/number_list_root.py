@@ -219,7 +219,7 @@ class DocxRootParser(BaseParser):
                 id=pecha.id,
                 parser=self.name,
                 **metadata,
-                bases=[],
+                bases={},
                 initial_creation_type=InitialCreationType.google_docx,
             )
         except Exception as e:
@@ -247,17 +247,17 @@ class DocxRootParser(BaseParser):
         meaning_segment_layer.save()
 
         # set base metadata
-        bases = [
-            {
-                basename: {
-                    "source_metadata": {"total_segments": len(anns)},
-                    "base_file": f"{basename}.txt",
-                }
-            }
-        ]
-        pecha_metadata = pecha.metadata.to_dict()
-        pecha_metadata["bases"].extend(bases)
-        pecha.set_metadata(pecha_metadata)
+        # bases = [
+        #     {
+        #         basename: {
+        #             "source_metadata": {"total_segments": len(anns)},
+        #             "base_file": f"{basename}.txt",
+        #         }
+        #     }
+        # ]
+        # pecha_metadata = pecha.metadata.to_dict()
+        # pecha_metadata["bases"].extend(bases)
+        # pecha.set_metadata(pecha_metadata)
 
         # Get layer path relative to Pecha Path
         index = layer_path.parts.index(pecha.id)

@@ -131,8 +131,7 @@ class DharamanexusParser(BaseParser):
             }
 
     def write_to_pecha(self, pecha, metadata):
-        curr_bases = {}
-        bases = []
+        bases = {}
         order = 1
         for vol, data in self.state.items():
             base_name = pecha.set_base(content=data["base_text"])
@@ -155,19 +154,17 @@ class DharamanexusParser(BaseParser):
                 pecha.add_annotation(pagination, page_ann, LayerEnum.pagination)
             pagination.save()
 
-            curr_bases = {
-                base_name: {
-                    "source_metadata": {
-                        "source_id": vol,
-                        "total_segments": len(data["annotations"]["segments"]),
-                        "total_pages": len(data["annotations"]["pages"]),
-                    },
-                    "base_file": base_name,
-                    "order": order,
-                }
+            curr_base = {
+                "source_metadata": {
+                    "source_id": vol,
+                    "total_segments": len(data["annotations"]["segments"]),
+                    "total_pages": len(data["annotations"]["pages"]),
+                },
+                "base_file": base_name,
+                "order": order,
             }
-            bases.append(curr_bases)
-            curr_bases = {}
+
+            bases[base_name] = curr_base
             order += 1
 
         pecha.set_metadata(
