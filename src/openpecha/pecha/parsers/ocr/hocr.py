@@ -133,9 +133,7 @@ class HOCRParser(OCRParser):
 
     def get_bboxes_for_page(self, image_group_id, image_filename):
         bboxes = []
-        hocr_page_html = self.data_provider.get_image_data(
-            image_group_id, image_filename
-        )
+        hocr_page_html = self.data_source.get_image_data(image_group_id, image_filename)
         if hocr_page_html:
             if self.mode == "IA":
                 bboxes = self.get_boxes_for_IA(hocr_page_html)

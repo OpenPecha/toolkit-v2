@@ -185,7 +185,7 @@ class GoogleVisionParser(OCRParser):
         return bboxes, avg_width
 
     def get_bboxes_for_page(self, image_group_id, image_filename):
-        ocr_object = self.data_provider.get_image_data(image_group_id, image_filename)
+        ocr_object = self.data_source.get_image_data(image_group_id, image_filename)
         try:
             page_content = ocr_object["textAnnotations"][0]["description"]
         except Exception as e:

@@ -44,7 +44,6 @@ class BdrcParser:
             - Create OPF (replace with your actual OPF creation logic)
         """
         input_path = Path(input)
-        ocr_import_info = metadata["bdrc"]["ocr_import_info"]
         # 1. Create a temporary directory for extraction
         extract_dir = Path(tempfile.mkdtemp())  # Creates a temp directory
         work_id = metadata["bdrc"]["ocr_import_info"]["bdrc_scan_id"]
@@ -70,17 +69,13 @@ class BdrcParser:
             raise ValueError("No data provider found for the given zip file")
 
         elif isinstance(data_source, BDRCGBSource):
-            pecha = HOCRParser().parse(data_source, pecha_id, {}, ocr_import_info)
+            pecha = HOCRParser().parse(data_source, pecha_id, {})
 
         elif isinstance(data_source, HOCRIASource):
-            pecha = HOCRParser(mode=self.IA).parse(
-                data_source, pecha_id, {}, ocr_import_info
-            )
+            pecha = HOCRParser(mode=self.IA).parse(data_source, pecha_id, {})
 
         elif isinstance(data_source, GoogleVisionSource):
-            pecha = GoogleVisionParser().parse(
-                data_source, pecha_id, {}, ocr_import_info
-            )
+            pecha = GoogleVisionParser().parse(data_source, pecha_id, {})
 
         else:
             raise ValueError("Unsupported data provider")

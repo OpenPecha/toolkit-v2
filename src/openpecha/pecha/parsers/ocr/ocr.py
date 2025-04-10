@@ -108,7 +108,7 @@ class BBox:
         return "'%s' [%d,%d,%d,%d]" % (self.text, self.x1, self.x2, self.y1, self.y2)
 
 
-class OCRFileProvider:
+class OCRSource:
     def __init__(self, ocr_import_info: str):
         self.ocr_import_info = ocr_import_info
 
@@ -667,7 +667,7 @@ class OCRParser(OCRBaseParser):
         """The main function that takes the OCR results for an entire volume
         and creates its base and layers
         """
-        image_list = self.data_provider.get_image_list(image_group_id)
+        image_list = self.data_source.get_image_list(image_group_id)
         state = {
             "base_layer_len": 0,
             "base_layer": "",
@@ -722,9 +722,7 @@ class OCRParser(OCRBaseParser):
             return Copyright_unknown, None
         return Copyright_copyrighted, LicenseType.UNDER_COPYRIGHT
 
-    def get_initial_metadata(
-        self, pecha_id: str, ocr_import_info=None
-    ) -> InitialPechaMetadata:
+    def get_initial_metadata(self, pecha_id: str) -> InitialPechaMetadata:
         source_metadata = {
             "id": f"http://purl.bdrc.io/resource/{self.bdrc_scan_id}",  # noqa
             "title": "",
@@ -753,7 +751,7 @@ class OCRParser(OCRBaseParser):
             copyright=copyright,
             licence=licence,
             source_metadata=source_metadata,
-            ocr_import_info=ocr_import_info,
+            ocr_import_info=self.data_source.ocr_import_info,
             language=language,
             **lifted_fields,  # these are added as top-level fields
         )
@@ -777,15 +775,14 @@ class OCRParser(OCRBaseParser):
 
     def parse(
         self,
-        data_provider: Any,
+        data_source: Any,
         pecha_id=None,
         opf_options={},
-        ocr_import_info={},
         mode=None,
     ):
         """Create OPF using Pecha instead of OpenPechaFS"""
 
-        self.data_provider = data_provider
+        self.data_source = data_source
 
         # Configure options
         self.remove_non_character_lines = opf_options.get(
@@ -813,20 +810,22 @@ class OCRParser(OCRBaseParser):
         )
 
         # Store import info
-        ocr_import_info["op_import_options"] = opf_options
+        self.data_source.ocr_import_info["op_import_options"] = opf_options
         # ocr_import_info["op_import_version"] = __version__
 
         # Determine scan ID and metadata
-        self.bdrc_scan_id = self.data_provider.bdrc_scan_id
-        self.source_info = self.data_provider.get_source_info()
-        self.default_language = ocr_import_info.get("expected_default_language", "bo")
+        self.bdrc_scan_id = self.data_source.bdrc_scan_id
+        self.source_info = self.data_source.get_source_info()
+        self.default_language = self.data_source.ocr_import_info.get(
+            "expected_default_language", "bo"
+        )
         if "languages" in self.source_info and self.source_info["languages"]:
             self.default_language = self.source_info["languages"][0]
 
         # Generate Pecha ID if not provided
         pecha_id = get_initial_pecha_id() if pecha_id is None else pecha_id
 
-        self.metadata = self.get_initial_metadata(pecha_id, ocr_import_info)
+        self.metadata = self.get_initial_metadata(pecha_id)
 
         # Create Pecha instance
         pecha = Pecha.create(output_path=self.output_path, pecha_id=pecha_id)
