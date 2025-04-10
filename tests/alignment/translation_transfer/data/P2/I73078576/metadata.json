@@ -25,8 +25,7 @@
       "BO": "དབུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤"
     }
   },
-  "bases": [
-    {
+  "bases": {
       "9979": {
         "source_metadata": {
           "total_segments": 10
@@ -34,7 +33,7 @@
         "base_file": "9979.txt"
       }
     }
-  ],
+  ,
   "copyright": {
     "status": "Unknown",
     "notice": "",

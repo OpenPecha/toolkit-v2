@@ -25,16 +25,14 @@
       "BO": "དབུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤"
     }
   },
-  "bases": [
-    {
+  "bases":  {
       "A340": {
         "source_metadata": {
           "total_segments": 10
         },
         "base_file": "A340.txt"
       }
-    }
-  ],
+    },
   "copyright": {
     "status": "Unknown",
     "notice": "",
