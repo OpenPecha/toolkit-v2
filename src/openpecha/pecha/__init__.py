@@ -280,6 +280,7 @@ class Pecha:
                 "source_metadata": {"annotations": {layer_name: {**ann_metadata}}},
                 "order": order,
             }
+        self.set_metadata(self.metadata.to_dict())
 
     def get_layers(
         self, base_name, from_cache=False
