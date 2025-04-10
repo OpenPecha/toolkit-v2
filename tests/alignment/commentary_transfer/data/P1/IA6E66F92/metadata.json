@@ -17,10 +17,15 @@
   "source_metadata": {},
   "bases": {
       "B8B3": {
+        "base_file": "B8B3.txt",
         "source_metadata": {
-          "total_segments": 9
+          "annotations": {
+             "English_Segment-74F4":{
+              "annotation_type":"Root_Segment"
+             }
+          }
         },
-        "base_file": "B8B3.txt"
+        "ordrer":1
       }
     },
   "copyright": {

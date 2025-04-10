@@ -73,7 +73,12 @@ class DocxAnnotationParser:
             layer_path = parser.add_segmentation_annotations(
                 pecha, updated_coords, lang
             )
-            layer_path.unlink()
+            pecha.add_annotation_metadata(
+                new_basename,
+                layer_path.stem,
+                {"annotation_title": ann_title, "annotation_type": ann_type.value},
+            )
+            return layer_path
 
             pass
         elif self.is_commentary_related_pecha(pecha_type):
