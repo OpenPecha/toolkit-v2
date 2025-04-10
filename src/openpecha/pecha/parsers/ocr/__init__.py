@@ -7,10 +7,10 @@ from typing import Any, Dict, Union
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
 from openpecha.pecha import Pecha
-from openpecha.pecha.parsers.ocr.data_providers import (
-    BDRCGBFileProvider,
-    GoogleVisionFileProvider,
-    HOCRIAFileProvider,
+from openpecha.pecha.parsers.ocr.data_source import (
+    BDRCGBSource,
+    GoogleVisionSource,
+    HOCRIASource,
 )
 from openpecha.pecha.parsers.ocr.google_vision import GoogleVisionParser
 from openpecha.pecha.parsers.ocr.hocr import HOCRParser
@@ -55,29 +55,6 @@ class BdrcParser:
             with zipfile.ZipFile(input_path, "r") as zip_ref:
                 zip_ref.extractall(work_path)
 
-            # 3. Determine the data provider based on the extracted structure
-            data_provider = self._determine_data_provider(work_path, metadata)
-
-            # 4. Parse the data using the determined data provider
-            if data_provider is None:
-                raise ValueError("No data provider found for the given zip file")
-
-            elif isinstance(data_provider, BDRCGBFileProvider):
-                pecha = HOCRParser().parse(data_provider, pecha_id, {}, ocr_import_info)
-
-            elif isinstance(data_provider, HOCRIAFileProvider):
-                pecha = HOCRParser(mode=self.IA).parse(
-                    data_provider, pecha_id, {}, ocr_import_info
-                )
-
-            elif isinstance(data_provider, GoogleVisionFileProvider):
-                pecha = GoogleVisionParser().parse(
-                    data_provider, pecha_id, {}, ocr_import_info
-                )
-
-            else:
-                raise ValueError("Unsupported data provider")
-
         except zipfile.BadZipFile:
             logger.error(f"Invalid zip file: {input_path}")
             raise  # Re-raise to signal the invalid input
@@ -85,17 +62,36 @@ class BdrcParser:
             logger.error(f"Error while parsing OCR: {e}")
             raise  # Re-raise to propagate the error
 
-        finally:
-            # 5. Clean up the temporary directory (very important!)
-            shutil.rmtree(str(extract_dir), ignore_errors=True)
+        # 3. Determine the data provider based on the extracted structure
+        data_source = self.determine_data_source(work_path, metadata)
+
+        # 4. Parse the data using the determined data provider
+        if data_source is None:
+            raise ValueError("No data provider found for the given zip file")
+
+        elif isinstance(data_source, BDRCGBSource):
+            pecha = HOCRParser().parse(data_source, pecha_id, {}, ocr_import_info)
+
+        elif isinstance(data_source, HOCRIASource):
+            pecha = HOCRParser(mode=self.IA).parse(
+                data_source, pecha_id, {}, ocr_import_info
+            )
+
+        elif isinstance(data_source, GoogleVisionSource):
+            pecha = GoogleVisionParser().parse(
+                data_source, pecha_id, {}, ocr_import_info
+            )
+
+        else:
+            raise ValueError("Unsupported data provider")
 
         return pecha
 
-    def _determine_data_provider(
+    def determine_data_source(
         self, work_path: Path, metadata: Dict[str, Any]
-    ) -> Union[BDRCGBFileProvider, HOCRIAFileProvider, GoogleVisionFileProvider]:
+    ) -> Union[BDRCGBSource, HOCRIASource, GoogleVisionSource]:
         """
-        Determines the appropriate data provider based on the extracted zip file structure.
+        Determines the appropriate data source based on the extracted zip file structure.
 
         This method should be adapted to your specific zip file organization.
         The current logic is based on the presence/absence of certain directories.
@@ -120,21 +116,21 @@ class BdrcParser:
 
         # Determine provider based on directory content (customize this logic)
         if any(ocr_path.rglob(pattern="*json.gz")):  # Look for Google Vision data
-            return GoogleVisionFileProvider(
+            return GoogleVisionSource(
                 bdrc_scan_id=bdrc_scan_id,
                 buda_data=buda_data,
                 ocr_import_info=ocr_import_info,
                 ocr_disk_path=ocr_path,
             )
         elif any(ocr_path.rglob(pattern="*html.zip")):  # Look for BDRC GB data
-            return BDRCGBFileProvider(
+            return BDRCGBSource(
                 bdrc_scan_id=bdrc_scan_id,
                 buda_data=buda_data,
                 ocr_import_info=ocr_import_info,
                 ocr_disk_path=ocr_path,
             )
         else:  # Assume HOCR IA data
-            return HOCRIAFileProvider(
+            return HOCRIASource(
                 bdrc_scan_id=bdrc_scan_id,
                 buda_data=buda_data,
                 ocr_import_info=ocr_import_info,

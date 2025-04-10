@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, cast
 from unittest import TestCase
 
-from openpecha.pecha.parsers.ocr.data_providers import BDRCGBFileProvider
+from openpecha.pecha.parsers.ocr.data_source import BDRCGBSource
 from openpecha.pecha.parsers.ocr.hocr import HOCRParser
 from openpecha.utils import read_json
 
@@ -37,9 +37,7 @@ class TestHORCRMetaData(TestCase):
         )
         ocr_import_info = read_json(ocr_import_info_path)
         buda_data = read_json(buda_data_path)
-        data_provider = BDRCGBFileProvider(
-            work_id, buda_data, ocr_import_info, ocr_path
-        )
+        data_source = BDRCGBSource(work_id, buda_data, ocr_import_info, ocr_path)
 
         self.expected_metadata: Dict[str, Any] = cast(
             Dict[str, Any], read_json(expected_meta_path)
@@ -52,7 +50,7 @@ class TestHORCRMetaData(TestCase):
         with tempfile.TemporaryDirectory() as tmpdirname:
             formatter = HOCRParser(output_path=tmpdirname)
             pecha = formatter.parse(
-                data_provider,
+                data_source,
                 pecha_id,
                 {"remove_duplicate_symbols": True},
                 ocr_import_info,

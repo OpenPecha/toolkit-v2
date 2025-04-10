@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.ocr.data_providers import GoogleVisionFileProvider
+from openpecha.pecha.parsers.ocr.data_source import GoogleVisionSource
 from openpecha.pecha.parsers.ocr.google_vision import GoogleVisionParser
 from openpecha.utils import read_json
 
@@ -25,13 +25,16 @@ def test_base_text():
     )
     ocr_import_info = read_json(ocr_import_info_path)
     buda_data = read_json(buda_data_path)
-    data_provider = GoogleVisionFileProvider(
-        work_id, buda_data, ocr_import_info, ocr_path
+    data_source = GoogleVisionSource(
+        bdrc_scan_id=work_id,
+        buda_data=buda_data,
+        ocr_import_info=ocr_import_info,
+        ocr_disk_path=ocr_path,
     )
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = GoogleVisionParser(output_path=tmpdirname)
-        pecha = formatter.parse(data_provider, pecha_id, {}, ocr_import_info)
+        pecha = formatter.parse(data_source, pecha_id, {}, ocr_import_info)
         base_text = pecha.bases["I3852"]
         assert expected_base_text == base_text
 
@@ -257,15 +260,18 @@ def test_build_layers():
     )
     ocr_import_info = read_json(ocr_import_info_path)
     buda_data = read_json(buda_data_path)
-    data_provider = GoogleVisionFileProvider(
-        work_id, buda_data, ocr_import_info, ocr_path
+    data_source = GoogleVisionSource(
+        bdrc_scan_id=work_id,
+        buda_data=buda_data,
+        ocr_import_info=ocr_import_info,
+        ocr_disk_path=ocr_path,
     )
 
     opf_options = {"ocr_confidence_threshold": 0.9, "max_low_conf_per_page": 50}
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = GoogleVisionParser(output_path=tmpdirname)
-        pecha = formatter.parse(data_provider, pecha_id, opf_options, ocr_import_info)
+        pecha = formatter.parse(data_source, pecha_id, opf_options, ocr_import_info)
 
         # Test each layer
         _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)

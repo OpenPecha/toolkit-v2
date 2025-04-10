@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.ocr.data_providers import HOCRIAFileProvider
+from openpecha.pecha.parsers.ocr.data_source import HOCRIASource
 from openpecha.pecha.parsers.ocr.hocr import HOCRParser
 from openpecha.utils import read_json
 
@@ -33,11 +33,16 @@ def test_base_text():
     )
     ocr_import_info = read_json(ocr_import_info_path)
     buda_data = read_json(buda_data_path)
-    data_provider = HOCRIAFileProvider(work_id, buda_data, ocr_import_info, ocr_path)
+    data_source = HOCRIASource(
+        bdrc_scan_id=work_id,
+        buda_data=buda_data,
+        ocr_import_info=ocr_import_info,
+        ocr_disk_path=ocr_path,
+    )
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRParser(mode=mode, output_path=tmpdirname)
-        pecha = formatter.parse(data_provider, pecha_id, {}, ocr_import_info)
+        pecha = formatter.parse(data_source, pecha_id, {}, ocr_import_info)
         base_text = pecha.bases["I0886"]
         base_text_line = base_text.split("\n")
         expected_base_text_line = expected_base_text.split("\n")
@@ -239,13 +244,18 @@ def test_build_layers():
 
     ocr_import_info = read_json(ocr_import_info_path)
     buda_data = read_json(buda_data_path)
-    data_provider = HOCRIAFileProvider(work_id, buda_data, ocr_import_info, ocr_path)
+    data_source = HOCRIASource(
+        bdrc_scan_id=work_id,
+        buda_data=buda_data,
+        ocr_import_info=ocr_import_info,
+        ocr_disk_path=ocr_path,
+    )
 
     opf_options = {"ocr_confidence_threshold": 0.9, "max_low_conf_per_page": 50}
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRParser(mode=mode, output_path=tmpdirname)
-        pecha = formatter.parse(data_provider, pecha_id, opf_options, ocr_import_info)
+        pecha = formatter.parse(data_source, pecha_id, opf_options, ocr_import_info)
         # Test each layer separately
         _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)
         _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict)

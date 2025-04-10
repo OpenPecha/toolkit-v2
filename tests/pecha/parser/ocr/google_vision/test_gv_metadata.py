@@ -2,7 +2,7 @@ import tempfile
 from pathlib import Path
 from unittest import TestCase
 
-from openpecha.pecha.parsers.ocr.data_providers import GoogleVisionFileProvider
+from openpecha.pecha.parsers.ocr.data_source import GoogleVisionSource
 from openpecha.pecha.parsers.ocr.google_vision import GoogleVisionParser
 from openpecha.utils import read_json
 
@@ -26,13 +26,16 @@ class TestGoogleVisionMetaData(TestCase):
         )
         ocr_import_info = read_json(ocr_import_info_path)
         buda_data = read_json(buda_data_path)
-        data_provider = GoogleVisionFileProvider(
-            work_id, buda_data, ocr_import_info, ocr_path
+        data_source = GoogleVisionSource(
+            bdrc_scan_id=work_id,
+            buda_data=buda_data,
+            ocr_import_info=ocr_import_info,
+            ocr_disk_path=ocr_path,
         )
 
         with tempfile.TemporaryDirectory() as tmpdirname:
             formatter = GoogleVisionParser(output_path=tmpdirname)
-            pecha = formatter.parse(data_provider, pecha_id, {}, ocr_import_info)
+            pecha = formatter.parse(data_source, pecha_id, {}, ocr_import_info)
             output_metadata = pecha.load_metadata()
             self.pecha_metadata = output_metadata
 

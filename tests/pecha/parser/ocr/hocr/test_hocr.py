@@ -3,7 +3,7 @@ import tempfile
 from pathlib import Path
 
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.parsers.ocr.data_providers import BDRCGBFileProvider
+from openpecha.pecha.parsers.ocr.data_source import BDRCGBSource
 from openpecha.pecha.parsers.ocr.hocr import HOCRParser
 from openpecha.utils import read_json
 
@@ -32,11 +32,11 @@ def test_base_text():
     )
     ocr_import_info = read_json(ocr_import_info_path)
     buda_data = read_json(buda_data_path)
-    data_provider = BDRCGBFileProvider(work_id, buda_data, ocr_import_info, ocr_path)
+    data_source = BDRCGBSource(work_id, buda_data, ocr_import_info, ocr_path)
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRParser(output_path=tmpdirname)
-        pecha = formatter.parse(data_provider, pecha_id, {}, ocr_import_info)
+        pecha = formatter.parse(data_source, pecha_id, {}, ocr_import_info)
         base_text = pecha.bases["I1KG10195"]
         assert expected_base_text == base_text
 
@@ -279,12 +279,12 @@ def test_build_layers():
     buda_data = read_json(buda_data_path)
 
     # Initialize data provider and formatter
-    data_provider = BDRCGBFileProvider(work_id, buda_data, ocr_import_info, ocr_path)
+    data_source = BDRCGBSource(work_id, buda_data, ocr_import_info, ocr_path)
     opf_options = {"ocr_confidence_threshold": 0.9, "max_low_conf_per_page": 50}
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         formatter = HOCRParser(output_path=tmpdirname)
-        pecha = formatter.parse(data_provider, pecha_id, opf_options, ocr_import_info)
+        pecha = formatter.parse(data_source, pecha_id, opf_options, ocr_import_info)
 
         # Test each layer
         _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict)

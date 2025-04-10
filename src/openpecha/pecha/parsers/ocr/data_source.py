@@ -15,7 +15,7 @@ from openpecha.utils import read_json
 logger = get_logger(__name__)
 
 
-class GoogleVisionFileProvider:
+class GoogleVisionSource:
     def __init__(
         self,
         bdrc_scan_id,
@@ -86,7 +86,7 @@ class GoogleVisionFileProvider:
         return ocr_object
 
 
-class BDRCGBFileProvider:
+class BDRCGBSource:
     def __init__(
         self,
         bdrc_scan_id,
@@ -185,7 +185,7 @@ class BDRCGBFileProvider:
             return None
 
 
-class HOCRIAFileProvider:
+class HOCRIASource:
     def __init__(
         self,
         bdrc_scan_id,

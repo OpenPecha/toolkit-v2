@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, cast
 from unittest import TestCase
 
-from openpecha.pecha.parsers.ocr.data_providers import HOCRIAFileProvider
+from openpecha.pecha.parsers.ocr.data_source import HOCRIASource
 from openpecha.pecha.parsers.ocr.hocr import HOCRParser
 from openpecha.utils import read_json
 
@@ -38,8 +38,11 @@ class TestHOCRIAMetaData(TestCase):
         )
         ocr_import_info = read_json(ocr_import_info_path)
         buda_data = read_json(buda_data_path)
-        data_provider = HOCRIAFileProvider(
-            work_id, buda_data, ocr_import_info, ocr_path
+        data_source = HOCRIASource(
+            bdrc_scan_id=work_id,
+            buda_data=buda_data,
+            ocr_import_info=ocr_import_info,
+            ocr_disk_path=ocr_path,
         )
 
         self.expected_metadata: Dict[str, Any] = cast(
@@ -52,7 +55,7 @@ class TestHOCRIAMetaData(TestCase):
 
         with tempfile.TemporaryDirectory() as tmpdirname:
             formatter = HOCRParser(mode=mode, output_path=tmpdirname)
-            pecha = formatter.parse(data_provider, pecha_id, {}, ocr_import_info)
+            pecha = formatter.parse(data_source, pecha_id, {}, ocr_import_info)
             self.pecha_metadata = pecha.load_metadata()
 
     def test_hocr_ia_metadata(self):
