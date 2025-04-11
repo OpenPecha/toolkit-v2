@@ -61,7 +61,3 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         assert read_json(expected_json) == serialized_json
 
 
-if __name__ == "__main__":
-    import unittest
-
-    unittest.main()

@@ -1,3 +1,5 @@
+from unittest import TestCase
+
 from openpecha.pecha.serializers.pecha_db.utils import (
     FormatPechaCategory,
 )
@@ -65,8 +67,8 @@ expected_category = {
     }
 
 
-class TestPechaCategoryFormatter:
-    def __init__(self):
+class TestPechaCategoryFormatter(TestCase):
+    def setUp(self):
         self.category = {}
 
     def test_get_category(self):
@@ -79,10 +81,10 @@ class TestPechaCategoryFormatter:
         category = formatter.get_category(pecha_category)
         new_category = formatter.assign_category(category, "root")
         self.assertEqual(
-            new_category["bo"][0]["name"], "རྩ་བ།"
+            new_category["bo"][-1]["name"], "རྩ་བ།"
         )
         self.assertEqual(
-            new_category["en"][0]["name"], "Root text"
+            new_category["en"][-1]["name"], "Root text"
         )
 
     def test_assign_category_commentary(self):
@@ -90,8 +92,8 @@ class TestPechaCategoryFormatter:
         category = formatter.get_category(pecha_category)
         new_category = formatter.assign_category(category, "commentary")
         self.assertEqual(
-            new_category["bo"][0]["name"], "འགྲེལ་བ།"
+            new_category["bo"][-1]["name"], "འགྲེལ་བ།"
         )
         self.assertEqual(
-            new_category["en"][0]["name"], "Commentary text"
+            new_category["en"][-1]["name"], "Commentary text"
         )

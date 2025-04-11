@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from stam import AnnotationStore
 
@@ -8,7 +8,6 @@ from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.utils import (
     get_metadata_for_pecha_org,
-    get_pecha_title,
     FormatPechaCategory
 )
 from openpecha.utils import chunk_strings
@@ -99,7 +98,7 @@ class PreAlignedRootTranslationSerializer:
         root_display_pecha: Pecha,
         root_pecha: Pecha,
         translation_pecha: Pecha,
-        pecha_category: Dict[str, List[Dict[str, str]]],
+        pecha_category: List[Dict[str, Union[Dict[str, str], str, None]]],
     ) -> Dict:
         # Format Category
         formatted_category = FormatPechaCategory().format_root_category(root_display_pecha, pecha_category)

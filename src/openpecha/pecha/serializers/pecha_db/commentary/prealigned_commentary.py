@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
@@ -20,7 +20,7 @@ class PreAlignedCommentarySerializer:
         root_display_pecha: Pecha,
         root_pecha: Pecha,
         commentary_pecha: Pecha,
-        pecha_category: Dict[str, List[Dict[str, str]]],
+        pecha_category: List[Dict[str, Union[Dict[str, str], str, None]]],
     ):
         # Format Category
         root_title = get_pecha_title(root_pecha, "en")
