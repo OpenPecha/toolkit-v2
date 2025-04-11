@@ -19,19 +19,19 @@ def format_metadata_for_op_api(metadata: Dict[str, Any]) -> Dict[str, Any]:
     document_id = metadata.get("ocr_import_info", {}).get("bdrc_scan_id")
     author = buda_data.get("author", None)
     title = buda_data.get("title", None)
-    long_title = buda_data.get("long_title", None)
     language = (
         buda_data.get("languages", [None])[0] if buda_data.get("languages") else None
     )
+    source_type = "bdrc"
 
     formatted_data = {
+        "source_type": source_type,
         "bdrc": metadata,
         "author": {"bo": author},
         "document_id": document_id,
         "language": language,
-        "long_title": {"bo": long_title},
         "source_url": buda_data.get("id", None),
-        "title": {"bo": title, "en": None},
+        "title": {"bo": title},
     }
 
     return formatted_data
