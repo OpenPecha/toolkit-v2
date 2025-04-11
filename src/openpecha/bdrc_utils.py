@@ -24,14 +24,24 @@ def format_metadata_for_op_api(metadata: Dict[str, Any]) -> Dict[str, Any]:
     )
     source_type = "bdrc"
 
-    formatted_data = {
-        "source_type": source_type,
-        "bdrc": metadata,
-        "author": {"bo": author},
-        "document_id": document_id,
-        "language": language,
-        "source_url": buda_data.get("id", None),
-        "title": {"bo": title},
-    }
+    if author:
+        formatted_data = {
+            "source_type": source_type,
+            "bdrc": metadata,
+            "author": {"bo": author},
+            "document_id": document_id,
+            "language": language,
+            "source_url": buda_data.get("id", None),
+            "title": {"bo": title},
+        }
+    else:
+        formatted_data = {
+            "source_type": source_type,
+            "bdrc": metadata,
+            "document_id": document_id,
+            "language": language,
+            "source_url": buda_data.get("id", None),
+            "title": {"bo": title},
+        }
 
     return formatted_data
