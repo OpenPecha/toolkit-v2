@@ -6,7 +6,6 @@ from openpecha.config import get_logger
 from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.serializers.pecha_db.utils import (
     get_metadata_for_pecha_org,
-    get_pecha_title,
     FormatPechaCategory
 )
 from openpecha.utils import (
@@ -59,7 +58,7 @@ class SimpleCommentarySerializer:
     def serialize(
         self,
         pecha: Pecha,
-        pecha_category: Dict[str, List[Dict]],
+        pecha_category: List[Dict[str, Union[Dict[str, str], str, None]]],
         root_title: str,
         translation_pecha: Union[Pecha, None] = None,
     ):

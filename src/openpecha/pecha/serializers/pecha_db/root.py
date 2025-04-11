@@ -8,7 +8,6 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import Language
 from openpecha.pecha.serializers.pecha_db.utils import (
     get_metadata_for_pecha_org,
-    get_pecha_title,
     FormatPechaCategory
 )
 from openpecha.utils import chunk_strings
@@ -97,7 +96,7 @@ class RootSerializer:
     def serialize(
         self,
         pecha: Pecha,
-        pecha_category: Dict[str, List[Dict[str, str]]],
+        pecha_category: List[Dict[str, Union[Dict[str, str], str, None]]],
         translation_pecha: Union[Pecha, None] = None,
     ) -> Dict:
 
