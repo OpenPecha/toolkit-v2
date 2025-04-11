@@ -1,1 +1,60 @@
-{"source_type": "bdrc", "bdrc": {"ocr_import_info": {"source": "bdrc", "software": "google_books", "batch": "batch_2022", "expected_default_language": "bo", "bdrc_scan_id": "W24767", "ocr_info": {"timestamp": "1977-04-22T06:00:00Z", "prop1": "value 1", "prop2": "value 2"}}, "buda_data": {"source_metadata": {"id": "http://purl.bdrc.io/resource/W24767", "status": "http://purl.bdrc.io/admindata/StatusReleased", "access": "http://purl.bdrc.io/admindata/AccessOpen", "reproduction_of": "http://purl.bdrc.io/resource/MW24767", "copyright_status": "http://purl.bdrc.io/resource/CopyrightPublicDomain", "title": "\u0f63\u0f58\u0f0b\u0f60\u0f56\u0fb2\u0f66\u0f0b\u0f42\u0f5e\u0f74\u0f44\u0f0b\u0f62\u0fa1\u0f7c\u0f0b\u0f62\u0f97\u0f7a\u0f60\u0f72\u0f0b\u0f5a\u0f72\u0f42\u0f0b\u0f62\u0f90\u0f44\u0f0b\u0f42\u0f72\u0f0b\u0f62\u0fa3\u0f58\u0f0b\u0f60\u0f42\u0fb2\u0f7a\u0f63\u0f0b\u0f56\u0f45\u0f74\u0f0b\u0f42\u0f45\u0f72\u0f42", "author": "\u0f66\u0f0b\u0f46\u0f7a\u0f53\u0f0b\u0f40\u0f74\u0f53\u0f0b\u0f51\u0f42\u0f60\u0f0b\u0f66\u0f99\u0f72\u0f44\u0f0b\u0f54\u0f7c\u0f0d", "languages": ["bo"]}, "image_groups": {"I3852": {"id": "http://purl.bdrc.io/resource/I3852", "total_pages": 542, "volume_number": 1, "volume_pages_bdrc_intro": 2}, "I3853": {"id": "http://purl.bdrc.io/resource/I3853", "total_pages": 504, "volume_number": 2, "volume_pages_bdrc_intro": 2}, "I3854": {"id": "http://purl.bdrc.io/resource/I3854", "total_pages": 502, "volume_number": 3, "volume_pages_bdrc_intro": 2}}}}, "author": {"bo": "\u0f66\u0f0b\u0f46\u0f7a\u0f53\u0f0b\u0f40\u0f74\u0f53\u0f0b\u0f51\u0f42\u0f60\u0f0b\u0f66\u0f99\u0f72\u0f44\u0f0b\u0f54\u0f7c\u0f0d"}, "document_id": "W24767", "language": "bo",  "source_url": "http://purl.bdrc.io/resource/W24767", "title": {"bo": "\u0f63\u0f58\u0f0b\u0f60\u0f56\u0fb2\u0f66\u0f0b\u0f42\u0f5e\u0f74\u0f44\u0f0b\u0f62\u0fa1\u0f7c\u0f0b\u0f62\u0f97\u0f7a\u0f60\u0f72\u0f0b\u0f5a\u0f72\u0f42\u0f0b\u0f62\u0f90\u0f44\u0f0b\u0f42\u0f72\u0f0b\u0f62\u0fa3\u0f58\u0f0b\u0f60\u0f42\u0fb2\u0f7a\u0f63\u0f0b\u0f56\u0f45\u0f74\u0f0b\u0f42\u0f45\u0f72\u0f42"}}
+{
+  "source_type": "bdrc",
+  "bdrc": {
+      "ocr_import_info": {
+          "source": "bdrc",
+          "software": "google_books",
+          "batch": "batch_2022",
+          "expected_default_language": "bo",
+          "bdrc_scan_id": "W24767",
+          "ocr_info": {
+              "timestamp": "1977-04-22T06:00:00Z",
+              "prop1": "value 1",
+              "prop2": "value 2"
+          }
+      },
+      "buda_data": {
+          "source_metadata": {
+              "id": "http://purl.bdrc.io/resource/W24767",
+              "status": "http://purl.bdrc.io/admindata/StatusReleased",
+              "access": "http://purl.bdrc.io/admindata/AccessOpen",
+              "reproduction_of": "http://purl.bdrc.io/resource/MW24767",
+              "copyright_status": "http://purl.bdrc.io/resource/CopyrightPublicDomain",
+              "title": "\u0f63\u0f58\u0f0b\u0f60\u0f56\u0fb2\u0f66\u0f0b\u0f42\u0f5e\u0f74\u0f44\u0f0b\u0f62\u0fa1\u0f7c\u0f0b\u0f62\u0f97\u0f7a\u0f60\u0f72\u0f0b\u0f5a\u0f72\u0f42\u0f0b\u0f62\u0f90\u0f44\u0f0b\u0f42\u0f72\u0f0b\u0f62\u0fa3\u0f58\u0f0b\u0f60\u0f42\u0fb2\u0f7a\u0f63\u0f0b\u0f56\u0f45\u0f74\u0f0b\u0f42\u0f45\u0f72\u0f42",
+              "author": "\u0f66\u0f0b\u0f46\u0f7a\u0f53\u0f0b\u0f40\u0f74\u0f53\u0f0b\u0f51\u0f42\u0f60\u0f0b\u0f66\u0f99\u0f72\u0f44\u0f0b\u0f54\u0f7c\u0f0d",
+              "languages": [
+                  "bo"
+              ]
+          },
+          "image_groups": {
+              "I3852": {
+                  "id": "http://purl.bdrc.io/resource/I3852",
+                  "total_pages": 542,
+                  "volume_number": 1,
+                  "volume_pages_bdrc_intro": 2
+              },
+              "I3853": {
+                  "id": "http://purl.bdrc.io/resource/I3853",
+                  "total_pages": 504,
+                  "volume_number": 2,
+                  "volume_pages_bdrc_intro": 2
+              },
+              "I3854": {
+                  "id": "http://purl.bdrc.io/resource/I3854",
+                  "total_pages": 502,
+                  "volume_number": 3,
+                  "volume_pages_bdrc_intro": 2
+              }
+          }
+      }
+  },
+  "document_id": "W24767",
+  "language": "bo",
+  "source_url": "http://purl.bdrc.io/resource/W24767",
+  "author": {
+      "bo": "\u0f66\u0f0b\u0f46\u0f7a\u0f53\u0f0b\u0f40\u0f74\u0f53\u0f0b\u0f51\u0f42\u0f60\u0f0b\u0f66\u0f99\u0f72\u0f44\u0f0b\u0f54\u0f7c\u0f0d"
+  },
+  "title": {
+      "bo": "\u0f63\u0f58\u0f0b\u0f60\u0f56\u0fb2\u0f66\u0f0b\u0f42\u0f5e\u0f74\u0f44\u0f0b\u0f62\u0fa1\u0f7c\u0f0b\u0f62\u0f97\u0f7a\u0f60\u0f72\u0f0b\u0f5a\u0f72\u0f42\u0f0b\u0f62\u0f90\u0f44\u0f0b\u0f42\u0f72\u0f0b\u0f62\u0fa3\u0f58\u0f0b\u0f60\u0f42\u0fb2\u0f7a\u0f63\u0f0b\u0f56\u0f45\u0f74\u0f0b\u0f42\u0f45\u0f72\u0f42"
+  }
+}
