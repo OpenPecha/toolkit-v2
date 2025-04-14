@@ -118,7 +118,30 @@ class TestDocxAnnotationParser(TestCase):
         assert new_annotation_metadata == expected_new_annotation_metadata
 
     def test_commentary_pecha(self):
-        pass
+        ann_type = LayerEnum.commentary_segment
+        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1"
+        docx_file = Path(
+            "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
+        )
+        metadatas = [
+            self.commentary_pecha_metadata,
+            self.root_pecha_metadata,
+            self.root_display_pecha_metadata,
+        ]
+
+        parent_layer_path = next(self.root_pecha.layer_path.rglob("*.json"))
+        parent_layer_path = str(
+            parent_layer_path.relative_to(self.root_pecha.pecha_path.parent)
+        )
+        layer_path = self.parser.add_annotation(
+            self.commentary_pecha,
+            ann_type,
+            ann_title,
+            docx_file,
+            metadatas,
+            parent_layer_path=self.root_pecha.layer_path,
+        )
+        return layer_path
 
     def tearDown(self) -> None:
         # Revert all original files
@@ -142,4 +165,4 @@ class TestDocxAnnotationParser(TestCase):
 
 work = TestDocxAnnotationParser()
 work.setUp()
-work.test_is_commentary_related_pecha()
+work.test_commentary_pecha()
