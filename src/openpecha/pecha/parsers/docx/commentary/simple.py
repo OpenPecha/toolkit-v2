@@ -90,10 +90,8 @@ class DocxSimpleCommentaryParser(BaseParser):
                 root_idx_mapping = match.group(1)
                 segment = match.group(2)
             curr_segment_ann = {
-                LayerEnum.meaning_segment.value: {
-                    "start": char_count,
-                    "end": char_count + len(segment),
-                },
+                "start": char_count,
+                "end": char_count + len(segment),
                 "root_idx_mapping": root_idx_mapping,
             }
             anns.append(curr_segment_ann)
@@ -183,6 +181,18 @@ class DocxSimpleCommentaryParser(BaseParser):
 
         return pecha
 
+    def extract_segmentation_anns(self, positions: List[Dict]) -> List[Dict]:
+        return [
+            {
+                LayerEnum.meaning_segment.value: {
+                    "start": pos["start"],
+                    "end": pos["end"],
+                },
+                "root_idx_mapping": pos["root_idx_mapping"],
+            }
+            for pos in positions
+        ]
+
     def add_segmentation_annotations(self, pecha: Pecha, positions: List[Dict]) -> Path:
 
         # Add meaning_segment layer
@@ -190,7 +200,9 @@ class DocxSimpleCommentaryParser(BaseParser):
         meaning_segment_layer, layer_path = pecha.add_layer(
             basename, LayerEnum.meaning_segment
         )
-        for ann in positions:
+
+        anns = self.extract_segmentation_anns(positions)
+        for ann in anns:
             pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
         meaning_segment_layer.save()
 

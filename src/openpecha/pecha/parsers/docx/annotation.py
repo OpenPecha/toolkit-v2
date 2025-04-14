@@ -80,8 +80,8 @@ class DocxAnnotationParser:
             )
             return layer_path
 
-            pass
         elif self.is_commentary_related_pecha(pecha_type):
+
             pass
 
         else:
