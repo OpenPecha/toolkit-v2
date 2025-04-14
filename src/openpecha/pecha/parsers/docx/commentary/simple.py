@@ -65,15 +65,7 @@ class DocxSimpleCommentaryParser(BaseParser):
 
         return res
 
-    def extract_commentary_segments_anns(
-        self, docx_file: Path
-    ) -> Tuple[List[Dict], str]:
-        """
-        1.Loop through numbered text
-        2.If text contains root index indentifier, save it
-        3.Else save the numberlist as it is
-        """
-        # Normalize text
+    def extract_text_from_docx(self, docx_file: Path) -> str:
         text = docx2python(docx_file).text
         if not text:
             logger.warning(
@@ -84,23 +76,22 @@ class DocxSimpleCommentaryParser(BaseParser):
             )
 
         text = self.normalize_text(text)
+        return text
 
-        # Extract text with numbered list from docx file
-        numbered_text: Dict[str, str] = self.extract_numbered_list(text)
-
+    def calculate_segment_coordinates(
+        self, segments: Dict[str, str]
+    ) -> Tuple[List[Dict], str]:
         anns = []
         base = ""
         char_count = 0
-        for root_idx_mapping, segment in numbered_text.items():
+        for root_idx_mapping, segment in segments.items():
             match = re.match(self.root_alignment_index_regex, segment)
             if match:
                 root_idx_mapping = match.group(1)
                 segment = match.group(2)
             curr_segment_ann = {
-                LayerEnum.meaning_segment.value: {
-                    "start": char_count,
-                    "end": char_count + len(segment),
-                },
+                "start": char_count,
+                "end": char_count + len(segment),
                 "root_idx_mapping": root_idx_mapping,
             }
             anns.append(curr_segment_ann)
@@ -109,51 +100,76 @@ class DocxSimpleCommentaryParser(BaseParser):
             char_count += len(segment) + 1
         return (anns, base)
 
+    def extract_segmentation_coordinates(
+        self, docx_file: Path
+    ) -> Tuple[List[Dict[str, int]], str]:
+        """Extract text from docx and calculate coordinates for segments.
+
+        Args:
+            docx_file: Path to the docx file
+
+        Returns:
+            Tuple containing:
+            - List of dicts with segment positions and root index mappings
+            - Base text containing all segments
+        """
+        # Extract and normalize text
+        text = self.extract_text_from_docx(docx_file)
+        numbered_text = self.extract_numbered_list(text)
+        return self.calculate_segment_coordinates(numbered_text)
+
     def parse(
         self,
         input: Union[str, Path],
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
         pecha_id: Union[str, None] = None,
-    ):
+    ) -> Pecha:
+        """Parse a docx file and create a pecha.
+
+        The process is split into three main steps:
+        1. Extract text and calculate coordinates
+        2. Extract segmentation annotations
+        3. Initialize pecha with annotations and metadata
+        """
         input = Path(input)
         if not input.exists():
             logger.error(f"The input docx file {str(input)} does not exist.")
             raise FileNotFoundError(
-                f"[Error] The input file '{str(input)}' does not exist."
+                f"[Error] The input docx file '{str(input)}' does not exist."
             )
+
         output_path.mkdir(parents=True, exist_ok=True)
 
-        anns, base = self.extract_commentary_segments_anns(input)
-        pecha, _ = self.create_pecha(anns, base, metadata, output_path, pecha_id)  # type: ignore
+        positions, base = self.extract_segmentation_coordinates(input)
+
+        pecha = self.create_pecha(base, output_path, metadata, pecha_id)
+        layer_path = self.add_segmentation_annotations(pecha, positions)
+        basename = list(pecha.bases.keys())[0]
+        pecha.add_annotation_metadata(
+            basename,
+            layer_path.stem,
+            {
+                "annotation_type": LayerEnum.meaning_segment.value,
+            },
+        )
+
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return pecha
 
     def create_pecha(
-        self,
-        anns: List[Dict],
-        base: str,
-        metadata: Dict,
-        output_path: Path,
-        pecha_id: str,
-    ) -> Tuple[Pecha, Path]:
+        self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
+    ) -> Pecha:
         pecha = Pecha.create(output_path, pecha_id)
-        basename = pecha.set_base(base)
-
-        # Add meaning_segment layer
-        meaning_segment_layer, layer_path = pecha.add_layer(
-            basename, LayerEnum.meaning_segment
-        )
-        for ann in anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
-        meaning_segment_layer.save()
+        pecha.set_base(base)
 
         try:
             pecha_metadata = PechaMetaData(
                 id=pecha.id,
                 parser=self.name,
-                initial_creation_type=InitialCreationType.google_docx,
                 **metadata,
+                bases={},
+                initial_creation_type=InitialCreationType.google_docx,
             )
         except Exception as e:
             logger.error(f"The metadata given was not valid. {str(e)}")
@@ -163,4 +179,31 @@ class DocxSimpleCommentaryParser(BaseParser):
         else:
             pecha.set_metadata(pecha_metadata.to_dict())
 
-        return (pecha, layer_path)
+        return pecha
+
+    def extract_segmentation_anns(self, positions: List[Dict]) -> List[Dict]:
+        return [
+            {
+                LayerEnum.meaning_segment.value: {
+                    "start": pos["start"],
+                    "end": pos["end"],
+                },
+                "root_idx_mapping": pos["root_idx_mapping"],
+            }
+            for pos in positions
+        ]
+
+    def add_segmentation_annotations(self, pecha: Pecha, positions: List[Dict]) -> Path:
+
+        # Add meaning_segment layer
+        basename = list(pecha.bases.keys())[0]
+        meaning_segment_layer, layer_path = pecha.add_layer(
+            basename, LayerEnum.meaning_segment
+        )
+
+        anns = self.extract_segmentation_anns(positions)
+        for ann in anns:
+            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
+        meaning_segment_layer.save()
+
+        return layer_path

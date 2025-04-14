@@ -16,16 +16,44 @@ class TestDocxAnnotationParser(TestCase):
         self.root_display_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/P1/IA6E66F92"
         )
+        self.root_pecha_path = Path(
+            "tests/alignment/commentary_transfer/data/P2/IC7760088"
+        )
+        self.commentary_pecha_path = Path(
+            "tests/alignment/commentary_transfer/data/P3/I77BD6EA9"
+        )
+
         self.root_display_pecha = Pecha.from_path(self.root_display_pecha_path)
+        self.root_pecha = Pecha.from_path(self.root_pecha_path)
+        self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
+
         self.root_display_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
             "version_of": None,
             **self.root_display_pecha.metadata.to_dict(),
         }
+        self.root_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": None,
+            "version_of": self.root_display_pecha.id,
+            **self.root_pecha.metadata.to_dict(),
+        }
+        self.commentary_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": self.root_pecha.id,
+            "version_of": None,
+            **self.commentary_pecha.metadata.to_dict(),
+        }
+
         self.root_display_pecha_backup = {
             f: f.read_bytes()
             for f in self.root_display_pecha_path.glob("**/*")
+            if f.is_file()
+        }
+        self.commentary_pecha_backup = {
+            f: f.read_bytes()
+            for f in self.commentary_pecha_path.glob("**/*")
             if f.is_file()
         }
 
@@ -89,6 +117,58 @@ class TestDocxAnnotationParser(TestCase):
         assert new_anns == expected_new_anns
         assert new_annotation_metadata == expected_new_annotation_metadata
 
+    def test_commentary_pecha(self):
+        ann_type = LayerEnum.commentary_segment
+        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1"
+        docx_file = Path(
+            "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
+        )
+        metadatas = [
+            self.commentary_pecha_metadata,
+            self.root_pecha_metadata,
+            self.root_display_pecha_metadata,
+        ]
+
+        parent_layer_path = next(self.root_pecha.layer_path.rglob("*.json"))
+        parent_layer_path = str(
+            parent_layer_path.relative_to(self.root_pecha.pecha_path.parent)
+        )
+        layer_path = self.parser.add_annotation(
+            self.commentary_pecha,
+            ann_type,
+            ann_title,
+            docx_file,
+            metadatas,
+            parent_layer_path=parent_layer_path,
+        )
+
+        new_anns = get_anns(AnnotationStore(file=str(layer_path)))
+        layer_path.unlink()
+        expected_new_anns = read_json(
+            Path(
+                "tests/pecha/parser/docx/annotation/data/commentary_pecha/expected_new_anns.json"
+            )
+        )
+
+        metadata = self.commentary_pecha.metadata
+        basename = list(metadata.bases.keys())[0]
+        new_annotation_metadata = metadata.bases[basename]["source_metadata"][
+            "annotations"
+        ][layer_path.stem]
+
+        expected_new_annotation_metadata = {
+            "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1",
+            "relationship": [
+                "commentary_of",
+                "IC7760088",
+                "IC7760088/layers/A389/English_Segment-84EB.json",
+            ],
+            "annotation_type": "Commentary_Segment",
+        }
+
+        assert new_anns == expected_new_anns
+        assert new_annotation_metadata == expected_new_annotation_metadata
+
     def tearDown(self) -> None:
         # Revert all original files
         for f, content in self.root_display_pecha_backup.items():
@@ -97,4 +177,13 @@ class TestDocxAnnotationParser(TestCase):
         # Remove any new files that weren't in the original backup
         for f in self.root_display_pecha_path.glob("**/*"):
             if f.is_file() and f not in self.root_display_pecha_backup:
+                f.unlink()
+
+        # Revert all original files
+        for f, content in self.commentary_pecha_backup.items():
+            f.write_bytes(content)
+
+        # Remove any new files that weren't in the original backup
+        for f in self.commentary_pecha_path.glob("**/*"):
+            if f.is_file() and f not in self.commentary_pecha_backup:
                 f.unlink()

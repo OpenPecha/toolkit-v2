@@ -4,6 +4,7 @@ from typing import Dict, List
 from openpecha.pecha import Pecha
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 
@@ -49,18 +50,19 @@ class DocxAnnotationParser:
 
         if self.is_root_related_pecha(pecha_type):
             parser = DocxRootParser()
-            segmentation_coords, _ = parser.extract_segmentation_coordinates(docx_file)
+            segmentation_coords, old_base = parser.extract_segmentation_coordinates(
+                docx_file
+            )
 
             new_basename = list(pecha.bases.keys())[0]
             new_base = pecha.get_base(new_basename)
-            old_base = parser.extract_text_from_docx(docx_file)
 
             diff_update = DiffMatchPatch(old_base, new_base)
 
             updated_coords = []
             for coord in segmentation_coords:
-                start = int(coord["start"])  # Ensure it's an integer
-                end = int(coord["end"])  # Ensure it's an integer
+                start = int(coord["start"])
+                end = int(coord["end"])
 
                 updated_coords.append(
                     {
@@ -80,9 +82,45 @@ class DocxAnnotationParser:
             )
             return layer_path
 
-            pass
         elif self.is_commentary_related_pecha(pecha_type):
-            pass
+            commentary_parser = DocxSimpleCommentaryParser()
+            (
+                segmentation_coords,
+                old_base,
+            ) = commentary_parser.extract_segmentation_coordinates(docx_file)
+            new_basename = list(pecha.bases.keys())[0]
+            new_base = pecha.get_base(new_basename)
+
+            diff_update = DiffMatchPatch(old_base, new_base)
+
+            updated_coords = []
+            for coord in segmentation_coords:
+                start = int(coord["start"])
+                end = int(coord["end"])
+
+                updated_coords.append(
+                    {
+                        "start": diff_update.get_updated_coord(start),
+                        "end": diff_update.get_updated_coord(end),
+                        "root_idx_mapping": coord.get("root_idx_mapping", ""),
+                    }
+                )
+            lang = pecha.metadata.language.value
+            layer_path = commentary_parser.add_segmentation_annotations(
+                pecha, updated_coords
+            )
+
+            pecha_id = parent_layer_path.split("/")[0] if parent_layer_path else None
+            pecha.add_annotation_metadata(
+                new_basename,
+                layer_path.stem,
+                {
+                    "annotation_title": ann_title,
+                    "relationship": ["commentary_of", pecha_id, parent_layer_path],
+                    "annotation_type": ann_type.value,
+                },
+            )
+            return layer_path
 
         else:
             raise ValueError(f"Unknown pecha type: {pecha_type}")
