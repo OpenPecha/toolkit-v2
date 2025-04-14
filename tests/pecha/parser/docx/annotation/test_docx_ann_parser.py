@@ -139,7 +139,7 @@ class TestDocxAnnotationParser(TestCase):
             ann_title,
             docx_file,
             metadatas,
-            parent_layer_path=self.root_pecha.layer_path,
+            parent_layer_path=parent_layer_path,
         )
         return layer_path
 
