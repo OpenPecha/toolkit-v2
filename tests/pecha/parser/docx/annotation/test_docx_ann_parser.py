@@ -158,6 +158,11 @@ class TestDocxAnnotationParser(TestCase):
 
         expected_new_annotation_metadata = {
             "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1",
+            "relationship": [
+                "commentary_of",
+                "IC7760088",
+                "IC7760088/layers/A389/English_Segment-84EB.json",
+            ],
             "annotation_type": "Commentary_Segment",
         }
 
