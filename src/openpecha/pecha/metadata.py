@@ -1,8 +1,5 @@
-import importlib
-import inspect
 from datetime import datetime
 from enum import Enum
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
@@ -113,15 +110,15 @@ class PechaMetaData(BaseModel):
             values["id"] = get_initial_pecha_id()
         return values
 
-    @model_validator(mode="before")
-    def validate_parser(cls, values):
-        if "parser" in values and values["parser"]:
-            parser_classes = cls.get_toolkit_parsers()
-            if values["parser"] not in [name for name, _ in parser_classes]:
-                raise ValueError(
-                    f"Parser {values['parser']} not in the Toolkit parsers."
-                )
-        return values
+    # @model_validator(mode="before")
+    # def validate_parser(cls, values):
+    #     if "parser" in values and values["parser"]:
+    #         parser_classes = cls.get_toolkit_parsers()
+    #         if values["parser"] not in [name for name, _ in parser_classes]:
+    #             raise ValueError(
+    #                 f"Parser {values['parser']} not in the Toolkit parsers."
+    #             )
+    #     return values
 
     @model_validator(mode="before")
     def set_toolkit_version(cls, values):
@@ -191,40 +188,40 @@ class PechaMetaData(BaseModel):
     def update_last_modified_date(self):
         self.last_modified = datetime.now()
 
-    @classmethod
-    def get_toolkit_parsers(cls):
-        # List to store all classes from the package
-        all_classes = []
-        import sys
+    # @classmethod
+    # def get_toolkit_parsers(cls):
+    #     # List to store all classes from the package
+    #     all_classes = []
+    #     import sys
 
-        base_path = Path(__file__).parent / "parsers"
-        pecha_parser_path = "openpecha.pecha.parsers"
+    #     base_path = Path(__file__).parent / "parsers"
+    #     pecha_parser_path = "openpecha.pecha.parsers"
 
-        for py_file in base_path.rglob("*.py"):
-            path_parts = list(py_file.parts)
-            path_parts[-1] = path_parts[-1].replace(".py", "")
-            if path_parts[-1] == "__init__":
-                path_parts.pop()
+    #     for py_file in base_path.rglob("*.py"):
+    #         path_parts = list(py_file.parts)
+    #         path_parts[-1] = path_parts[-1].replace(".py", "")
+    #         if path_parts[-1] == "__init__":
+    #             path_parts.pop()
 
-            if path_parts[0] == "/":
-                path_parts.pop(0)
+    #         if path_parts[0] == "/":
+    #             path_parts.pop(0)
 
-            start_index = path_parts.index(pecha_parser_path.split(".")[0])
-            parser_path = ".".join(path_parts[start_index:])
-            importlib.import_module(parser_path)
-            classes = inspect.getmembers(sys.modules[parser_path], inspect.isclass)
-            all_classes.extend(classes)
+    #         start_index = path_parts.index(pecha_parser_path.split(".")[0])
+    #         parser_path = ".".join(path_parts[start_index:])
+    #         importlib.import_module(parser_path)
+    #         classes = inspect.getmembers(sys.modules[parser_path], inspect.isclass)
+    #         all_classes.extend(classes)
 
-        parsers = importlib.import_module("openpecha.pecha.parsers")
-        parser_classes = [
-            (name, class_)
-            for name, class_ in all_classes
-            if issubclass(class_, parsers.BaseParser)
-            or issubclass(class_, parsers.OCRBaseParser)
-            and class_ is not parsers.BaseParser
-            and class_ is not parsers.OCRBaseParser
-        ]
-        return parser_classes
+    #     parsers = importlib.import_module("openpecha.pecha.parsers")
+    #     parser_classes = [
+    #         (name, class_)
+    #         for name, class_ in all_classes
+    #         if issubclass(class_, parsers.BaseParser)
+    #         or issubclass(class_, parsers.OCRBaseParser)
+    #         and class_ is not parsers.BaseParser
+    #         and class_ is not parsers.OCRBaseParser
+    #     ]
+    #     return parser_classes
 
     def to_dict(self):
         """
