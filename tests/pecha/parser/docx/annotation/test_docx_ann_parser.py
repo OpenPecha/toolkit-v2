@@ -191,4 +191,4 @@ class TestDocxAnnotationParser(TestCase):
 
 work = TestDocxAnnotationParser()
 work.setUp()
-work.test_commentary_pecha()
+work.test_root_pecha()
