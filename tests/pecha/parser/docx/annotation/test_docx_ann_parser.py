@@ -187,8 +187,3 @@ class TestDocxAnnotationParser(TestCase):
         for f in self.commentary_pecha_path.glob("**/*"):
             if f.is_file() and f not in self.commentary_pecha_backup:
                 f.unlink()
-
-
-work = TestDocxAnnotationParser()
-work.setUp()
-work.test_commentary_pecha()
