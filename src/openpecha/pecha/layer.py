@@ -20,7 +20,6 @@ class LayerCollectionEnum(Enum):
 
     translation = "Translation"
     root_commentory = "Root_Commentary"
-    metadata = "Meta_Data"
     structure_annotation = "Structure_Annotation"
     variation_annotation = "Variation_Annotation"
     ocr_annotation = "Ocr_Annotation"
@@ -39,9 +38,7 @@ class LayerEnum(Enum):
     italian_segment = "Italian_Segment"
     russian_segment = "Russian_Segment"
     hindi_segment = "Hindi_Segment"
-    pecha_display_alignment_segment = "Pecha_Display_Alignment_Segment"
     chapter = "Chapter"
-    metadata = "Meta_Data"
     pagination = "Pagination"
     durchen = "Durchen"
     sapche = "Sapche"
@@ -72,7 +69,6 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
         LayerEnum.italian_segment,
         LayerEnum.russian_segment,
         LayerEnum.hindi_segment,
-        LayerEnum.pecha_display_alignment_segment,
     ]:
         return LayerGroupEnum.translation_segment
 
@@ -109,12 +105,8 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
         LayerEnum.italian_segment,
         LayerEnum.russian_segment,
         LayerEnum.hindi_segment,
-        LayerEnum.pecha_display_alignment_segment,
     ]:
         return LayerCollectionEnum.translation
-
-    if layer_type == LayerEnum.metadata:
-        return LayerCollectionEnum.metadata
 
     if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
         return LayerCollectionEnum.root_commentory
@@ -173,7 +165,7 @@ class Layer(BaseModel):
         return v
 
     def bump_revision(self):
-        self.revision = f"{int(self.revision)+1:05}"
+        self.revision = f"{int(self.revision)+1:05}"  # noqa
 
     def reset(self):
         self.revision = "00001"
