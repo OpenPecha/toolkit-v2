@@ -161,7 +161,7 @@ class TestDocxAnnotationParser(TestCase):
             "relationship": [
                 "commentary_of",
                 "IC7760088",
-                "IC7760088/layers/A389/English_Segment-84EB.json",
+                "IC7760088/layers/A389/Alignment-84EB.json",
             ],
             "annotation_type": "Alignment",
         }
@@ -187,3 +187,8 @@ class TestDocxAnnotationParser(TestCase):
         for f in self.commentary_pecha_path.glob("**/*"):
             if f.is_file() and f not in self.commentary_pecha_backup:
                 f.unlink()
+
+
+work = TestDocxAnnotationParser()
+work.setUp()
+work.test_commentary_pecha()
