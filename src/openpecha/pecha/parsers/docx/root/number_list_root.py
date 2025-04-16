@@ -171,7 +171,9 @@ class DocxRootParser(BaseParser):
         positions, base = self.extract_segmentation_coordinates(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        layer_path = self.add_segmentation_annotations(pecha, positions)
+        layer_path = self.add_segmentation_annotations(
+            pecha, positions, LayerEnum.root_segment
+        )
         basename = list(pecha.bases.keys())[0]
         pecha.add_annotation_metadata(
             basename,
@@ -208,16 +210,16 @@ class DocxRootParser(BaseParser):
 
         return pecha
 
-    def add_segmentation_annotations(self, pecha: Pecha, positions: List[Dict]) -> Path:
+    def add_segmentation_annotations(
+        self, pecha: Pecha, positions: List[Dict], layer_enum: LayerEnum
+    ) -> Path:
 
         # Add meaning_segment layer
         basename = list(pecha.bases.keys())[0]
-        meaning_segment_layer, layer_path = pecha.add_layer(
-            basename, LayerEnum.root_segment
-        )
+        meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
         anns = self.extract_segmentation_anns(positions)
         for ann in anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.root_segment)
+            pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
         meaning_segment_layer.save()
 
         return layer_path

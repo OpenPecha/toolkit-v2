@@ -71,7 +71,9 @@ class DocxAnnotationParser:
                         "root_idx_mapping": coord.get("root_idx_mapping", ""),
                     }
                 )
-            layer_path = parser.add_segmentation_annotations(pecha, updated_coords)
+            layer_path = parser.add_segmentation_annotations(
+                pecha, updated_coords, ann_type
+            )
             pecha.add_annotation_metadata(
                 new_basename,
                 layer_path.stem,
