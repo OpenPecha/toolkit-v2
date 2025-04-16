@@ -152,7 +152,7 @@ class DocxSimpleCommentaryParser(BaseParser):
             basename,
             layer_path.stem,
             {
-                "annotation_type": LayerEnum.meaning_segment.value,
+                "annotation_type": LayerEnum.segmentation.value,
             },
         )
 
