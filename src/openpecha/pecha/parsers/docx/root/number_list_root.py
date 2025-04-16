@@ -216,7 +216,6 @@ class DocxRootParser(BaseParser):
         self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
     ) -> Path:
 
-        # Add meaning_segment layer
         basename = list(pecha.bases.keys())[0]
         layer, layer_path = pecha.add_layer(basename, ann_type)
         anns = self.extract_segmentation_anns(positions, ann_type)

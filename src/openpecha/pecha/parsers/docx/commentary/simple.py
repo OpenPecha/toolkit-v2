@@ -201,13 +201,12 @@ class DocxSimpleCommentaryParser(BaseParser):
         self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
     ) -> Path:
 
-        # Add meaning_segment layer
         basename = list(pecha.bases.keys())[0]
-        meaning_segment_layer, layer_path = pecha.add_layer(basename, ann_type)
+        layer, layer_path = pecha.add_layer(basename, ann_type)
 
         anns = self.extract_segmentation_anns(positions, ann_type)
         for ann in anns:
-            pecha.add_annotation(meaning_segment_layer, ann, ann_type)
-        meaning_segment_layer.save()
+            pecha.add_annotation(layer, ann, ann_type)
+        layer.save()
 
         return layer_path
