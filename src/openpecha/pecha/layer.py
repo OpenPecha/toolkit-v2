@@ -24,10 +24,10 @@ class LayerCollectionEnum(Enum):
     variation_annotation = "Variation_Annotation"
     ocr_annotation = "Ocr_Annotation"
     language_annotation = "language_Annotation"
+    segmentation_annotation = "Segmentation_Annotation"
 
 
 class LayerEnum(Enum):
-    # Existing v2 segments
     meaning_segment = "Meaning_Segment"
     root_segment = "Root_Segment"
     commentary_segment = "Commentary_Segment"
@@ -38,12 +38,15 @@ class LayerEnum(Enum):
     italian_segment = "Italian_Segment"
     russian_segment = "Russian_Segment"
     hindi_segment = "Hindi_Segment"
+
+    segmentation = "Segmentation"
+    alignment = "Alignment"
+
     chapter = "Chapter"
     pagination = "Pagination"
     durchen = "Durchen"
     sapche = "Sapche"
 
-    # Common attributes (keeping v2 naming)
     ocr_confidence = "OCRConfidence"
     language = "Language"
     citation = "Citation"
@@ -57,6 +60,7 @@ class LayerGroupEnum(Enum):
     spelling_variation = "Spelling_Variation"
     ocr_confidence_type = "Ocr_Type"
     language_type = "Language_Type"
+    segmentation_type = "Segmentation_Type"
 
 
 def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
@@ -71,6 +75,9 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
         LayerEnum.hindi_segment,
     ]:
         return LayerGroupEnum.translation_segment
+
+    if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
+        return LayerGroupEnum.segmentation_type
 
     if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
         return LayerGroupEnum.associated_alignment
@@ -107,6 +114,9 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
         LayerEnum.hindi_segment,
     ]:
         return LayerCollectionEnum.translation
+
+    if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
+        return LayerCollectionEnum.segmentation_annotation
 
     if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
         return LayerCollectionEnum.root_commentory

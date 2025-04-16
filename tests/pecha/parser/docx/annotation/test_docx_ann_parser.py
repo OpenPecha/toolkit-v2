@@ -84,7 +84,7 @@ class TestDocxAnnotationParser(TestCase):
         )
 
     def test_root_pecha(self):
-        ann_type = LayerEnum.root_segment
+        ann_type = LayerEnum.alignment
         ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
@@ -111,7 +111,7 @@ class TestDocxAnnotationParser(TestCase):
 
         expected_new_annotation_metadata = {
             "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1",
-            "annotation_type": "Root_Segment",
+            "annotation_type": "Alignment",
         }
 
         assert new_anns == expected_new_anns
