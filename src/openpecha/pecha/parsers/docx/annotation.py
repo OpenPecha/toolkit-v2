@@ -105,7 +105,7 @@ class DocxAnnotationParser:
                     }
                 )
             layer_path = commentary_parser.add_segmentation_annotations(
-                pecha, updated_coords
+                pecha, updated_coords, ann_type
             )
 
             pecha_id = parent_layer_path.split("/")[0] if parent_layer_path else None

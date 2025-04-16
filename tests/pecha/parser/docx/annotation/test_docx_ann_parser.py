@@ -118,7 +118,7 @@ class TestDocxAnnotationParser(TestCase):
         assert new_annotation_metadata == expected_new_annotation_metadata
 
     def test_commentary_pecha(self):
-        ann_type = LayerEnum.commentary_segment
+        ann_type = LayerEnum.alignment
         ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
@@ -163,7 +163,7 @@ class TestDocxAnnotationParser(TestCase):
                 "IC7760088",
                 "IC7760088/layers/A389/English_Segment-84EB.json",
             ],
-            "annotation_type": "Commentary_Segment",
+            "annotation_type": "Alignment",
         }
 
         assert new_anns == expected_new_anns

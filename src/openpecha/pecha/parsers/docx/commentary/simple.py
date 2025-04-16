@@ -144,7 +144,9 @@ class DocxSimpleCommentaryParser(BaseParser):
         positions, base = self.extract_segmentation_coordinates(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        layer_path = self.add_segmentation_annotations(pecha, positions)
+        layer_path = self.add_segmentation_annotations(
+            pecha, positions, LayerEnum.segmentation
+        )
         basename = list(pecha.bases.keys())[0]
         pecha.add_annotation_metadata(
             basename,
@@ -181,10 +183,12 @@ class DocxSimpleCommentaryParser(BaseParser):
 
         return pecha
 
-    def extract_segmentation_anns(self, positions: List[Dict]) -> List[Dict]:
+    def extract_segmentation_anns(
+        self, positions: List[Dict], ann_type: LayerEnum
+    ) -> List[Dict]:
         return [
             {
-                LayerEnum.meaning_segment.value: {
+                ann_type.value: {
                     "start": pos["start"],
                     "end": pos["end"],
                 },
@@ -193,17 +197,17 @@ class DocxSimpleCommentaryParser(BaseParser):
             for pos in positions
         ]
 
-    def add_segmentation_annotations(self, pecha: Pecha, positions: List[Dict]) -> Path:
+    def add_segmentation_annotations(
+        self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
+    ) -> Path:
 
         # Add meaning_segment layer
         basename = list(pecha.bases.keys())[0]
-        meaning_segment_layer, layer_path = pecha.add_layer(
-            basename, LayerEnum.meaning_segment
-        )
+        meaning_segment_layer, layer_path = pecha.add_layer(basename, ann_type)
 
-        anns = self.extract_segmentation_anns(positions)
+        anns = self.extract_segmentation_anns(positions, ann_type)
         for ann in anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
+            pecha.add_annotation(meaning_segment_layer, ann, ann_type)
         meaning_segment_layer.save()
 
         return layer_path
