@@ -108,7 +108,7 @@ class DocxRootParser(BaseParser):
         return (positions, base)
 
     def extract_segmentation_anns(
-        self, positions: List[Dict[str, int]], layer_enum: LayerEnum
+        self, positions: List[Dict[str, int]], ann_type: LayerEnum
     ) -> List[Dict]:
         """Create segment annotations from position information.
 
@@ -120,7 +120,7 @@ class DocxRootParser(BaseParser):
         """
         return [
             {
-                layer_enum.value: {
+                ann_type.value: {
                     "start": pos["start"],
                     "end": pos["end"],
                 },
@@ -213,14 +213,14 @@ class DocxRootParser(BaseParser):
         return pecha
 
     def add_segmentation_annotations(
-        self, pecha: Pecha, positions: List[Dict], layer_enum: LayerEnum
+        self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
     ) -> Path:
 
         # Add meaning_segment layer
         basename = list(pecha.bases.keys())[0]
-        layer, layer_path = pecha.add_layer(basename, layer_enum)
-        anns = self.extract_segmentation_anns(positions, layer_enum)
+        layer, layer_path = pecha.add_layer(basename, ann_type)
+        anns = self.extract_segmentation_anns(positions, ann_type)
         for ann in anns:
-            pecha.add_annotation(layer, ann, layer_enum)
+            pecha.add_annotation(layer, ann, ann_type)
         layer.save()
         return layer_path
