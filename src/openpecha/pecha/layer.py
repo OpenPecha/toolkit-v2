@@ -18,7 +18,6 @@ from openpecha.pecha.metadata import PechaMetaData
 class LayerCollectionEnum(Enum):
     """In STAM, this is used for setting DataSet id"""
 
-    translation = "Translation"
     root_commentory = "Root_Commentary"
     structure_annotation = "Structure_Annotation"
     variation_annotation = "Variation_Annotation"
@@ -31,13 +30,6 @@ class LayerEnum(Enum):
     meaning_segment = "Meaning_Segment"
     root_segment = "Root_Segment"
     commentary_segment = "Commentary_Segment"
-    tibetan_segment = "Tibetan_Segment"
-    english_segment = "English_Segment"
-    chinese_segment = "Chinese_Segment"
-    sanskrit_segment = "Sanskrit_Segment"
-    italian_segment = "Italian_Segment"
-    russian_segment = "Russian_Segment"
-    hindi_segment = "Hindi_Segment"
 
     segmentation = "Segmentation"
     alignment = "Alignment"
@@ -55,7 +47,6 @@ class LayerEnum(Enum):
 
 class LayerGroupEnum(Enum):
     structure_type = "Structure_Type"
-    translation_segment = "Translation_Segment"
     associated_alignment = "Associated_Alignment"
     spelling_variation = "Spelling_Variation"
     ocr_confidence_type = "Ocr_Type"
@@ -65,16 +56,6 @@ class LayerGroupEnum(Enum):
 
 def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
     """return the annotation category where annotation type falls in"""
-    if layer_type in [
-        LayerEnum.tibetan_segment,
-        LayerEnum.english_segment,
-        LayerEnum.chinese_segment,
-        LayerEnum.sanskrit_segment,
-        LayerEnum.italian_segment,
-        LayerEnum.russian_segment,
-        LayerEnum.hindi_segment,
-    ]:
-        return LayerGroupEnum.translation_segment
 
     if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
         return LayerGroupEnum.segmentation_type
@@ -104,16 +85,6 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
 
 def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
     """return the annotation category where annotation type falls in"""
-    if layer_type in [
-        LayerEnum.tibetan_segment,
-        LayerEnum.english_segment,
-        LayerEnum.chinese_segment,
-        LayerEnum.sanskrit_segment,
-        LayerEnum.italian_segment,
-        LayerEnum.russian_segment,
-        LayerEnum.hindi_segment,
-    ]:
-        return LayerCollectionEnum.translation
 
     if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
         return LayerCollectionEnum.segmentation_annotation
