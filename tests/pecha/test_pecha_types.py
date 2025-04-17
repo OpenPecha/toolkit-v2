@@ -1,9 +1,9 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 from unittest import TestCase
 
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 
-extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
+extra_fields: Dict[str, str | Dict[str, str] | List[str] | None] = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
     "document_id": "1vgnfCQH3yaWPDaMDFXT_5GhlG0M9kEra0mxkDX46VLE",
     "language": "en",
@@ -17,7 +17,7 @@ extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
     "usage_title": {"en": "Illuminating the Intent Chapter 6"},
 }
 
-MetadataType = Dict[str, Union[str, Dict[str, str], List[str], None]]
+MetadataType = Dict[str, str | Dict[str, str] | List[str] | None]
 
 
 class TestPechaType(TestCase):
