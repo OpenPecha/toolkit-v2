@@ -4,13 +4,12 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple
 
-import stam
 from git import Repo
-from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
+from stam import AnnotationData, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.catalog import PechaDataCatalog
-from openpecha.config import GITHUB_ORG_NAME, PECHAS_PATH
+from openpecha.config import PECHAS_PATH
 from openpecha.exceptions import GithubCloneError, StamAddAnnotationError
 from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import (
@@ -26,7 +25,6 @@ from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
 BASE_NAME = str
-layer_type = str
 
 
 class Pecha:
