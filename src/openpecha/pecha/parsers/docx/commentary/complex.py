@@ -161,7 +161,7 @@ class DocxComplexCommentaryParser(BaseParser):
             doc = self.update_doc(doc, len(root_idx_mapping) + 1)
             updated_segment = segment.strip()
             curr_segment_ann = {
-                LayerEnum.meaning_segment.value: {
+                LayerEnum.alignment.value: {
                     "start": char_count,
                     "end": char_count + len(updated_segment),
                 },
@@ -169,7 +169,7 @@ class DocxComplexCommentaryParser(BaseParser):
             }
         else:
             curr_segment_ann = {
-                LayerEnum.meaning_segment.value: {
+                LayerEnum.alignment.value: {
                     "start": char_count,
                     "end": char_count + len(segment),
                 }
@@ -265,9 +265,9 @@ class DocxComplexCommentaryParser(BaseParser):
         """
         if self.temp_state["meaning_segment"]["anns"]:
             meaning_segment_ann = self.temp_state["meaning_segment"]["anns"][0]  # type: ignore
-            meaning_segment_ann[LayerEnum.meaning_segment.value][
-                "end"
-            ] -= self.temp_state["sapche"]["char_diff"]
+            meaning_segment_ann[LayerEnum.alignment.value]["end"] -= self.temp_state[
+                "sapche"
+            ]["char_diff"]
             self.meaning_segment_anns.append(meaning_segment_ann)
 
         self.sapche_anns.extend(self.temp_state["sapche"]["anns"])  # type: ignore
@@ -308,9 +308,9 @@ class DocxComplexCommentaryParser(BaseParser):
         basename = pecha.set_base(self.base)
 
         # Add meaning_segment layer
-        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
+        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.alignment)
         for ann in self.meaning_segment_anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.meaning_segment)
+            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.alignment)
         meaning_segment_layer.save()
 
         # Add sapche layer

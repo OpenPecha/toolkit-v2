@@ -171,15 +171,15 @@
 #         total_pages = 0
 
 #         if "segments" in self.temp_state["annotations"]:
-#             segment, _ = pecha.add_layer(base_name, LayerEnum.meaning_segment)
+#             segment, _ = pecha.add_layer(base_name, LayerEnum.segmentation)
 #             for segment_id, segment_span in self.temp_state["annotations"][
 #                 "segments"
 #             ].items():
 #                 segment_ann = {
-#                     LayerEnum.meaning_segment.value: segment_span["span"],
+#                     LayerEnum.segmentation.value: segment_span["span"],
 #                     "segment_id": segment_id,
 #                 }
-#                 pecha.add_annotation(segment, segment_ann, LayerEnum.meaning_segment)
+#                 pecha.add_annotation(segment, segment_ann, LayerEnum.segmentation)
 #             segment.save()
 #             total_segments = len(self.temp_state["annotations"]["segments"])
 

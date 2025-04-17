@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Translation",
+      "@id": "Segmentation_Annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -19,7 +19,7 @@
         },
         {
           "@type": "DataKey",
-          "@id": "Translation_Segment"
+          "@id": "Segmentation_Type"
         }
       ],
       "data": [
@@ -35,10 +35,10 @@
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "key": "Translation_Segment",
+          "key": "Segmentation_Type",
           "value": {
             "@type": "String",
-            "value": "Tibetan_Segment"
+            "value": "Alignment"
           }
         },
         {
@@ -148,12 +148,12 @@
         {
           "@type": "AnnotationData",
           "@id": "989E84EF",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -179,12 +179,12 @@
         {
           "@type": "AnnotationData",
           "@id": "5978387E",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -210,12 +210,12 @@
         {
           "@type": "AnnotationData",
           "@id": "E49668B3",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -241,12 +241,12 @@
         {
           "@type": "AnnotationData",
           "@id": "BA4C9A65",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -272,12 +272,12 @@
         {
           "@type": "AnnotationData",
           "@id": "EF8F889D",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -303,12 +303,12 @@
         {
           "@type": "AnnotationData",
           "@id": "9CE44755",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -334,12 +334,12 @@
         {
           "@type": "AnnotationData",
           "@id": "10FB18F9",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -365,12 +365,12 @@
         {
           "@type": "AnnotationData",
           "@id": "64ACC1F5",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -396,12 +396,12 @@
         {
           "@type": "AnnotationData",
           "@id": "0442A13F",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -427,12 +427,12 @@
         {
           "@type": "AnnotationData",
           "@id": "98333B35",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4A12A5EA",
-          "set": "Translation"
+          "set": "Segmentation_Annotation"
         }
       ]
     }

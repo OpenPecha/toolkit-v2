@@ -2,16 +2,14 @@ import re
 from pathlib import Path
 from typing import Dict, List
 
-from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.serializers import BaseSerializer
-from openpecha.utils import read_json, write_json
+from openpecha.utils import read_json
 
 
 class PechaDBSerializer(BaseSerializer):
-    def __init__(self, output_path: Path = PECHAS_PATH):
-        self.output_path = output_path
+    def __init__(self):
         self.contents: List[List[str]] = []
         self.mappings: Dict[str, List[int]] = {}
         self.chapter: Dict[int, List] = {}
@@ -40,7 +38,7 @@ class PechaDBSerializer(BaseSerializer):
                 chapter_num += 1
                 text_index = 1
                 self.chapter[chapter_num] = []
-            for ann_store in pecha.layers[basename][LayerEnum.meaning_segment]:
+            for ann_store in pecha.layers[basename][LayerEnum.segmentation]:
                 for ann in list(ann_store):
                     segment_id = str(ann.data()[0])
                     segment_text = ann.text()[0]
@@ -63,7 +61,6 @@ class PechaDBSerializer(BaseSerializer):
     def serialize(self, pecha_path: Path, source_type: str):
         pecha_id = pecha_path.stem
         pecha = Pecha(pecha_id=pecha_id, pecha_path=pecha_path)
-        self.output_path.mkdir(parents=True, exist_ok=True)
 
         pecha_json = {
             "title": pecha.metadata.title,
@@ -76,24 +73,18 @@ class PechaDBSerializer(BaseSerializer):
 
         if source_type == "dharmanexus":
             self.create_dharmanexus_content_list(pecha)
-            pecha_db_json_path = f"{self.output_path}/{pecha_id}.json"
-            mapping_path = f"{self.output_path}/{pecha_id}_mapping.json"
             pecha_json["content"] = self.contents
-            write_json(pecha_db_json_path, pecha_json)
-            write_json(mapping_path, self.mappings)
-            return pecha_db_json_path, mapping_path
+            return pecha_json, self.mappings
         elif source_type == "pedurma":
             self.create_pedurma_content_list(pecha)
             pecha_json["content"] = self.contents
-            pecha_db_json_path = f"{self.output_path}/{pecha_id}.json"
-            write_json(pecha_db_json_path, pecha_json)
-            return pecha_db_json_path
+            return pecha_json
 
     def create_pedurma_content_list(self, pecha):
         self.contents = []
         for _, layer in pecha.layers.items():
             curr_chapter = []
-            meaning_segment_layer = layer[LayerEnum.meaning_segment][0]
+            meaning_segment_layer = layer[LayerEnum.segmentation][0]
             durchen_layer = layer[LayerEnum.durchen][0]
             for ann in meaning_segment_layer:
                 meaning_segment = str(ann)
@@ -133,9 +124,7 @@ class PechaDBSerializer(BaseSerializer):
             self.contents.append(curr_chapter)
 
 
-def chapterize_serialized_json(
-    json_file: Path, output_path: Path, chapter_size: int = 200
-):
+def chapterize_serialized_json(json_file: Path, chapter_size: int = 200):
     """
     Splits JSON content into chapters of fixed size and saves to a new file.
     Input JSON must have structure: {"content": [[text1, text2, ...]]}.
@@ -150,8 +139,4 @@ def chapterize_serialized_json(
 
     data["content"] = new_content
 
-    output_path.mkdir(parents=True, exist_ok=True)
-    output_file = output_path / f"{json_file.stem}_chapterized.json"
-    write_json(output_file, data)
-
-    return output_file
+    return data
