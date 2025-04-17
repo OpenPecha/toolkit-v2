@@ -38,7 +38,7 @@
           "key": "Segmentation_Type",
           "value": {
             "@type": "String",
-            "value": "English_Segment"
+            "value": "Segmentation"
           }
         },
         {
