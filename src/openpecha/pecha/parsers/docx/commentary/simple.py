@@ -144,17 +144,7 @@ class DocxSimpleCommentaryParser(BaseParser):
         positions, base = self.extract_segmentation_coordinates(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        layer_path = self.add_segmentation_annotations(
-            pecha, positions, LayerEnum.segmentation
-        )
-        basename = list(pecha.bases.keys())[0]
-        pecha.add_annotation_metadata(
-            basename,
-            layer_path.stem,
-            {
-                "annotation_type": LayerEnum.segmentation.value,
-            },
-        )
+        self.add_segmentation_annotations(pecha, positions, LayerEnum.segmentation)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return pecha

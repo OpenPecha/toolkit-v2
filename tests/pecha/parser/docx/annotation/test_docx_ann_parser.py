@@ -103,19 +103,7 @@ class TestDocxAnnotationParser(TestCase):
             )
         )
 
-        metadata = self.root_display_pecha.metadata
-        basename = list(metadata.bases.keys())[0]
-        new_annotation_metadata = metadata.bases[basename]["source_metadata"][
-            "annotations"
-        ][layer_path.stem]
-
-        expected_new_annotation_metadata = {
-            "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1",
-            "annotation_type": "Alignment",
-        }
-
         assert new_anns == expected_new_anns
-        assert new_annotation_metadata == expected_new_annotation_metadata
 
     def test_commentary_pecha(self):
         ann_type = LayerEnum.alignment
@@ -150,24 +138,7 @@ class TestDocxAnnotationParser(TestCase):
             )
         )
 
-        metadata = self.commentary_pecha.metadata
-        basename = list(metadata.bases.keys())[0]
-        new_annotation_metadata = metadata.bases[basename]["source_metadata"][
-            "annotations"
-        ][layer_path.stem]
-
-        expected_new_annotation_metadata = {
-            "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1",
-            "relationship": [
-                "commentary_of",
-                "IC7760088",
-                "IC7760088/layers/A389/Alignment-84EB.json",
-            ],
-            "annotation_type": "Alignment",
-        }
-
         assert new_anns == expected_new_anns
-        assert new_annotation_metadata == expected_new_annotation_metadata
 
     def tearDown(self) -> None:
         # Revert all original files
