@@ -84,7 +84,7 @@ class PechaDBSerializer(BaseSerializer):
         self.contents = []
         for _, layer in pecha.layers.items():
             curr_chapter = []
-            meaning_segment_layer = layer[LayerEnum.meaning_segment][0]
+            meaning_segment_layer = layer[LayerEnum.segmentation][0]
             durchen_layer = layer[LayerEnum.durchen][0]
             for ann in meaning_segment_layer:
                 meaning_segment = str(ann)

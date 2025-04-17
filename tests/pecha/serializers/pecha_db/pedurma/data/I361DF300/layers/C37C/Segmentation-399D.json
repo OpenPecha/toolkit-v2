@@ -11,21 +11,21 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Structure_Annotation",
+      "@id": "Segmentation_Annotation",
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "Structure_Type"
+          "@id": "Segmentation_Type"
         }
       ],
       "data": [
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "key": "Structure_Type",
+          "key": "Segmentation_Type",
           "value": {
             "@type": "String",
-            "value": "Meaning_Segment"
+            "value": "Segmentation"
           }
         }
       ]
@@ -54,7 +54,7 @@
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "set": "Structure_Annotation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -80,7 +80,7 @@
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "set": "Structure_Annotation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -106,7 +106,7 @@
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "set": "Structure_Annotation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -132,7 +132,7 @@
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "set": "Structure_Annotation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -158,7 +158,7 @@
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "set": "Structure_Annotation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -184,7 +184,7 @@
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "set": "Structure_Annotation"
+          "set": "Segmentation_Annotation"
         }
       ]
     },
@@ -210,7 +210,7 @@
         {
           "@type": "AnnotationData",
           "@id": "6EA4B469",
-          "set": "Structure_Annotation"
+          "set": "Segmentation_Annotation"
         }
       ]
     }
