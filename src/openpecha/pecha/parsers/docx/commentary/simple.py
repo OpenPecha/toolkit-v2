@@ -149,6 +149,7 @@ class DocxSimpleCommentaryParser(BaseParser):
         layer_path = self.add_segmentation_annotations(
             pecha, positions, LayerEnum.segmentation
         )
+        layer_path = layer_path.relative_to(pecha.pecha_path.parent)
         layer_name = str(layer_path)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
