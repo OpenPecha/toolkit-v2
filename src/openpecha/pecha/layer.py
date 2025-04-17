@@ -26,8 +26,6 @@ class LayerCollectionEnum(Enum):
 
 
 class LayerEnum(Enum):
-    meaning_segment = "Meaning_Segment"
-
     segmentation = "Segmentation"
     alignment = "Alignment"
 
@@ -59,7 +57,6 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
     if layer_type in [
         LayerEnum.chapter,
         LayerEnum.sapche,
-        LayerEnum.meaning_segment,
         LayerEnum.pagination,
     ]:
         return LayerGroupEnum.structure_type
@@ -85,7 +82,6 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
     if layer_type in [
         LayerEnum.chapter,
         LayerEnum.sapche,
-        LayerEnum.meaning_segment,
         LayerEnum.pagination,
     ]:
         return LayerCollectionEnum.structure_annotation
