@@ -38,7 +38,7 @@ class PechaDBSerializer(BaseSerializer):
                 chapter_num += 1
                 text_index = 1
                 self.chapter[chapter_num] = []
-            for ann_store in pecha.layers[basename][LayerEnum.meaning_segment]:
+            for ann_store in pecha.layers[basename][LayerEnum.segmentation]:
                 for ann in list(ann_store):
                     segment_id = str(ann.data()[0])
                     segment_text = ann.text()[0]
