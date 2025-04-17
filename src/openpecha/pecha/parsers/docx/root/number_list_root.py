@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 
 from docx2python import docx2python
 
@@ -149,10 +149,10 @@ class DocxRootParser(BaseParser):
 
     def parse(
         self,
-        input: Union[str, Path],
+        input: str | Path,
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
-        pecha_id: Union[str, None] = None,
+        pecha_id: str | None = None,
     ) -> Pecha:
         """Parse a docx file and create a pecha.
 

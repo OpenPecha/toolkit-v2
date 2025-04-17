@@ -1,4 +1,4 @@
-from typing import Collection, Dict, Union
+from typing import Collection, Dict
 from unittest import TestCase
 
 from openpecha.pecha.parsers.docx import DocxParser
@@ -17,7 +17,7 @@ extra_fields = {
     "usage_title": {"en": "Illuminating the Intent Chapter 6"},
 }
 
-MetadataType = Dict[str, Union[str, Dict[str, str], Collection[str], None]]
+MetadataType = Dict[str, str | Dict[str, str] | Collection[str] | None]
 
 
 class TestDocxParser(TestCase):

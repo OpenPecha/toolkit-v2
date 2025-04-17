@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError
@@ -124,7 +124,7 @@ class FormatPechaCategory:
         return category
 
 
-def get_metadata_for_pecha_org(pecha: Pecha, lang: Union[str, None] = None):
+def get_metadata_for_pecha_org(pecha: Pecha, lang: str | None = None):
     """
     Extract required metadata from Pecha for `pecha.org` serialization
     """

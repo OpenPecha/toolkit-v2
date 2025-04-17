@@ -2,7 +2,7 @@ import json
 import shutil
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Generator, List, Optional, Tuple, Union
+from typing import Dict, Generator, List, Optional, Tuple
 
 import stam
 from git import Repo
@@ -55,7 +55,7 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @classmethod
-    def create(cls, output_path: Path, pecha_id: Union[str, None] = None) -> "Pecha":
+    def create(cls, output_path: Path, pecha_id: str | None = None) -> "Pecha":
         pecha_id = get_initial_pecha_id() if not pecha_id else pecha_id
         pecha_path = output_path / pecha_id
         if pecha_path.exists():
@@ -409,7 +409,7 @@ class Pecha:
         This function merges the layers of the source pecha into the current pecha.
 
         Args:
-            source_pecha_path (Union[Path, str]): The path of the source pecha.
+            source_pecha_path (Path | str): The path of the source pecha.
             source_base_name (str): The base name of the source pecha.
             target_base_name (str): The base name of the target (current) pecha.
         """

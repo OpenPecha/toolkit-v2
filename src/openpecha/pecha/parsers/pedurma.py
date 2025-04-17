@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from botok.tokenizers.chunktokenizer import ChunkTokenizer
 
@@ -27,7 +27,7 @@ class PedurmaParser(BaseParser):
     def parse(
         self,
         input: str,
-        metadata: Union[Dict, Path],
+        metadata: Dict | Path,
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
 

@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from docx import Document
 from docx.shared import RGBColor
@@ -48,7 +48,7 @@ class DocxComplexCommentaryParser(BaseParser):
     def parse(
         self,
         input: Path,
-        metadata: Union[Dict[str, Any], Path],
+        metadata: Dict[str, Any] | Path,
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
 

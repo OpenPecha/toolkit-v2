@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from stam import AnnotationStore
 
@@ -96,7 +96,7 @@ class RootSerializer:
         self,
         pecha: Pecha,
         pecha_category: List[Dict],
-        translation_pecha: Union[Pecha, None] = None,
+        translation_pecha: Pecha | None = None,
     ) -> Dict:
 
         # Format Category
