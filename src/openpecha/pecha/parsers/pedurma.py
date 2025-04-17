@@ -58,7 +58,7 @@ class PedurmaParser(BaseParser):
         self.meaning_segment_anns = []
         for line in self.base_text.splitlines():
             segment_ann = {
-                LayerEnum.meaning_segment.value: {
+                LayerEnum.segmentation.value: {
                     "start": char_walker,
                     "end": char_walker + len(line),
                 }
@@ -80,9 +80,9 @@ class PedurmaParser(BaseParser):
         durchen_layer.save()
 
         # Add Segment Layer
-        segment_layer, _ = pecha.add_layer(basename, LayerEnum.meaning_segment)
+        segment_layer, _ = pecha.add_layer(basename, LayerEnum.segmentation)
         for ann in self.meaning_segment_anns:
-            pecha.add_annotation(segment_layer, ann, LayerEnum.meaning_segment)
+            pecha.add_annotation(segment_layer, ann, LayerEnum.segmentation)
 
         segment_layer.save()
         # Set metadata

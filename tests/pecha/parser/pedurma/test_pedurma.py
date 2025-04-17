@@ -56,7 +56,7 @@ def test_pedurma():
             parser.meaning_segment_anns, expected_meaning_segments
         ):
             start, end = (
-                ann[LayerEnum.meaning_segment.value]["start"],
-                ann[LayerEnum.meaning_segment.value]["end"],
+                ann[LayerEnum.segmentation.value]["start"],
+                ann[LayerEnum.segmentation.value]["end"],
             )
             assert parser.base_text[start:end] == expected_segment
