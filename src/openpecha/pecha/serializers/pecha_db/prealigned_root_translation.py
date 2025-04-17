@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from stam import AnnotationStore
 
@@ -7,8 +7,8 @@ from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.utils import (
+    FormatPechaCategory,
     get_metadata_for_pecha_org,
-    FormatPechaCategory
 )
 from openpecha.utils import chunk_strings
 
@@ -16,7 +16,6 @@ logger = get_logger(__name__)
 
 
 class PreAlignedRootTranslationSerializer:
-
     @staticmethod
     def get_texts_from_layer(layer: AnnotationStore):
         """
@@ -98,10 +97,12 @@ class PreAlignedRootTranslationSerializer:
         root_display_pecha: Pecha,
         root_pecha: Pecha,
         translation_pecha: Pecha,
-        pecha_category: List[Dict[str, Union[Dict[str, str], str, None]]],
+        pecha_category: List[Dict],
     ) -> Dict:
         # Format Category
-        formatted_category = FormatPechaCategory().format_root_category(root_display_pecha, pecha_category)
+        formatted_category = FormatPechaCategory().format_root_category(
+            root_display_pecha, pecha_category
+        )
         bo_category, en_category = formatted_category["bo"], formatted_category["en"]
         # Get the metadata for root and translation pecha
         root_metadata = get_metadata_for_pecha_org(root_display_pecha)

@@ -5,8 +5,8 @@ from stam import AnnotationStore
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.serializers.pecha_db.utils import (
+    FormatPechaCategory,
     get_metadata_for_pecha_org,
-    FormatPechaCategory
 )
 from openpecha.utils import (
     chunk_strings,
@@ -18,7 +18,6 @@ logger = get_logger(__name__)
 
 
 class SimpleCommentarySerializer:
-
     def get_content(self, pecha: Pecha, layer_path: str):
         """
         Prepare content in the sapche annotations to the required format(Tree like structure)
@@ -58,12 +57,14 @@ class SimpleCommentarySerializer:
     def serialize(
         self,
         pecha: Pecha,
-        pecha_category: List[Dict[str, Union[Dict[str, str], str, None]]],
+        pecha_category: List[Dict],
         root_title: str,
         translation_pecha: Union[Pecha, None] = None,
     ):
         # Format Category
-        formatted_category = FormatPechaCategory().format_commentary_category(pecha, pecha_category, root_title)
+        formatted_category = FormatPechaCategory().format_commentary_category(
+            pecha, pecha_category, root_title
+        )
         src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
 
         # Get the metadata for Commentary and Commentary Translation pecha
