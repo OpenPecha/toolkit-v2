@@ -39,15 +39,25 @@ class TestDocxRootParser(TestCase):
 
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
             "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coordinates"
-        ) as mock_extract_root_idx:
+        ) as mock_extract_root_idx, patch(
+            "openpecha.pecha.get_initial_pecha_id"
+        ) as mock_get_pecha_id, patch(
+            "openpecha.pecha.get_base_id"
+        ) as mock_get_base_id, patch(
+            "openpecha.pecha.get_layer_id"
+        ) as mock_get_layer_id:
             OUTPUT_DIR = Path(tmpdirname)
             mock_extract_root_idx.return_value = (
                 expected_segmentation_coords,
                 expected_base,
             )
-            pecha, _ = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
+            mock_get_pecha_id.return_value = "P00001"
+            mock_get_base_id.return_value = "B001"
+            mock_get_layer_id.return_value = "L001"
+            pecha, layer_name = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
+            assert layer_name == "P00001/layers/B001/Segmentation-L001.json"
 
     def test_en_google_doc_translation_parser(self):
         en_docx_file = self.DATA_DIR / "en" / "entering the middle way english.docx"
@@ -78,18 +88,23 @@ class TestDocxRootParser(TestCase):
 
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
             "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coordinates"
-        ) as mock_extract_root_idx:
+        ) as mock_extract_root_idx, patch(
+            "openpecha.pecha.get_initial_pecha_id"
+        ) as mock_get_pecha_id, patch(
+            "openpecha.pecha.get_base_id"
+        ) as mock_get_base_id, patch(
+            "openpecha.pecha.get_layer_id"
+        ) as mock_get_layer_id:
             OUTPUT_DIR = Path(tmpdirname)
             mock_extract_root_idx.return_value = (
                 expected_segmentation_coords,
                 expected_base,
             )
-            pecha, _ = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
+            mock_get_pecha_id.return_value = "P00002"
+            mock_get_base_id.return_value = "B002"
+            mock_get_layer_id.return_value = "L002"
+
+            pecha, layer_name = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
-
-
-work = TestDocxRootParser()
-work.setUp()
-work.test_bo_google_doc_translation_parser()
-work.test_en_google_doc_translation_parser()
+            assert layer_name == "P00002/layers/B002/Segmentation-L002.json"
