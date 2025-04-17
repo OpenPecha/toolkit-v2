@@ -104,8 +104,9 @@ class DocxParser:
                 pecha_id=pecha_id,
             )
         else:
-            return DocxRootParser().parse(
+            pecha, _ = DocxRootParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
+            return pecha

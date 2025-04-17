@@ -45,7 +45,7 @@ class TestDocxRootParser(TestCase):
                 expected_segmentation_coords,
                 expected_base,
             )
-            pecha = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
+            pecha, _ = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
 
@@ -84,7 +84,7 @@ class TestDocxRootParser(TestCase):
                 expected_segmentation_coords,
                 expected_base,
             )
-            pecha = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
+            pecha, _ = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
 
