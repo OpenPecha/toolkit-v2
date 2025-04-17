@@ -18,7 +18,6 @@ from openpecha.pecha.metadata import PechaMetaData
 class LayerCollectionEnum(Enum):
     """In STAM, this is used for setting DataSet id"""
 
-    root_commentory = "Root_Commentary"
     structure_annotation = "Structure_Annotation"
     variation_annotation = "Variation_Annotation"
     ocr_annotation = "Ocr_Annotation"
@@ -28,7 +27,6 @@ class LayerCollectionEnum(Enum):
 
 class LayerEnum(Enum):
     meaning_segment = "Meaning_Segment"
-    commentary_segment = "Commentary_Segment"
 
     segmentation = "Segmentation"
     alignment = "Alignment"
@@ -46,7 +44,6 @@ class LayerEnum(Enum):
 
 class LayerGroupEnum(Enum):
     structure_type = "Structure_Type"
-    associated_alignment = "Associated_Alignment"
     spelling_variation = "Spelling_Variation"
     ocr_confidence_type = "Ocr_Type"
     language_type = "Language_Type"
@@ -58,9 +55,6 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
 
     if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
         return LayerGroupEnum.segmentation_type
-
-    if layer_type in [LayerEnum.commentary_segment]:
-        return LayerGroupEnum.associated_alignment
 
     if layer_type in [
         LayerEnum.chapter,
@@ -87,9 +81,6 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
 
     if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
         return LayerCollectionEnum.segmentation_annotation
-
-    if layer_type in [LayerEnum.commentary_segment]:
-        return LayerCollectionEnum.root_commentory
 
     if layer_type in [
         LayerEnum.chapter,
