@@ -85,14 +85,13 @@ class TestDocxAnnotationParser(TestCase):
 
     def test_root_pecha(self):
         ann_type = LayerEnum.alignment
-        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
         metadatas = [self.root_display_pecha_metadata]
 
         layer_path = self.parser.add_annotation(
-            self.root_display_pecha, ann_type, ann_title, docx_file, metadatas
+            self.root_display_pecha, ann_type, docx_file, metadatas
         )
 
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
@@ -107,7 +106,6 @@ class TestDocxAnnotationParser(TestCase):
 
     def test_commentary_pecha(self):
         ann_type = LayerEnum.alignment
-        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )
@@ -124,10 +122,8 @@ class TestDocxAnnotationParser(TestCase):
         layer_path = self.parser.add_annotation(
             self.commentary_pecha,
             ann_type,
-            ann_title,
             docx_file,
             metadatas,
-            parent_layer_path=parent_layer_path,
         )
 
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))

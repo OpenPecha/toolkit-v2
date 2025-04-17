@@ -40,10 +40,8 @@ class DocxAnnotationParser:
         self,
         pecha: Pecha,
         ann_type: LayerEnum,
-        ann_title: str,
         docx_file: Path,
         metadatas: List[Dict],
-        parent_layer_path: str | None = None,
     ):
         pecha_type: PechaType = get_pecha_type(metadatas)
 
