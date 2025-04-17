@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 from stam import AnnotationStore
 
@@ -59,7 +59,7 @@ class SimpleCommentarySerializer:
         pecha: Pecha,
         pecha_category: List[Dict],
         root_title: str,
-        translation_pecha: Union[Pecha, None] = None,
+        translation_pecha: Pecha | None = None,
     ):
         # Format Category
         formatted_category = FormatPechaCategory().format_commentary_category(

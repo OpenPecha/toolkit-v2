@@ -4,7 +4,7 @@ import math
 import os
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from openpecha.config import NO_OF_CHAPTER_SEGMENT
 from openpecha.exceptions import FileNotFoundError
@@ -125,7 +125,7 @@ def write_csv(file_path, data) -> None:
         writer.writerows(data)
 
 
-def read_json(fn: Union[str, Path]) -> Dict:
+def read_json(fn: str | Path) -> Dict:
     fn = Path(fn)
     if not fn.is_file():
         raise FileNotFoundError(f"{str(fn)} JSON file is not found to read.")
@@ -134,7 +134,7 @@ def read_json(fn: Union[str, Path]) -> Dict:
 
 
 def write_json(
-    output_fn: Union[str, Path],
+    output_fn: str | Path,
     data: Dict,
 ) -> Path:
     """Dump data to a JSON file."""

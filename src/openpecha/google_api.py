@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional
 from urllib.parse import urlparse
 
 from google.oauth2 import service_account
@@ -16,7 +16,7 @@ class GoogleDocAndSheetsDownloader:
         google_docs_link: Optional[str] = None,
         google_sheets_link: Optional[str] = None,
         credentials_path: Optional[str] = GOOGLE_API_CRENDENTIALS_PATH,
-        output_dir: Union[str, Path] = PECHAS_PATH,
+        output_dir: str | Path = PECHAS_PATH,
     ):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)

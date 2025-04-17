@@ -1,6 +1,6 @@
 # import re
 # from pathlib import Path
-# from typing import Any, Dict, Union
+# from typing import Any, Dict
 
 # from openpecha.config import PECHAS_PATH
 # from openpecha.pecha import Pecha
@@ -214,7 +214,7 @@
 #     def parse(
 #         self,
 #         input: Any,
-#         metadata: Union[Dict, Path],
+#         metadata: Dict|Path,
 #         output_path: Path = PECHAS_PATH,
 #     ):
 #         text = input.read_text(encoding="utf-8")

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
@@ -79,18 +79,18 @@ class DocxParser:
 
     def parse(
         self,
-        docx_file: Union[str, Path],
+        docx_file: str | Path,
         metadatas: List[Dict],
-        pecha_id: Union[str, None] = None,
+        pecha_id: str | None = None,
     ) -> Pecha:
         """Parses a DOCX file and generates a Pecha object based on its type.
 
         Args:
-            docx_file (Union[str, Path]): Path to the DOCX file to be parsed.
+            docx_file (str | Path): Path to the DOCX file to be parsed.
             metadatas (List[Dict]): List of dictionaries, where each dictionary
                                     contains metadata of the Pecha.
             output_path (Path):
-            pecha_id (Union[str, None], optional): Pecha ID to be assigned. Defaults to None.
+            pecha_id (str | None, optional): Pecha ID to be assigned. Defaults to None.
 
         Returns:
             Pecha: Pecha object.
