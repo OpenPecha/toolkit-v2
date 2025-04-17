@@ -98,11 +98,12 @@ class DocxParser:
         is_commentary = self.is_commentary_pecha(metadatas)
 
         if is_commentary:
-            return DocxSimpleCommentaryParser().parse(
+            pecha, _ = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
+            return pecha
         else:
             pecha, _ = DocxRootParser().parse(
                 input=docx_file,

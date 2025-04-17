@@ -17,6 +17,8 @@ from openpecha.pecha.parsers import BaseParser
 
 logger = get_logger(__name__)
 
+layer_name = str
+
 
 class DocxSimpleCommentaryParser(BaseParser):
     def __init__(self):
@@ -124,7 +126,7 @@ class DocxSimpleCommentaryParser(BaseParser):
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
-    ) -> Pecha:
+    ) -> Tuple[Pecha, layer_name]:
         """Parse a docx file and create a pecha.
 
         The process is split into three main steps:
@@ -144,10 +146,13 @@ class DocxSimpleCommentaryParser(BaseParser):
         positions, base = self.extract_segmentation_coordinates(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        self.add_segmentation_annotations(pecha, positions, LayerEnum.segmentation)
+        layer_path = self.add_segmentation_annotations(
+            pecha, positions, LayerEnum.segmentation
+        )
+        layer_name = str(layer_path)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
-        return pecha
+        return (pecha, layer_name)
 
     def create_pecha(
         self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None

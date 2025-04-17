@@ -43,5 +43,5 @@ class TestDocxSimpleCommentaryParser(TestCase):
                 self.expected_anns,
                 self.expected_base,
             )
-            pecha = parser.parse(self.input, self.metadata, Path(tempdir))
+            pecha, _ = parser.parse(self.input, self.metadata, Path(tempdir))
             assert isinstance(pecha, Pecha)
