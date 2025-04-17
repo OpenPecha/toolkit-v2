@@ -25,7 +25,7 @@
           "key": "Associated_Alignment",
           "value": {
             "@type": "String",
-            "value": "Root_Segment"
+            "value": "Segmentation"
           }
         }
       ]

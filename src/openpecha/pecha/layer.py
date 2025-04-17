@@ -28,7 +28,6 @@ class LayerCollectionEnum(Enum):
 
 class LayerEnum(Enum):
     meaning_segment = "Meaning_Segment"
-    root_segment = "Root_Segment"
     commentary_segment = "Commentary_Segment"
 
     segmentation = "Segmentation"
@@ -60,7 +59,7 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
     if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
         return LayerGroupEnum.segmentation_type
 
-    if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
+    if layer_type in [LayerEnum.commentary_segment]:
         return LayerGroupEnum.associated_alignment
 
     if layer_type in [
@@ -89,7 +88,7 @@ def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
     if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
         return LayerCollectionEnum.segmentation_annotation
 
-    if layer_type in [LayerEnum.root_segment, LayerEnum.commentary_segment]:
+    if layer_type in [LayerEnum.commentary_segment]:
         return LayerCollectionEnum.root_commentory
 
     if layer_type in [
