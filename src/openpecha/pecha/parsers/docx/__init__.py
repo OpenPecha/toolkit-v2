@@ -3,12 +3,11 @@ from typing import Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, layer_name
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 
 logger = get_logger(__name__)
-layer_name = str
 
 
 class PechaOrgPechaMetaDataValidator:

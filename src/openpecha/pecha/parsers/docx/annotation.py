@@ -9,7 +9,6 @@ from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 
 pecha_id = str
-layer_name = str
 
 
 class DocxAnnotationParser:

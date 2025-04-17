@@ -10,14 +10,12 @@ from openpecha.exceptions import (
     FileNotFoundError,
     MetaDataValidationError,
 )
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, layer_name
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 logger = get_logger(__name__)
-
-layer_name = str
 
 
 class DocxSimpleCommentaryParser(BaseParser):
