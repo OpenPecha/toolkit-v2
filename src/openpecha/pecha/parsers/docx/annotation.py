@@ -68,11 +68,9 @@ class DocxAnnotationParser:
                         "root_idx_mapping": coord.get("root_idx_mapping", ""),
                     }
                 )
-            layer_path = parser.add_segmentation_annotations(
+            layer_name = parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
-            layer_path = layer_path.relative_to(pecha.layer_path)
-            layer_name = str(layer_path)
             return (pecha, layer_name)
 
         elif self.is_commentary_related_pecha(pecha_type):
@@ -98,11 +96,9 @@ class DocxAnnotationParser:
                         "root_idx_mapping": coord.get("root_idx_mapping", ""),
                     }
                 )
-            layer_path = commentary_parser.add_segmentation_annotations(
+            layer_name = commentary_parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
-            layer_path = layer_path.relative_to(pecha.layer_path)
-            layer_name = str(layer_path)
 
             return (pecha, layer_name)
 

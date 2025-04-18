@@ -56,4 +56,4 @@ class TestDocxSimpleCommentaryParser(TestCase):
 
             pecha, layer_name = parser.parse(self.input, self.metadata, Path(tempdir))
             assert isinstance(pecha, Pecha)
-            assert layer_name == "P00001/layers/B001/Segmentation-L001.json"
+            assert layer_name == "B001/Segmentation-L001.json"

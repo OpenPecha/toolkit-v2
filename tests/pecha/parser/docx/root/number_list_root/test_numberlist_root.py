@@ -57,7 +57,7 @@ class TestDocxRootParser(TestCase):
             pecha, layer_name = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
-            assert layer_name == "P00001/layers/B001/Segmentation-L001.json"
+            assert layer_name == "B001/Segmentation-L001.json"
 
     def test_en_google_doc_translation_parser(self):
         en_docx_file = self.DATA_DIR / "en" / "entering the middle way english.docx"
@@ -107,4 +107,4 @@ class TestDocxRootParser(TestCase):
             pecha, layer_name = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
 
             assert isinstance(pecha, Pecha)
-            assert layer_name == "P00002/layers/B002/Segmentation-L002.json"
+            assert layer_name == "B002/Segmentation-L002.json"
