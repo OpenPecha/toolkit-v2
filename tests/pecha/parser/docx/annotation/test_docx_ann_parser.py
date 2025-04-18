@@ -127,7 +127,6 @@ class TestDocxAnnotationParser(TestCase):
         layer_path = pecha.layer_path / layer_name
 
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
-        layer_path.unlink()
         expected_new_anns = read_json(
             Path(
                 "tests/pecha/parser/docx/annotation/data/commentary_pecha/expected_new_anns.json"
