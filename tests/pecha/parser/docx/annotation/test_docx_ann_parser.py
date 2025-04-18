@@ -85,18 +85,16 @@ class TestDocxAnnotationParser(TestCase):
 
     def test_root_pecha(self):
         ann_type = LayerEnum.alignment
-        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
         metadatas = [self.root_display_pecha_metadata]
 
-        layer_path = self.parser.add_annotation(
-            self.root_display_pecha, ann_type, ann_title, docx_file, metadatas
+        pecha, layer_name = self.parser.add_annotation(
+            self.root_display_pecha, ann_type, docx_file, metadatas
         )
-
+        layer_path = pecha.layer_path / layer_name
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
-        layer_path.unlink()
         expected_new_anns = read_json(
             Path(
                 "tests/pecha/parser/docx/annotation/data/root_display_pecha/expected_new_anns.json"
@@ -107,7 +105,6 @@ class TestDocxAnnotationParser(TestCase):
 
     def test_commentary_pecha(self):
         ann_type = LayerEnum.alignment
-        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )
@@ -121,17 +118,15 @@ class TestDocxAnnotationParser(TestCase):
         parent_layer_path = str(
             parent_layer_path.relative_to(self.root_pecha.pecha_path.parent)
         )
-        layer_path = self.parser.add_annotation(
+        pecha, layer_name = self.parser.add_annotation(
             self.commentary_pecha,
             ann_type,
-            ann_title,
             docx_file,
             metadatas,
-            parent_layer_path=parent_layer_path,
         )
+        layer_path = pecha.layer_path / layer_name
 
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
-        layer_path.unlink()
         expected_new_anns = read_json(
             Path(
                 "tests/pecha/parser/docx/annotation/data/commentary_pecha/expected_new_anns.json"

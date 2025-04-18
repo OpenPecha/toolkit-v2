@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, layer_name
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -9,7 +9,6 @@ from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 
 pecha_id = str
-layer_name = str
 
 
 class DocxAnnotationParser:
@@ -41,11 +40,9 @@ class DocxAnnotationParser:
         self,
         pecha: Pecha,
         ann_type: LayerEnum,
-        ann_title: str,
         docx_file: Path,
         metadatas: List[Dict],
-        parent_layer_path: str | None = None,
-    ):
+    ) -> Tuple[Pecha, layer_name]:
         pecha_type: PechaType = get_pecha_type(metadatas)
 
         if self.is_root_related_pecha(pecha_type):
@@ -71,11 +68,10 @@ class DocxAnnotationParser:
                         "root_idx_mapping": coord.get("root_idx_mapping", ""),
                     }
                 )
-            layer_path = parser.add_segmentation_annotations(
+            layer_name = parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
-
-            return layer_path
+            return (pecha, layer_name)
 
         elif self.is_commentary_related_pecha(pecha_type):
             commentary_parser = DocxSimpleCommentaryParser()
@@ -100,11 +96,11 @@ class DocxAnnotationParser:
                         "root_idx_mapping": coord.get("root_idx_mapping", ""),
                     }
                 )
-            layer_path = commentary_parser.add_segmentation_annotations(
+            layer_name = commentary_parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
 
-            return layer_path
+            return (pecha, layer_name)
 
         else:
             raise ValueError(f"Unknown pecha type: {pecha_type}")

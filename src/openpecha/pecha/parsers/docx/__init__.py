@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, layer_name
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 
@@ -82,7 +82,7 @@ class DocxParser:
         docx_file: str | Path,
         metadatas: List[Dict],
         pecha_id: str | None = None,
-    ) -> Pecha:
+    ) -> Tuple[Pecha, layer_name]:
         """Parses a DOCX file and generates a Pecha object based on its type.
 
         Args:
@@ -98,14 +98,16 @@ class DocxParser:
         is_commentary = self.is_commentary_pecha(metadatas)
 
         if is_commentary:
-            return DocxSimpleCommentaryParser().parse(
+            pecha, layer_name = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
+            return (pecha, layer_name)
         else:
-            return DocxRootParser().parse(
+            pecha, layer_name = DocxRootParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
+            return (pecha, layer_name)
