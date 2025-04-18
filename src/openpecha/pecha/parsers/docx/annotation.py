@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, layer_name
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -42,7 +42,7 @@ class DocxAnnotationParser:
         ann_type: LayerEnum,
         docx_file: Path,
         metadatas: List[Dict],
-    ):
+    ) -> Tuple[Pecha, layer_name]:
         pecha_type: PechaType = get_pecha_type(metadatas)
 
         if self.is_root_related_pecha(pecha_type):
@@ -71,8 +71,9 @@ class DocxAnnotationParser:
             layer_path = parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
-
-            return layer_path
+            layer_path = layer_path.relative_to(pecha.layer_path)
+            layer_name = str(layer_path)
+            return (pecha, layer_name)
 
         elif self.is_commentary_related_pecha(pecha_type):
             commentary_parser = DocxSimpleCommentaryParser()
@@ -100,8 +101,10 @@ class DocxAnnotationParser:
             layer_path = commentary_parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
+            layer_path = layer_path.relative_to(pecha.layer_path)
+            layer_name = str(layer_path)
 
-            return layer_path
+            return (pecha, layer_name)
 
         else:
             raise ValueError(f"Unknown pecha type: {pecha_type}")
