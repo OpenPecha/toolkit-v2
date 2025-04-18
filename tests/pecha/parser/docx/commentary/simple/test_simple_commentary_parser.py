@@ -40,8 +40,6 @@ class TestDocxSimpleCommentaryParser(TestCase):
         with tempfile.TemporaryDirectory() as tempdir, mock.patch(
             "openpecha.pecha.parsers.docx.commentary.simple.DocxSimpleCommentaryParser.extract_segmentation_coordinates"
         ) as mock_extract_commentary_segments_anns, patch(
-            "openpecha.pecha.get_initial_pecha_id"
-        ) as mock_get_pecha_id, patch(
             "openpecha.pecha.get_base_id"
         ) as mock_get_base_id, patch(
             "openpecha.pecha.get_layer_id"
@@ -50,7 +48,6 @@ class TestDocxSimpleCommentaryParser(TestCase):
                 self.expected_anns,
                 self.expected_base,
             )
-            mock_get_pecha_id.return_value = "P00001"
             mock_get_base_id.return_value = "B001"
             mock_get_layer_id.return_value = "L001"
 

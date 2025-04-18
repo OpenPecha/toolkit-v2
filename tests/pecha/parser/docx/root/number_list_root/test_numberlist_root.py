@@ -40,8 +40,6 @@ class TestDocxRootParser(TestCase):
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
             "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coordinates"
         ) as mock_extract_root_idx, patch(
-            "openpecha.pecha.get_initial_pecha_id"
-        ) as mock_get_pecha_id, patch(
             "openpecha.pecha.get_base_id"
         ) as mock_get_base_id, patch(
             "openpecha.pecha.get_layer_id"
@@ -51,7 +49,6 @@ class TestDocxRootParser(TestCase):
                 expected_segmentation_coords,
                 expected_base,
             )
-            mock_get_pecha_id.return_value = "P00001"
             mock_get_base_id.return_value = "B001"
             mock_get_layer_id.return_value = "L001"
             pecha, layer_name = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
@@ -89,8 +86,6 @@ class TestDocxRootParser(TestCase):
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
             "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coordinates"
         ) as mock_extract_root_idx, patch(
-            "openpecha.pecha.get_initial_pecha_id"
-        ) as mock_get_pecha_id, patch(
             "openpecha.pecha.get_base_id"
         ) as mock_get_base_id, patch(
             "openpecha.pecha.get_layer_id"
@@ -100,7 +95,6 @@ class TestDocxRootParser(TestCase):
                 expected_segmentation_coords,
                 expected_base,
             )
-            mock_get_pecha_id.return_value = "P00002"
             mock_get_base_id.return_value = "B002"
             mock_get_layer_id.return_value = "L002"
 
