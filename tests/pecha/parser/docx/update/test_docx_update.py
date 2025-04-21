@@ -1,8 +1,11 @@
 from pathlib import Path
 from unittest import TestCase
 
-from openpecha.pecha import Pecha
+from stam import AnnotationStore
+
+from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.parsers.docx.update import DocxAnnotationUpdate
+from openpecha.utils import read_json
 
 
 class TestDocxAnnotationUpdate(TestCase):
@@ -30,9 +33,22 @@ class TestDocxAnnotationUpdate(TestCase):
         )
         metadatas = [self.root_pecha_metadata]
 
+        full_layer_path = self.root_pecha.layer_path / layer_path
+        old_anns = get_anns(AnnotationStore(file=str(full_layer_path)))
+        expected_old_anns = read_json(
+            "tests/pecha/parser/docx/update/data/root/old_anns.json"
+        )
+        assert old_anns == expected_old_anns, "Old annotations do not match"
+
         updated_pecha, _ = updater.update_annotation(
             self.root_pecha, layer_path, docx_file, metadatas
         )
+
+        updated_anns = get_anns(AnnotationStore(file=str(full_layer_path)))
+        expected_new_anns = read_json(
+            "tests/pecha/parser/docx/update/data/root/new_anns.json"
+        )
+        assert updated_anns == expected_new_anns, "New annotations do not match"
 
     def tearDown(self) -> None:
         # Revert all original files
