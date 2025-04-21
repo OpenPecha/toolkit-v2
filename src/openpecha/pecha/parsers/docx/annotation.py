@@ -57,9 +57,7 @@ class DocxAnnotationParser:
             new_base = pecha.get_base(new_basename)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            layer_name = parser.add_segmentation_annotations(
-                pecha, updated_coords, ann_type
-            )
+            layer_name = parser.add_segmentation_layer(pecha, updated_coords, ann_type)
             return (pecha, layer_name)
 
         elif is_commentary_related_pecha(pecha_type):
@@ -72,7 +70,7 @@ class DocxAnnotationParser:
             new_base = pecha.get_base(new_basename)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            layer_name = commentary_parser.add_segmentation_annotations(
+            layer_name = commentary_parser.add_segmentation_layer(
                 pecha, updated_coords, ann_type
             )
 
