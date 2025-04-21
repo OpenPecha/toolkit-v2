@@ -23,10 +23,10 @@ class DocxAnnotationUpdate:
         return LayerEnum(layer_name.split("-")[0])
 
     def update_annotation(
-        self, pecha: Pecha, layer_path: str, docx_file: Path, metadatas: List[Dict]
+        self, pecha: Pecha, ann_path: str, docx_file: Path, metadatas: List[Dict]
     ):
-        ann_type = self.extract_layer_enum(layer_path)
-        layer_id = self.extract_layer_id(layer_path)
+        ann_type = self.extract_layer_enum(ann_path)
+        layer_id = self.extract_layer_id(ann_path)
 
         with patch("openpecha.pecha.get_layer_id") as mock_layer_id:
             mock_layer_id.return_value = layer_id

@@ -27,14 +27,14 @@ class TestDocxAnnotationUpdate(TestCase):
 
     def test_root_pecha(self):
         updater = DocxAnnotationUpdate()
-        layer_path = "A389/Alignment-84EB.json"
+        ann_path = "A389/Alignment-84EB.json"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
         metadatas = [self.root_pecha_metadata]
 
-        full_layer_path = self.root_pecha.layer_path / layer_path
-        old_anns = get_anns(AnnotationStore(file=str(full_layer_path)))
+        full_ann_path = self.root_pecha.layer_path / ann_path
+        old_anns = get_anns(AnnotationStore(file=str(full_ann_path)))
         expected_old_anns = read_json(
             "tests/pecha/parser/docx/update/data/root/old_anns.json"
         )
@@ -42,9 +42,9 @@ class TestDocxAnnotationUpdate(TestCase):
             old_anns == expected_old_anns
         ), "Old annotations do not match in Root Pecha Segmentation Layer Update"
 
-        updater.update_annotation(self.root_pecha, layer_path, docx_file, metadatas)
+        updater.update_annotation(self.root_pecha, ann_path, docx_file, metadatas)
 
-        updated_anns = get_anns(AnnotationStore(file=str(full_layer_path)))
+        updated_anns = get_anns(AnnotationStore(file=str(full_ann_path)))
         expected_new_anns = read_json(
             "tests/pecha/parser/docx/update/data/root/new_anns.json"
         )
