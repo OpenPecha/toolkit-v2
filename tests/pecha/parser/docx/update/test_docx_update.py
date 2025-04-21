@@ -86,6 +86,16 @@ class TestDocxAnnotationUpdate(TestCase):
             old_anns == expected_old_anns
         ), "Old annotations do not match in Commentary Pecha Segmentation Layer Update"
 
+        updater.update_annotation(self.commentary_pecha, ann_path, docx_file, metadatas)
+
+        updated_anns = get_anns(AnnotationStore(file=str(full_ann_path)))
+        expected_updated_anns = read_json(
+            "tests/pecha/parser/docx/update/data/commentary/new_anns.json"
+        )
+        assert (
+            updated_anns == expected_updated_anns
+        ), "New annotations do not match in Commentary Pecha Segmentation Layer Update"
+
     def tearDown(self) -> None:
         # Revert all original files
         for f, content in self.root_pecha_backup.items():
