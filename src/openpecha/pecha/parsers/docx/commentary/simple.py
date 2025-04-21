@@ -10,7 +10,7 @@ from openpecha.exceptions import (
     FileNotFoundError,
     MetaDataValidationError,
 )
-from openpecha.pecha import Pecha, layer_name
+from openpecha.pecha import Pecha, ann_path
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
@@ -100,7 +100,7 @@ class DocxSimpleCommentaryParser(BaseParser):
             char_count += len(segment) + 1
         return (anns, base)
 
-    def extract_segmentation_coordinates(
+    def extract_segmentation_coords(
         self, docx_file: Path
     ) -> Tuple[List[Dict[str, int]], str]:
         """Extract text from docx and calculate coordinates for segments.
@@ -124,7 +124,7 @@ class DocxSimpleCommentaryParser(BaseParser):
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
-    ) -> Tuple[Pecha, layer_name]:
+    ) -> Tuple[Pecha, ann_path]:
         """Parse a docx file and create a pecha.
 
         The process is split into three main steps:
@@ -141,15 +141,13 @@ class DocxSimpleCommentaryParser(BaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        positions, base = self.extract_segmentation_coordinates(input)
+        positions, base = self.extract_segmentation_coords(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        layer_name = self.add_segmentation_annotations(
-            pecha, positions, LayerEnum.segmentation
-        )
+        ann_path = self.add_segmentation_layer(pecha, positions, LayerEnum.segmentation)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
-        return (pecha, layer_name)
+        return (pecha, ann_path)
 
     def create_pecha(
         self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
@@ -189,9 +187,9 @@ class DocxSimpleCommentaryParser(BaseParser):
             for pos in positions
         ]
 
-    def add_segmentation_annotations(
+    def add_segmentation_layer(
         self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
-    ) -> layer_name:
+    ) -> ann_path:
 
         basename = list(pecha.bases.keys())[0]
         layer, layer_path = pecha.add_layer(basename, ann_type)
@@ -201,6 +199,4 @@ class DocxSimpleCommentaryParser(BaseParser):
             pecha.add_annotation(layer, ann, ann_type)
         layer.save()
 
-        layer_path = layer_path.relative_to(pecha.layer_path)
-        layer_name = str(layer_path)
-        return layer_name
+        return str(layer_path.relative_to(pecha.layer_path))
