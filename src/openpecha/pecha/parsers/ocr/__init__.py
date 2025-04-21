@@ -52,7 +52,7 @@ class BdrcParser:
         try:
             # 2. Extract the zip file
             with zipfile.ZipFile(input_path, "r") as zip_ref:
-                zip_ref.extractall(work_path)
+                zip_ref.extractall(extract_dir)
 
         except zipfile.BadZipFile:
             logger.error(f"Invalid zip file: {input_path}")
