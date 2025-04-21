@@ -70,12 +70,12 @@ class TestDocxAnnotationUpdate(TestCase):
         ), "New annotations do not match in Root Pecha Segmentation Layer Update"
 
     def test_commentary_pecha(self):
-        updater = DocxAnnotationUpdate()  # noqa
+        updater = DocxAnnotationUpdate()
         ann_path = "BEC3/Alignment-90C0.json"
-        docx_file = Path(  # noqa
+        docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )
-        metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]  # noqa
+        metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
 
         full_ann_path = self.commentary_pecha.layer_path / ann_path
         old_anns = get_anns(AnnotationStore(file=str(full_ann_path)))
