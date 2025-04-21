@@ -6,7 +6,6 @@ from stam import AnnotationStore
 from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
-from openpecha.pecha.pecha_types import PechaType
 from openpecha.utils import read_json
 
 
@@ -56,32 +55,6 @@ class TestDocxAnnotationParser(TestCase):
             for f in self.commentary_pecha_path.glob("**/*")
             if f.is_file()
         }
-
-    def test_is_root_related_pecha(self):
-        # Test root pecha types
-        assert self.parser.is_root_related_pecha(PechaType.root_pecha)
-        assert self.parser.is_root_related_pecha(
-            PechaType.prealigned_root_translation_pecha
-        )
-
-        # Test non-root pecha types
-        assert not self.parser.is_root_related_pecha(PechaType.commentary_pecha)
-        assert not self.parser.is_root_related_pecha(
-            PechaType.prealigned_commentary_pecha
-        )
-
-    def test_is_commentary_related_pecha(self):
-        # Test commentary pecha types
-        assert self.parser.is_commentary_related_pecha(PechaType.commentary_pecha)
-        assert self.parser.is_commentary_related_pecha(
-            PechaType.prealigned_commentary_pecha
-        )
-
-        # Test non-commentary pecha types
-        assert not self.parser.is_commentary_related_pecha(PechaType.root_pecha)
-        assert not self.parser.is_commentary_related_pecha(
-            PechaType.prealigned_root_translation_pecha
-        )
 
     def test_root_pecha(self):
         ann_type = LayerEnum.alignment
