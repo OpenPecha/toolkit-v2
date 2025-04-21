@@ -2,7 +2,6 @@ from pathlib import Path
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.update import DocxAnnotationUpdate
 
 
@@ -25,13 +24,14 @@ class TestDocxAnnotationUpdate(TestCase):
 
     def test_root_pecha(self):
         updater = DocxAnnotationUpdate()
-        metadatas = [self.root_pecha_metadata]
+        layer_path = "A389/Alignment-84EB.json"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
+        metadatas = [self.root_pecha_metadata]
 
-        updater.update_annotation(
-            self.root_pecha, LayerEnum.alignment, docx_file, metadatas
+        updated_pecha, _ = updater.update_annotation(
+            self.root_pecha, layer_path, docx_file, metadatas
         )
 
     def tearDown(self) -> None:
