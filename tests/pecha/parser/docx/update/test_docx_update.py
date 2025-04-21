@@ -38,17 +38,19 @@ class TestDocxAnnotationUpdate(TestCase):
         expected_old_anns = read_json(
             "tests/pecha/parser/docx/update/data/root/old_anns.json"
         )
-        assert old_anns == expected_old_anns, "Old annotations do not match"
+        assert (
+            old_anns == expected_old_anns
+        ), "Old annotations do not match in Root Pecha Segmentation Layer Update"
 
-        updated_pecha, _ = updater.update_annotation(
-            self.root_pecha, layer_path, docx_file, metadatas
-        )
+        updater.update_annotation(self.root_pecha, layer_path, docx_file, metadatas)
 
         updated_anns = get_anns(AnnotationStore(file=str(full_layer_path)))
         expected_new_anns = read_json(
             "tests/pecha/parser/docx/update/data/root/new_anns.json"
         )
-        assert updated_anns == expected_new_anns, "New annotations do not match"
+        assert (
+            updated_anns == expected_new_anns
+        ), "New annotations do not match in Root Pecha Segmentation Layer Update"
 
     def tearDown(self) -> None:
         # Revert all original files
