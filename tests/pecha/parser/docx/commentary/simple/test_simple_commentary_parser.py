@@ -26,7 +26,7 @@ class TestDocxSimpleCommentaryParser(TestCase):
 
     def test_extract_commentary_segments(self):
         parser = DocxSimpleCommentaryParser()
-        anns, base = parser.extract_segmentation_coordinates(self.input)
+        anns, base = parser.extract_segmentation_coords(self.input)
 
         assert (
             anns == self.expected_anns
@@ -38,7 +38,7 @@ class TestDocxSimpleCommentaryParser(TestCase):
     def test_create_pecha(self):
         parser = DocxSimpleCommentaryParser()
         with tempfile.TemporaryDirectory() as tempdir, mock.patch(
-            "openpecha.pecha.parsers.docx.commentary.simple.DocxSimpleCommentaryParser.extract_segmentation_coordinates"
+            "openpecha.pecha.parsers.docx.commentary.simple.DocxSimpleCommentaryParser.extract_segmentation_coords"
         ) as mock_extract_commentary_segments_anns, patch(
             "openpecha.pecha.get_base_id"
         ) as mock_get_base_id, patch(

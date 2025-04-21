@@ -129,7 +129,7 @@ class DocxRootParser(BaseParser):
             for pos in positions
         ]
 
-    def extract_segmentation_coordinates(
+    def extract_segmentation_coords(
         self, docx_file: Path
     ) -> Tuple[List[Dict[str, int]], str]:
         """Extract text from docx and calculate coordinates for segments.
@@ -170,7 +170,7 @@ class DocxRootParser(BaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        positions, base = self.extract_segmentation_coordinates(input)
+        positions, base = self.extract_segmentation_coords(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         layer_name = self.add_segmentation_annotations(
