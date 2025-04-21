@@ -8,6 +8,9 @@ from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
 
 
 class DocxAnnotationUpdate:
+    def __init__(self):
+        self.parser = DocxAnnotationParser()
+
     def extract_layer_name(self, layer_path: str) -> str:
         return Path(layer_path).stem
 
@@ -23,12 +26,11 @@ class DocxAnnotationUpdate:
         self, pecha: Pecha, layer_path: str, docx_file: Path, metadatas: List[Dict]
     ):
         ann_type = self.extract_layer_enum(layer_path)
-        parser = DocxAnnotationParser()
         layer_id = self.extract_layer_id(layer_path)
 
         with patch("openpecha.pecha.get_layer_id") as mock_layer_id:
             mock_layer_id.return_value = layer_id
-            updated_pecha, updated_layer_name = parser.add_annotation(
+            updated_pecha, updated_layer_name = self.parser.add_annotation(
                 pecha, ann_type, docx_file, metadatas
             )
 
