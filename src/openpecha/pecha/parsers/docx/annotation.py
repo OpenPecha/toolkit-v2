@@ -20,6 +20,26 @@ class DocxAnnotationParser:
     def __init__(self):
         pass
 
+    def get_updated_coords(
+        self, coords: List[Dict[str, int]], old_base: str, new_base: str
+    ):
+        diff_update = DiffMatchPatch(old_base, new_base)
+
+        updated_coords = []
+        for coord in coords:
+            start = int(coord["start"])
+            end = int(coord["end"])
+
+            updated_coords.append(
+                {
+                    "start": diff_update.get_updated_coord(start),
+                    "end": diff_update.get_updated_coord(end),
+                    "root_idx_mapping": coord.get("root_idx_mapping", ""),
+                }
+            )
+
+        return updated_coords
+
     def add_annotation(
         self,
         pecha: Pecha,
@@ -31,27 +51,12 @@ class DocxAnnotationParser:
 
         if is_root_related_pecha(pecha_type):
             parser = DocxRootParser()
-            segmentation_coords, old_base = parser.extract_segmentation_coords(
-                docx_file
-            )
+            coords, old_base = parser.extract_segmentation_coords(docx_file)
 
             new_basename = list(pecha.bases.keys())[0]
             new_base = pecha.get_base(new_basename)
 
-            diff_update = DiffMatchPatch(old_base, new_base)
-
-            updated_coords = []
-            for coord in segmentation_coords:
-                start = int(coord["start"])
-                end = int(coord["end"])
-
-                updated_coords.append(
-                    {
-                        "start": diff_update.get_updated_coord(start),
-                        "end": diff_update.get_updated_coord(end),
-                        "root_idx_mapping": coord.get("root_idx_mapping", ""),
-                    }
-                )
+            updated_coords = self.get_updated_coords(coords, old_base, new_base)
             layer_name = parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
@@ -60,26 +65,13 @@ class DocxAnnotationParser:
         elif is_commentary_related_pecha(pecha_type):
             commentary_parser = DocxSimpleCommentaryParser()
             (
-                segmentation_coords,
+                coords,
                 old_base,
             ) = commentary_parser.extract_segmentation_coords(docx_file)
             new_basename = list(pecha.bases.keys())[0]
             new_base = pecha.get_base(new_basename)
 
-            diff_update = DiffMatchPatch(old_base, new_base)
-
-            updated_coords = []
-            for coord in segmentation_coords:
-                start = int(coord["start"])
-                end = int(coord["end"])
-
-                updated_coords.append(
-                    {
-                        "start": diff_update.get_updated_coord(start),
-                        "end": diff_update.get_updated_coord(end),
-                        "root_idx_mapping": coord.get("root_idx_mapping", ""),
-                    }
-                )
+            updated_coords = self.get_updated_coords(coords, old_base, new_base)
             layer_name = commentary_parser.add_segmentation_annotations(
                 pecha, updated_coords, ann_type
             )
