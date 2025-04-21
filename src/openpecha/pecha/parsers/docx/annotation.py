@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, layer_name
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import LayerEnum
@@ -49,12 +50,18 @@ class DocxAnnotationParser:
     ) -> Tuple[Pecha, layer_name]:
         pecha_type: PechaType = get_pecha_type(metadatas)
 
+        if ann_type not in [LayerEnum.alignment, LayerEnum.segmentation]:
+            raise ParseNotReadyForThisAnnotation(
+                f"Parser is not ready for the annotation type: {ann_type}"
+            )
+
+        # New Segmentation Layer should be updated to this existing base
+        new_basename = list(pecha.bases.keys())[0]
+        new_base = pecha.get_base(new_basename)
+
         if is_root_related_pecha(pecha_type):
             parser = DocxRootParser()
             coords, old_base = parser.extract_segmentation_coords(docx_file)
-
-            new_basename = list(pecha.bases.keys())[0]
-            new_base = pecha.get_base(new_basename)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
             layer_name = parser.add_segmentation_layer(pecha, updated_coords, ann_type)
@@ -66,8 +73,6 @@ class DocxAnnotationParser:
                 coords,
                 old_base,
             ) = commentary_parser.extract_segmentation_coords(docx_file)
-            new_basename = list(pecha.bases.keys())[0]
-            new_base = pecha.get_base(new_basename)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
             layer_name = commentary_parser.add_segmentation_layer(

@@ -12,5 +12,5 @@ class DocxAnnotationUpdate:
     ):
         parser = DocxAnnotationParser()
 
-        ann_type = LayerEnum.segmentation
+        ann_type = LayerEnum.alignment
         parser.add_annotation(pecha, ann_type, docx_file, metadatas)
