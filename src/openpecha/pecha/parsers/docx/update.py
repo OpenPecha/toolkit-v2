@@ -3,20 +3,14 @@ from typing import Dict, List
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
 
 
 class DocxAnnotationUpdate:
     def update_annotation(
-        self, pecha: Pecha, ann_type: LayerEnum, docx_file: Path, metadatas: List[Dict]
+        self, pecha: Pecha, layer_name: str, docx_file: Path, metadatas: List[Dict]
     ):
-        pass
+        parser = DocxAnnotationParser()
 
-    def update_root_pecha_layer(
-        self, pecha: Pecha, ann_type: LayerEnum, docx_file: Path, metadatas: List[Dict]
-    ):
-        pass
-
-    def update_commentary_pecha_layer(
-        self, pecha: Pecha, ann_type: LayerEnum, docx_file: Path, metadatas: List[Dict]
-    ):
-        pass
+        ann_type = LayerEnum.segmentation
+        parser.add_annotation(pecha, ann_type, docx_file, metadatas)
