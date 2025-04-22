@@ -109,7 +109,8 @@ class Layer(BaseModel):
 
     @field_validator("revision")
     def revision_must_int_parsible(cls, v):
-        assert v.isdigit(), "must integer parsible like `00002`"
+        if not v.isdigit():
+            raise ValueError("revision must be integer-parsable like `00002`")
         return v
 
     def bump_revision(self):
