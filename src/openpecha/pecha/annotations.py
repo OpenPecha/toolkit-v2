@@ -174,7 +174,6 @@ class PechaRelationShip(str, Enum):
 class PechaAlignment(BaseModel):
     pecha_id: PechaId
     alignment_id: str = Field(..., pattern="\\S")
-    relationship: PechaRelationShip
 
 
 class AnnotationModel(BaseModel):
