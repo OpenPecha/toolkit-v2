@@ -44,15 +44,15 @@ class DocxAnnotationParser:
     def add_annotation(
         self,
         pecha: Pecha,
-        ann_type: LayerEnum,
+        type: LayerEnum,
         docx_file: Path,
         metadatas: List[Dict],
     ) -> Tuple[Pecha, ann_path]:
         pecha_type: PechaType = get_pecha_type(metadatas)
 
-        if ann_type not in [LayerEnum.alignment, LayerEnum.segmentation]:
+        if type not in [LayerEnum.alignment, LayerEnum.segmentation]:
             raise ParseNotReadyForThisAnnotation(
-                f"Parser is not ready for the annotation type: {ann_type}"
+                f"Parser is not ready for the annotation type: {type}"
             )
 
         # New Segmentation Layer should be updated to this existing base
@@ -64,7 +64,7 @@ class DocxAnnotationParser:
             coords, old_base = parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            ann_path = parser.add_segmentation_layer(pecha, updated_coords, ann_type)
+            ann_path = parser.add_segmentation_layer(pecha, updated_coords, type)
             return (pecha, ann_path)
 
         elif is_commentary_related_pecha(pecha_type):
@@ -76,7 +76,7 @@ class DocxAnnotationParser:
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
             ann_path = commentary_parser.add_segmentation_layer(
-                pecha, updated_coords, ann_type
+                pecha, updated_coords, type
             )
 
             return (pecha, ann_path)
