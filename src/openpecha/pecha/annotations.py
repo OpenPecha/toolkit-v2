@@ -186,7 +186,7 @@ class AnnotationModel(BaseModel):
     aligned_to: PechaAlignment | None = Field(None, description="Alignment descriptor")
 
     @model_validator(mode="after")
-    def check_alignment_and_aligned_to(self):
+    def check_alignment(self):
         if self.type == LayerEnum.alignment:
             if self.aligned_to is None:
                 raise ValueError("aligned_to must be provided when type is alignment")
