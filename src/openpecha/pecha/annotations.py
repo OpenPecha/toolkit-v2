@@ -157,7 +157,7 @@ class PechaId(str):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v):
+    def validate(cls, v, info=None):  # <-- add info=None
         if not re.fullmatch(r"^I[A-F0-9]{8}$", v):
             raise ValueError(
                 "PechaId must start with 'I' followed by 8 uppercase hex characters"
