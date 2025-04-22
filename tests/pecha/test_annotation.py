@@ -45,16 +45,31 @@ def test_pecha_alignment_fields():
     assert pa.alignment_id == "align1"
 
 
-def test_annotation_model_minimal():
+def test_annotation_model_minimal_alignment():
+    align = PechaAlignment(pecha_id="I1234ABCD", alignment_id="align1")
     am = AnnotationModel(
         pecha_id="I1234ABCD",
         type=LayerEnum.alignment,
         document_id="doc1",
         id="ann1",
         title="Test",
+        aligned_to=align,
     )
     assert am.pecha_id == "I1234ABCD"
     assert am.type == LayerEnum.alignment
+    assert am.aligned_to == align
+
+
+def test_annotation_model_minimal_non_alignment():
+    am = AnnotationModel(
+        pecha_id="I1234ABCD",
+        type=LayerEnum.segmentation,
+        document_id="doc1",
+        id="ann1",
+        title="Test",
+    )
+    assert am.pecha_id == "I1234ABCD"
+    assert am.type == LayerEnum.segmentation
     assert am.aligned_to is None
 
 
