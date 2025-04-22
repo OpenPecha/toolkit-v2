@@ -1,5 +1,6 @@
 import json
 import re
+from enum import Enum
 from typing import Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -165,9 +166,15 @@ class PechaId(str):
         return v
 
 
+class PechaRelationShip(str, Enum):
+    commentary_of = "commentary_of"
+    translation_of = "translation_of"
+
+
 class PechaAlignment(BaseModel):
     pecha_id: PechaId
     alignment_id: str = Field(..., pattern="\\S")
+    relationship: PechaRelationShip
 
 
 class AnnotationModel(BaseModel):
