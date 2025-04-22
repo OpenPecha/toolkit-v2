@@ -166,7 +166,7 @@ class PechaId(str):
         return v
 
 
-class PechaRelationShip(str, Enum):
+class PechaRelationship(str, Enum):
     commentary_of = "commentary_of"
     translation_of = "translation_of"
 
