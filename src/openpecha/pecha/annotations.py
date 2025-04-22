@@ -1,9 +1,11 @@
-"""Module contains all the Annotations classes
-"""
-
+import json
+import re
 from typing import Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from openpecha.ids import get_uuid
+from openpecha.pecha.layer import LayerEnum
 
 
 class Span(BaseModel):
@@ -74,3 +76,121 @@ class OCRConfidence(BaseAnnotation):
 
 class Citation(BaseAnnotation):
     pass
+
+
+def _get_annotation_class(layer_name: LayerEnum):
+    """Maps LayerEnum to Annotation class"""
+
+    if layer_name == LayerEnum.pagination:
+        return Pagination
+    elif layer_name == LayerEnum.language:
+        return Lang
+    elif layer_name == LayerEnum.citation:
+        return Citation
+    elif layer_name == LayerEnum.ocr_confidence:
+        return OCRConfidence
+    else:
+        return BaseAnnotation
+
+
+class Layer(BaseModel):
+    id: str = Field(default=None)
+    annotation_type: LayerEnum
+    revision: str = Field(default="00001")
+    annotations: Dict = Field(default_factory=dict)
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @model_validator(mode="before")
+    def set_id(cls, values):
+        values["id"] = values.get("id") or get_uuid()
+        return values
+
+    @field_validator("revision")
+    def revision_must_int_parsible(cls, v):
+        assert v.isdigit(), "must integer parsible like `00002`"
+        return v
+
+    def bump_revision(self):
+        self.revision = f"{int(self.revision)+1:05}"  # noqa
+
+    def reset(self):
+        self.revision = "00001"
+        self.annotations = {}
+
+    def get_annotations(self):
+        """Yield Annotation Objects"""
+        for ann_id, ann_dict in self.annotations.items():
+            ann_class = _get_annotation_class(self.annotation_type)
+            ann = ann_class.model_validate(ann_dict)
+            yield ann_id, ann
+
+    def get_annotation(self, annotation_id: str) -> Optional[BaseAnnotation]:
+        """Retrieve annotation of id `annotation_id`"""
+        ann_dict = self.annotations.get(annotation_id)
+        if not ann_dict:
+            return None
+        ann_class = _get_annotation_class(self.annotation_type)
+        ann = ann_class.model_validate(ann_dict)
+        return ann
+
+    def set_annotation(self, ann: BaseAnnotation, ann_id=None):
+        """Add or Update annotation `ann` to the layer, returns the annotation id"""
+        ann_id = ann_id if ann_id is not None else get_uuid()
+        self.annotations[ann_id] = json.loads(ann.model_dump_json())
+        return ann_id
+
+    def remove_annotation(self, annotation_id: str):
+        """Delete annotaiton of `annotation_id` from the layer"""
+        if annotation_id in self.annotations:
+            del self.annotations[annotation_id]
+
+
+class OCRConfidenceLayer(Layer):
+    confidence_threshold: float
+    annotation_type: LayerEnum = Field(default=LayerEnum.ocr_confidence)
+
+
+class PechaId(str):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        if not re.fullmatch(r"^I[A-F0-9]{8}$", v):
+            raise ValueError(
+                "PechaId must start with 'I' followed by 8 uppercase hex characters"
+            )
+        return v
+
+
+class PechaAlignment(BaseModel):
+    pecha_id: PechaId
+    alignment_id: str = Field(..., pattern="\\S")
+
+
+class AnnotationModel(BaseModel):
+    pecha_id: PechaId
+    type: LayerEnum = Field(..., description="Type of the annotation")
+    document_id: str = Field(..., pattern="\\S")
+    id: str = Field(..., pattern="\\S")
+    title: str = Field(..., min_length=1)
+    aligned_to: PechaAlignment | None = Field(None, description="Alignment descriptor")
+
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "examples": {
+                "pecha_id": "I857977C3",
+                "type": "Alignment",
+                "document_id": "1vgnfCQH3yaWPDaMDFXT_5GhlG0M9kEra0mxkDX46VLE",
+                "annotation_id": "test_id",
+                "title": "Test Alignment",
+                "aligned_to": {
+                    "pecha_id": "I857977C3",
+                    "alignment_id": "test_alignment_id",
+                },
+            }
+        },
+    )

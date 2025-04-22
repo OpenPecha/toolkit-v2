@@ -1,8 +1,8 @@
 import pytest
 from pydantic import ValidationError
 
-from openpecha.pecha.annotations import Citation, Span
-from openpecha.pecha.layer import Layer, LayerEnum
+from openpecha.pecha.annotations import Citation, Layer, Span
+from openpecha.pecha.layer import LayerEnum
 
 
 def test_layer_model():
