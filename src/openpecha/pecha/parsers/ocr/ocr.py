@@ -13,8 +13,15 @@ from fontTools import unicodedata
 from openpecha.config import PECHAS_PATH, get_logger
 from openpecha.ids import get_initial_pecha_id
 from openpecha.pecha import Pecha
-from openpecha.pecha.annotations import Lang, OCRConfidence, Page, Span
-from openpecha.pecha.layer import Layer, LayerEnum, OCRConfidenceLayer
+from openpecha.pecha.annotations import (
+    Lang,
+    Layer,
+    OCRConfidence,
+    OCRConfidenceLayer,
+    Page,
+    Span,
+)
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import (
     Copyright_copyrighted,
     Copyright_public_domain,
