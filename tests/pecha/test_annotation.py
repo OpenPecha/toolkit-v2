@@ -84,6 +84,24 @@ def test_annotation_model_invalid_pechaid():
         )
 
 
+def test_pecha_relationship_enum():
+    from openpecha.pecha.annotations import PechaRelationship
+
+    # Test enum values
+    assert PechaRelationship.commentary_of.value == "commentary_of"
+    assert PechaRelationship.translation_of.value == "translation_of"
+
+    # Test accessing by value
+    assert PechaRelationship("commentary_of") == PechaRelationship.commentary_of
+    assert PechaRelationship("translation_of") == PechaRelationship.translation_of
+
+    # Test invalid value raises ValueError
+    import pytest
+
+    with pytest.raises(ValueError):
+        PechaRelationship("invalid_value")
+
+
 def test_annotation_model_missing_required():
     with pytest.raises(ValidationError):
         AnnotationModel(
