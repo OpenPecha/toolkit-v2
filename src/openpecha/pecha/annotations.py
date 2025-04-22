@@ -1,5 +1,6 @@
 import json
 import re
+from enum import Enum
 from typing import Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -108,7 +109,8 @@ class Layer(BaseModel):
 
     @field_validator("revision")
     def revision_must_int_parsible(cls, v):
-        assert v.isdigit(), "must integer parsible like `00002`"
+        if not v.isdigit():
+            raise ValueError("revision must be integer-parsable like `00002`")
         return v
 
     def bump_revision(self):
@@ -165,6 +167,11 @@ class PechaId(str):
         return v
 
 
+class PechaRelationship(str, Enum):
+    commentary_of = "commentary_of"
+    translation_of = "translation_of"
+
+
 class PechaAlignment(BaseModel):
     pecha_id: PechaId
     alignment_id: str = Field(..., pattern="\\S")
@@ -177,6 +184,16 @@ class AnnotationModel(BaseModel):
     id: str = Field(..., pattern="\\S")
     title: str = Field(..., min_length=1)
     aligned_to: PechaAlignment | None = Field(None, description="Alignment descriptor")
+
+    @model_validator(mode="after")
+    def check_alignment(self):
+        if self.type == LayerEnum.alignment:
+            if self.aligned_to is None:
+                raise ValueError("aligned_to must be provided when type is alignment")
+        else:
+            if self.aligned_to is not None:
+                raise ValueError("aligned_to must be None unless type is alignment")
+        return self
 
     model_config = ConfigDict(
         extra="forbid",
