@@ -25,7 +25,7 @@ from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
 BASE_NAME = str
-ann_path = str
+annotation_id = str
 
 
 class Pecha:

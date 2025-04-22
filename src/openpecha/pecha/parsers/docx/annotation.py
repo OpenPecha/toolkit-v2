@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
-from openpecha.pecha import Pecha, ann_path
+from openpecha.pecha import Pecha, annotation_id
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -44,15 +44,15 @@ class DocxAnnotationParser:
     def add_annotation(
         self,
         pecha: Pecha,
-        ann_type: LayerEnum,
+        type: LayerEnum,
         docx_file: Path,
         metadatas: List[Dict],
-    ) -> Tuple[Pecha, ann_path]:
+    ) -> Tuple[Pecha, annotation_id]:
         pecha_type: PechaType = get_pecha_type(metadatas)
 
-        if ann_type not in [LayerEnum.alignment, LayerEnum.segmentation]:
+        if type not in [LayerEnum.alignment, LayerEnum.segmentation]:
             raise ParseNotReadyForThisAnnotation(
-                f"Parser is not ready for the annotation type: {ann_type}"
+                f"Parser is not ready for the annotation type: {type}"
             )
 
         # New Segmentation Layer should be updated to this existing base
@@ -64,8 +64,8 @@ class DocxAnnotationParser:
             coords, old_base = parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            ann_path = parser.add_segmentation_layer(pecha, updated_coords, ann_type)
-            return (pecha, ann_path)
+            annotation_id = parser.add_segmentation_layer(pecha, updated_coords, type)
+            return (pecha, annotation_id)
 
         elif is_commentary_related_pecha(pecha_type):
             commentary_parser = DocxSimpleCommentaryParser()
@@ -75,11 +75,11 @@ class DocxAnnotationParser:
             ) = commentary_parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            ann_path = commentary_parser.add_segmentation_layer(
-                pecha, updated_coords, ann_type
+            annotation_id = commentary_parser.add_segmentation_layer(
+                pecha, updated_coords, type
             )
 
-            return (pecha, ann_path)
+            return (pecha, annotation_id)
 
         else:
             raise ValueError(f"Unknown pecha type: {pecha_type}")

@@ -10,7 +10,7 @@ from openpecha.exceptions import (
     FileNotFoundError,
     MetaDataValidationError,
 )
-from openpecha.pecha import Pecha, ann_path
+from openpecha.pecha import Pecha, annotation_id
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
@@ -153,7 +153,7 @@ class DocxRootParser(BaseParser):
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
-    ) -> Tuple[Pecha, ann_path]:
+    ) -> Tuple[Pecha, annotation_id]:
         """Parse a docx file and create a pecha.
 
         The process is split into three main steps:
@@ -173,10 +173,12 @@ class DocxRootParser(BaseParser):
         positions, base = self.extract_segmentation_coords(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        ann_path = self.add_segmentation_layer(pecha, positions, LayerEnum.segmentation)
+        annotation_id = self.add_segmentation_layer(
+            pecha, positions, LayerEnum.segmentation
+        )
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
-        return (pecha, ann_path)
+        return (pecha, annotation_id)
 
     def create_pecha(
         self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
@@ -204,7 +206,7 @@ class DocxRootParser(BaseParser):
 
     def add_segmentation_layer(
         self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
-    ) -> ann_path:
+    ) -> annotation_id:
 
         basename = list(pecha.bases.keys())[0]
         layer, layer_path = pecha.add_layer(basename, ann_type)
