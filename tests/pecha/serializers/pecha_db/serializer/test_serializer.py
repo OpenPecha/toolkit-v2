@@ -14,18 +14,6 @@ class TestSerializer(TestCase):
         self.root_display_pecha = Pecha.from_path(
             Path("tests/alignment/commentary_transfer/data/P1/IA6E66F92")
         )
-        self.root_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/root/data/bo/IE60BBDE8")
-        )
-        self.root_translation_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/root/data/en/I62E00D78")
-        )
-        self.commentary_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/commentary/simple/data/bo/I6944984E")
-        )
-        self.commentary_translation_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91")
-        )
         self.root_display_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
@@ -42,6 +30,9 @@ class TestSerializer(TestCase):
                 )
             ],
         }
+        self.root_pecha = Pecha.from_path(
+            Path("tests/pecha/serializers/pecha_db/root/data/bo/IE60BBDE8")
+        )
         self.root_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
@@ -55,11 +46,15 @@ class TestSerializer(TestCase):
                     id="3635/Segmentation-039B.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1",
                     aligned_to=PechaAlignment(
-                        pecha_id="IA6E66F92", alignment_id="3635/Segmentation-039B.json"
+                        pecha_id="IA6E66F92", alignment_id="B8B3/Segmentation-74F4.json"
                     ),
                 )
             ],
         }
+
+        self.root_translation_pecha = Pecha.from_path(
+            Path("tests/pecha/serializers/pecha_db/root/data/en/I62E00D78")
+        )
         self.root_translation_pecha_metadata = {
             "translation_of": "IE60BBDE8",
             "commentary_of": None,
@@ -67,28 +62,60 @@ class TestSerializer(TestCase):
             **self.root_translation_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
-                    pecha_id="IE60BBDE8",
+                    pecha_id="I62E00D78",
                     type=LayerEnum.alignment,
                     document_id="d3",
-                    id="3635/Segmentation-039B.json",
+                    id="D93E/Alignment-0216.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
                     aligned_to=PechaAlignment(
-                        pecha_id="IA6E66F92", alignment_id="3635/Segmentation-039B.json"
+                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
                     ),
                 )
             ],
         }
+
+        self.commentary_pecha = Pecha.from_path(
+            Path("tests/pecha/serializers/pecha_db/commentary/simple/data/bo/I6944984E")
+        )
         self.commentary_pecha_metadata = {
             "translation_of": None,
             "commentary_of": "IE60BBDE8",
             "version_of": None,
             **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
+                    ),
+                )
+            ],
         }
+
+        self.commentary_translation_pecha = Pecha.from_path(
+            Path("tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91")
+        )
         self.commentary_translation_pecha_metadata = {
             "translation_of": "I6944984E",
             "commentary_of": None,
             "version_of": None,
             **self.commentary_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I94DBDA91",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="FD22/Alignment-599A.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="I6944984E", alignment_id="E949/Alignment-2F29.json"
+                    ),
+                )
+            ],
         }
         self.pecha_category = [
             {
