@@ -29,30 +29,20 @@ MetadataType = Dict[str, str | Dict[str, str] | List[str] | None]
 
 class TestPechaType(TestCase):
     def setUp(self):
-        self.root_display_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/P1/IA6E66F92"
-        )
         self.root_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/P2/IC7760088"
+            "tests/alignment/commentary_transfer/data/root/IA6E66F92"
         )
         self.commentary_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/P3/I77BD6EA9"
+            "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
         )
 
-        self.root_display_pecha = Pecha.from_path(self.root_display_pecha_path)
         self.root_pecha = Pecha.from_path(self.root_pecha_path)
         self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
 
-        self.root_display_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": None,
-            "version_of": None,
-            **self.root_display_pecha.metadata.to_dict(),
-        }
         self.root_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
-            "version_of": self.root_display_pecha.id,
+            "version_of": None,
             **self.root_pecha.metadata.to_dict(),
         }
         self.commentary_pecha_metadata = {
