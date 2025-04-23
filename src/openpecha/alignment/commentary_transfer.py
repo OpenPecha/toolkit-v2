@@ -17,6 +17,9 @@ class CommentaryAlignmentTransfer:
     def get_first_layer_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("*.json"))
 
+    def get_display_layer_path(self, pecha: Pecha) -> Pecha:
+        return next(pecha.layer_path.rglob("Segmentation-*.json"))
+
     def base_update(self, src_pecha: Pecha, tgt_pecha: Pecha) -> Path:
         """
         1. Take the layer from src pecha
@@ -80,21 +83,21 @@ class CommentaryAlignmentTransfer:
         return dict(sorted(mapping.items()))
 
     def get_root_pechas_mapping(
-        self, root_pecha: Pecha, root_display_pecha: Pecha
+        self, root_pecha: Pecha, root_alignment_id: str
     ) -> Dict[int, List]:
         """
         Get segmentation mapping from root_pecha -> root_display_pecha
         """
-        display_layer_path = self.get_first_layer_path(root_display_pecha)
-        new_tgt_layer = self.base_update(root_pecha, root_display_pecha)
+        display_layer_path = self.get_display_layer_path(root_pecha)
+        # new_tgt_layer = self.base_update(root_pecha, root_display_pecha)
 
         display_layer = AnnotationStore(file=str(display_layer_path))
-        transfer_layer = AnnotationStore(file=str(new_tgt_layer))
+        transfer_layer = AnnotationStore(
+            file=str(root_pecha.layer_path / root_alignment_id)
+        )
 
         map = self.map_layer_to_layer(transfer_layer, display_layer)
 
-        # Clean up the layer
-        new_tgt_layer.unlink()
         return map
 
     def get_serialized_commentary(
