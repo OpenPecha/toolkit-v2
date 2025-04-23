@@ -180,12 +180,15 @@ class TestSerializer(TestCase):
         pechas = [self.commentary_pecha, self.root_display_pecha]
         metadatas = [self.commentary_pecha_metadata, self.root_display_pecha_metadata]
 
+        annotation_id = "E949/Alignment-2F29.json"
+
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_pecha,
+            annotation_id,
             self.pecha_category,
             self.root_display_pecha.metadata.title["EN"],
         )
@@ -206,15 +209,20 @@ class TestSerializer(TestCase):
             self.root_display_pecha_metadata,
         ]
 
+        translation_ann_id = "FD22/Alignment-599A.json"
+        annotation_id = "E949/Alignment-2F29.json"
+
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, translation_ann_id)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_pecha,
+            annotation_id,
             self.pecha_category,
             self.root_display_pecha.metadata.title["EN"],
             self.commentary_translation_pecha,
+            translation_ann_id
         )
 
     @mock.patch(

@@ -128,3 +128,5 @@ class SimpleCommentarySerializer:
         }
         logger.info(f"Pecha {pecha.id} is serialized successfully.")
         return serialized_json
+
+
