@@ -79,14 +79,15 @@ class Serializer:
             case PechaType.commentary_pecha:
                 root_en_title = self.get_root_en_title(metadatas, pechas)
                 return SimpleCommentarySerializer().serialize(
-                    pecha, pecha_category, root_en_title
+                    pecha, annotation_id, pecha_category, root_en_title
                 )
 
             case PechaType.commentary_translation_pecha:
                 root_en_title = self.get_root_en_title(metadatas, pechas)
                 commentary_pecha = pechas[1]
+                commentary_annotation_id = metadatas[1]["annotations"][0].id
                 return SimpleCommentarySerializer().serialize(
-                    commentary_pecha, pecha_category, root_en_title, pecha
+                    commentary_pecha, commentary_annotation_id, pecha_category, root_en_title, pecha, annotation_id
                 )
 
             case PechaType.prealigned_commentary_pecha:
