@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, metadata
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
     PreAlignedCommentarySerializer,
@@ -71,7 +71,10 @@ class Serializer:
 
             case PechaType.root_translation_pecha:
                 root_pecha = pechas[-1]
-                return RootSerializer().serialize(root_pecha, pecha_category, pecha)
+                root_annotation_id = metadatas[-1]["annotations"][0].id
+                return RootSerializer().serialize(
+                    root_pecha, root_annotation_id, pecha_category, pecha, annotation_id
+                )
 
             case PechaType.commentary_pecha:
                 root_en_title = self.get_root_en_title(metadatas, pechas)

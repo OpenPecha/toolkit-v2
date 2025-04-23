@@ -138,13 +138,14 @@ class TestSerializer(TestCase):
 
         pechas = [self.root_pecha]
         metadatas = [self.root_pecha_metadata]
+        annotation_id = "B8B3/Segmentation-74F4.json"
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_pecha, self.pecha_category
+            self.root_pecha, annotation_id, self.pecha_category
         )
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
@@ -156,15 +157,19 @@ class TestSerializer(TestCase):
             self.root_translation_pecha_metadata,
             self.root_display_pecha_metadata,
         ]
+        annotation_id = "D93E/Alignment-0216.json"
+        root_ann_id = "B8B3/Segmentation-74F4.json"
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
             self.root_display_pecha,
+            root_ann_id,
             self.pecha_category,
             self.root_translation_pecha,
+            annotation_id,
         )
 
     @mock.patch(
