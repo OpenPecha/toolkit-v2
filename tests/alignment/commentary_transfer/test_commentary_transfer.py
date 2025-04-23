@@ -32,9 +32,15 @@ class TestCommentaryAlignmentTransfer(TestCase):
         assert mapping == expected_mapping
 
     def test_get_serialized_commentary(self):
+        root_alignment_id = "B8B3/Alignment-F81A.json"
+        commentary_alignment_id = "BEC3/Alignment-90C0.json"
+
         serializer = CommentaryAlignmentTransfer()
         serialized_json = serializer.get_serialized_commentary(
-            self.root_display_pecha, self.root_pecha, self.commentary_pecha
+            self.root_pecha,
+            root_alignment_id,
+            self.commentary_pecha,
+            commentary_alignment_id,
         )
 
         expected_json = self.DATA_DIR / "expected_serialized_commentary.json"

@@ -101,24 +101,32 @@ class CommentaryAlignmentTransfer:
         return map
 
     def get_serialized_commentary(
-        self, root_display_pecha: Pecha, root_pecha: Pecha, commentary_pecha: Pecha
+        self,
+        root_pecha: Pecha,
+        root_alignment_id: str,
+        commentary_pecha: Pecha,
+        commentary_alignment_id: str,
     ) -> List[str]:
         def is_empty(text):
             """Check if text is empty or contains only newlines."""
             return not text.strip().replace("\n", "")
 
-        root_map = self.get_root_pechas_mapping(root_pecha, root_display_pecha)
+        root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
-        root_display_layer_path = self.get_first_layer_path(root_display_pecha)
+        root_display_layer_path = self.get_display_layer_path(root_pecha)
         root_display_anns = self.extract_root_anns(
             AnnotationStore(file=str(root_display_layer_path))
         )
 
-        root_layer_path = self.get_first_layer_path(root_pecha)
-        root_anns = self.extract_root_anns(AnnotationStore(file=str(root_layer_path)))
+        root_anns = self.extract_root_anns(
+            AnnotationStore(file=str(root_pecha.layer_path / root_alignment_id))
+        )
 
-        commentary_layer_path = self.get_first_layer_path(commentary_pecha)
-        commentary_anns = get_anns(AnnotationStore(file=str(commentary_layer_path)))
+        commentary_anns = get_anns(
+            AnnotationStore(
+                file=str(commentary_pecha.layer_path / commentary_alignment_id)
+            )
+        )
         serialized_content = []
         for ann in commentary_anns:
             root_indices = parse_root_mapping(ann["root_idx_mapping"])
