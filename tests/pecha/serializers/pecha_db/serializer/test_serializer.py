@@ -2,9 +2,12 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
+from openpecha.pecha.annotations import AnnotationModel, PechaAlignment
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.serializers.pecha_db import Serializer
 
 null = None
+
 
 class TestSerializer(TestCase):
     def setUp(self):
@@ -28,18 +31,52 @@ class TestSerializer(TestCase):
             "commentary_of": None,
             "version_of": None,
             **self.root_display_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="IA6E66F92",
+                    type=LayerEnum.segmentation,
+                    document_id="d1",
+                    id="B8B3/Segmentation-74F4.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
+                    aligned_to=None,
+                )
+            ],
         }
         self.root_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
             "version_of": "IA6E66F92",
             **self.root_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="IE60BBDE8",
+                    type=LayerEnum.alignment,
+                    document_id="d2",
+                    id="3635/Segmentation-039B.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IA6E66F92", alignment_id="3635/Segmentation-039B.json"
+                    ),
+                )
+            ],
         }
         self.root_translation_pecha_metadata = {
             "translation_of": "IE60BBDE8",
             "commentary_of": None,
             "version_of": None,
             **self.root_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="IE60BBDE8",
+                    type=LayerEnum.alignment,
+                    document_id="d3",
+                    id="3635/Segmentation-039B.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IA6E66F92", alignment_id="3635/Segmentation-039B.json"
+                    ),
+                )
+            ],
         }
         self.commentary_pecha_metadata = {
             "translation_of": None,
@@ -55,37 +92,19 @@ class TestSerializer(TestCase):
         }
         self.pecha_category = [
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Madhyamaka",
-                    "bo": "དབུ་མ།"
-                },
-                "parent": null
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                "parent": null,
             },
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Madhyamaka treatises",
-                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"
-                },
-                "parent": "madhyamaka"
-            }
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
+                "parent": "madhyamaka",
+            },
         ]
-        
+
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
