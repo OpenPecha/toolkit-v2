@@ -49,9 +49,16 @@ class Serializer:
         pechas: List[Pecha],
         metadatas: List[Dict[str, Any]],
         pecha_category: List[Dict[str, Dict[str, str]]],
+        annotation_id: str,
     ):
         """
         Serialize a Pecha based on its type.
+
+        Arguments:
+            pechas: List of Pecha from Pecha to serialize to its top parent Pecha
+            metadatas: List of metadata from Pecha to serialize to its top parent Pecha
+            pecha_category: Place where Pecha comes when serializing for pecha.org
+            annotation_id: Identifier for layer path i.e basename/layername.json relative from Pecha layer path
         """
         pecha = pechas[0]
 
@@ -60,13 +67,11 @@ class Serializer:
 
         match pecha_type:
             case PechaType.root_pecha:
-                return RootSerializer().serialize(pecha, pecha_category)
+                return RootSerializer().serialize(pecha, annotation_id, pecha_category)
 
             case PechaType.root_translation_pecha:
                 root_pecha = pechas[-1]
-                return RootSerializer().serialize(
-                    root_pecha, pecha_category, pecha
-                )
+                return RootSerializer().serialize(root_pecha, pecha_category, pecha)
 
             case PechaType.commentary_pecha:
                 root_en_title = self.get_root_en_title(metadatas, pechas)
