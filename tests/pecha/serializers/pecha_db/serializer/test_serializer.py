@@ -11,32 +11,13 @@ null = None
 
 class TestSerializer(TestCase):
     def setUp(self):
-        self.root_display_pecha = Pecha.from_path(
-            Path("tests/alignment/commentary_transfer/data/P1/IA6E66F92")
-        )
-        self.root_display_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": None,
-            "version_of": None,
-            **self.root_display_pecha.metadata.to_dict(),
-            "annotations": [
-                AnnotationModel(
-                    pecha_id="IA6E66F92",
-                    type=LayerEnum.segmentation,
-                    document_id="d1",
-                    id="B8B3/Segmentation-74F4.json",
-                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
-                    aligned_to=None,
-                )
-            ],
-        }
         self.root_pecha = Pecha.from_path(
             Path("tests/pecha/serializers/pecha_db/root/data/bo/IE60BBDE8")
         )
         self.root_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
-            "version_of": "IA6E66F92",
+            "version_of": None,
             **self.root_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
@@ -152,10 +133,10 @@ class TestSerializer(TestCase):
     def test_root_translation_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
-        pechas = [self.root_translation_pecha, self.root_display_pecha]
+        pechas = [self.root_translation_pecha, self.root_pecha]
         metadatas = [
             self.root_translation_pecha_metadata,
-            self.root_display_pecha_metadata,
+            self.root_pecha_metadata,
         ]
         annotation_id = "D93E/Alignment-0216.json"
         root_ann_id = "B8B3/Segmentation-74F4.json"
@@ -165,7 +146,7 @@ class TestSerializer(TestCase):
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_display_pecha,
+            self.root_pecha,
             root_ann_id,
             self.pecha_category,
             self.root_translation_pecha,
@@ -177,8 +158,8 @@ class TestSerializer(TestCase):
     )
     def test_commentary_pecha(self, mock_commentary_serialize):
         mock_commentary_serialize.return_value = {}
-        pechas = [self.commentary_pecha, self.root_display_pecha]
-        metadatas = [self.commentary_pecha_metadata, self.root_display_pecha_metadata]
+        pechas = [self.commentary_pecha, self.root_pecha]
+        metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
 
         annotation_id = "E949/Alignment-2F29.json"
 
@@ -190,7 +171,7 @@ class TestSerializer(TestCase):
             self.commentary_pecha,
             annotation_id,
             self.pecha_category,
-            self.root_display_pecha.metadata.title["EN"],
+            self.root_pecha.metadata.title["EN"],
         )
 
     @mock.patch(
@@ -201,12 +182,12 @@ class TestSerializer(TestCase):
         pechas = [
             self.commentary_translation_pecha,
             self.commentary_pecha,
-            self.root_display_pecha,
+            self.root_pecha,
         ]
         metadatas = [
             self.commentary_translation_pecha_metadata,
             self.commentary_pecha_metadata,
-            self.root_display_pecha_metadata,
+            self.root_pecha_metadata,
         ]
 
         translation_ann_id = "FD22/Alignment-599A.json"
@@ -220,9 +201,9 @@ class TestSerializer(TestCase):
             self.commentary_pecha,
             annotation_id,
             self.pecha_category,
-            self.root_display_pecha.metadata.title["EN"],
+            self.root_pecha.metadata.title["EN"],
             self.commentary_translation_pecha,
-            translation_ann_id
+            translation_ann_id,
         )
 
     @mock.patch(
@@ -230,11 +211,10 @@ class TestSerializer(TestCase):
     )
     def test_prealigned_commentary_pecha(self, mock_commentary_serialize):
         mock_commentary_serialize.return_value = {}
-        pechas = [self.commentary_pecha, self.root_pecha, self.root_display_pecha]
+        pechas = [self.commentary_pecha, self.root_pecha]
         metadatas = [
             self.commentary_pecha_metadata,
             self.root_pecha_metadata,
-            self.root_display_pecha_metadata,
         ]
 
         serializer = Serializer()
@@ -242,7 +222,6 @@ class TestSerializer(TestCase):
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
-            self.root_display_pecha,
             self.root_pecha,
             self.commentary_pecha,
             self.pecha_category,
@@ -254,11 +233,10 @@ class TestSerializer(TestCase):
     def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
-        pechas = [self.root_translation_pecha, self.root_pecha, self.root_display_pecha]
+        pechas = [self.root_translation_pecha, self.root_pecha]
         metadatas = [
             self.root_translation_pecha_metadata,
             self.root_pecha_metadata,
-            self.root_display_pecha_metadata,
         ]
 
         serializer = Serializer()
@@ -266,7 +244,6 @@ class TestSerializer(TestCase):
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_display_pecha,
             self.root_pecha,
             self.root_translation_pecha,
             self.pecha_category,
