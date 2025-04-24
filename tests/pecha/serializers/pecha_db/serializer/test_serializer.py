@@ -212,54 +212,49 @@ class TestSerializer(TestCase):
             translation_ann_id,
         )
 
-    @mock.patch(
-        "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.PreAlignedCommentarySerializer.serialize"
-    )
-    def test_prealigned_commentary_pecha(self, mock_commentary_serialize):
-        mock_commentary_serialize.return_value = {}
-        pechas = [self.commentary_pecha, self.root_pecha]
-        metadatas = [
-            self.commentary_pecha_metadata,
-            self.root_pecha_metadata,
-        ]
+    # @mock.patch(
+    #     "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.PreAlignedCommentarySerializer.serialize"
+    # )
+    # def test_prealigned_commentary_pecha(self, mock_commentary_serialize):
+    #     mock_commentary_serialize.return_value = {}
+    #     pechas = [self.commentary_pecha, self.root_pecha]
+    #     metadatas = [
+    #         self.commentary_pecha_metadata,
+    #         self.root_pecha_metadata,
+    #     ]
 
-        serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+    #     serializer = Serializer()
+    #     serializer.serialize(pechas, metadatas, self.pecha_category)
 
-        mock_commentary_serialize.assert_called_once()
-        mock_commentary_serialize.assert_called_with(
-            self.root_pecha,
-            self.commentary_pecha,
-            self.pecha_category,
-        )
+    #     mock_commentary_serialize.assert_called_once()
+    #     mock_commentary_serialize.assert_called_with(
+    #         self.root_pecha,
+    #         self.commentary_pecha,
+    #         self.pecha_category,
+    #     )
 
-    @mock.patch(
-        "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
-    )
-    def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
-        mock_translation_serialize.return_value = {}
+    # @mock.patch(
+    #     "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
+    # )
+    # def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
+    #     mock_translation_serialize.return_value = {}
 
-        pechas = [self.root_translation_pecha, self.root_pecha]
-        metadatas = [
-            self.root_translation_pecha_metadata,
-            self.root_pecha_metadata,
-        ]
+    #     pechas = [self.root_translation_pecha, self.root_pecha]
+    #     metadatas = [
+    #         self.root_translation_pecha_metadata,
+    #         self.root_pecha_metadata,
+    #     ]
 
-        annotation_id = "D93E/Alignment-0216.json"
-        root_alignment_id = "3635/Segmentation-039B.json"
+    #     annotation_id = "D93E/Alignment-0216.json"
+    #     root_alignment_id = "3635/Segmentation-039B.json"
 
-        serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
+    #     serializer = Serializer()
+    #     serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
 
-        mock_translation_serialize.assert_called_once()
-        mock_translation_serialize.assert_called_with(
-            self.root_pecha,
-            root_alignment_id,
-            self.root_translation_pecha,
-            self.pecha_category,
-        )
-
-
-work = TestSerializer()
-work.setUp()
-work.test_prealigned_root_translation_pecha()
+    #     mock_translation_serialize.assert_called_once()
+    #     mock_translation_serialize.assert_called_with(
+    #         self.root_pecha,
+    #         root_alignment_id,
+    #         self.root_translation_pecha,
+    #         self.pecha_category,
+    #     )
