@@ -94,27 +94,27 @@ class PreAlignedRootTranslationSerializer:
 
     def serialize(
         self,
-        root_display_pecha: Pecha,
         root_pecha: Pecha,
+        root_alignment_id: str,
         translation_pecha: Pecha,
         pecha_category: List[Dict],
     ) -> Dict:
         # Format Category
         formatted_category = FormatPechaCategory().format_root_category(
-            root_display_pecha, pecha_category
+            root_pecha, pecha_category
         )
         bo_category, en_category = formatted_category["bo"], formatted_category["en"]
         # Get the metadata for root and translation pecha
-        root_metadata = get_metadata_for_pecha_org(root_display_pecha)
+        root_metadata = get_metadata_for_pecha_org(root_pecha)
         translation_metadata = get_metadata_for_pecha_org(translation_pecha)
 
         # Get content from root and translation pecha
         src_content = TranslationAlignmentTransfer().get_serialized_translation(
-            root_display_pecha, root_pecha, translation_pecha
+            root_pecha, root_alignment_id, translation_pecha
         )
 
         tgt_content = self.get_root_content(
-            root_display_pecha, root_display_pecha.get_segmentation_layer_path()
+            root_pecha, root_pecha.get_segmentation_layer_path()
         )
 
         # Preprocess newlines in content
