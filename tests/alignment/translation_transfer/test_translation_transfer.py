@@ -11,7 +11,7 @@ DATA_DIR = Path(__file__).parent / "data"
 class TestTranslationAlignmentTransfer(TestCase):
     def setUp(self):
         self.root_pecha = Pecha.from_path(DATA_DIR / "root/I15C4AA72")
-        self.translation_pecha = Pecha.from_path(DATA_DIR / "commentary/I4FA57826")
+        self.translation_pecha = Pecha.from_path(DATA_DIR / "translation/I4FA57826")
 
     def test_get_root_pechas_mapping(self):
 
