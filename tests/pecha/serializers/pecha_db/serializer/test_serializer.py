@@ -12,7 +12,7 @@ null = None
 class TestSerializer(TestCase):
     def setUp(self):
         self.root_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/root/data/bo/IE60BBDE8")
+            Path("tests/alignment/commentary_transfer/data/root/IA6E66F92")
         )
         self.root_pecha_metadata = {
             "translation_of": None,
@@ -21,15 +21,21 @@ class TestSerializer(TestCase):
             **self.root_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
-                    pecha_id="IE60BBDE8",
-                    type=LayerEnum.alignment,
+                    pecha_id="IA6E66F92",
+                    type=LayerEnum.segmentation,
                     document_id="d2",
-                    id="3635/Segmentation-039B.json",
-                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1",
-                    aligned_to=PechaAlignment(
-                        pecha_id="IA6E66F92", alignment_id="B8B3/Segmentation-74F4.json"
-                    ),
-                )
+                    id="B8B3/Segmentation-74F4.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation",
+                    aligned_to=None,
+                ),
+                AnnotationModel(
+                    pecha_id="IA6E66F92",
+                    type=LayerEnum.segmentation,
+                    document_id="d2",
+                    id="B8B3/Alignment-F81A.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ alignment",
+                    aligned_to=None,
+                ),
             ],
         }
 
@@ -239,12 +245,21 @@ class TestSerializer(TestCase):
             self.root_pecha_metadata,
         ]
 
+        annotation_id = "D93E/Alignment-0216.json"
+        root_alignment_id = "3635/Segmentation-039B.json"
+
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
             self.root_pecha,
+            root_alignment_id,
             self.root_translation_pecha,
             self.pecha_category,
         )
+
+
+work = TestSerializer()
+work.setUp()
+work.test_prealigned_root_translation_pecha()

@@ -87,7 +87,12 @@ class Serializer:
                 commentary_pecha = pechas[1]
                 commentary_annotation_id = metadatas[1]["annotations"][0].id
                 return SimpleCommentarySerializer().serialize(
-                    commentary_pecha, commentary_annotation_id, pecha_category, root_en_title, pecha, annotation_id
+                    commentary_pecha,
+                    commentary_annotation_id,
+                    pecha_category,
+                    root_en_title,
+                    pecha,
+                    annotation_id,
                 )
 
             case PechaType.prealigned_commentary_pecha:
@@ -102,12 +107,12 @@ class Serializer:
                 )
 
             case PechaType.prealigned_root_translation_pecha:
-                root_display_pecha = pechas[2]
                 root_pecha = pechas[1]
+                root_alignment_id = metadatas[0]["annotations"][0].id
                 translation_pecha = pechas[0]
                 return PreAlignedRootTranslationSerializer().serialize(
-                    root_display_pecha,
                     root_pecha,
+                    root_alignment_id,
                     translation_pecha,
                     pecha_category,
                 )
