@@ -72,3 +72,26 @@ def has_version_of(metadatas: List[Dict]) -> bool:
         if "version_of" in metadata and metadata["version_of"]:
             return True
     return False
+
+
+def is_root_related_pecha(pecha_type: PechaType) -> bool:
+    """
+    Returns True if the pecha type is root-related.
+    """
+    return pecha_type in [
+        PechaType.root_pecha,
+        PechaType.root_translation_pecha,
+        PechaType.prealigned_root_translation_pecha,
+    ]
+
+
+def is_commentary_related_pecha(pecha_type: PechaType) -> bool:
+    """
+    Returns True if the pecha type is commentary-related.
+    """
+    return pecha_type in [
+        PechaType.commentary_pecha,
+        PechaType.commentary_translation_pecha,
+        PechaType.prealigned_commentary_pecha,
+        PechaType.prealigned_commentary_translation_pecha,
+    ]

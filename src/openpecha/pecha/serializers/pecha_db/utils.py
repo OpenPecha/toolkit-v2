@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError
@@ -6,6 +6,7 @@ from openpecha.pecha import Pecha
 from openpecha.utils import get_text_direction_with_lang
 
 logger = get_logger(__name__)
+
 
 class FormatPechaCategory:
     def __init__(self):
@@ -30,12 +31,11 @@ class FormatPechaCategory:
             "enShortDesc": "",
         }
 
-
     def get_category(self, pecha_category: List[Dict[str, Dict]]):
         """
         Get the category of the Pecha
         """
-        category = {}
+        category: Dict = {}
         for cate_info in pecha_category:
             bo_name = cate_info["name"].get("bo")
             en_name = cate_info["name"].get("en")
@@ -50,18 +50,21 @@ class FormatPechaCategory:
                     "bo": [],
                     "en": [],
                 }
-            category["bo"].append({
-                "name": bo_name,
-                "heDesc": bo_desc,
-                "heShortDesc": bo_short_desc,
-            })
-            category["en"].append({
-                "name": en_name,
-                "enDesc": en_desc,
-                "enShortDesc": en_short_desc,
-            })
+            category["bo"].append(
+                {
+                    "name": bo_name,
+                    "heDesc": bo_desc,
+                    "heShortDesc": bo_short_desc,
+                }
+            )
+            category["en"].append(
+                {
+                    "name": en_name,
+                    "enDesc": en_desc,
+                    "enShortDesc": en_short_desc,
+                }
+            )
         return category
-
 
     def assign_category(self, category, type: str):
         if type == "root":
@@ -72,8 +75,7 @@ class FormatPechaCategory:
             category["en"].append(self.en_commentary_category)
         return category
 
-
-    def format_root_category(self, pecha: Pecha, pecha_category: Dict[str, List[Dict[str, str]]]):
+    def format_root_category(self, pecha: Pecha, pecha_category: List[Dict]):
         """
         1.Add Root section ie "རྩ་བ།" or "Root text" to category
         2.Add pecha title to category
@@ -82,7 +84,7 @@ class FormatPechaCategory:
 
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
-        
+
         category = self.assign_category(category, "root")
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
@@ -90,17 +92,21 @@ class FormatPechaCategory:
 
         return category
 
-
-    def format_commentary_category(self, pecha: Pecha, pecha_category: Dict[str, List[Dict[str, str]]], root_title: str):
+    def format_commentary_category(
+        self,
+        pecha: Pecha,
+        pecha_category: List[Dict],
+        root_title: str,
+    ):
         """
         1.Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
         2.Add pecha title to category
         """
         category = self.get_category(pecha_category)
-        
+
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
-        
+
         category = self.assign_category(category, "commentary")
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
@@ -117,7 +123,8 @@ class FormatPechaCategory:
 
         return category
 
-def get_metadata_for_pecha_org(pecha: Pecha, lang: Union[str, None] = None):
+
+def get_metadata_for_pecha_org(pecha: Pecha, lang: str | None = None):
     """
     Extract required metadata from Pecha for `pecha.org` serialization
     """

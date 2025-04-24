@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.updated_opf_serializer import (
@@ -7,9 +7,9 @@ from openpecha.pecha.serializers.pecha_db.updated_opf_serializer import (
 )
 from openpecha.utils import read_json
 
-MetadataType = Dict[str, Union[str, Dict[str, str], List[str], None]]
+MetadataType = Dict[str, str | Dict[str, str] | List[str] | None]
 
-extra_fields: Dict[str, Union[str, Dict[str, str], List[str], None]] = {
+extra_fields: Dict[str, str | Dict[str, str] | List[str] | None] = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
     "document_id": "1vgnfCQH3yaWPDaMDFXT_5GhlG0M9kEra0mxkDX46VLE",
     "language": "en",

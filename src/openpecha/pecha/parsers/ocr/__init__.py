@@ -2,7 +2,7 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
@@ -23,9 +23,9 @@ class BdrcParser:
 
     def parse(
         self,
-        input: Union[str, Path],
+        input: str | Path,
         metadata: Dict[str, Any],
-        pecha_id: Union[str, None] = None,
+        pecha_id: str | None = None,
     ) -> Pecha:  # Assuming "Pecha" is a class you have
         """
         Inputs:
@@ -52,7 +52,7 @@ class BdrcParser:
         try:
             # 2. Extract the zip file
             with zipfile.ZipFile(input_path, "r") as zip_ref:
-                zip_ref.extractall(work_path)
+                zip_ref.extractall(extract_dir)
 
         except zipfile.BadZipFile:
             logger.error(f"Invalid zip file: {input_path}")
@@ -84,7 +84,7 @@ class BdrcParser:
 
     def determine_data_source(
         self, work_path: Path, metadata: Dict[str, Any]
-    ) -> Union[BDRCGBSource, HOCRIASource, GoogleVisionSource]:
+    ) -> BDRCGBSource | HOCRIASource | GoogleVisionSource:
         """
         Determines the appropriate data source based on the extracted zip file structure.
 

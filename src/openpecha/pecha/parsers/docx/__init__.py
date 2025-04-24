@@ -1,9 +1,9 @@
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, annotation_id
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 
@@ -79,18 +79,18 @@ class DocxParser:
 
     def parse(
         self,
-        docx_file: Union[str, Path],
+        docx_file: str | Path,
         metadatas: List[Dict],
-        pecha_id: Union[str, None] = None,
-    ) -> Pecha:
+        pecha_id: str | None = None,
+    ) -> Tuple[Pecha, annotation_id]:
         """Parses a DOCX file and generates a Pecha object based on its type.
 
         Args:
-            docx_file (Union[str, Path]): Path to the DOCX file to be parsed.
+            docx_file (str | Path): Path to the DOCX file to be parsed.
             metadatas (List[Dict]): List of dictionaries, where each dictionary
                                     contains metadata of the Pecha.
             output_path (Path):
-            pecha_id (Union[str, None], optional): Pecha ID to be assigned. Defaults to None.
+            pecha_id (str | None, optional): Pecha ID to be assigned. Defaults to None.
 
         Returns:
             Pecha: Pecha object.
@@ -98,14 +98,16 @@ class DocxParser:
         is_commentary = self.is_commentary_pecha(metadatas)
 
         if is_commentary:
-            return DocxSimpleCommentaryParser().parse(
+            pecha, annotation_id = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
+            return (pecha, annotation_id)
         else:
-            return DocxRootParser().parse(
+            pecha, annotation_id = DocxRootParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
+            return (pecha, annotation_id)

@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 
 from docx2python import docx2python
 
@@ -8,12 +8,11 @@ from openpecha.config import PECHAS_PATH, get_logger
 from openpecha.exceptions import (
     EmptyFileError,
     FileNotFoundError,
-    InvalidLanguageEnumError,
     MetaDataValidationError,
 )
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, annotation_id
 from openpecha.pecha.layer import LayerEnum
-from openpecha.pecha.metadata import InitialCreationType, Language, PechaMetaData
+from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import BaseParser
 
 logger = get_logger(__name__)
@@ -78,34 +77,6 @@ class DocxRootParser(BaseParser):
 
         return res
 
-    @staticmethod
-    def get_layer_enum_with_lang(lang: str):
-        if lang == Language.english.value:
-            return LayerEnum.english_segment
-
-        if lang == Language.tibetan.value:
-            return LayerEnum.tibetan_segment
-
-        if lang == Language.chinese.value:
-            return LayerEnum.chinese_segment
-
-        if lang == Language.sanskrit.value:
-            return LayerEnum.sanskrit_segment
-
-        if lang == Language.italian.value:
-            return LayerEnum.italian_segment
-
-        if lang == Language.russian.value:
-            return LayerEnum.russian_segment
-
-        if lang == Language.hindi.value:
-            return LayerEnum.hindi_segment
-
-        logger.error(f"The language {lang} does not included in Language Enum.")  # noqa
-        raise InvalidLanguageEnumError(
-            f"[Error] The language enum '{lang}' from metadata is invalid."
-        )
-
     def calculate_segment_coordinates(
         self, segments: Dict[str, str]
     ) -> Tuple[List[Dict], str]:
@@ -137,27 +108,28 @@ class DocxRootParser(BaseParser):
         return (positions, base)
 
     def extract_segmentation_anns(
-        self, positions: List[Dict[str, int]], lang: str
+        self, positions: List[Dict[str, int]], ann_type: LayerEnum
     ) -> List[Dict]:
         """Create segment annotations from position information.
 
         Args:
             positions: List of dicts containing start/end positions and root index mappings
-            lang
 
         Returns:
             List of annotation dictionaries
         """
-        layer_enum = self.get_layer_enum_with_lang(lang)
         return [
             {
-                layer_enum.value: {"start": pos["start"], "end": pos["end"]},
+                ann_type.value: {
+                    "start": pos["start"],
+                    "end": pos["end"],
+                },
                 "root_idx_mapping": pos["root_idx_mapping"],
             }
             for pos in positions
         ]
 
-    def extract_segmentation_coordinates(
+    def extract_segmentation_coords(
         self, docx_file: Path
     ) -> Tuple[List[Dict[str, int]], str]:
         """Extract text from docx and calculate coordinates for segments.
@@ -177,11 +149,11 @@ class DocxRootParser(BaseParser):
 
     def parse(
         self,
-        input: Union[str, Path],
+        input: str | Path,
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
-        pecha_id: Union[str, None] = None,
-    ) -> Pecha:
+        pecha_id: str | None = None,
+    ) -> Tuple[Pecha, annotation_id]:
         """Parse a docx file and create a pecha.
 
         The process is split into three main steps:
@@ -198,23 +170,15 @@ class DocxRootParser(BaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        positions, base = self.extract_segmentation_coordinates(input)
+        positions, base = self.extract_segmentation_coords(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        layer_path = self.add_segmentation_annotations(
-            pecha, positions, metadata["language"]
-        )
-        basename = list(pecha.bases.keys())[0]
-        pecha.add_annotation_metadata(
-            basename,
-            layer_path.stem,
-            {
-                "annotation_type": LayerEnum.root_segment.value,
-            },
+        annotation_id = self.add_segmentation_layer(
+            pecha, positions, LayerEnum.segmentation
         )
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
-        return pecha
+        return (pecha, annotation_id)
 
     def create_pecha(
         self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
@@ -240,18 +204,15 @@ class DocxRootParser(BaseParser):
 
         return pecha
 
-    def add_segmentation_annotations(
-        self, pecha: Pecha, positions: List[Dict], lang: str
-    ) -> Path:
+    def add_segmentation_layer(
+        self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
+    ) -> annotation_id:
 
-        layer_enum = self.get_layer_enum_with_lang(lang)
-
-        # Add meaning_segment layer
         basename = list(pecha.bases.keys())[0]
-        meaning_segment_layer, layer_path = pecha.add_layer(basename, layer_enum)
-        anns = self.extract_segmentation_anns(positions, lang)
+        layer, layer_path = pecha.add_layer(basename, ann_type)
+        anns = self.extract_segmentation_anns(positions, ann_type)
         for ann in anns:
-            pecha.add_annotation(meaning_segment_layer, ann, layer_enum)
-        meaning_segment_layer.save()
+            pecha.add_annotation(layer, ann, ann_type)
+        layer.save()
 
-        return layer_path
+        return str(layer_path.relative_to(pecha.layer_path))

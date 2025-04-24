@@ -18,7 +18,7 @@
     "document_id": "1--EOib3nmA4OTPt6_QuB9L_34gTFmJb0YKatyjaJdag",
     "commentary_alignments": [
       {
-        "source": "IB42962D2/layers/F741/Tibetan_Segment-D792.json",
+        "source": "IB42962D2/layers/F741/Segmentation-D792.json",
         "target": "IB0D3B88B/layers/3A5A/Meaning_Segment-D5D9.json"
       }
     ],

@@ -6,7 +6,6 @@ from stam import AnnotationStore
 from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
-from openpecha.pecha.pecha_types import PechaType
 from openpecha.utils import read_json
 
 
@@ -57,69 +56,28 @@ class TestDocxAnnotationParser(TestCase):
             if f.is_file()
         }
 
-    def test_is_root_related_pecha(self):
-        # Test root pecha types
-        assert self.parser.is_root_related_pecha(PechaType.root_pecha)
-        assert self.parser.is_root_related_pecha(
-            PechaType.prealigned_root_translation_pecha
-        )
-
-        # Test non-root pecha types
-        assert not self.parser.is_root_related_pecha(PechaType.commentary_pecha)
-        assert not self.parser.is_root_related_pecha(
-            PechaType.prealigned_commentary_pecha
-        )
-
-    def test_is_commentary_related_pecha(self):
-        # Test commentary pecha types
-        assert self.parser.is_commentary_related_pecha(PechaType.commentary_pecha)
-        assert self.parser.is_commentary_related_pecha(
-            PechaType.prealigned_commentary_pecha
-        )
-
-        # Test non-commentary pecha types
-        assert not self.parser.is_commentary_related_pecha(PechaType.root_pecha)
-        assert not self.parser.is_commentary_related_pecha(
-            PechaType.prealigned_root_translation_pecha
-        )
-
     def test_root_pecha(self):
-        ann_type = LayerEnum.root_segment
-        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1"
+        type = LayerEnum.alignment
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
         metadatas = [self.root_display_pecha_metadata]
 
-        layer_path = self.parser.add_annotation(
-            self.root_display_pecha, ann_type, ann_title, docx_file, metadatas
+        pecha, layer_name = self.parser.add_annotation(
+            self.root_display_pecha, type, docx_file, metadatas
         )
-
+        layer_path = pecha.layer_path / layer_name
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
-        layer_path.unlink()
         expected_new_anns = read_json(
             Path(
                 "tests/pecha/parser/docx/annotation/data/root_display_pecha/expected_new_anns.json"
             )
         )
 
-        metadata = self.root_display_pecha.metadata
-        basename = list(metadata.bases.keys())[0]
-        new_annotation_metadata = metadata.bases[basename]["source_metadata"][
-            "annotations"
-        ][layer_path.stem]
-
-        expected_new_annotation_metadata = {
-            "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1",
-            "annotation_type": "Root_Segment",
-        }
-
         assert new_anns == expected_new_anns
-        assert new_annotation_metadata == expected_new_annotation_metadata
 
     def test_commentary_pecha(self):
-        ann_type = LayerEnum.commentary_segment
-        ann_title = "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1"
+        type = LayerEnum.alignment
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )
@@ -133,41 +91,22 @@ class TestDocxAnnotationParser(TestCase):
         parent_layer_path = str(
             parent_layer_path.relative_to(self.root_pecha.pecha_path.parent)
         )
-        layer_path = self.parser.add_annotation(
+        pecha, layer_name = self.parser.add_annotation(
             self.commentary_pecha,
-            ann_type,
-            ann_title,
+            type,
             docx_file,
             metadatas,
-            parent_layer_path=parent_layer_path,
         )
+        layer_path = pecha.layer_path / layer_name
 
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
-        layer_path.unlink()
         expected_new_anns = read_json(
             Path(
                 "tests/pecha/parser/docx/annotation/data/commentary_pecha/expected_new_anns.json"
             )
         )
 
-        metadata = self.commentary_pecha.metadata
-        basename = list(metadata.bases.keys())[0]
-        new_annotation_metadata = metadata.bases[basename]["source_metadata"][
-            "annotations"
-        ][layer_path.stem]
-
-        expected_new_annotation_metadata = {
-            "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1",
-            "relationship": [
-                "commentary_of",
-                "IC7760088",
-                "IC7760088/layers/A389/English_Segment-84EB.json",
-            ],
-            "annotation_type": "Commentary_Segment",
-        }
-
         assert new_anns == expected_new_anns
-        assert new_annotation_metadata == expected_new_annotation_metadata
 
     def tearDown(self) -> None:
         # Revert all original files

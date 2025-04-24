@@ -2,15 +2,14 @@ import json
 import shutil
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Generator, List, Optional, Tuple, Union
+from typing import Dict, Generator, List, Optional, Tuple
 
-import stam
 from git import Repo
-from stam import Annotation, AnnotationData, AnnotationStore, Offset, Selector
+from stam import AnnotationData, AnnotationStore, Offset, Selector
 
 from openpecha import utils
 from openpecha.catalog import PechaDataCatalog
-from openpecha.config import GITHUB_ORG_NAME, PECHAS_PATH
+from openpecha.config import PECHAS_PATH
 from openpecha.exceptions import GithubCloneError, StamAddAnnotationError
 from openpecha.github_utils import clone_repo, create_release
 from openpecha.ids import (
@@ -26,7 +25,7 @@ from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
 BASE_NAME = str
-layer_type = str
+annotation_id = str
 
 
 class Pecha:
@@ -55,7 +54,7 @@ class Pecha:
         return cls(pecha_id, pecha_path)
 
     @classmethod
-    def create(cls, output_path: Path, pecha_id: Union[str, None] = None) -> "Pecha":
+    def create(cls, output_path: Path, pecha_id: str | None = None) -> "Pecha":
         pecha_id = get_initial_pecha_id() if not pecha_id else pecha_id
         pecha_path = output_path / pecha_id
         if pecha_path.exists():
@@ -261,27 +260,6 @@ class Pecha:
 
         return self.metadata
 
-    def add_annotation_metadata(
-        self, basename: str, layer_name: str, ann_metadata: Dict
-    ):
-        """
-        Add Annotation Metadata in Pecha Metadata bases
-        """
-        bases_count = len(list(self.metadata.bases.keys()))
-        order = bases_count + 1
-
-        if basename in self.metadata.bases:
-            self.metadata.bases[basename]["source_metadata"]["annotations"][
-                layer_name
-            ] = {**ann_metadata}
-        else:
-            self.metadata.bases[basename] = {
-                "basefilename": f"{basename}.txt",
-                "source_metadata": {"annotations": {layer_name: {**ann_metadata}}},
-                "order": order,
-            }
-        self.set_metadata(self.metadata.to_dict())
-
     def get_layers(
         self, base_name, from_cache=False
     ) -> Generator[Tuple[str, AnnotationStore], None, None]:
@@ -430,7 +408,7 @@ class Pecha:
         This function merges the layers of the source pecha into the current pecha.
 
         Args:
-            source_pecha_path (Union[Path, str]): The path of the source pecha.
+            source_pecha_path (Path | str): The path of the source pecha.
             source_base_name (str): The base name of the source pecha.
             target_base_name (str): The base name of the target (current) pecha.
         """

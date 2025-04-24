@@ -1,6 +1,6 @@
 import ast
 from pathlib import Path
-from typing import List, Union
+from typing import List
 
 from git import Repo
 
@@ -37,7 +37,7 @@ class PechaDataCatalog:
                 Repo(self.repo_path), message="Update catalog", branch="main"
             )
 
-    def get_pecha_id_with_title(self, title: str) -> Union[str, None]:
+    def get_pecha_id_with_title(self, title: str) -> str | None:
         """
         1.Get pecha/opf catalog data
         2.Compare title with each entry

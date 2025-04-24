@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
 
@@ -77,8 +77,8 @@ class LicenseType(Enum):
 
 class PechaMetaData(BaseModel):
     id: str
-    title: Optional[Union[Dict[str, str], str]] = None
-    author: Optional[Union[List[str], Dict[str, str], str]] = None
+    title: Optional[Dict[str, str] | str] = None
+    author: Optional[List[str] | Dict[str, str] | str] = None
     imported: Optional[datetime] = None
     source: Optional[str] = None
     toolkit_version: str

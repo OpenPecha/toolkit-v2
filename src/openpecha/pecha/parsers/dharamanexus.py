@@ -1,7 +1,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import pyewts
 
@@ -45,7 +45,7 @@ class DharamanexusParser(BaseParser):
 
     def sort_file_names(self, files):
         parts = re.findall(self.regex_pattern, files)
-        key: List[Union[int, float]] = []
+        key: List[int | float] = []
         for part in parts:
             if part.isdigit():
                 key.append(int(part))
@@ -136,13 +136,13 @@ class DharamanexusParser(BaseParser):
         for vol, data in self.state.items():
             base_name = pecha.set_base(content=data["base_text"])
 
-            segment, _ = pecha.add_layer(base_name, LayerEnum.meaning_segment)
+            segment, _ = pecha.add_layer(base_name, LayerEnum.segmentation)
             for segment_id, segment_span in data["annotations"]["segments"].items():
                 segment_ann = {
-                    LayerEnum.meaning_segment.value: segment_span["span"],
+                    LayerEnum.segmentation.value: segment_span["span"],
                     "segment_id": segment_id,
                 }
-                pecha.add_annotation(segment, segment_ann, LayerEnum.meaning_segment)
+                pecha.add_annotation(segment, segment_ann, LayerEnum.segmentation)
             segment.save()
 
             pagination, _ = pecha.add_layer(base_name, LayerEnum.pagination)
@@ -174,7 +174,7 @@ class DharamanexusParser(BaseParser):
     def parse(
         self,
         input: Any,
-        metadata: Union[Dict, Path],
+        metadata: Dict | Path,
         output_path: Path = PECHAS_PATH,
     ):
         self.make_state(input)

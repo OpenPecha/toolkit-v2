@@ -34,12 +34,6 @@ class GithubCloneError(GithubRepoError):
     pass
 
 
-class GithubRepoNotFoundError(GithubRepoError):
-    """Raised when the specified github repo is not found"""
-
-    pass
-
-
 class FileNotFoundError(Exception):
     """Raised when the specified file is not found."""
 
@@ -70,12 +64,6 @@ class BaseUpdateFailedError(Exception):
     pass
 
 
-class InvalidLanguageEnumError(Exception):
-    """Raised when the language enum is invalid."""
-
-    pass
-
-
 class StamAnnotationStoreLoadError(Exception):
     """Raised when there is an error loading annotation store in STAM."""
 
@@ -88,7 +76,7 @@ class StamAddAnnotationError(Exception):
     pass
 
 
-class RootPechaNotFoundError(Exception):
-    """Raised when the root pecha is not found."""
+class ParseNotReadyForThisAnnotation(Exception):
+    """Raised when the parser is not ready for this annotation."""
 
     pass

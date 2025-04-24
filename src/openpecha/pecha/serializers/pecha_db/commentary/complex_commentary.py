@@ -90,7 +90,7 @@ class ComplexCommentarySerializer:
         meaning_segment_anns = []
         basename = next(pecha.base_path.rglob("*.txt")).stem
         meaning_segment_layer, _ = pecha.get_layer_by_ann_type(
-            basename, LayerEnum.meaning_segment
+            basename, LayerEnum.alignment
         )
         for ann in meaning_segment_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
