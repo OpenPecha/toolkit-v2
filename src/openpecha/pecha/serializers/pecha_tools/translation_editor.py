@@ -5,9 +5,11 @@ from stam import AnnotationStore
 from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError, MetaDataMissingError
 from openpecha.pecha import Pecha, get_annotations_data
+from openpecha.pecha.serializers.pecha_tools.utils import get_base_text
 
 
 logger = get_logger(__name__)
+
 
 def get_layer_name(metadatas: List[Dict[str, Any]]) -> str:
     """
@@ -31,28 +33,6 @@ class TranslationSerializer:
         return [
             "" if str(ann) == "\n" else str(ann).replace("\n", " ") for ann in layer
         ]
-            
-            
-    def get_base_text(self, pecha: Pecha, layer_path: str):
-        ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
-        if not ann_store_path.exists():
-            logger.error(f"The layer path {str(ann_store_path)} does not exist.")
-            raise FileNotFoundError(
-                f"[Error] The layer path '{str(ann_store_path)}' does not exist."
-            )
-
-        try:
-            segment_layer = AnnotationStore(file=ann_store_path.as_posix())
-        except Exception as e:
-            logger.error(
-                f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
-            )
-            raise StamAnnotationStoreLoadError(
-                f"[Error] Error loading annotation store from layer path: {layer_path}. {str(e)}"
-            )
-        else:
-            base_text = " ".join(self.get_texts_from_layer(segment_layer))
-            return base_text
 
     def get_annotations_from_layer(self, pecha: Pecha, layer_path: str):
         ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
@@ -88,7 +68,7 @@ class TranslationSerializer:
             layer_name = get_layer_name(metadatas)
 
         layer_path = pecha.get_segmentation_layer_path()
-        base_text = self.get_base_text(pecha, layer_path)
+        base_text = get_base_text(pecha, layer_path)
         annotations = self.get_annotations_from_layer(pecha, layer_path)
 
         serialized_json = {

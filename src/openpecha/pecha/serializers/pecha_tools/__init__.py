@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnBase
 from openpecha.pecha.serializers.pecha_tools.translation_editor import (
