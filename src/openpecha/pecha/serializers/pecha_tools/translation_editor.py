@@ -22,18 +22,6 @@ def get_layer_name(metadatas: List[Dict[str, Any]]) -> str:
 
 
 class TranslationSerializer:
-
-    @staticmethod
-    def get_texts_from_layer(layer: AnnotationStore):
-        """
-        Extract texts from layer
-        1.If text is a newline, replace it with empty string
-        2.Replace newline with whtespace
-        """
-        return [
-            "" if str(ann) == "\n" else str(ann).replace("\n", " ") for ann in layer
-        ]
-
     def get_annotations_from_layer(self, pecha: Pecha, layer_path: str):
         ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
         if not ann_store_path.exists():
