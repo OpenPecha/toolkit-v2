@@ -11,10 +11,10 @@ from openpecha.utils import read_json
 class TestDocxAnnotationUpdate(TestCase):
     def setUp(self) -> None:
         self.root_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/P2/IC7760088"
+            "tests/alignment/commentary_transfer/data/root/IA6E66F92"
         )
         self.commentary_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/P3/I77BD6EA9"
+            "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
         )
 
         self.root_pecha = Pecha.from_path(self.root_pecha_path)
@@ -44,7 +44,7 @@ class TestDocxAnnotationUpdate(TestCase):
 
     def test_root_pecha(self):
         updater = DocxAnnotationUpdate()
-        annotation_id = "A389/Alignment-84EB.json"
+        annotation_id = "B8B3/Segmentation-74F4.json"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
