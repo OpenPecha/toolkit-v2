@@ -42,3 +42,22 @@ def extract_text_from_docx(docx_file: Path) -> str:
 
     text = normalize_text(text)
     return text
+
+
+def remove_footnote(text: str) -> str:
+    """
+    Input: text extracted from docx file
+    Output: text without footnote
+    """
+
+    # Remove footnote numbers
+    text = re.sub(r"----footnote\d+----", "", text)
+
+    # Remove footnote content
+    parts = text.split("\n\n")
+    res = []
+    for part in parts:
+        if not part.strip().startswith("footnote"):
+            res.append(part)
+    text = "\n\n".join(res)
+    return text
