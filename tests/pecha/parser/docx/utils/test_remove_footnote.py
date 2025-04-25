@@ -13,7 +13,7 @@ class TestRemoveFootNote(TestCase):
         self.two_page_footnote = self.TWO_PAGE_DIR / "two_page_footnote.docx"
 
     def test_remove_footnote_one_page(self):
-        text = extract_text_from_docx(self.one_page_footnote)
+        text = extract_text_from_docx(self.one_page_footnote, False)
         expected_before = self.ONE_PAGE_DIR / "before_one_page.txt"
         assert text == expected_before.read_text(encoding="utf-8").strip()
 
@@ -22,7 +22,7 @@ class TestRemoveFootNote(TestCase):
         assert text == expected_after.read_text(encoding="utf-8").strip()
 
     def test_remove_footnote_two_page(self):
-        text = extract_text_from_docx(self.two_page_footnote)
+        text = extract_text_from_docx(self.two_page_footnote, False)
         expected_before = self.TWO_PAGE_DIR / "before_two_page.txt"
         assert text == expected_before.read_text(encoding="utf-8").strip()
 
