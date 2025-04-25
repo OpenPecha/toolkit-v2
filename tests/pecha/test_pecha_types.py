@@ -3,6 +3,8 @@ from typing import Dict, List
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
+from openpecha.pecha.annotations import AnnotationModel, PechaAlignment
+from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.pecha_types import (
     PechaType,
     get_pecha_type,
@@ -32,11 +34,15 @@ class TestPechaType(TestCase):
         self.root_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/root/IA6E66F92"
         )
+        self.root_translation_pecha_path = Path(
+            "tests/pecha/serializers/pecha_db/root/data/en/I62E00D78"
+        )
         self.commentary_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
         )
 
         self.root_pecha = Pecha.from_path(self.root_pecha_path)
+        self.root_translation_pecha = Pecha.from_path(self.root_translation_pecha_path)
         self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
 
         self.root_pecha_metadata = {
@@ -44,6 +50,42 @@ class TestPechaType(TestCase):
             "commentary_of": None,
             "version_of": None,
             **self.root_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="IA6E66F92",
+                    type=LayerEnum.segmentation,
+                    document_id="d2",
+                    id="B8B3/Segmentation-74F4.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation",
+                    aligned_to=None,
+                ),
+                AnnotationModel(
+                    pecha_id="IA6E66F92",
+                    type=LayerEnum.segmentation,
+                    document_id="d2",
+                    id="B8B3/Alignment-F81A.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ alignment",
+                    aligned_to=None,
+                ),
+            ],
+        }
+        self.root_translation_pecha_metadata = {
+            "translation_of": "IE60BBDE8",
+            "commentary_of": None,
+            "version_of": None,
+            **self.root_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I62E00D78",
+                    type=LayerEnum.alignment,
+                    document_id="d3",
+                    id="D93E/Alignment-0216.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
+                    ),
+                )
+            ],
         }
         self.commentary_pecha_metadata = {
             "translation_of": None,
@@ -217,3 +259,10 @@ class TestPechaType(TestCase):
             get_pecha_type(metadatas)
             == PechaType.prealigned_commentary_translation_pecha
         )
+
+
+work = TestPechaType()
+work.setUp()
+work.test_root_pecha()
+work.test_root_translation_pecha()
+work.test_commentary_pecha()
