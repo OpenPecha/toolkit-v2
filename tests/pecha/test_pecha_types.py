@@ -40,7 +40,9 @@ class TestPechaType(TestCase):
         self.commentary_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
         )
-        self.commentary_translation_pecha_path = Path("")
+        self.commentary_translation_pecha_path = Path(
+            "tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91"
+        )
 
         self.root_pecha = Pecha.from_path(self.root_pecha_path)
         self.root_translation_pecha = Pecha.from_path(self.root_translation_pecha_path)
@@ -93,9 +95,39 @@ class TestPechaType(TestCase):
         }
         self.commentary_pecha_metadata = {
             "translation_of": None,
-            "commentary_of": self.root_pecha.id,
+            "commentary_of": "IE60BBDE8",
             "version_of": None,
             **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
+                    ),
+                )
+            ],
+        }
+        self.commentary_translation_pecha_metadata = {
+            "translation_of": "I6944984E",
+            "commentary_of": None,
+            "version_of": None,
+            **self.commentary_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I94DBDA91",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="FD22/Alignment-599A.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="I6944984E", alignment_id="E949/Alignment-2F29.json"
+                    ),
+                )
+            ],
         }
 
     def test_is_root_related_pecha(self):
@@ -138,24 +170,9 @@ class TestPechaType(TestCase):
 
     def test_commentary_translation_pecha(self):
         metadatas: list[MetadataType] = [
-            {
-                "translation_of": "P0001",
-                "commentary_of": None,
-                "version_of": None,
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": "P0002",
-                "version_of": None,
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                "version_of": None,
-                **extra_fields,
-            },
+            self.commentary_translation_pecha_metadata,
+            self.commentary_pecha_metadata,
+            self.root_pecha_metadata,
         ]
         assert get_pecha_type(metadatas) == PechaType.commentary_translation_pecha
 
@@ -243,5 +260,6 @@ work.setUp()
 work.test_root_pecha()
 work.test_root_translation_pecha()
 work.test_commentary_pecha()
+work.test_commentary_translation_pecha()
 
 # work.test_prealigned_root_translation_pecha()
