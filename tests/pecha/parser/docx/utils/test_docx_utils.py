@@ -6,24 +6,26 @@ from openpecha.pecha.parsers.docx.utils import extract_text_from_docx, remove_fo
 
 class TestRemoveFootNote(TestCase):
     def setUp(self):
-        self.DATA_DIR = Path(__file__).parent / "data"
-        self.one_page_footnote = self.DATA_DIR / "one_page_footnote.docx"
-        self.two_page_footnote = self.DATA_DIR / "two_page_footnote.docx"
+        self.FOOTNOTE_DIR = Path(__file__).parent / "data" / "footnote"
+        self.ONE_PAGE_DIR = self.FOOTNOTE_DIR / "one_page"
+        self.TWO_PAGE_DIR = self.FOOTNOTE_DIR / "two_page"
+        self.one_page_footnote = self.ONE_PAGE_DIR / "one_page_footnote.docx"
+        self.two_page_footnote = self.TWO_PAGE_DIR / "two_page_footnote.docx"
 
     def test_remove_footnote_one_page(self):
         text = extract_text_from_docx(self.one_page_footnote)
-        expected_before = self.DATA_DIR / "before_one_page.txt"
+        expected_before = self.ONE_PAGE_DIR / "before_one_page.txt"
         assert text == expected_before.read_text(encoding="utf-8").strip()
 
         text = remove_footnote(text)
-        expected_after = self.DATA_DIR / "after_one_page.txt"
+        expected_after = self.ONE_PAGE_DIR / "after_one_page.txt"
         assert text == expected_after.read_text(encoding="utf-8").strip()
 
     def test_remove_footnote_two_page(self):
         text = extract_text_from_docx(self.two_page_footnote)
-        expected_before = self.DATA_DIR / "before_two_page.txt"
+        expected_before = self.TWO_PAGE_DIR / "before_two_page.txt"
         assert text == expected_before.read_text(encoding="utf-8").strip()
 
         text = remove_footnote(text)
-        expected_after = self.DATA_DIR / "after_two_page.txt"
+        expected_after = self.TWO_PAGE_DIR / "after_two_page.txt"
         assert text == expected_after.read_text(encoding="utf-8").strip()
