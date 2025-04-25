@@ -98,7 +98,9 @@ class TestDocxRootParser(TestCase):
             mock_get_base_id.return_value = "B002"
             mock_get_layer_id.return_value = "L002"
 
-            pecha, layer_name = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
+            pecha, annotation_path = self.parser.parse(
+                en_docx_file, metadata, OUTPUT_DIR
+            )
 
             assert isinstance(pecha, Pecha)
-            assert layer_name == "B002/Segmentation-L002.json"
+            assert annotation_path == "B002/Segmentation-L002.json"
