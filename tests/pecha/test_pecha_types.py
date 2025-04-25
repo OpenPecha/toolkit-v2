@@ -40,10 +40,14 @@ class TestPechaType(TestCase):
         self.commentary_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
         )
+        self.commentary_translation_pecha_path = Path("")
 
         self.root_pecha = Pecha.from_path(self.root_pecha_path)
         self.root_translation_pecha = Pecha.from_path(self.root_translation_pecha_path)
         self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
+        self.commentary_translation_pecha = Pecha.from_path(
+            self.commentary_translation_pecha_path
+        )
 
         self.root_pecha_metadata = {
             "translation_of": None,
@@ -115,47 +119,20 @@ class TestPechaType(TestCase):
         )
 
     def test_root_pecha(self):
-        metadatas: list[MetadataType] = [
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                "version_of": None,
-                **extra_fields,
-            },
-        ]
+        metadatas: list[MetadataType] = [self.root_pecha_metadata]
         assert get_pecha_type(metadatas) == PechaType.root_pecha
 
     def test_root_translation_pecha(self):
         metadatas: list[MetadataType] = [
-            {
-                "translation_of": "P0001",
-                "commentary_of": None,
-                "version_of": None,
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                "version_of": None,
-                **extra_fields,
-            },
+            self.root_translation_pecha_metadata,
+            self.root_pecha_metadata,
         ]
         assert get_pecha_type(metadatas) == PechaType.root_translation_pecha
 
     def test_commentary_pecha(self):
         metadatas: list[MetadataType] = [
-            {
-                "translation_of": None,
-                "commentary_of": "P0001",
-                "version_of": None,
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                "version_of": None,
-                **extra_fields,
-            },
+            self.commentary_pecha_metadata,
+            self.root_pecha_metadata,
         ]
         assert get_pecha_type(metadatas) == PechaType.commentary_pecha
 
@@ -266,3 +243,5 @@ work.setUp()
 work.test_root_pecha()
 work.test_root_translation_pecha()
 work.test_commentary_pecha()
+
+# work.test_prealigned_root_translation_pecha()
