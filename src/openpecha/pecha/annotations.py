@@ -202,7 +202,7 @@ class AnnotationModel(BaseModel):
                 "pecha_id": "I857977C3",
                 "type": "Alignment",
                 "document_id": "1vgnfCQH3yaWPDaMDFXT_5GhlG0M9kEra0mxkDX46VLE",
-                "annotation_id": "test_id",
+                "annotation_path": "test_id",
                 "title": "Test Alignment",
                 "aligned_to": {
                     "pecha_id": "I857977C3",

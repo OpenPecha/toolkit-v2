@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
-from openpecha.pecha import Pecha, annotation_id
+from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -47,7 +47,7 @@ class DocxAnnotationParser:
         type: LayerEnum,
         docx_file: Path,
         metadatas: List[Dict],
-    ) -> Tuple[Pecha, annotation_id]:
+    ) -> Tuple[Pecha, annotation_path]:
         pecha_type: PechaType = get_pecha_type(metadatas)
 
         if type not in [LayerEnum.alignment, LayerEnum.segmentation]:
@@ -64,8 +64,8 @@ class DocxAnnotationParser:
             coords, old_base = parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            annotation_id = parser.add_segmentation_layer(pecha, updated_coords, type)
-            return (pecha, annotation_id)
+            annotation_path = parser.add_segmentation_layer(pecha, updated_coords, type)
+            return (pecha, annotation_path)
 
         elif is_commentary_related_pecha(pecha_type):
             commentary_parser = DocxSimpleCommentaryParser()
@@ -75,11 +75,11 @@ class DocxAnnotationParser:
             ) = commentary_parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            annotation_id = commentary_parser.add_segmentation_layer(
+            annotation_path = commentary_parser.add_segmentation_layer(
                 pecha, updated_coords, type
             )
 
-            return (pecha, annotation_id)
+            return (pecha, annotation_path)
 
         else:
             raise ValueError(f"Unknown pecha type: {pecha_type}")
