@@ -25,7 +25,7 @@ from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
 BASE_NAME = str
-annotation_id = str
+annotation_path = str
 
 
 class Pecha:
@@ -445,18 +445,17 @@ def get_anns(ann_store: AnnotationStore):
         anns.append(curr_ann)
     return anns
 
+
 def get_annotations_data(ann_store: AnnotationStore):
     annotations = []
     for ann in ann_store:
         span = {
             "start": ann.offset().begin().value(),
-            "end": ann.offset().end().value()
+            "end": ann.offset().end().value(),
         }
         curr_ann = {"span": span}
         for data in ann:
-            curr_ann.update({
-                "mapping": data.value().get()
-                })
+            curr_ann.update({"mapping": data.value().get()})
             break
         annotations.append(curr_ann)
     return annotations
