@@ -57,7 +57,8 @@ def remove_footnote(text: str) -> str:
     parts = text.split("\n\n")
     res = []
     for part in parts:
-        if not part.strip().startswith("footnote"):
+        # Use regex to check if part starts with 'footnote' followed by digits
+        if not re.match(r"^footnote\d+\)", part.strip()):
             res.append(part)
     text = "\n\n".join(res)
     return text
