@@ -75,42 +75,7 @@ class TestPechaType(TestCase):
                 ),
             ],
         }
-        self.root_translation_pecha_metadata = {
-            "translation_of": "IE60BBDE8",
-            "commentary_of": None,
-            "version_of": None,
-            **self.root_translation_pecha.metadata.to_dict(),
-            "annotations": [
-                AnnotationModel(
-                    pecha_id="I62E00D78",
-                    type=LayerEnum.alignment,
-                    document_id="d3",
-                    id="D93E/Alignment-0216.json",
-                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
-                    aligned_to=PechaAlignment(
-                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
-                    ),
-                )
-            ],
-        }
-        self.commentary_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": "IE60BBDE8",
-            "version_of": None,
-            **self.commentary_pecha.metadata.to_dict(),
-            "annotations": [
-                AnnotationModel(
-                    pecha_id="I6944984E",
-                    type=LayerEnum.alignment,
-                    document_id="d4",
-                    id="E949/Alignment-2F29.json",
-                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
-                    aligned_to=PechaAlignment(
-                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
-                    ),
-                )
-            ],
-        }
+
         self.commentary_translation_pecha_metadata = {
             "translation_of": "I6944984E",
             "commentary_of": None,
@@ -155,39 +120,175 @@ class TestPechaType(TestCase):
         assert get_pecha_type(metadatas) == PechaType.root_pecha
 
     def test_root_translation_pecha(self):
+        root_translation_pecha_metadata = {
+            "translation_of": "IE60BBDE8",
+            "commentary_of": None,
+            "version_of": None,
+            **self.root_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I62E00D78",
+                    type=LayerEnum.alignment,
+                    document_id="d3",
+                    id="D93E/Alignment-0216.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Segmentation-74F4.json"
+                    ),
+                )
+            ],
+        }
+
         metadatas: list[MetadataType] = [
-            self.root_translation_pecha_metadata,
+            root_translation_pecha_metadata,
             self.root_pecha_metadata,
         ]
         assert get_pecha_type(metadatas) == PechaType.root_translation_pecha
 
     def test_commentary_pecha(self):
+        commentary_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": "IE60BBDE8",
+            "version_of": None,
+            **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Segmentation-74F4.json"
+                    ),
+                )
+            ],
+        }
         metadatas: list[MetadataType] = [
-            self.commentary_pecha_metadata,
+            commentary_pecha_metadata,
             self.root_pecha_metadata,
         ]
         assert get_pecha_type(metadatas) == PechaType.commentary_pecha
 
     def test_commentary_translation_pecha(self):
+        commentary_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": "IE60BBDE8",
+            "version_of": None,
+            **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Segmentation-74F4.json"
+                    ),
+                )
+            ],
+        }
         metadatas: list[MetadataType] = [
             self.commentary_translation_pecha_metadata,
-            self.commentary_pecha_metadata,
+            commentary_pecha_metadata,
             self.root_pecha_metadata,
         ]
         assert get_pecha_type(metadatas) == PechaType.commentary_translation_pecha
 
     def test_prealigned_root_translation_pecha(self):
-        metadatas: list[MetadataType] = [self.root_translation_pecha_metadata, self.root_pecha_metadata]
+        root_translation_pecha_metadata = {
+            "translation_of": "IE60BBDE8",
+            "commentary_of": None,
+            "version_of": None,
+            **self.root_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I62E00D78",
+                    type=LayerEnum.alignment,
+                    document_id="d3",
+                    id="D93E/Alignment-0216.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Alignment-F81A.json"
+                    ),
+                )
+            ],
+        }
+        metadatas: list[MetadataType] = [
+            root_translation_pecha_metadata,
+            self.root_pecha_metadata,
+        ]
         assert get_pecha_type(metadatas) == PechaType.prealigned_root_translation_pecha
 
     def test_prealigned_commentary_pecha(self):
-        metadatas: list[MetadataType] = [self.commentary_pecha_metadata, self.root_pecha_metadata]
+        commentary_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": "IE60BBDE8",
+            "version_of": None,
+            **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Alignment-F81A.json"
+                    ),
+                )
+            ],
+        }
+        metadatas: list[MetadataType] = [
+            commentary_pecha_metadata,
+            self.root_pecha_metadata,
+        ]
         assert get_pecha_type(metadatas) == PechaType.prealigned_commentary_pecha
 
     def test_prealigned_commentary_translation_pecha(self):
-        metadatas: list[MetadataType] = [self.commentary_translation_pecha_metadata, self.commentary_pecha_metadata, self.root_pecha_metadata]
+        commentary_translation_pecha_metadata = {
+            "translation_of": "I6944984E",
+            "commentary_of": None,
+            "version_of": None,
+            **self.commentary_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I94DBDA91",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="FD22/Alignment-599A.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary translation",
+                    aligned_to=PechaAlignment(
+                        pecha_id="I6944984E", alignment_id="E949/Alignment-2F29.json"
+                    ),
+                )
+            ],
+        }
+        commentary_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": "IE60BBDE8",
+            "version_of": None,
+            **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Alignment-F81A.json"
+                    ),
+                )
+            ],
+        }
+        metadatas: list[MetadataType] = [
+            commentary_translation_pecha_metadata,
+            commentary_pecha_metadata,
+            self.root_pecha_metadata,
+        ]
         assert (
             get_pecha_type(metadatas)
             == PechaType.prealigned_commentary_translation_pecha
         )
-

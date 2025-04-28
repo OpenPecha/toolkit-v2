@@ -71,7 +71,7 @@ def has_version_of(metadatas: List[Dict]) -> bool:
     root_metadata = metadatas[-1]
     parent_metadata = metadatas[-2]
 
-    aligned_root_id = parent_metadata["annotations"][0].id
+    aligned_root_id = parent_metadata["annotations"][0].aligned_to.alignment_id
 
     if root_metadata["annotations"][0].id == aligned_root_id:
         return False
