@@ -108,7 +108,9 @@ class Serializer:
 
             case PechaType.prealigned_root_translation_pecha:
                 root_pecha = pechas[1]
-                root_alignment_id = metadatas[0]["annotations"][0].id
+                root_alignment_id = metadatas[0]["annotations"][
+                    0
+                ].aligned_to.alignment_id
                 translation_pecha = pechas[0]
                 return PreAlignedRootTranslationSerializer().serialize(
                     root_pecha,

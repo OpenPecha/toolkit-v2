@@ -233,36 +233,46 @@ class TestSerializer(TestCase):
     #         self.pecha_category,
     #     )
 
-    # @mock.patch(
-    #     "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
-    # )
-    # def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
-    #     mock_translation_serialize.return_value = {}
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
+    )
+    def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
+        mock_translation_serialize.return_value = {}
+        root_translation_pecha_metadata = {
+            "translation_of": "IE60BBDE8",
+            "commentary_of": None,
+            "version_of": None,
+            **self.root_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I62E00D78",
+                    type=LayerEnum.alignment,
+                    document_id="d3",
+                    id="D93E/Alignment-0216.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Alignment-F81A.json"
+                    ),
+                )
+            ],
+        }
 
-    #     pechas = [self.root_translation_pecha, self.root_pecha]
-    #     metadatas = [
-    #         self.root_translation_pecha_metadata,
-    #         self.root_pecha_metadata,
-    #     ]
+        pechas = [self.root_translation_pecha, self.root_pecha]
+        metadatas = [
+            root_translation_pecha_metadata,
+            self.root_pecha_metadata,
+        ]
 
-    #     annotation_id = "D93E/Alignment-0216.json"
-    #     root_alignment_id = "3635/Segmentation-039B.json"
+        annotation_id = "D93E/Alignment-0216.json"
+        root_alignment_id = "B8B3/Alignment-F81A.json"
 
-    #     serializer = Serializer()
-    #     serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
 
-    #     mock_translation_serialize.assert_called_once()
-    #     mock_translation_serialize.assert_called_with(
-    #         self.root_pecha,
-    #         root_alignment_id,
-    #         self.root_translation_pecha,
-    #         self.pecha_category,
-    #     )
-
-
-work = TestSerializer()
-work.setUp()
-work.test_root_pecha()
-work.test_root_translation_pecha()
-work.test_commentary_pecha()
-work.test_commentary_translation_pecha()
+        mock_translation_serialize.assert_called_once()
+        mock_translation_serialize.assert_called_with(
+            self.root_pecha,
+            root_alignment_id,
+            self.root_translation_pecha,
+            self.pecha_category,
+        )
