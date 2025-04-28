@@ -1,8 +1,6 @@
-from pathlib import Path
 from typing import Dict, List
 from unittest import TestCase
 
-from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel, PechaAlignment
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.pecha_types import (
@@ -11,6 +9,7 @@ from openpecha.pecha.pecha_types import (
     is_commentary_related_pecha,
     is_root_related_pecha,
 )
+from tests.pecha import SharedPechaSetup
 
 extra_fields: Dict[str, str | Dict[str, str] | List[str] | None] = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
@@ -29,71 +28,9 @@ extra_fields: Dict[str, str | Dict[str, str] | List[str] | None] = {
 MetadataType = Dict[str, str | Dict[str, str] | List[str] | None]
 
 
-class TestPechaType(TestCase):
+class TestPechaType(TestCase, SharedPechaSetup):
     def setUp(self):
-        self.root_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/root/IA6E66F92"
-        )
-        self.root_translation_pecha_path = Path(
-            "tests/pecha/serializers/pecha_db/root/data/en/I62E00D78"
-        )
-        self.commentary_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
-        )
-        self.commentary_translation_pecha_path = Path(
-            "tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91"
-        )
-
-        self.root_pecha = Pecha.from_path(self.root_pecha_path)
-        self.root_translation_pecha = Pecha.from_path(self.root_translation_pecha_path)
-        self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
-        self.commentary_translation_pecha = Pecha.from_path(
-            self.commentary_translation_pecha_path
-        )
-
-        self.root_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": None,
-            "version_of": None,
-            **self.root_pecha.metadata.to_dict(),
-            "annotations": [
-                AnnotationModel(
-                    pecha_id="IA6E66F92",
-                    type=LayerEnum.segmentation,
-                    document_id="d2",
-                    id="B8B3/Segmentation-74F4.json",
-                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation",
-                    aligned_to=None,
-                ),
-                AnnotationModel(
-                    pecha_id="IA6E66F92",
-                    type=LayerEnum.segmentation,
-                    document_id="d2",
-                    id="B8B3/Alignment-F81A.json",
-                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ alignment",
-                    aligned_to=None,
-                ),
-            ],
-        }
-
-        self.commentary_translation_pecha_metadata = {
-            "translation_of": "I6944984E",
-            "commentary_of": None,
-            "version_of": None,
-            **self.commentary_translation_pecha.metadata.to_dict(),
-            "annotations": [
-                AnnotationModel(
-                    pecha_id="I94DBDA91",
-                    type=LayerEnum.alignment,
-                    document_id="d4",
-                    id="FD22/Alignment-599A.json",
-                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
-                    aligned_to=PechaAlignment(
-                        pecha_id="I6944984E", alignment_id="E949/Alignment-2F29.json"
-                    ),
-                )
-            ],
-        }
+        self.setup_pechas()
 
     def test_is_root_related_pecha(self):
         # Test root pecha types
