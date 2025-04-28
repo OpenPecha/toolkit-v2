@@ -55,7 +55,7 @@ class TestSerializer(TestCase):
                     id="D93E/Alignment-0216.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
                     aligned_to=PechaAlignment(
-                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Segmentation-74F4.json"
                     ),
                 )
             ],
@@ -77,7 +77,7 @@ class TestSerializer(TestCase):
                     id="E949/Alignment-2F29.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
                     aligned_to=PechaAlignment(
-                        pecha_id="IE60BBDE8", alignment_id="3635/Segmentation-039B.json"
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Segmentation-74F4.json"
                     ),
                 )
             ],
@@ -258,3 +258,11 @@ class TestSerializer(TestCase):
     #         self.root_translation_pecha,
     #         self.pecha_category,
     #     )
+
+
+work = TestSerializer()
+work.setUp()
+work.test_root_pecha()
+work.test_root_translation_pecha()
+work.test_commentary_pecha()
+work.test_commentary_translation_pecha()
