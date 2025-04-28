@@ -63,10 +63,10 @@ class TestDocxAnnotationParser(TestCase):
         )
         metadatas = [self.root_display_pecha_metadata]
 
-        pecha, layer_name = self.parser.add_annotation(
+        pecha, annotation_path = self.parser.add_annotation(
             self.root_display_pecha, type, docx_file, metadatas
         )
-        layer_path = pecha.layer_path / layer_name
+        layer_path = pecha.layer_path / annotation_path
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
         expected_new_anns = read_json(
             Path(
@@ -91,13 +91,13 @@ class TestDocxAnnotationParser(TestCase):
         parent_layer_path = str(
             parent_layer_path.relative_to(self.root_pecha.pecha_path.parent)
         )
-        pecha, layer_name = self.parser.add_annotation(
+        pecha, annotation_path = self.parser.add_annotation(
             self.commentary_pecha,
             type,
             docx_file,
             metadatas,
         )
-        layer_path = pecha.layer_path / layer_name
+        layer_path = pecha.layer_path / annotation_path
 
         new_anns = get_anns(AnnotationStore(file=str(layer_path)))
         expected_new_anns = read_json(
