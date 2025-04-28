@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict, List
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
@@ -104,7 +105,7 @@ class TestSerializer(TestCase):
                 )
             ],
         }
-        self.pecha_category = [
+        self.pecha_category: List[Dict] = [
             {
                 "description": {"en": "", "bo": ""},
                 "short_description": {"en": "", "bo": ""},
@@ -212,26 +213,51 @@ class TestSerializer(TestCase):
             translation_ann_id,
         )
 
-    # @mock.patch(
-    #     "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.PreAlignedCommentarySerializer.serialize"
-    # )
-    # def test_prealigned_commentary_pecha(self, mock_commentary_serialize):
-    #     mock_commentary_serialize.return_value = {}
-    #     pechas = [self.commentary_pecha, self.root_pecha]
-    #     metadatas = [
-    #         self.commentary_pecha_metadata,
-    #         self.root_pecha_metadata,
-    #     ]
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.PreAlignedCommentarySerializer.serialize"
+    )
+    def test_prealigned_commentary_pecha(self, mock_commentary_serialize):
+        mock_commentary_serialize.return_value = {}
 
-    #     serializer = Serializer()
-    #     serializer.serialize(pechas, metadatas, self.pecha_category)
+        commentary_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": "IE60BBDE8",
+            "version_of": None,
+            **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/Alignment-F81A.json"
+                    ),
+                )
+            ],
+        }
 
-    #     mock_commentary_serialize.assert_called_once()
-    #     mock_commentary_serialize.assert_called_with(
-    #         self.root_pecha,
-    #         self.commentary_pecha,
-    #         self.pecha_category,
-    #     )
+        pechas = [self.commentary_pecha, self.root_pecha]
+        metadatas = [
+            commentary_pecha_metadata,
+            self.root_pecha_metadata,
+        ]
+
+        annotation_id = "E949/Alignment-2F29.json"
+        root_alignment_id = "B8B3/Alignment-F81A.json"
+
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_id)
+
+        mock_commentary_serialize.assert_called_once()
+        mock_commentary_serialize.assert_called_with(
+            self.root_pecha,
+            root_alignment_id,
+            self.commentary_pecha,
+            annotation_id,
+            self.pecha_category,
+        )
 
     @mock.patch(
         "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
