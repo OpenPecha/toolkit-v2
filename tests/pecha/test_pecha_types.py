@@ -11,20 +11,6 @@ from openpecha.pecha.pecha_types import (
 )
 from tests.pecha import SharedPechaSetup
 
-extra_fields: Dict[str, str | Dict[str, str] | List[str] | None] = {
-    "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
-    "document_id": "1vgnfCQH3yaWPDaMDFXT_5GhlG0M9kEra0mxkDX46VLE",
-    "language": "en",
-    "long_title": {
-        "en": "Illuminating the Intent Chapter 6, verses 1 to 64 Literal Translation, Monlam AI, February 2025"
-    },
-    "title": {
-        "bo": "མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ།",
-        "en": "Illuminating the Intent Chapter 6",
-    },
-    "usage_title": {"en": "Illuminating the Intent Chapter 6"},
-}
-
 MetadataType = Dict[str, str | Dict[str, str] | List[str] | None]
 
 
