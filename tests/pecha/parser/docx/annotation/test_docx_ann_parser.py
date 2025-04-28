@@ -4,6 +4,7 @@ from unittest import TestCase
 from stam import AnnotationStore
 
 from openpecha.pecha import Pecha, get_anns
+from openpecha.pecha.annotations import AnnotationModel, PechaAlignment
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
 from openpecha.utils import read_json
@@ -27,12 +28,42 @@ class TestDocxAnnotationParser(TestCase):
             "commentary_of": None,
             "version_of": None,
             **self.root_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="IA6E66F92",
+                    type=LayerEnum.segmentation,
+                    document_id="d2",
+                    id="B8B3/Segmentation-74F4.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation",
+                    aligned_to=None,
+                ),
+                AnnotationModel(
+                    pecha_id="IA6E66F92",
+                    type=LayerEnum.segmentation,
+                    document_id="d2",
+                    id="B8B3/Alignment-F81A.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ alignment",
+                    aligned_to=None,
+                ),
+            ],
         }
         self.commentary_pecha_metadata = {
             "translation_of": None,
             "commentary_of": self.root_pecha.id,
             "version_of": None,
             **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=LayerEnum.alignment,
+                    document_id="d4",
+                    id="E949/Alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IA6E66F92", alignment_id="B8B3/Segmentation-74F4.json"
+                    ),
+                )
+            ],
         }
 
         self.root_pecha_backup = {
