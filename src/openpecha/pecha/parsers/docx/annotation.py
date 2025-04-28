@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_id
 from openpecha.pecha.blupdate import DiffMatchPatch
@@ -15,6 +16,8 @@ from openpecha.pecha.pecha_types import (
 )
 
 pecha_id = str
+
+logger = get_logger(__name__)
 
 
 class DocxAnnotationParser:
@@ -65,6 +68,7 @@ class DocxAnnotationParser:
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
             annotation_id = parser.add_segmentation_layer(pecha, updated_coords, type)
+            logger.info(f"Alignment annotation successfully added to Pecha {pecha.id}")
             return (pecha, annotation_id)
 
         elif is_commentary_related_pecha(pecha_type):
@@ -78,7 +82,7 @@ class DocxAnnotationParser:
             annotation_id = commentary_parser.add_segmentation_layer(
                 pecha, updated_coords, type
             )
-
+            logger.info(f"Alignment annotation successfully added to Pecha {pecha.id}")
             return (pecha, annotation_id)
 
         else:
