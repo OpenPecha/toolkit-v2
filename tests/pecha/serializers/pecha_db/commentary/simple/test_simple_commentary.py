@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any, Dict, List
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
@@ -10,49 +11,33 @@ from openpecha.utils import read_json
 DATA_DIR = Path(__file__).parent / "data"
 null = None
 
+
 class TestSimpleCommentarySerializer(TestCase):
     def setUp(self):
-        self.pecha_category = [
+
+        self.pecha_category: List[Dict[Any, Any]] = [
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Madhyamaka",
-                    "bo": "དབུ་མ།"
-                },
-                "parent": null
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                "parent": null,
             },
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Entering the Middle Way",
-                    "bo": "དབུ་མ་ལ་འཇུག་པ།"
-                },
-                "parent": "madhyamaka"
-            }
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།"},
+                "parent": "madhyamaka",
+            },
         ]
 
     def test_bo_commentary_serializer(self):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
-        annotation_id = "E949/Alignment-2F29.json"
+        annotation_path = "E949/Alignment-2F29.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
             pecha,
-            annotation_id,
+            annotation_path,
             self.pecha_category,
             "Entering the Middle Way Chapter 6, verses 1 to 64",
         )
@@ -63,17 +48,17 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
         translation_pecha = Pecha.from_path(DATA_DIR / "en/I94DBDA91")
 
-        annotation_id = "E949/Alignment-2F29.json"
-        translation_ann_id = "FD22/Alignment-599A.json"
+        annotation_path = "E949/Alignment-2F29.json"
+        translation_ann_path = "FD22/Alignment-599A.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
             pecha,
-            annotation_id,
+            annotation_path,
             self.pecha_category,
             "Entering the Middle Way Chapter 6, verses 1 to 64",
             translation_pecha,
-            translation_ann_id
+            translation_ann_path,
         )
 
         expected_serialized_json = read_json(DATA_DIR / "en/commentary_serialized.json")
@@ -83,18 +68,17 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
         translation_pecha = Pecha.from_path(DATA_DIR / "zh/I9A60B88D")
 
-        annotation_id = "E949/Alignment-2F29.json"
-        translation_ann_id = "B97E/Alignment-22A8.json"
+        annotation_path = "E949/Alignment-2F29.json"
+        translation_ann_path = "B97E/Alignment-22A8.json"
 
         serializer = SimpleCommentarySerializer()
-
         serialized_json = serializer.serialize(
             pecha,
-            annotation_id,
+            annotation_path,
             self.pecha_category,
             "Entering the Middle Way Chapter 6, verses 1 to 64",
             translation_pecha,
-            translation_ann_id
+            translation_ann_path,
         )
         expected_serialized_json = read_json(DATA_DIR / "zh/commentary_serialized.json")
         assert serialized_json == expected_serialized_json

@@ -1,8 +1,9 @@
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
-from openpecha.pecha import Pecha, annotation_id
+from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import LayerEnum
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -15,6 +16,8 @@ from openpecha.pecha.pecha_types import (
 )
 
 pecha_id = str
+
+logger = get_logger(__name__)
 
 
 class DocxAnnotationParser:
@@ -44,11 +47,18 @@ class DocxAnnotationParser:
     def add_annotation(
         self,
         pecha: Pecha,
-        type: LayerEnum,
+        type: LayerEnum | str,
         docx_file: Path,
         metadatas: List[Dict],
-    ) -> Tuple[Pecha, annotation_id]:
+    ) -> Tuple[Pecha, annotation_path]:
         pecha_type: PechaType = get_pecha_type(metadatas)
+
+        # Accept both str and LayerEnum, convert str to LayerEnum
+        if isinstance(type, str):
+            try:
+                type = LayerEnum(type)
+            except ValueError:
+                raise ParseNotReadyForThisAnnotation(f"Invalid annotation type: {type}")
 
         if type not in [LayerEnum.alignment, LayerEnum.segmentation]:
             raise ParseNotReadyForThisAnnotation(
@@ -64,8 +74,11 @@ class DocxAnnotationParser:
             coords, old_base = parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            annotation_id = parser.add_segmentation_layer(pecha, updated_coords, type)
-            return (pecha, annotation_id)
+            annotation_path = parser.add_segmentation_layer(pecha, updated_coords, type)
+            logger.info(
+                f"Alignment Annotation is successfully added to Pecha {pecha.id}"
+            )
+            return (pecha, annotation_path)
 
         elif is_commentary_related_pecha(pecha_type):
             commentary_parser = DocxSimpleCommentaryParser()
@@ -75,11 +88,13 @@ class DocxAnnotationParser:
             ) = commentary_parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            annotation_id = commentary_parser.add_segmentation_layer(
+            annotation_path = commentary_parser.add_segmentation_layer(
                 pecha, updated_coords, type
             )
-
-            return (pecha, annotation_id)
+            logger.info(
+                f"Alignment Annotation is successfully added to Pecha {pecha.id}"
+            )
+            return (pecha, annotation_path)
 
         else:
             raise ValueError(f"Unknown pecha type: {pecha_type}")

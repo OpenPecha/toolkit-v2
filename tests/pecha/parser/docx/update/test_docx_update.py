@@ -24,13 +24,13 @@ class TestDocxAnnotationUpdate(TestCase, SharedPechaSetup):
 
     def test_root_pecha(self):
         updater = DocxAnnotationUpdate()
-        annotation_id = "B8B3/Segmentation-74F4.json"
+        annotation_path = "B8B3/Segmentation-74F4.json"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
         metadatas = [self.root_pecha_metadata]
 
-        full_ann_path = self.root_pecha.layer_path / annotation_id
+        full_ann_path = self.root_pecha.layer_path / annotation_path
         old_anns = get_anns(AnnotationStore(file=str(full_ann_path)))
         expected_old_anns = read_json(
             "tests/pecha/parser/docx/update/data/root/old_anns.json"
@@ -39,7 +39,9 @@ class TestDocxAnnotationUpdate(TestCase, SharedPechaSetup):
             old_anns == expected_old_anns
         ), "Old annotations do not match in Root Pecha Segmentation Layer Update"
 
-        updater.update_annotation(self.root_pecha, annotation_id, docx_file, metadatas)
+        updater.update_annotation(
+            self.root_pecha, annotation_path, docx_file, metadatas
+        )
 
         updated_anns = get_anns(AnnotationStore(file=str(full_ann_path)))
         expected_new_anns = read_json(
@@ -51,13 +53,13 @@ class TestDocxAnnotationUpdate(TestCase, SharedPechaSetup):
 
     def test_commentary_pecha(self):
         updater = DocxAnnotationUpdate()
-        annotation_id = "BEC3/Alignment-90C0.json"
+        annotation_path = "BEC3/Alignment-90C0.json"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )
         metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
 
-        full_ann_path = self.commentary_pecha.layer_path / annotation_id
+        full_ann_path = self.commentary_pecha.layer_path / annotation_path
         old_anns = get_anns(AnnotationStore(file=str(full_ann_path)))
         expected_old_anns = read_json(
             "tests/pecha/parser/docx/update/data/commentary/old_anns.json"
@@ -67,7 +69,7 @@ class TestDocxAnnotationUpdate(TestCase, SharedPechaSetup):
         ), "Old annotations do not match in Commentary Pecha Segmentation Layer Update"
 
         updater.update_annotation(
-            self.commentary_pecha, annotation_id, docx_file, metadatas
+            self.commentary_pecha, annotation_path, docx_file, metadatas
         )
 
         updated_anns = get_anns(AnnotationStore(file=str(full_ann_path)))

@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
-from openpecha.pecha import Pecha, annotation_id
+from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 
@@ -82,7 +82,7 @@ class DocxParser:
         docx_file: str | Path,
         metadatas: List[Dict],
         pecha_id: str | None = None,
-    ) -> Tuple[Pecha, annotation_id]:
+    ) -> Tuple[Pecha, annotation_path]:
         """Parses a DOCX file and generates a Pecha object based on its type.
 
         Args:
@@ -98,16 +98,16 @@ class DocxParser:
         is_commentary = self.is_commentary_pecha(metadatas)
 
         if is_commentary:
-            pecha, annotation_id = DocxSimpleCommentaryParser().parse(
+            pecha, annotation_path = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
-            return (pecha, annotation_id)
+            return (pecha, annotation_path)
         else:
-            pecha, annotation_id = DocxRootParser().parse(
+            pecha, annotation_path = DocxRootParser().parse(
                 input=docx_file,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
-            return (pecha, annotation_id)
+            return (pecha, annotation_path)

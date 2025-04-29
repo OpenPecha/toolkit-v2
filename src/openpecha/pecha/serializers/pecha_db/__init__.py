@@ -21,29 +21,31 @@ logger = get_logger(__name__)
 # Handler functions for each PechaType
 
 
-def _serialize_root_pecha(pechas, metadatas, pecha_category, annotation_id):
-    return RootSerializer().serialize(pechas[0], annotation_id, pecha_category)
+def _serialize_root_pecha(pechas, metadatas, pecha_category, annotation_path):
+    return RootSerializer().serialize(pechas[0], annotation_path, pecha_category)
 
 
-def _serialize_root_translation_pecha(pechas, metadatas, pecha_category, annotation_id):
+def _serialize_root_translation_pecha(
+    pechas, metadatas, pecha_category, annotation_path
+):
     return RootSerializer().serialize(
         pechas[1],
         metadatas[1]["annotations"][0].id,
         pecha_category,
         pechas[0],
-        annotation_id,
+        annotation_path,
     )
 
 
-def _serialize_commentary_pecha(pechas, metadatas, pecha_category, annotation_id):
+def _serialize_commentary_pecha(pechas, metadatas, pecha_category, annotation_path):
     root_title = Serializer.get_root_en_title(metadatas, pechas)
     return SimpleCommentarySerializer().serialize(
-        pechas[0], annotation_id, pecha_category, root_title
+        pechas[0], annotation_path, pecha_category, root_title
     )
 
 
 def _serialize_commentary_translation_pecha(
-    pechas, metadatas, pecha_category, annotation_id
+    pechas, metadatas, pecha_category, annotation_path
 ):
     root_title = Serializer.get_root_en_title(metadatas, pechas)
     return SimpleCommentarySerializer().serialize(
@@ -52,12 +54,12 @@ def _serialize_commentary_translation_pecha(
         pecha_category,
         root_title,
         pechas[0],
-        annotation_id,
+        annotation_path,
     )
 
 
 def _serialize_prealigned_commentary_pecha(
-    pechas, metadatas, pecha_category, annotation_id
+    pechas, metadatas, pecha_category, annotation_path
 ):
     root_pecha = pechas[1]
     commentary_pecha = pechas[0]
@@ -66,13 +68,13 @@ def _serialize_prealigned_commentary_pecha(
         root_pecha,
         root_alignment_id,
         commentary_pecha,
-        annotation_id,
+        annotation_path,
         pecha_category,
     )
 
 
 def _serialize_prealigned_root_translation_pecha(
-    pechas, metadatas, pecha_category, annotation_id
+    pechas, metadatas, pecha_category, annotation_path
 ):
     root_pecha = pechas[1]
     root_alignment_id = metadatas[0]["annotations"][0].aligned_to.alignment_id
@@ -123,7 +125,7 @@ class Serializer:
         pechas: List[Pecha],
         metadatas: List[Dict[str, Any]],
         pecha_category: List[Dict[str, Dict[str, str]]],
-        annotation_id: str,
+        annotation_path: str,
     ):
         """
         Serialize a Pecha based on its type.
@@ -134,4 +136,4 @@ class Serializer:
         handler = PECHA_SERIALIZER_REGISTRY.get(pecha_type)
         if not handler:
             raise ValueError(f"Unsupported pecha type: {pecha_type}")
-        return handler(pechas, metadatas, pecha_category, annotation_id)
+        return handler(pechas, metadatas, pecha_category, annotation_path)
