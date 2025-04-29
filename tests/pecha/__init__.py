@@ -30,7 +30,6 @@ class SharedPechaSetup:
         self.root_pecha_metadata = {
             "translation_of": None,
             "commentary_of": None,
-            "version_of": None,
             **self.root_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
@@ -55,7 +54,6 @@ class SharedPechaSetup:
         self.root_translation_pecha_metadata = {
             "translation_of": "IE60BBDE8",
             "commentary_of": None,
-            "version_of": None,
             **self.root_translation_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
@@ -74,7 +72,6 @@ class SharedPechaSetup:
         self.commentary_pecha_metadata = {
             "translation_of": None,
             "commentary_of": "IE60BBDE8",
-            "version_of": None,
             **self.commentary_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
@@ -93,7 +90,6 @@ class SharedPechaSetup:
         self.commentary_translation_pecha_metadata = {
             "translation_of": "I6944984E",
             "commentary_of": None,
-            "version_of": None,
             **self.commentary_translation_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
@@ -112,7 +108,6 @@ class SharedPechaSetup:
         self.prealigned_root_translation_pecha_metadata = {
             "translation_of": "IE60BBDE8",
             "commentary_of": None,
-            "version_of": None,
             **self.root_translation_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
@@ -131,7 +126,6 @@ class SharedPechaSetup:
         self.prealigned_commentary_pecha_metadata = {
             "translation_of": None,
             "commentary_of": "IE60BBDE8",
-            "version_of": None,
             **self.commentary_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(
@@ -150,7 +144,6 @@ class SharedPechaSetup:
         self.prealigned_commentary_translation_pecha_metadata = {
             "translation_of": "I6944984E",
             "commentary_of": None,
-            "version_of": None,
             **self.commentary_translation_pecha.metadata.to_dict(),
             "annotations": [
                 AnnotationModel(

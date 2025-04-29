@@ -122,17 +122,5 @@ class Serializer:
                     pecha_category,
                 )
 
-            case PechaType.prealigned_commentary_translation_pecha:
-                root_display_pecha = pechas[3]
-                root_pecha = pechas[2]
-                commentary_pecha = pechas[1]
-                translation_pecha = pechas[0]
-                return PreAlignedCommentarySerializer().serialize(
-                    root_display_pecha,
-                    root_pecha,
-                    commentary_pecha,
-                    pecha_category,
-                )
-
             case _:
                 raise ValueError(f"Unsupported pecha type: {pecha_type}")

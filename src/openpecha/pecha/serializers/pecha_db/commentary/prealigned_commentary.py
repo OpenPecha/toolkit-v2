@@ -38,7 +38,7 @@ class PreAlignedCommentarySerializer:
         # Get content
         src_content: List[List[str]] = []
         tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
-            root_pecha, root_alignment_id, commentary_pecha
+            root_pecha, root_alignment_id, commentary_pecha, commentary_alignment_id
         )
         # Preprocess newlines in content
         tgt_content = [
