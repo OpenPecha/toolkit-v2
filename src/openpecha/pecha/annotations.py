@@ -191,7 +191,9 @@ class PechaAlignment(BaseModel):
 
 class AnnotationModel(BaseModel):
     pecha_id: PechaId = Field(..., description="Pecha ID")
-    type: LayerEnum = Field(..., description="Type of the annotation")
+    type: LayerEnum = Field(
+        LayerEnum.segmentation, description="Type of the annotation"
+    )
     document_id: str = Field(..., pattern="\\S")
     path: str = Field(..., pattern="\\S")
     title: str = Field(..., min_length=1)
