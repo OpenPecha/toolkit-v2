@@ -1,124 +1,68 @@
-from pathlib import Path
+from typing import Dict, List
 from unittest import TestCase, mock
 
-from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db import Serializer
+from tests.pecha import SharedPechaSetup
 
 null = None
 
-class TestSerializer(TestCase):
+
+class TestSerializer(TestCase, SharedPechaSetup):
     def setUp(self):
-        self.root_display_pecha = Pecha.from_path(
-            Path("tests/alignment/commentary_transfer/data/P1/IA6E66F92")
-        )
-        self.root_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/root/data/bo/IE60BBDE8")
-        )
-        self.root_translation_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/root/data/en/I62E00D78")
-        )
-        self.commentary_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/commentary/simple/data/bo/I6944984E")
-        )
-        self.commentary_translation_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91")
-        )
-        self.root_display_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": None,
-            "version_of": None,
-            **self.root_display_pecha.metadata.to_dict(),
-        }
-        self.root_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": None,
-            "version_of": "IA6E66F92",
-            **self.root_pecha.metadata.to_dict(),
-        }
-        self.root_translation_pecha_metadata = {
-            "translation_of": "IE60BBDE8",
-            "commentary_of": None,
-            "version_of": None,
-            **self.root_translation_pecha.metadata.to_dict(),
-        }
-        self.commentary_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": "IE60BBDE8",
-            "version_of": None,
-            **self.commentary_pecha.metadata.to_dict(),
-        }
-        self.commentary_translation_pecha_metadata = {
-            "translation_of": "I6944984E",
-            "commentary_of": None,
-            "version_of": None,
-            **self.commentary_translation_pecha.metadata.to_dict(),
-        }
-        self.pecha_category = [
+        self.setup_pechas()
+        self.pecha_category: List[Dict] = [
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Madhyamaka",
-                    "bo": "དབུ་མ།"
-                },
-                "parent": null
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                "parent": null,
             },
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Madhyamaka treatises",
-                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"
-                },
-                "parent": "madhyamaka"
-            }
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
+                "parent": "madhyamaka",
+            },
         ]
-        
+
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
         pechas = [self.root_pecha]
         metadatas = [self.root_pecha_metadata]
+        annotation_path = "B8B3/Segmentation-74F4.json"
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_pecha, self.pecha_category
+            self.root_pecha, annotation_path, self.pecha_category
         )
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_translation_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
-        pechas = [self.root_translation_pecha, self.root_display_pecha]
+        pechas = [self.root_translation_pecha, self.root_pecha]
         metadatas = [
             self.root_translation_pecha_metadata,
-            self.root_display_pecha_metadata,
+            self.root_pecha_metadata,
         ]
+        annotation_path = "D93E/Alignment-0216.json"
+        root_ann_path = "B8B3/Segmentation-74F4.json"
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_display_pecha,
+            self.root_pecha,
+            root_ann_path,
             self.pecha_category,
             self.root_translation_pecha,
+            annotation_path,
         )
 
     @mock.patch(
@@ -126,17 +70,20 @@ class TestSerializer(TestCase):
     )
     def test_commentary_pecha(self, mock_commentary_serialize):
         mock_commentary_serialize.return_value = {}
-        pechas = [self.commentary_pecha, self.root_display_pecha]
-        metadatas = [self.commentary_pecha_metadata, self.root_display_pecha_metadata]
+        pechas = [self.commentary_pecha, self.root_pecha]
+        metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
+
+        annotation_path = "E949/Alignment-2F29.json"
 
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_pecha,
+            annotation_path,
             self.pecha_category,
-            self.root_display_pecha.metadata.title["EN"],
+            self.root_pecha.metadata.title["EN"],
         )
 
     @mock.patch(
@@ -147,23 +94,30 @@ class TestSerializer(TestCase):
         pechas = [
             self.commentary_translation_pecha,
             self.commentary_pecha,
-            self.root_display_pecha,
+            self.root_pecha,
         ]
         metadatas = [
             self.commentary_translation_pecha_metadata,
             self.commentary_pecha_metadata,
-            self.root_display_pecha_metadata,
+            self.root_pecha_metadata,
         ]
 
+        translation_ann_path = "FD22/Alignment-599A.json"
+        annotation_path = "E949/Alignment-2F29.json"
+
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(
+            pechas, metadatas, self.pecha_category, translation_ann_path
+        )
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
             self.commentary_pecha,
+            annotation_path,
             self.pecha_category,
-            self.root_display_pecha.metadata.title["EN"],
+            self.root_pecha.metadata.title["EN"],
             self.commentary_translation_pecha,
+            translation_ann_path,
         )
 
     @mock.patch(
@@ -171,21 +125,25 @@ class TestSerializer(TestCase):
     )
     def test_prealigned_commentary_pecha(self, mock_commentary_serialize):
         mock_commentary_serialize.return_value = {}
-        pechas = [self.commentary_pecha, self.root_pecha, self.root_display_pecha]
+
+        pechas = [self.commentary_pecha, self.root_pecha]
         metadatas = [
-            self.commentary_pecha_metadata,
+            self.prealigned_commentary_pecha_metadata,
             self.root_pecha_metadata,
-            self.root_display_pecha_metadata,
         ]
 
+        annotation_path = "E949/Alignment-2F29.json"
+        root_alignment_path = "B8B3/Alignment-F81A.json"
+
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
 
         mock_commentary_serialize.assert_called_once()
         mock_commentary_serialize.assert_called_with(
-            self.root_display_pecha,
             self.root_pecha,
+            root_alignment_path,
             self.commentary_pecha,
+            annotation_path,
             self.pecha_category,
         )
 
@@ -195,20 +153,22 @@ class TestSerializer(TestCase):
     def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
         mock_translation_serialize.return_value = {}
 
-        pechas = [self.root_translation_pecha, self.root_pecha, self.root_display_pecha]
+        pechas = [self.root_translation_pecha, self.root_pecha]
         metadatas = [
-            self.root_translation_pecha_metadata,
+            self.prealigned_root_translation_pecha_metadata,
             self.root_pecha_metadata,
-            self.root_display_pecha_metadata,
         ]
 
+        annotation_path = "D93E/Alignment-0216.json"
+        root_alignment_path = "B8B3/Alignment-F81A.json"
+
         serializer = Serializer()
-        serializer.serialize(pechas, metadatas, self.pecha_category)
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
 
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_display_pecha,
             self.root_pecha,
+            root_alignment_path,
             self.root_translation_pecha,
             self.pecha_category,
         )

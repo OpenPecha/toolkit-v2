@@ -9,12 +9,12 @@ from openpecha.utils import read_json
 
 null = None
 
+
 class TestPreAlignedCommentarySerializer(TestCase):
     def setUp(self):
         self.DATA_DIR = Path("tests/alignment/commentary_transfer/data")
-        self.root_pecha = Pecha.from_path(self.DATA_DIR / "P2/IC7760088")
-        self.root_display_pecha = Pecha.from_path(self.DATA_DIR / "P1/IA6E66F92")
-        self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "P3/I77BD6EA9")
+        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/IA6E66F92")
+        self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "commentary/I77BD6EA9")
 
         self.expected_serialized_commentary = read_json(
             self.DATA_DIR / "expected_serialized_commentary.json"
@@ -23,35 +23,17 @@ class TestPreAlignedCommentarySerializer(TestCase):
         # Create the patcher and set return_value
         self.pecha_category = [
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Madhyamaka",
-                    "bo": "དབུ་མ།"
-                },
-                "parent": null
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                "parent": null,
             },
             {
-                "description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "short_description": {
-                    "en": "",
-                    "bo": ""
-                },
-                "name": {
-                    "en": "Entering the Middle Way",
-                    "bo": "དབུ་མ་ལ་འཇུག་པ།"
-                },
-                "parent": "madhyamaka"
-            }
+                "description": {"en": "", "bo": ""},
+                "short_description": {"en": "", "bo": ""},
+                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།"},
+                "parent": "madhyamaka",
+            },
         ]
 
     @mock.patch(
@@ -62,11 +44,15 @@ class TestPreAlignedCommentarySerializer(TestCase):
             self.expected_serialized_commentary
         )
 
+        root_alignment_id = "B8B3/Alignment-F81A.json"
+        commentary_alignment_id = "BEC3/Alignment-90C0.json"
+
         serializer = PreAlignedCommentarySerializer()
         serialized_json = serializer.serialize(
-            self.root_display_pecha,
             self.root_pecha,
+            root_alignment_id,
             self.commentary_pecha,
+            commentary_alignment_id,
             self.pecha_category,
         )
 

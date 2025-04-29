@@ -95,8 +95,10 @@ class RootSerializer:
     def serialize(
         self,
         pecha: Pecha,
+        ann_id: str,
         pecha_category: List[Dict],
         translation_pecha: Pecha | None = None,
+        translation_ann_id: str | None = None,
     ) -> Dict:
 
         # Format Category
@@ -118,10 +120,10 @@ class RootSerializer:
             )
 
         # Get content from root and translation pecha
-        root_content = self.get_root_content(pecha, pecha.get_segmentation_layer_path())
+        root_content = self.get_root_content(pecha, pecha.layer_path / ann_id)
         if translation_pecha:
             translation_content = self.get_translation_content(
-                translation_pecha, translation_pecha.get_segmentation_layer_path()
+                translation_pecha, translation_pecha.layer_path / translation_ann_id
             )
         else:
             translation_content = []

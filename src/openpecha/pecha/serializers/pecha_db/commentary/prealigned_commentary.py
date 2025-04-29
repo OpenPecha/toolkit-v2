@@ -16,9 +16,10 @@ logger = get_logger(__name__)
 class PreAlignedCommentarySerializer:
     def serialize(
         self,
-        root_display_pecha: Pecha,
         root_pecha: Pecha,
+        root_alignment_id: str,
         commentary_pecha: Pecha,
+        commentary_alignment_id: str,
         pecha_category: List[Dict],
     ):
         # Format Category
@@ -37,7 +38,7 @@ class PreAlignedCommentarySerializer:
         # Get content
         src_content: List[List[str]] = []
         tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
-            root_display_pecha, root_pecha, commentary_pecha
+            root_pecha, root_alignment_id, commentary_pecha, commentary_alignment_id
         )
         # Preprocess newlines in content
         tgt_content = [

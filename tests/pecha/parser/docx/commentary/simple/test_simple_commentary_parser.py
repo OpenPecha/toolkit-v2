@@ -51,8 +51,6 @@ class TestDocxSimpleCommentaryParser(TestCase):
             mock_get_base_id.return_value = "B001"
             mock_get_layer_id.return_value = "L001"
 
-            pecha, annotation_path = parser.parse(
-                self.input, self.metadata, Path(tempdir)
-            )
+            pecha, layer_name = parser.parse(self.input, self.metadata, Path(tempdir))
             assert isinstance(pecha, Pecha)
-            assert annotation_path == "B001/Segmentation-L001.json"
+            assert layer_name == "B001/Segmentation-L001.json"

@@ -65,13 +65,17 @@ def is_translation_pecha(metadatas: List[Dict]) -> bool:
 def has_version_of(metadatas: List[Dict]) -> bool:
     """
     Return
-        True: if the any pecha has a 'version_of' metadata chain
+        True: If the pecha points to an alignment annotation layer of Root Pecha
         False: otherwise
     """
-    for metadata in metadatas:
-        if "version_of" in metadata and metadata["version_of"]:
-            return True
-    return False
+    root_metadata = metadatas[-1]
+    parent_metadata = metadatas[-2]
+
+    aligned_root_id = parent_metadata["annotations"][0].aligned_to.alignment_id
+
+    if root_metadata["annotations"][0].path == aligned_root_id:
+        return False
+    return True
 
 
 def is_root_related_pecha(pecha_type: PechaType) -> bool:

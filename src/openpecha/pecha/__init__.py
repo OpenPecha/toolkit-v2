@@ -444,18 +444,3 @@ def get_anns(ann_store: AnnotationStore):
         curr_ann = {**ann_data, "text": str(ann)}
         anns.append(curr_ann)
     return anns
-
-
-def get_annotations_data(ann_store: AnnotationStore):
-    annotations = []
-    for ann in ann_store:
-        span = {
-            "start": ann.offset().begin().value(),
-            "end": ann.offset().end().value(),
-        }
-        curr_ann = {"span": span}
-        for data in ann:
-            curr_ann.update({"mapping": data.value().get()})
-            break
-        annotations.append(curr_ann)
-    return annotations

@@ -57,9 +57,11 @@ class SimpleCommentarySerializer:
     def serialize(
         self,
         pecha: Pecha,
+        annotation_path: str,
         pecha_category: List[Dict],
         root_title: str,
         translation_pecha: Pecha | None = None,
+        translation_ann_path: str | None = None,
     ):
         # Format Category
         formatted_category = FormatPechaCategory().format_commentary_category(
@@ -86,11 +88,11 @@ class SimpleCommentarySerializer:
             tgt_metadata = get_metadata_for_pecha_org(pecha, "bo")
 
             src_content = self.get_content(
-                translation_pecha, translation_pecha.get_segmentation_layer_path()
+                translation_pecha, translation_pecha.layer_path / translation_ann_path
             )
-            tgt_content = self.get_content(pecha, pecha.get_segmentation_layer_path())
+            tgt_content = self.get_content(pecha, pecha.layer_path / annotation_path)
         else:
-            content = self.get_content(pecha, pecha.get_segmentation_layer_path())
+            content = self.get_content(pecha, pecha.layer_path / annotation_path)
             if pecha.metadata.language.value == "bo":
                 src_content = []
                 tgt_content = content

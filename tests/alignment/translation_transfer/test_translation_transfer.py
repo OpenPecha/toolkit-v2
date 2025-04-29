@@ -10,14 +10,15 @@ DATA_DIR = Path(__file__).parent / "data"
 
 class TestTranslationAlignmentTransfer(TestCase):
     def setUp(self):
-        self.root_pecha = Pecha.from_path(DATA_DIR / "P2/I73078576")
-        self.root_display_pecha = Pecha.from_path(DATA_DIR / "P1/I15C4AA72")
-        self.translation_pecha = Pecha.from_path(DATA_DIR / "P3/I4FA57826")
+        self.root_pecha = Pecha.from_path(DATA_DIR / "root/I15C4AA72")
+        self.translation_pecha = Pecha.from_path(DATA_DIR / "translation/I4FA57826")
 
     def test_get_root_pechas_mapping(self):
+
+        root_alignment_id = "A340/Alignment-CCF1.json"
         translation_transfer = TranslationAlignmentTransfer()
         mapping = translation_transfer.get_root_pechas_mapping(
-            self.root_pecha, self.root_display_pecha
+            self.root_pecha, root_alignment_id
         )
         expected_mapping = {
             1: [1],
@@ -34,14 +35,11 @@ class TestTranslationAlignmentTransfer(TestCase):
         assert mapping == expected_mapping
 
     def test_get_serialized_translation(self):
+        root_alignment_id = "A340/Alignment-CCF1.json"
+
         translation_transfer = TranslationAlignmentTransfer()
         serialized_json = translation_transfer.get_serialized_translation(
-            self.root_pecha, self.root_display_pecha, self.translation_pecha
+            self.root_pecha, root_alignment_id, self.translation_pecha
         )
         expected_serialized_json = read_json(DATA_DIR / "serialized_translation.json")
         assert serialized_json == expected_serialized_json
-
-
-work = TestTranslationAlignmentTransfer()
-work.setUp()
-work.test_get_serialized_translation()

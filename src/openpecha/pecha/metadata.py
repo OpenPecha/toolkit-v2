@@ -230,7 +230,7 @@ class PechaMetaData(BaseModel):
         data = self.model_dump()
 
         # Dynamically get standard fields from the model
-        standard_fields = list(set(self.__class__.model_fields.keys()))
+        standard_fields = list(set(self.model_fields.keys()))
 
         # Move any extra fields to source_metadata
         extra_fields = {}

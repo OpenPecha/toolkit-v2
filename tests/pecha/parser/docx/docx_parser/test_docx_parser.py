@@ -31,7 +31,6 @@ class TestDocxParser(TestCase):
             {
                 "translation_of": None,
                 "commentary_of": None,
-                "version_of": None,
                 **extra_fields,
             },
         ]
@@ -43,13 +42,11 @@ class TestDocxParser(TestCase):
             {
                 "translation_of": "P0001",
                 "commentary_of": None,
-                "version_of": None,
                 **extra_fields,
             },
             {
                 "translation_of": None,
                 "commentary_of": None,
-                "version_of": None,
                 **extra_fields,
             },
         ]
@@ -60,13 +57,11 @@ class TestDocxParser(TestCase):
             {
                 "translation_of": None,
                 "commentary_of": "P0001",
-                "version_of": None,
                 **extra_fields,
             },
             {
                 "translation_of": None,
                 "commentary_of": None,
-                "version_of": None,
                 **extra_fields,
             },
         ]
@@ -78,19 +73,16 @@ class TestDocxParser(TestCase):
             {
                 "translation_of": "P0001",
                 "commentary_of": None,
-                "version_of": None,
                 **extra_fields,
             },
             {
                 "translation_of": None,
                 "commentary_of": "P0002",
-                "version_of": None,
                 **extra_fields,
             },
             {
                 "translation_of": None,
                 "commentary_of": None,
-                "version_of": None,
                 **extra_fields,
             },
         ]

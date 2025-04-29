@@ -94,7 +94,6 @@ class DocxParser:
 
         Returns:
             Pecha: Pecha object.
-            annotation_path: Annotation path.
         """
         is_commentary = self.is_commentary_pecha(metadatas)
 
