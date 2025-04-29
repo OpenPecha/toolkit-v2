@@ -70,8 +70,8 @@ class Serializer:
                 return RootSerializer().serialize(pecha, annotation_id, pecha_category)
 
             case PechaType.root_translation_pecha:
-                root_pecha = pechas[-1]
-                root_annotation_id = metadatas[-1]["annotations"][0].id
+                root_pecha = pechas[1]
+                root_annotation_id = metadatas[1]["annotations"][0].id
                 return RootSerializer().serialize(
                     root_pecha, root_annotation_id, pecha_category, pecha, annotation_id
                 )
