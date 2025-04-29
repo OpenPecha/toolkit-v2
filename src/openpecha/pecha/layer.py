@@ -11,7 +11,7 @@ class LayerCollectionEnum(Enum):
     segmentation_annotation = "Segmentation_Annotation"
 
 
-class LayerEnum(Enum):
+class LayerEnum(str, Enum):
     segmentation = "Segmentation"
     alignment = "Alignment"
 

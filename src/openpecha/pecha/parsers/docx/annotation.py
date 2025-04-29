@@ -47,11 +47,18 @@ class DocxAnnotationParser:
     def add_annotation(
         self,
         pecha: Pecha,
-        type: LayerEnum,
+        type: LayerEnum | str,
         docx_file: Path,
         metadatas: List[Dict],
     ) -> Tuple[Pecha, annotation_path]:
         pecha_type: PechaType = get_pecha_type(metadatas)
+
+        # Accept both str and LayerEnum, convert str to LayerEnum
+        if isinstance(type, str):
+            try:
+                type = LayerEnum(type)
+            except ValueError:
+                raise ParseNotReadyForThisAnnotation(f"Invalid annotation type: {type}")
 
         if type not in [LayerEnum.alignment, LayerEnum.segmentation]:
             raise ParseNotReadyForThisAnnotation(
