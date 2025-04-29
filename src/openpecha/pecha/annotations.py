@@ -3,7 +3,15 @@ import re
 from enum import Enum
 from typing import Dict, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    GetCoreSchemaHandler,
+    field_validator,
+    model_validator,
+)
+from pydantic_core import core_schema
 
 from openpecha.ids import get_uuid
 from openpecha.pecha.layer import LayerEnum
@@ -155,8 +163,12 @@ class OCRConfidenceLayer(Layer):
 
 class PechaId(str):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(
+        cls, source_type: type, handler: GetCoreSchemaHandler
+    ) -> core_schema.CoreSchema:
+        return core_schema.no_info_after_validator_function(
+            cls.validate, core_schema.str_schema()
+        )
 
     @classmethod
     def validate(cls, v, info=None):  # <-- add info=None
@@ -178,8 +190,10 @@ class PechaAlignment(BaseModel):
 
 
 class AnnotationModel(BaseModel):
-    pecha_id: PechaId
-    type: LayerEnum = Field(..., description="Type of the annotation")
+    pecha_id: PechaId = Field(..., description="Pecha ID")
+    type: LayerEnum = Field(
+        LayerEnum.segmentation, description="Type of the annotation"
+    )
     document_id: str = Field(..., pattern="\\S")
     path: str = Field(..., pattern="\\S")
     title: str = Field(..., min_length=1)
