@@ -51,7 +51,7 @@ def test_annotation_model_minimal_alignment():
         pecha_id="I1234ABCD",
         type=LayerEnum.alignment,
         document_id="doc1",
-        id="ann1",
+        path="ann1",
         title="Test",
         aligned_to=align,
     )
@@ -65,7 +65,7 @@ def test_annotation_model_minimal_non_alignment():
         pecha_id="I1234ABCD",
         type=LayerEnum.segmentation,
         document_id="doc1",
-        id="ann1",
+        path="ann1",
         title="Test",
     )
     assert am.pecha_id == "I1234ABCD"
@@ -79,7 +79,7 @@ def test_annotation_model_with_alignment():
         pecha_id="I1234ABCD",
         type=LayerEnum.alignment,
         document_id="doc1",
-        id="ann1",
+        path="ann1",
         title="Test",
         aligned_to=align,
     )
@@ -94,7 +94,7 @@ def test_annotation_model_invalid_pechaid():
             pecha_id="BADID",
             type=LayerEnum.alignment,
             document_id="doc1",
-            id="ann1",
+            path="ann1",
             title="Test",
         )
 
@@ -123,6 +123,6 @@ def test_annotation_model_missing_required():
             pecha_id="I1234ABCD",
             type=LayerEnum.alignment,
             document_id="doc1",
-            # id missing
+            # path missing
             title="Test",
         )

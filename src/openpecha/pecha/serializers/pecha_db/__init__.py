@@ -30,7 +30,7 @@ def _serialize_root_translation_pecha(
 ):
     return RootSerializer().serialize(
         pechas[1],
-        metadatas[1]["annotations"][0].id,
+        metadatas[1]["annotations"][0].path,
         pecha_category,
         pechas[0],
         annotation_path,
@@ -50,7 +50,7 @@ def _serialize_commentary_translation_pecha(
     root_title = Serializer.get_root_en_title(metadatas, pechas)
     return SimpleCommentarySerializer().serialize(
         pechas[1],
-        metadatas[1]["annotations"][0].id,
+        metadatas[1]["annotations"][0].path,
         pecha_category,
         root_title,
         pechas[0],
