@@ -14,9 +14,6 @@ logger = get_logger(__name__)
 
 
 class CommentaryAlignmentTransfer:
-    def get_first_layer_path(self, pecha: Pecha) -> Path:
-        return next(pecha.layer_path.rglob("*.json"))
-
     def get_display_layer_path(self, pecha: Pecha) -> Pecha:
         return next(pecha.layer_path.rglob("Segmentation-*.json"))
 
