@@ -190,7 +190,7 @@ class PechaAlignment(BaseModel):
 
 
 class AnnotationModel(BaseModel):
-    pecha_id: PechaId
+    pecha_id: PechaId = Field(..., description="Pecha ID")
     type: LayerEnum = Field(..., description="Type of the annotation")
     document_id: str = Field(..., pattern="\\S")
     path: str = Field(..., pattern="\\S")
