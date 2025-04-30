@@ -11,11 +11,11 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Segmentation_Annotation",
+      "@id": "segmentation_annotation",
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "Segmentation_Type"
+          "@id": "segmentation_type"
         },
         {
           "@type": "DataKey",
@@ -26,10 +26,10 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "key": "Segmentation_Type",
+          "key": "segmentation_type",
           "value": {
             "@type": "String",
-            "value": "Alignment"
+            "value": "alignment"
           }
         },
         {
@@ -121,7 +121,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -147,7 +147,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -173,7 +173,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -199,12 +199,12 @@
         {
           "@type": "AnnotationData",
           "@id": "484F7446",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -230,12 +230,12 @@
         {
           "@type": "AnnotationData",
           "@id": "E4779AD2",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -261,7 +261,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -287,7 +287,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -313,7 +313,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -339,7 +339,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -365,7 +365,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -391,7 +391,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -417,7 +417,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -443,12 +443,12 @@
         {
           "@type": "AnnotationData",
           "@id": "909AC22D",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -474,12 +474,12 @@
         {
           "@type": "AnnotationData",
           "@id": "909AC22D",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -505,7 +505,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -531,12 +531,12 @@
         {
           "@type": "AnnotationData",
           "@id": "D8809BD5",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -562,7 +562,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -588,7 +588,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -614,7 +614,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -640,7 +640,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -666,7 +666,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -692,7 +692,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -718,12 +718,12 @@
         {
           "@type": "AnnotationData",
           "@id": "D8809BD5",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -749,12 +749,12 @@
         {
           "@type": "AnnotationData",
           "@id": "7F3B532C",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -780,7 +780,7 @@
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -806,12 +806,12 @@
         {
           "@type": "AnnotationData",
           "@id": "BC8BFB3F",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -837,12 +837,12 @@
         {
           "@type": "AnnotationData",
           "@id": "DC5F1040",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "64D7B728",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     }

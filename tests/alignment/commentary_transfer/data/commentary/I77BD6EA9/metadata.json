@@ -29,7 +29,7 @@
               "IC7760088",
               "IC7760088/layers/A389/Alignment-84EB.json"
             ],
-            "annotation_type": "Alignment"
+            "annotation_type": "alignment"
           },
           "Alignment-9174": {
             "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1",
@@ -38,7 +38,7 @@
               "IC7760088",
               "IC7760088/layers/A389/Alignment-84EB.json"
             ],
-            "annotation_type": "Alignment"
+            "annotation_type": "alignment"
           },
           "Alignment-B549": {
             "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1",
@@ -47,7 +47,7 @@
               "IC7760088",
               "IC7760088/layers/A389/Alignment-84EB.json"
             ],
-            "annotation_type": "Alignment"
+            "annotation_type": "alignment"
           },
           "Alignment-B20B": {
             "annotation_title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1",
@@ -56,7 +56,7 @@
               "IC7760088",
               "IC7760088/layers/A389/Alignment-84EB.json"
             ],
-            "annotation_type": "Alignment"
+            "annotation_type": "alignment"
           }
         }
       },

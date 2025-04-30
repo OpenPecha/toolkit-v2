@@ -25,7 +25,7 @@
           "key": "segmentation_type",
           "value": {
             "@type": "String",
-            "value": "Segmentation"
+            "value": "segmentation"
           }
         }
       ]

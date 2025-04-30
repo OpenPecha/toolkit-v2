@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Segmentation_Annotation",
+      "@id": "segmentation_annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -19,7 +19,7 @@
         },
         {
           "@type": "DataKey",
-          "@id": "Segmentation_Type"
+          "@id": "segmentation_type"
         }
       ],
       "data": [
@@ -35,10 +35,10 @@
         {
           "@type": "AnnotationData",
           "@id": "6C03DE80",
-          "key": "Segmentation_Type",
+          "key": "segmentation_type",
           "value": {
             "@type": "String",
-            "value": "Alignment"
+            "value": "alignment"
           }
         },
         {
@@ -103,12 +103,12 @@
         {
           "@type": "AnnotationData",
           "@id": "92E14156",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "6C03DE80",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -134,12 +134,12 @@
         {
           "@type": "AnnotationData",
           "@id": "C773873B",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "6C03DE80",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -165,12 +165,12 @@
         {
           "@type": "AnnotationData",
           "@id": "32C39648",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "6C03DE80",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -196,12 +196,12 @@
         {
           "@type": "AnnotationData",
           "@id": "698455EF",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "6C03DE80",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     },
@@ -227,12 +227,12 @@
         {
           "@type": "AnnotationData",
           "@id": "E0909861",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "6C03DE80",
-          "set": "Segmentation_Annotation"
+          "set": "segmentation_annotation"
         }
       ]
     }

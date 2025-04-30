@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Structure_Annotation",
+      "@id": "structure_annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -19,7 +19,7 @@
         },
         {
           "@type": "DataKey",
-          "@id": "Structure_Type"
+          "@id": "structure_type"
         }
       ],
       "data": [
@@ -35,10 +35,10 @@
         {
           "@type": "AnnotationData",
           "@id": "BDDAC43D",
-          "key": "Structure_Type",
+          "key": "structure_type",
           "value": {
             "@type": "String",
-            "value": "Sapche"
+            "value": "sapche"
           }
         },
         {
@@ -103,12 +103,12 @@
         {
           "@type": "AnnotationData",
           "@id": "B678EBB8",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "BDDAC43D",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -134,12 +134,12 @@
         {
           "@type": "AnnotationData",
           "@id": "2B274D88",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "BDDAC43D",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -165,12 +165,12 @@
         {
           "@type": "AnnotationData",
           "@id": "5491D044",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "BDDAC43D",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -196,12 +196,12 @@
         {
           "@type": "AnnotationData",
           "@id": "E7CE46EE",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "BDDAC43D",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -227,12 +227,12 @@
         {
           "@type": "AnnotationData",
           "@id": "523C2C1F",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "BDDAC43D",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     }

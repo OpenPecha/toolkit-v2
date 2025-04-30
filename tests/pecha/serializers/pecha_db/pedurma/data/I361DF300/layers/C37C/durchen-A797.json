@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Variation_Annotation",
+      "@id": "variation_annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -19,7 +19,7 @@
         },
         {
           "@type": "DataKey",
-          "@id": "Spelling_Variation"
+          "@id": "spelling_variation"
         }
       ],
       "data": [
@@ -35,7 +35,7 @@
         {
           "@type": "AnnotationData",
           "@id": "B809684A",
-          "key": "Spelling_Variation",
+          "key": "spelling_variation",
           "value": {
             "@type": "String",
             "value": "Durchen"
@@ -94,12 +94,12 @@
         {
           "@type": "AnnotationData",
           "@id": "76AA4D10",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "B809684A",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         }
       ]
     },
@@ -125,12 +125,12 @@
         {
           "@type": "AnnotationData",
           "@id": "0740A003",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "B809684A",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         }
       ]
     },
@@ -156,12 +156,12 @@
         {
           "@type": "AnnotationData",
           "@id": "F0FFE363",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "B809684A",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         }
       ]
     },
@@ -187,12 +187,12 @@
         {
           "@type": "AnnotationData",
           "@id": "6696F679",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "B809684A",
-          "set": "Variation_Annotation"
+          "set": "variation_annotation"
         }
       ]
     }

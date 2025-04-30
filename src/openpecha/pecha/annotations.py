@@ -204,7 +204,7 @@ class AnnotationModel(BaseModel):
         json_schema_extra={
             "examples": {
                 "pecha_id": "I857977C3",
-                "type": "Alignment",
+                "type": "alignment",
                 "document_id": "1vgnfCQH3yaWPDaMDFXT_5GhlG0M9kEra0mxkDX46VLE",
                 "annotation_id": "test_id",
                 "title": "Test Alignment",
