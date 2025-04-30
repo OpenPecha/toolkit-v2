@@ -114,7 +114,7 @@ def get_annotation_bounds(annotation):
 def _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
     """Test pagination layer annotations"""
     _, pagination_layer_file = pecha.get_layer_by_ann_type(
-        base_name, LayerEnum.pagination
+        base_name, LayerEnum.PAGINATION
     )
     assert pagination_layer_file.exists(), "Pagination layer file should exist"
     assert pagination_layer_file.name.startswith(
@@ -156,7 +156,7 @@ def _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
 
 def _test_language_layer(pecha, base_name, expected_language_layer_dict):
     """Test language layer annotations"""
-    _, language_layer_file = pecha.get_layer_by_ann_type(base_name, LayerEnum.language)
+    _, language_layer_file = pecha.get_layer_by_ann_type(base_name, LayerEnum.LANGUAGE)
     assert language_layer_file.exists(), "Language layer file should exist"
     assert language_layer_file.name.startswith(
         "Language-"
@@ -195,7 +195,7 @@ def _test_language_layer(pecha, base_name, expected_language_layer_dict):
 def _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict):
     """Test OCR confidence layer annotations"""
     _, confidence_layer_file = pecha.get_layer_by_ann_type(
-        base_name, LayerEnum.ocr_confidence
+        base_name, LayerEnum.OCR_CONFIDENCE
     )
     assert confidence_layer_file.exists(), "OCR confidence layer file should exist"
     assert confidence_layer_file.name.startswith(

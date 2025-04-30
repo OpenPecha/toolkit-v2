@@ -136,22 +136,22 @@ class DharamanexusParser(BaseParser):
         for vol, data in self.state.items():
             base_name = pecha.set_base(content=data["base_text"])
 
-            segment, _ = pecha.add_layer(base_name, LayerEnum.segmentation)
+            segment, _ = pecha.add_layer(base_name, LayerEnum.SEGMENTATION)
             for segment_id, segment_span in data["annotations"]["segments"].items():
                 segment_ann = {
-                    LayerEnum.segmentation.value: segment_span["span"],
+                    LayerEnum.SEGMENTATION.value: segment_span["span"],
                     "segment_id": segment_id,
                 }
-                pecha.add_annotation(segment, segment_ann, LayerEnum.segmentation)
+                pecha.add_annotation(segment, segment_ann, LayerEnum.SEGMENTATION)
             segment.save()
 
-            pagination, _ = pecha.add_layer(base_name, LayerEnum.pagination)
+            pagination, _ = pecha.add_layer(base_name, LayerEnum.PAGINATION)
             for page_id, page_ann in data["annotations"]["pages"].items():
                 page_ann = {
-                    LayerEnum.pagination.value: page_ann["span"],
+                    LayerEnum.PAGINATION.value: page_ann["span"],
                     "folio": page_id,
                 }
-                pecha.add_annotation(pagination, page_ann, LayerEnum.pagination)
+                pecha.add_annotation(pagination, page_ann, LayerEnum.PAGINATION)
             pagination.save()
 
             curr_base = {

@@ -24,7 +24,7 @@ class TestDocxAnnotationParser(TestCase, SharedPechaSetup):
         }
 
     def test_root_pecha(self):
-        type = LayerEnum.alignment
+        type = LayerEnum.ALIGNMENT
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
@@ -44,7 +44,7 @@ class TestDocxAnnotationParser(TestCase, SharedPechaSetup):
         assert new_anns == expected_new_anns
 
     def test_commentary_pecha(self):
-        type = LayerEnum.alignment
+        type = LayerEnum.ALIGNMENT
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )

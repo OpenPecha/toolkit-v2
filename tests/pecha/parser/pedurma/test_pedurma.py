@@ -27,8 +27,8 @@ def test_pedurma():
         expected_span_texts = ["༄༅། །", "འཕགས་པ་འཇམ་", "འདུད།", "རྣམ་"]
         for ann, expected_span in zip(parser.pedurma_anns, expected_span_texts):
             start, end = (
-                ann[LayerEnum.durchen.value]["start"],
-                ann[LayerEnum.durchen.value]["end"],
+                ann[LayerEnum.DURCHEN.value]["start"],
+                ann[LayerEnum.DURCHEN.value]["end"],
             )
             assert parser.base_text[start:end] == expected_span
 
@@ -56,7 +56,7 @@ def test_pedurma():
             parser.meaning_segment_anns, expected_meaning_segments
         ):
             start, end = (
-                ann[LayerEnum.segmentation.value]["start"],
-                ann[LayerEnum.segmentation.value]["end"],
+                ann[LayerEnum.SEGMENTATION.value]["start"],
+                ann[LayerEnum.SEGMENTATION.value]["end"],
             )
             assert parser.base_text[start:end] == expected_segment

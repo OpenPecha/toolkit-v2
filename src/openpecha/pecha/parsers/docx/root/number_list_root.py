@@ -174,7 +174,7 @@ class DocxRootParser(BaseParser):
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         annotation_path = self.add_segmentation_layer(
-            pecha, positions, LayerEnum.segmentation
+            pecha, positions, LayerEnum.SEGMENTATION
         )
 
         logger.info(f"Pecha {pecha.id} is created successfully.")

@@ -14,7 +14,7 @@ def test_pecha_read():
 
     base_path = pecha.pecha_path / "base"
     basefile_name = list(base_path.rglob("*.txt"))[0].stem
-    ann_store, _ = pecha.get_layer_by_ann_type(basefile_name, LayerEnum.segmentation)
+    ann_store, _ = pecha.get_layer_by_ann_type(basefile_name, LayerEnum.SEGMENTATION)
     assert isinstance(ann_store, AnnotationStore)
 
     expected_anns = [
@@ -27,7 +27,7 @@ def test_pecha_read():
 
     """ comparing annotations """
     dataset = list(ann_store.datasets())[0]
-    key = dataset.key(LayerGroupEnum.structure_type.value)
-    anns = list(dataset.data(key, value=LayerEnum.segmentation.value).annotations())
+    key = dataset.key(LayerGroupEnum.STRUCTURE_TYPE.value)
+    anns = list(dataset.data(key, value=LayerEnum.SEGMENTATION.value).annotations())
     for ann, expected_ann in zip(anns, expected_anns):
         assert str(ann) == expected_ann

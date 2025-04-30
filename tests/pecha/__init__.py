@@ -34,7 +34,7 @@ class SharedPechaSetup:
             "annotations": [
                 AnnotationModel(
                     pecha_id="IA6E66F92",
-                    type=LayerEnum.segmentation,
+                    type=LayerEnum.SEGMENTATION,
                     document_id="d2",
                     path="B8B3/Segmentation-74F4.json",
                     title="\u0f51\u0f44\u0f0b\u0f42\u0fb1\u0f72\u0f44\u0f0b\u0f54\u0f0b\u0f62\u0f66\u0f0b\u0f63\u0f0b\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d segmentation",
@@ -42,7 +42,7 @@ class SharedPechaSetup:
                 ),
                 AnnotationModel(
                     pecha_id="IA6E66F92",
-                    type=LayerEnum.segmentation,
+                    type=LayerEnum.ALIGNMENT,
                     document_id="d2",
                     path="B8B3/Alignment-74F4.json",
                     title="\u0f51\u0f44\u0f0b\u0f42\u0fb1\u0f72\u0f44\u0f0b\u0f54\u0f0b\u0f62\u0f66\u0f0b\u0f63\u0f0b\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d alignment",
@@ -58,7 +58,7 @@ class SharedPechaSetup:
             "annotations": [
                 AnnotationModel(
                     pecha_id="I62E00D78",
-                    type=LayerEnum.alignment,
+                    type=LayerEnum.ALIGNMENT,
                     document_id="d3",
                     path="D93E/Alignment-0216.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
@@ -76,7 +76,7 @@ class SharedPechaSetup:
             "annotations": [
                 AnnotationModel(
                     pecha_id="I6944984E",
-                    type=LayerEnum.alignment,
+                    type=LayerEnum.ALIGNMENT,
                     document_id="d4",
                     path="E949/Alignment-2F29.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
@@ -94,7 +94,7 @@ class SharedPechaSetup:
             "annotations": [
                 AnnotationModel(
                     pecha_id="I94DBDA91",
-                    type=LayerEnum.alignment,
+                    type=LayerEnum.ALIGNMENT,
                     document_id="d4",
                     path="FD22/Alignment-599A.json",
                     title="\u0f51\u0f44\u0f0b\u0f42\u0fb1\u0f72\u0f44\u0f0b\u0f54\u0f0b\u0f62\u0f66\u0f0b\u0f63\u0f0b\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d commentary",
@@ -112,7 +112,7 @@ class SharedPechaSetup:
             "annotations": [
                 AnnotationModel(
                     pecha_id="I62E00D78",
-                    type=LayerEnum.alignment,
+                    type=LayerEnum.ALIGNMENT,
                     document_id="d3",
                     path="D93E/Alignment-0216.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
@@ -130,7 +130,7 @@ class SharedPechaSetup:
             "annotations": [
                 AnnotationModel(
                     pecha_id="I6944984E",
-                    type=LayerEnum.alignment,
+                    type=LayerEnum.ALIGNMENT,
                     document_id="d4",
                     path="E949/Alignment-2F29.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
@@ -148,7 +148,7 @@ class SharedPechaSetup:
             "annotations": [
                 AnnotationModel(
                     pecha_id="I94DBDA91",
-                    type=LayerEnum.alignment,
+                    type=LayerEnum.ALIGNMENT,
                     document_id="d4",
                     path="FD22/Alignment-599A.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary translation",

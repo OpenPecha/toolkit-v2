@@ -90,13 +90,13 @@ class Citation(BaseAnnotation):
 def _get_annotation_class(layer_name: LayerEnum):
     """Maps LayerEnum to Annotation class"""
 
-    if layer_name == LayerEnum.pagination:
+    if layer_name == LayerEnum.PAGINATION:
         return Pagination
-    elif layer_name == LayerEnum.language:
+    elif layer_name == LayerEnum.LANGUAGE:
         return Lang
-    elif layer_name == LayerEnum.citation:
+    elif layer_name == LayerEnum.CITATION:
         return Citation
-    elif layer_name == LayerEnum.ocr_confidence:
+    elif layer_name == LayerEnum.OCR_CONFIDENCE:
         return OCRConfidence
     else:
         return BaseAnnotation
@@ -158,7 +158,7 @@ class Layer(BaseModel):
 
 class OCRConfidenceLayer(Layer):
     confidence_threshold: float
-    annotation_type: LayerEnum = Field(default=LayerEnum.ocr_confidence)
+    annotation_type: LayerEnum = Field(default=LayerEnum.OCR_CONFIDENCE)
 
 
 class PechaId(str):
@@ -192,7 +192,7 @@ class PechaAlignment(BaseModel):
 class AnnotationModel(BaseModel):
     pecha_id: PechaId = Field(..., description="Pecha ID")
     type: LayerEnum = Field(
-        LayerEnum.segmentation, description="Type of the annotation"
+        LayerEnum.SEGMENTATION, description="Type of the annotation"
     )
     document_id: str = Field(..., pattern="\\S")
     path: str = Field(..., pattern="\\S")
