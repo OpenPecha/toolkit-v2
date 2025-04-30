@@ -9,7 +9,7 @@ def test_layer_model():
     layer = Layer(
         annotation_type=LayerEnum.BOOK_TITLE, revision="00001", annotations={}
     )
-    assert layer.annotation_type.value == "BookTitle"
+    assert layer.annotation_type.value == "book_title"
     assert layer.revision == "00001"
     layer.bump_revision()
     assert layer.revision == "00002"
