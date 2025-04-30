@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict, List
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
@@ -17,7 +18,7 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         self.translation_pecha = Pecha.from_path(
             self.DATA_DIR / "translation/I4FA57826"
         )
-        self.pecha_category = [
+        self.pecha_category: List[Dict] = [
             {
                 "description": {"en": "", "bo": ""},
                 "short_description": {"en": "", "bo": ""},
@@ -34,12 +35,14 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
 
     def test_root_translation_pecha(self):
         root_alignment_id = "A340/alignment-CCF1.json"
+        translation_alignment_id = "AC0A/alignment-9048.json"
 
         serializer = PreAlignedRootTranslationSerializer()
         serialized_json = serializer.serialize(
             self.root_pecha,
             root_alignment_id,
             self.translation_pecha,
+            translation_alignment_id,
             self.pecha_category,
         )
         expected_json = (

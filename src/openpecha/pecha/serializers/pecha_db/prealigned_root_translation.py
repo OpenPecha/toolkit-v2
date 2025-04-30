@@ -97,6 +97,7 @@ class PreAlignedRootTranslationSerializer:
         root_pecha: Pecha,
         root_alignment_id: str,
         translation_pecha: Pecha,
+        translation_alignment_id: str,
         pecha_category: List[Dict],
     ) -> Dict:
         # Format Category
@@ -110,7 +111,7 @@ class PreAlignedRootTranslationSerializer:
 
         # Get content from root and translation pecha
         src_content = TranslationAlignmentTransfer().get_serialized_translation(
-            root_pecha, root_alignment_id, translation_pecha
+            root_pecha, root_alignment_id, translation_pecha, translation_alignment_id
         )
 
         tgt_content = self.get_root_content(

@@ -13,21 +13,8 @@ class TranslationAlignmentTransfer:
     def get_first_layer_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("*.json"))
 
-    def get_display_layer_path(self, pecha: Pecha) -> Pecha:
+    def get_display_layer_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
-
-    def base_update(self, src_pecha: Pecha, tgt_pecha: Pecha) -> Path:
-        """
-        1. Take the layer from src pecha
-        2. Migrate the layer to tgt pecha using base update
-        """
-        src_base_name = list(src_pecha.bases.keys())[0]
-        tgt_base_name = list(tgt_pecha.bases.keys())[0]
-        tgt_pecha.merge_pecha(src_pecha, src_base_name, tgt_base_name)
-
-        src_layer_name = next(src_pecha.layer_path.rglob("*.json")).name
-        new_layer_path = tgt_pecha.layer_path / tgt_base_name / src_layer_name
-        return new_layer_path
 
     def extract_root_anns(self, layer: AnnotationStore) -> Dict:
         """
@@ -85,7 +72,6 @@ class TranslationAlignmentTransfer:
         Get segmentation mapping from root_pecha -> root_display_pecha
         """
         display_layer_path = self.get_display_layer_path(root_pecha)
-        # new_tgt_layer = self.base_update(root_pecha, root_display_pecha)
 
         display_layer = AnnotationStore(file=str(display_layer_path))
         transfer_layer = AnnotationStore(
@@ -93,9 +79,6 @@ class TranslationAlignmentTransfer:
         )
 
         map = self.map_layer_to_layer(transfer_layer, display_layer)
-
-        # Clean up the layer
-        # new_tgt_layer.unlink()
         return map
 
     def get_serialized_translation(
@@ -103,6 +86,7 @@ class TranslationAlignmentTransfer:
         root_pecha: Pecha,
         root_alignment_id: str,
         root_translation_pecha: Pecha,
+        translation_alignment_id: str,
     ) -> List[str]:
         def is_empty(text):
             """Check if text is empty or contains only newlines."""
@@ -110,7 +94,9 @@ class TranslationAlignmentTransfer:
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
-        translation_layer_path = self.get_first_layer_path(root_translation_pecha)
+        translation_layer_path = (
+            root_translation_pecha.layer_path / translation_alignment_id
+        )
         translation_anns = self.extract_root_anns(
             AnnotationStore(file=str(translation_layer_path))
         )
