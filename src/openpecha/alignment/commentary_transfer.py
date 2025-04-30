@@ -16,30 +16,28 @@ class CommentaryAlignmentTransfer:
     def get_display_layer_path(self, pecha: Pecha) -> Pecha:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
-    def extract_root_anns(self, layer: AnnotationStore) -> Dict:
+    def extract_root_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
         """
-        Extract annotation from layer(STAM)
+        Extract annotations from a STAM layer into a dictionary keyed by root index mapping.
         """
         anns = {}
         for ann in layer.annotations():
             start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {}
-            for data in ann:
-                ann_metadata[data.key().id()] = str(data.value())
-            anns[int(ann_metadata["root_idx_mapping"])] = {
+            ann_metadata = {data.key().id(): str(data.value()) for data in ann}
+            root_idx = int(ann_metadata["root_idx_mapping"])
+            anns[root_idx] = {
                 "Span": {"start": start, "end": end},
                 "text": str(ann),
-                "root_idx_mapping": int(ann_metadata["root_idx_mapping"]),
+                "root_idx_mapping": root_idx,
             }
         return anns
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
-    ):
+    ) -> Dict[int, List[int]]:
         """
-        1. Extract annotations from source and target layers
-        2. Map the annotations from source to target layer
-        src_layer -> tgt_layer (One to Many)
+        Map annotations from src_layer to tgt_layer based on span overlap or containment.
+        Returns a mapping from source indices to lists of target indices.
         """
         mapping: Dict = {}
 
