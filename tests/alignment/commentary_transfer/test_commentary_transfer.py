@@ -13,7 +13,7 @@ class TestCommentaryAlignmentTransfer(TestCase):
         self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "commentary/I77BD6EA9")
 
     def test_get_root_pechas_mapping(self):
-        root_alignment_id = "B8B3/Alignment-F81A.json"
+        root_alignment_id = "B8B3/alignment-F81A.json"
         serializer = CommentaryAlignmentTransfer()
         mapping = serializer.get_root_pechas_mapping(self.root_pecha, root_alignment_id)
         expected_mapping = {
@@ -31,8 +31,8 @@ class TestCommentaryAlignmentTransfer(TestCase):
         assert mapping == expected_mapping
 
     def test_get_serialized_commentary(self):
-        root_alignment_id = "B8B3/Alignment-F81A.json"
-        commentary_alignment_id = "BEC3/Alignment-90C0.json"
+        root_alignment_id = "B8B3/alignment-F81A.json"
+        commentary_alignment_id = "BEC3/alignment-90C0.json"
 
         serializer = CommentaryAlignmentTransfer()
         serialized_json = serializer.get_serialized_commentary(
