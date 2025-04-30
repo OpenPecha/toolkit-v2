@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Dict, List
 
 from stam import AnnotationStore
@@ -16,19 +15,6 @@ logger = get_logger(__name__)
 class CommentaryAlignmentTransfer:
     def get_display_layer_path(self, pecha: Pecha) -> Pecha:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
-
-    def base_update(self, src_pecha: Pecha, tgt_pecha: Pecha) -> Path:
-        """
-        1. Take the layer from src pecha
-        2. Migrate the layer to tgt pecha using base update
-        """
-        src_base_name = list(src_pecha.bases.keys())[0]
-        tgt_base_name = list(tgt_pecha.bases.keys())[0]
-        tgt_pecha.merge_pecha(src_pecha, src_base_name, tgt_base_name)
-
-        src_layer_name = next(src_pecha.layer_path.rglob("*.json")).name
-        new_layer_path = tgt_pecha.layer_path / tgt_base_name / src_layer_name
-        return new_layer_path
 
     def extract_root_anns(self, layer: AnnotationStore) -> Dict:
         """
@@ -86,7 +72,6 @@ class CommentaryAlignmentTransfer:
         Get segmentation mapping from root_pecha -> root_display_pecha
         """
         display_layer_path = self.get_display_layer_path(root_pecha)
-        # new_tgt_layer = self.base_update(root_pecha, root_display_pecha)
 
         display_layer = AnnotationStore(file=str(display_layer_path))
         transfer_layer = AnnotationStore(
@@ -94,7 +79,6 @@ class CommentaryAlignmentTransfer:
         )
 
         map = self.map_layer_to_layer(transfer_layer, display_layer)
-
         return map
 
     def get_serialized_commentary(
