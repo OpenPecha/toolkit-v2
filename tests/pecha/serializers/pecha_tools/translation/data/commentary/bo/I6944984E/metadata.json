@@ -1,0 +1,27 @@
+{
+  "id": "I6944984E",
+  "title": {
+    "bo": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡ ནས་ ༦༤",
+    "en": "Illuminating the Intent Chapter 6, verses 1 to 64"
+  },
+  "author": {
+    "bo": "ཙོང་ཁ་པ་བློ་བཟང་གྲགས་པ།",
+    "en": "Tsongkhapa Lobzang Drakpa"
+  },
+  "imported": "2025-02-14T06:58:26.817177",
+  "source": "https://library.bdrc.io/",
+  "toolkit_version": "0.0.1",
+  "parser": "DocxSimpleCommentaryParser",
+  "initial_creation_type": "google_docx",
+  "language": "bo",
+  "source_metadata": {
+    "commentary_of": "IA74EAD05"
+  },
+  "bases": {},
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown"
+}
