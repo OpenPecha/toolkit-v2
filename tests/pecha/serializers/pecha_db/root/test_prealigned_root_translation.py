@@ -33,7 +33,7 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         ]
 
     def test_root_translation_pecha(self):
-        root_alignment_id = "A340/Alignment-CCF1.json"
+        root_alignment_id = "A340/alignment-CCF1.json"
 
         serializer = PreAlignedRootTranslationSerializer()
         serialized_json = serializer.serialize(

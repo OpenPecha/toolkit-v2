@@ -161,7 +161,7 @@ class DocxComplexCommentaryParser(BaseParser):
             doc = self.update_doc(doc, len(root_idx_mapping) + 1)
             updated_segment = segment.strip()
             curr_segment_ann = {
-                LayerEnum.alignment.value: {
+                LayerEnum.ALIGNMENT.value: {
                     "start": char_count,
                     "end": char_count + len(updated_segment),
                 },
@@ -169,7 +169,7 @@ class DocxComplexCommentaryParser(BaseParser):
             }
         else:
             curr_segment_ann = {
-                LayerEnum.alignment.value: {
+                LayerEnum.ALIGNMENT.value: {
                     "start": char_count,
                     "end": char_count + len(segment),
                 }
@@ -205,7 +205,7 @@ class DocxComplexCommentaryParser(BaseParser):
                         end = start + len(doc_style["texts"][idx])
                         sapche_anns.append(
                             {
-                                LayerEnum.sapche.value: {"start": start, "end": end},
+                                LayerEnum.SAPCHE.value: {"start": start, "end": end},
                                 "sapche_number": sapche_number,
                             }
                         )
@@ -224,7 +224,7 @@ class DocxComplexCommentaryParser(BaseParser):
                 inner_char_count += len(doc_style["texts"][idx])
             inner_char_count += 1  # for newline
 
-        formatted_anns = self.merge_anns(sapche_anns, LayerEnum.sapche)
+        formatted_anns = self.merge_anns(sapche_anns, LayerEnum.SAPCHE)
         self.temp_state["sapche"]["anns"].extend(formatted_anns)  # type: ignore
         updated_segment = "\n".join(
             ["".join(doc_style["texts"]) for doc_style in doc["styles"]]
@@ -265,7 +265,7 @@ class DocxComplexCommentaryParser(BaseParser):
         """
         if self.temp_state["meaning_segment"]["anns"]:
             meaning_segment_ann = self.temp_state["meaning_segment"]["anns"][0]  # type: ignore
-            meaning_segment_ann[LayerEnum.alignment.value]["end"] -= self.temp_state[
+            meaning_segment_ann[LayerEnum.ALIGNMENT.value]["end"] -= self.temp_state[
                 "sapche"
             ]["char_diff"]
             self.meaning_segment_anns.append(meaning_segment_ann)
@@ -308,15 +308,15 @@ class DocxComplexCommentaryParser(BaseParser):
         basename = pecha.set_base(self.base)
 
         # Add meaning_segment layer
-        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.alignment)
+        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.ALIGNMENT)
         for ann in self.meaning_segment_anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.alignment)
+            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.ALIGNMENT)
         meaning_segment_layer.save()
 
         # Add sapche layer
-        sapche_layer, _ = pecha.add_layer(basename, LayerEnum.sapche)
+        sapche_layer, _ = pecha.add_layer(basename, LayerEnum.SAPCHE)
         for ann in self.sapche_anns:
-            pecha.add_annotation(sapche_layer, ann, LayerEnum.sapche)
+            pecha.add_annotation(sapche_layer, ann, LayerEnum.SAPCHE)
         sapche_layer.save()
 
         pecha.set_metadata(

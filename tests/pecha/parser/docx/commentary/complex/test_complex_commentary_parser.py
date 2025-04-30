@@ -22,10 +22,10 @@ class TestDocxComplexCommentaryParser(TestCase):
             output_path.mkdir(parents=True, exist_ok=True)
             parser.parse(input, metadata, output_path)
             expected_sapche_anns = [
-                {"Sapche": {"start": 102, "end": 124}, "sapche_number": "1."},
-                {"Sapche": {"start": 126, "end": 166}, "sapche_number": "1.1."},
-                {"Sapche": {"start": 2122, "end": 2153}, "sapche_number": "1.2."},
-                {"Sapche": {"start": 2816, "end": 2856}, "sapche_number": "1.3."},
+                {"sapche": {"start": 102, "end": 124}, "sapche_number": "1."},
+                {"sapche": {"start": 126, "end": 166}, "sapche_number": "1.1."},
+                {"sapche": {"start": 2122, "end": 2153}, "sapche_number": "1.2."},
+                {"sapche": {"start": 2816, "end": 2856}, "sapche_number": "1.3."},
             ]
 
             assert parser.sapche_anns == expected_sapche_anns
@@ -42,8 +42,8 @@ class TestDocxComplexCommentaryParser(TestCase):
             output_path.mkdir(parents=True, exist_ok=True)
             parser.parse(input, metadata, output_path)
             expected_sapche_anns = [
-                {"Sapche": {"start": 124, "end": 164}, "sapche_number": "1."},
-                {"Sapche": {"start": 166, "end": 238}, "sapche_number": "1.1."},
+                {"sapche": {"start": 124, "end": 164}, "sapche_number": "1."},
+                {"sapche": {"start": 166, "end": 238}, "sapche_number": "1.1."},
             ]
 
             assert parser.sapche_anns == expected_sapche_anns
@@ -60,11 +60,11 @@ class TestDocxComplexCommentaryParser(TestCase):
             output_path.mkdir(parents=True, exist_ok=True)
             parser.parse(input, metadata, output_path)
             expected_sapche_anns = [
-                {"Sapche": {"start": 251, "end": 253}, "sapche_number": "1."},
-                {"Sapche": {"start": 316, "end": 322}, "sapche_number": "2."},
-                {"Sapche": {"start": 324, "end": 330}, "sapche_number": "2.1"},
-                {"Sapche": {"start": 397, "end": 403}, "sapche_number": "2.1.1"},
-                {"Sapche": {"start": 731, "end": 737}, "sapche_number": "3."},
+                {"sapche": {"start": 251, "end": 253}, "sapche_number": "1."},
+                {"sapche": {"start": 316, "end": 322}, "sapche_number": "2."},
+                {"sapche": {"start": 324, "end": 330}, "sapche_number": "2.1"},
+                {"sapche": {"start": 397, "end": 403}, "sapche_number": "2.1.1"},
+                {"sapche": {"start": 731, "end": 737}, "sapche_number": "3."},
             ]
 
             assert parser.sapche_anns == expected_sapche_anns

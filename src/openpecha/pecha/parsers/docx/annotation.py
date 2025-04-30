@@ -60,7 +60,7 @@ class DocxAnnotationParser:
             except ValueError:
                 raise ParseNotReadyForThisAnnotation(f"Invalid annotation type: {type}")
 
-        if type not in [LayerEnum.alignment, LayerEnum.segmentation]:
+        if type not in [LayerEnum.ALIGNMENT, LayerEnum.SEGMENTATION]:
             raise ParseNotReadyForThisAnnotation(
                 f"Parser is not ready for the annotation type: {type}"
             )

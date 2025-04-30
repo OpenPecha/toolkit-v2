@@ -20,12 +20,12 @@ class TestChonjukPlainTextParser:
             {
                 "chapter_number": "1",
                 "chapter_title": "བྱང་ཆུབ་སེམས་ཀྱི་ཕན་ཡོན་བཤད་པ།",
-                "Chapter": {"start": 145, "end": 446},
+                "chapter": {"start": 145, "end": 446},
             },
             {
                 "chapter_number": "2",
                 "chapter_title": "སྡིག་པ་བཤགས་པ།",
-                "Chapter": {"start": 449, "end": 896},
+                "chapter": {"start": 449, "end": 896},
             },
         ]
 
@@ -37,6 +37,3 @@ class TestChonjukPlainTextParser:
             )
             assert parser.cleaned_text == expected_base_text
             assert parser.annotations == expected_chapter_anns
-
-
-TestChonjukPlainTextParser().test_chonjuk_plaintext_parser()

@@ -58,7 +58,7 @@ class PedurmaParser(BaseParser):
         self.meaning_segment_anns = []
         for line in self.base_text.splitlines():
             segment_ann = {
-                LayerEnum.segmentation.value: {
+                LayerEnum.SEGMENTATION.value: {
                     "start": char_walker,
                     "end": char_walker + len(line),
                 }
@@ -73,16 +73,16 @@ class PedurmaParser(BaseParser):
         basename = pecha.set_base(self.base_text)
 
         # Add Durchen Layer
-        durchen_layer, _ = pecha.add_layer(basename, LayerEnum.durchen)
+        durchen_layer, _ = pecha.add_layer(basename, LayerEnum.DURCHEN)
         for ann in self.pedurma_anns:
-            pecha.add_annotation(durchen_layer, ann, LayerEnum.durchen)
+            pecha.add_annotation(durchen_layer, ann, LayerEnum.DURCHEN)
 
         durchen_layer.save()
 
         # Add Segment Layer
-        segment_layer, _ = pecha.add_layer(basename, LayerEnum.segmentation)
+        segment_layer, _ = pecha.add_layer(basename, LayerEnum.SEGMENTATION)
         for ann in self.meaning_segment_anns:
-            pecha.add_annotation(segment_layer, ann, LayerEnum.segmentation)
+            pecha.add_annotation(segment_layer, ann, LayerEnum.SEGMENTATION)
 
         segment_layer.save()
         # Set metadata
@@ -118,7 +118,7 @@ def get_annotation(prev_chunk: str, note_chunk: str, char_walker: int):
     start = char_walker - len(span_text)
     end = char_walker
 
-    ann = {LayerEnum.durchen.value: {"start": start, "end": end}, "note": note_chunk}
+    ann = {LayerEnum.DURCHEN.value: {"start": start, "end": end}, "note": note_chunk}
     return ann
 
 

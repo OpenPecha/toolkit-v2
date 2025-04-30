@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Structure_Annotation",
+      "@id": "structure_annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -19,7 +19,7 @@
         },
         {
           "@type": "DataKey",
-          "@id": "Structure_Type"
+          "@id": "structure_type"
         }
       ],
       "data": [
@@ -35,10 +35,10 @@
         {
           "@type": "AnnotationData",
           "@id": "20BCB9B0",
-          "key": "Structure_Type",
+          "key": "structure_type",
           "value": {
             "@type": "String",
-            "value": "Sapche"
+            "value": "sapche"
           }
         },
         {
@@ -94,12 +94,12 @@
         {
           "@type": "AnnotationData",
           "@id": "5A4B6955",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "20BCB9B0",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -125,12 +125,12 @@
         {
           "@type": "AnnotationData",
           "@id": "FF456E46",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "20BCB9B0",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -156,12 +156,12 @@
         {
           "@type": "AnnotationData",
           "@id": "74A1EEC4",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "20BCB9B0",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -187,12 +187,12 @@
         {
           "@type": "AnnotationData",
           "@id": "32FAE763",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "20BCB9B0",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     }

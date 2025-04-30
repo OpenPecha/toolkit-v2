@@ -15,17 +15,17 @@
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "Structure_Type"
+          "@id": "segmentation_type"
         }
       ],
       "data": [
         {
           "@type": "AnnotationData",
           "@id": "5e882f182fd54490a20078c8c7161a45",
-          "key": "Structure_Type",
+          "key": "segmentation_type",
           "value": {
             "@type": "String",
-            "value": "Segmentation"
+            "value": "segmentation"
           }
         }
       ]

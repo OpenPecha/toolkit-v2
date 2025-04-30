@@ -701,22 +701,22 @@ class OCRParser(OCRBaseParser):
         layers = {}
         if state["pagination_annotations"]:
             layer = Layer(
-                annotation_type=LayerEnum.pagination,
+                annotation_type=LayerEnum.PAGINATION,
                 annotations=state["pagination_annotations"],
             )
-            layers[LayerEnum.pagination] = layer
+            layers[LayerEnum.PAGINATION] = layer
         if state["language_annotations"]:
             annotations = self.merge_short_language_annotations(
                 state["language_annotations"]
             )
-            layer = Layer(annotation_type=LayerEnum.language, annotations=annotations)
-            layers[LayerEnum.language] = layer
+            layer = Layer(annotation_type=LayerEnum.LANGUAGE, annotations=annotations)
+            layers[LayerEnum.LANGUAGE] = layer
         if state["low_confidence_annotations"]:
             layer = OCRConfidenceLayer(
                 confidence_threshold=self.ocr_confidence_threshold,
                 annotations=state["low_confidence_annotations"],
             )
-            layers[LayerEnum.ocr_confidence] = layer
+            layers[LayerEnum.OCR_CONFIDENCE] = layer
         return state["base_layer"], layers, state["word_confidences"]
 
     def get_copyright_and_license_info(self, bdata):
@@ -860,13 +860,13 @@ class OCRParser(OCRBaseParser):
                                 "end": ann.span.end,
                             }
                         }
-                        if layer_type == LayerEnum.pagination:
+                        if layer_type == LayerEnum.PAGINATION:
                             ann_dict.update(
                                 {"imgnum": ann.imgnum, "reference": ann.reference}
                             )
-                        elif layer_type == LayerEnum.language:
+                        elif layer_type == LayerEnum.LANGUAGE:
                             ann_dict.update({"language": ann.language})
-                        elif layer_type == LayerEnum.ocr_confidence:
+                        elif layer_type == LayerEnum.OCR_CONFIDENCE:
                             ann_dict.update({"confidence": ann.confidence})
                             if ann.nb_below_threshold is not None:
                                 ann_dict["nb_below_threshold"] = ann.nb_below_threshold

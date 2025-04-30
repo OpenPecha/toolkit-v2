@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Structure_Annotation",
+      "@id": "structure_annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -23,7 +23,7 @@
         },
         {
           "@type": "DataKey",
-          "@id": "Structure_Type"
+          "@id": "structure_type"
         }
       ],
       "data": [
@@ -48,10 +48,10 @@
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "key": "Structure_Type",
+          "key": "structure_type",
           "value": {
             "@type": "String",
-            "value": "Pagination"
+            "value": "pagination"
           }
         },
         {
@@ -242,17 +242,17 @@
         {
           "@type": "AnnotationData",
           "@id": "EFA110F1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "D8A41939",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -278,17 +278,17 @@
         {
           "@type": "AnnotationData",
           "@id": "EF8DA7AD",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "0F2B9126",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -314,17 +314,17 @@
         {
           "@type": "AnnotationData",
           "@id": "A1EA02D7",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "7F4663B8",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -350,17 +350,17 @@
         {
           "@type": "AnnotationData",
           "@id": "4F8F26CB",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "62760716",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -386,17 +386,17 @@
         {
           "@type": "AnnotationData",
           "@id": "0F5B1361",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "F22BE01F",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -422,17 +422,17 @@
         {
           "@type": "AnnotationData",
           "@id": "74CFC727",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4DAC715D",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -458,17 +458,17 @@
         {
           "@type": "AnnotationData",
           "@id": "54496B55",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "DFE1C883",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -494,17 +494,17 @@
         {
           "@type": "AnnotationData",
           "@id": "44F7FFF4",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4BA7AAA7",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -530,17 +530,17 @@
         {
           "@type": "AnnotationData",
           "@id": "B991DE39",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "378D4D51",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     },
@@ -566,17 +566,17 @@
         {
           "@type": "AnnotationData",
           "@id": "21E34801",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "2ED44C6D",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "4D854DB1",
-          "set": "Structure_Annotation"
+          "set": "structure_annotation"
         }
       ]
     }

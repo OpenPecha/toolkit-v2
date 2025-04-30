@@ -29,7 +29,7 @@ class TestRootSerializer(TestCase):
     def test_root_pecha(self):
         root_opf = DATA_DIR / "bo/IE60BBDE8"
         root_pecha = Pecha.from_path(root_opf)
-        ann_id = "3635/Segmentation-039B.json"
+        ann_id = "3635/segmentation-039B.json"
 
         serializer = RootSerializer()
         json_output = serializer.serialize(
@@ -45,8 +45,8 @@ class TestRootSerializer(TestCase):
         root_pecha = Pecha.from_path(root_opf)
         translation_pecha = Pecha.from_path(translation_opf)
 
-        ann_id = "3635/Segmentation-039B.json"
-        translation_ann_id = "D93E/Alignment-0216.json"
+        ann_id = "3635/segmentation-039B.json"
+        translation_ann_id = "D93E/alignment-0216.json"
 
         serializer = RootSerializer()
         json_output = serializer.serialize(

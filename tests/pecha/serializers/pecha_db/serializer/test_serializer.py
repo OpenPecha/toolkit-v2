@@ -31,7 +31,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
 
         pechas = [self.root_pecha]
         metadatas = [self.root_pecha_metadata]
-        annotation_path = "B8B3/Segmentation-74F4.json"
+        annotation_path = "B8B3/segmentation-74F4.json"
 
         serializer = Serializer()
         serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
@@ -50,8 +50,8 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_translation_pecha_metadata,
             self.root_pecha_metadata,
         ]
-        annotation_path = "D93E/Alignment-0216.json"
-        root_ann_path = "B8B3/Segmentation-74F4.json"
+        annotation_path = "D93E/alignment-0216.json"
+        root_ann_path = "B8B3/segmentation-74F4.json"
 
         serializer = Serializer()
         serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
@@ -73,7 +73,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
         pechas = [self.commentary_pecha, self.root_pecha]
         metadatas = [self.commentary_pecha_metadata, self.root_pecha_metadata]
 
-        annotation_path = "E949/Alignment-2F29.json"
+        annotation_path = "E949/alignment-2F29.json"
 
         serializer = Serializer()
         serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
@@ -102,8 +102,8 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha_metadata,
         ]
 
-        translation_ann_path = "FD22/Alignment-599A.json"
-        annotation_path = "E949/Alignment-2F29.json"
+        translation_ann_path = "FD22/alignment-599A.json"
+        annotation_path = "E949/alignment-2F29.json"
 
         serializer = Serializer()
         serializer.serialize(
@@ -132,8 +132,8 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha_metadata,
         ]
 
-        annotation_path = "E949/Alignment-2F29.json"
-        root_alignment_path = "B8B3/Alignment-F81A.json"
+        annotation_path = "E949/alignment-2F29.json"
+        root_alignment_path = "B8B3/alignment-F81A.json"
 
         serializer = Serializer()
         serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
@@ -159,8 +159,8 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha_metadata,
         ]
 
-        annotation_path = "D93E/Alignment-0216.json"
-        root_alignment_path = "B8B3/Alignment-F81A.json"
+        annotation_path = "D93E/alignment-0216.json"
+        root_alignment_path = "B8B3/alignment-F81A.json"
 
         serializer = Serializer()
         serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)

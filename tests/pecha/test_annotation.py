@@ -51,27 +51,27 @@ def test_annotation_model_minimal_alignment():
     align = PechaAlignment(pecha_id="I1234ABCD", alignment_id="align1")
     am = AnnotationModel(
         pecha_id="I1234ABCD",
-        type=LayerEnum.alignment,
+        type=LayerEnum.ALIGNMENT,
         document_id="doc1",
         path="ann1",
         title="Test",
         aligned_to=align,
     )
     assert am.pecha_id == "I1234ABCD"
-    assert am.type == LayerEnum.alignment
+    assert am.type == LayerEnum.ALIGNMENT
     assert am.aligned_to == align
 
 
 def test_annotation_model_minimal_non_alignment():
     am = AnnotationModel(
         pecha_id="I1234ABCD",
-        type=LayerEnum.segmentation,
+        type=LayerEnum.SEGMENTATION,
         document_id="doc1",
         path="ann1",
         title="Test",
     )
     assert am.pecha_id == "I1234ABCD"
-    assert am.type == LayerEnum.segmentation
+    assert am.type == LayerEnum.SEGMENTATION
     assert am.aligned_to is None
 
 
@@ -79,7 +79,7 @@ def test_annotation_model_with_alignment():
     align = PechaAlignment(pecha_id="I1234ABCD", alignment_id="align1")
     am = AnnotationModel(
         pecha_id="I1234ABCD",
-        type=LayerEnum.alignment,
+        type=LayerEnum.ALIGNMENT,
         document_id="doc1",
         path="ann1",
         title="Test",
@@ -94,7 +94,7 @@ def test_annotation_model_invalid_pechaid():
     with pytest.raises(ValidationError):
         AnnotationModel(
             pecha_id="BADID",
-            type=LayerEnum.alignment,
+            type=LayerEnum.ALIGNMENT,
             document_id="doc1",
             path="ann1",
             title="Test",
@@ -123,7 +123,7 @@ def test_annotation_model_missing_required():
     with pytest.raises(ValidationError):
         AnnotationModel(
             pecha_id="I1234ABCD",
-            type=LayerEnum.alignment,
+            type=LayerEnum.ALIGNMENT,
             document_id="doc1",
             # path missing
             title="Test",

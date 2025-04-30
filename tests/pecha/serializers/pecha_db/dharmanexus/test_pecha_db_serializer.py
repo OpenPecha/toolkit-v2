@@ -18,6 +18,3 @@ def test_pecha_db_serializer():
     assert mapping_json == read_json(
         "tests/pecha/serializers/pecha_db/dharmanexus/data/expected_mapping.json"
     )
-
-
-test_pecha_db_serializer()

@@ -4,57 +4,57 @@ from enum import Enum
 class LayerCollectionEnum(Enum):
     """In STAM, this is used for setting DataSet id"""
 
-    structure_annotation = "Structure_Annotation"
-    variation_annotation = "Variation_Annotation"
-    ocr_annotation = "Ocr_Annotation"
-    language_annotation = "language_Annotation"
-    segmentation_annotation = "Segmentation_Annotation"
+    STRUCTURE_ANNOTATION = "structure_annotation"
+    VARIATION_ANNOTATION = "variation_annotation"
+    OCR_ANNOTATION = "ocr_annotation"
+    LANGUAGE_ANNOTATION = "language_annotation"
+    SEGMENTATION_ANNOTATION = "segmentation_annotation"
 
 
 class LayerEnum(str, Enum):
-    segmentation = "Segmentation"
-    alignment = "Alignment"
+    SEGMENTATION = "segmentation"
+    ALIGNMENT = "alignment"
 
-    chapter = "Chapter"
-    pagination = "Pagination"
-    durchen = "Durchen"
-    sapche = "Sapche"
+    CHAPTER = "chapter"
+    PAGINATION = "pagination"
+    DURCHEN = "durchen"
+    SAPCHE = "sapche"
 
-    ocr_confidence = "OCRConfidence"
-    language = "Language"
-    citation = "Citation"
-    book_title = "BookTitle"
+    OCR_CONFIDENCE = "ocr_confidence"
+    LANGUAGE = "language"
+    CITATION = "citation"
+    BOOK_TITLE = "book_title"
 
 
 class LayerGroupEnum(Enum):
-    structure_type = "Structure_Type"
-    spelling_variation = "Spelling_Variation"
-    ocr_confidence_type = "Ocr_Type"
-    language_type = "Language_Type"
-    segmentation_type = "Segmentation_Type"
+    STRUCTURE_TYPE = "structure_type"
+    SPELLING_VARIATION = "spelling_variation"
+    OCR_CONFIDENCE_TYPE = "ocr_confidence_type"
+    LANGUAGE_TYPE = "language_type"
+    SEGMENTATION_TYPE = "segmentation_type"
 
 
 def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
     """return the annotation category where annotation type falls in"""
 
-    if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
-        return LayerGroupEnum.segmentation_type
+    if layer_type in [LayerEnum.SEGMENTATION, LayerEnum.ALIGNMENT]:
+        return LayerGroupEnum.SEGMENTATION_TYPE
 
     if layer_type in [
-        LayerEnum.chapter,
-        LayerEnum.sapche,
-        LayerEnum.pagination,
+        LayerEnum.CHAPTER,
+        LayerEnum.SAPCHE,
+        LayerEnum.PAGINATION,
     ]:
-        return LayerGroupEnum.structure_type
+        return LayerGroupEnum.STRUCTURE_TYPE
 
-    if layer_type == LayerEnum.language:
-        return LayerGroupEnum.language_type
+    if layer_type == LayerEnum.LANGUAGE:
+        return LayerGroupEnum.LANGUAGE_TYPE
 
-    if layer_type == LayerEnum.ocr_confidence:
-        return LayerGroupEnum.ocr_confidence_type
+    if layer_type == LayerEnum.OCR_CONFIDENCE:
+        return LayerGroupEnum.OCR_CONFIDENCE_TYPE
 
-    if layer_type == LayerEnum.durchen:
-        return LayerGroupEnum.spelling_variation
+    if layer_type == LayerEnum.DURCHEN:
+        return LayerGroupEnum.SPELLING_VARIATION
 
     raise ValueError(f"Layer type {layer_type} has no defined LayerGroupEnum")
 
@@ -62,23 +62,23 @@ def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
 def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
     """return the annotation category where annotation type falls in"""
 
-    if layer_type in [LayerEnum.segmentation, LayerEnum.alignment]:
-        return LayerCollectionEnum.segmentation_annotation
+    if layer_type in [LayerEnum.SEGMENTATION, LayerEnum.ALIGNMENT]:
+        return LayerCollectionEnum.SEGMENTATION_ANNOTATION
 
     if layer_type in [
-        LayerEnum.chapter,
-        LayerEnum.sapche,
-        LayerEnum.pagination,
+        LayerEnum.CHAPTER,
+        LayerEnum.SAPCHE,
+        LayerEnum.PAGINATION,
     ]:
-        return LayerCollectionEnum.structure_annotation
+        return LayerCollectionEnum.STRUCTURE_ANNOTATION
 
-    if layer_type == LayerEnum.language:
-        return LayerCollectionEnum.language_annotation
+    if layer_type == LayerEnum.LANGUAGE:
+        return LayerCollectionEnum.LANGUAGE_ANNOTATION
 
-    if layer_type == LayerEnum.ocr_confidence:
-        return LayerCollectionEnum.ocr_annotation
+    if layer_type == LayerEnum.OCR_CONFIDENCE:
+        return LayerCollectionEnum.OCR_ANNOTATION
 
-    if layer_type == LayerEnum.durchen:
-        return LayerCollectionEnum.variation_annotation
+    if layer_type == LayerEnum.DURCHEN:
+        return LayerCollectionEnum.VARIATION_ANNOTATION
 
     raise ValueError(f"Layer type {layer_type} has no defined LayerCollectionEnum")

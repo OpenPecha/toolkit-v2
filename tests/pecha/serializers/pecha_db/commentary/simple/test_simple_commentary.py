@@ -32,7 +32,7 @@ class TestSimpleCommentarySerializer(TestCase):
 
     def test_bo_commentary_serializer(self):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
-        annotation_path = "E949/Alignment-2F29.json"
+        annotation_path = "E949/alignment-2F29.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
@@ -48,8 +48,8 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
         translation_pecha = Pecha.from_path(DATA_DIR / "en/I94DBDA91")
 
-        annotation_path = "E949/Alignment-2F29.json"
-        translation_ann_path = "FD22/Alignment-599A.json"
+        annotation_path = "E949/alignment-2F29.json"
+        translation_ann_path = "FD22/alignment-599A.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
@@ -68,8 +68,8 @@ class TestSimpleCommentarySerializer(TestCase):
         pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
         translation_pecha = Pecha.from_path(DATA_DIR / "zh/I9A60B88D")
 
-        annotation_path = "E949/Alignment-2F29.json"
-        translation_ann_path = "B97E/Alignment-22A8.json"
+        annotation_path = "E949/alignment-2F29.json"
+        translation_ann_path = "B97E/alignment-22A8.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(

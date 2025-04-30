@@ -21,7 +21,7 @@
         "source_metadata": {
           "annotations": {
              "Segmentation-74F4":{
-              "annotation_type":"Segmentation"
+              "annotation_type":"segmentation"
              }
           }
         },

@@ -11,7 +11,7 @@
   "annotationsets": [
     {
       "@type": "AnnotationDataSet",
-      "@id": "Ocr_Annotation",
+      "@id": "ocr_annotation",
       "keys": [
         {
           "@type": "DataKey",
@@ -42,7 +42,7 @@
           "key": "Ocr_Type",
           "value": {
             "@type": "String",
-            "value": "OCRConfidence"
+            "value": "ocr_confidence"
           }
         },
         {
@@ -260,12 +260,12 @@
         {
           "@type": "AnnotationData",
           "@id": "22D55B9D",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -291,12 +291,12 @@
         {
           "@type": "AnnotationData",
           "@id": "53D10337",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -322,12 +322,12 @@
         {
           "@type": "AnnotationData",
           "@id": "AE10211B",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -353,12 +353,12 @@
         {
           "@type": "AnnotationData",
           "@id": "8160AE39",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -384,12 +384,12 @@
         {
           "@type": "AnnotationData",
           "@id": "2BC1F29F",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -415,12 +415,12 @@
         {
           "@type": "AnnotationData",
           "@id": "9B23ADED",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -446,12 +446,12 @@
         {
           "@type": "AnnotationData",
           "@id": "28422248",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -477,12 +477,12 @@
         {
           "@type": "AnnotationData",
           "@id": "D9E2719C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -508,12 +508,12 @@
         {
           "@type": "AnnotationData",
           "@id": "7C47AA34",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -539,12 +539,12 @@
         {
           "@type": "AnnotationData",
           "@id": "020CC901",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -570,12 +570,12 @@
         {
           "@type": "AnnotationData",
           "@id": "1DD3597E",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -601,12 +601,12 @@
         {
           "@type": "AnnotationData",
           "@id": "D23E8D05",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -632,12 +632,12 @@
         {
           "@type": "AnnotationData",
           "@id": "8D694440",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -663,12 +663,12 @@
         {
           "@type": "AnnotationData",
           "@id": "7C47AA34",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -694,12 +694,12 @@
         {
           "@type": "AnnotationData",
           "@id": "A3F4CD7D",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -725,12 +725,12 @@
         {
           "@type": "AnnotationData",
           "@id": "0AEFEB47",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -756,12 +756,12 @@
         {
           "@type": "AnnotationData",
           "@id": "3F94D53C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -787,17 +787,17 @@
         {
           "@type": "AnnotationData",
           "@id": "82955126",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "322CC8FC",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -823,17 +823,17 @@
         {
           "@type": "AnnotationData",
           "@id": "14957097",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "63C89952",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     },
@@ -859,17 +859,17 @@
         {
           "@type": "AnnotationData",
           "@id": "0F48825A",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "8F4B8FC9",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         },
         {
           "@type": "AnnotationData",
           "@id": "3FCF8A0C",
-          "set": "Ocr_Annotation"
+          "set": "ocr_annotation"
         }
       ]
     }
