@@ -27,7 +27,7 @@ def test_pecha_read():
 
     """ comparing annotations """
     dataset = list(ann_store.datasets())[0]
-    key = dataset.key(LayerGroupEnum.STRUCTURE_TYPE.value)
+    key = dataset.key(LayerGroupEnum.SEGMENTATION_TYPE.value)
     anns = list(dataset.data(key, value=LayerEnum.SEGMENTATION.value).annotations())
     for ann, expected_ann in zip(anns, expected_anns):
         assert str(ann) == expected_ann
