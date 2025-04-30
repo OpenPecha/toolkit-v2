@@ -104,9 +104,3 @@ class TestCommentarySerializer(TestCase):
 
     def tearDown(self):
         pass
-
-
-work = TestCommentarySerializer()
-work.setUp()
-work.test_bo_commentary_serializer()
-work.test_en_commentary_serializer()
