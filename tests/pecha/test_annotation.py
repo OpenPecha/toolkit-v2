@@ -146,7 +146,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Annotation"
-        assert model.type == LayerEnum.segmentation
+        assert model.type == LayerEnum.SEGMENTATION
         assert model.aligned_to is None
 
     def test_valid_annotation_with_type(self):
@@ -155,7 +155,7 @@ class TestValidAnnotationModel:
             "pecha_id": "I12345678",
             "document_id": "DOC123",
             "title": "Test Alignment Annotation",
-            "type": "Alignment",
+            "type": "alignment",
             "path": "E11/layer.json",
         }
 
@@ -163,7 +163,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Alignment Annotation"
-        assert model.type == LayerEnum.alignment
+        assert model.type == LayerEnum.ALIGNMENT
         assert model.aligned_to is None
 
     def test_valid_annotation_with_alignment(self):
@@ -172,7 +172,7 @@ class TestValidAnnotationModel:
             "pecha_id": "I12345678",
             "document_id": "DOC123",
             "title": "Test Annotation with Alignment",
-            "type": "Alignment",
+            "type": "alignment",
             "path": "E11/layer.json",
             "aligned_to": {
                 "pecha_id": "I87654321",
@@ -184,7 +184,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Annotation with Alignment"
-        assert model.type == LayerEnum.alignment
+        assert model.type == LayerEnum.ALIGNMENT
         assert model.aligned_to is not None
         assert model.model_dump()["aligned_to"]["pecha_id"] == "I87654321"
         assert model.model_dump()["aligned_to"]["alignment_id"] == "ALIGN001"
@@ -202,7 +202,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Dict Annotation"
-        assert model.type == LayerEnum.segmentation
+        assert model.type == LayerEnum.SEGMENTATION
 
 
 class TestInvalidAnnotationModel:
@@ -345,7 +345,7 @@ class TestAnnotationModelSerialization:
             pecha_id="I12345678",
             document_id="DOC123",
             title="Serialization Test",
-            type="Alignment",
+            type="alignment",
             path="E11/layer.json",
             aligned_to={
                 "pecha_id": "I87654321",
@@ -357,7 +357,7 @@ class TestAnnotationModelSerialization:
         assert data["pecha_id"] == "I12345678"  # Should be string not nested object
         assert data["document_id"] == "DOC123"
         assert data["title"] == "Serialization Test"
-        assert data["type"] == LayerEnum.alignment
+        assert data["type"] == LayerEnum.ALIGNMENT
         assert data["path"] == "E11/layer.json"
         assert data["aligned_to"]["pecha_id"] == "I87654321"
         assert data["aligned_to"]["alignment_id"] == "ALIGN001"
@@ -377,7 +377,7 @@ class TestAnnotationModelSerialization:
         assert data["pecha_id"] == "I12345678"
         assert data["document_id"] == "DOC123"
         assert data["title"] == "JSON Serialization Test"
-        assert data["type"] == "Segmentation"
+        assert data["type"] == "segmentation"
         assert data["path"] == "E11/layer.json"
         assert data["aligned_to"] is None
 
