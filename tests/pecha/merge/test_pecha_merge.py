@@ -44,10 +44,7 @@ def test_pecha_merge(temp_data):
         / "P0001"
         / "layers"
         / "0001"
-        / "Segmentation-a222.json"
+        / "segmentation-a222.json"
     )
     if target_new_post_layer_path.exists():
         target_new_post_layer_path.unlink()
-
-
-test_pecha_merge(Path(__file__).parent / "data")
