@@ -71,6 +71,22 @@ class TranslationAlignmentTransfer:
         )
         return self.map_layer_to_layer(transfer_layer, display_layer)
 
+    def get_translation_pechas_mapping(
+        self, translation_pecha: Pecha, translation_alignment_id: str
+    ) -> Dict[int, List]:
+        """
+        Get Segmentation mapping from translation display pecha -> translation pecha
+        """
+        display_layer_path = self.get_display_layer_path(translation_pecha)
+        tgt_layer_path = translation_pecha.layer_path / translation_alignment_id
+
+        display_layer = AnnotationStore(file=str(display_layer_path))
+        transfer_layer = AnnotationStore(file=str(tgt_layer_path))
+
+        map = self.map_layer_to_layer(transfer_layer, display_layer)
+
+        return map
+
     def get_serialized_translation(
         self,
         root_pecha: Pecha,

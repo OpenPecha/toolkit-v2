@@ -34,6 +34,26 @@ class TestTranslationAlignmentTransfer(TestCase):
         }
         assert mapping == expected_mapping
 
+    def test_get_translation_pechas_mapping(self):
+        translation_alignment_id = "AC0A/alignment-9048.json"
+        translation_transfer = TranslationAlignmentTransfer()
+        mapping = translation_transfer.get_translation_pechas_mapping(
+            self.translation_pecha, translation_alignment_id
+        )
+        expected_mapping = {
+            1: [1],
+            2: [1],
+            3: [2],
+            4: [3],
+            5: [3],
+            6: [4],
+            7: [5],
+            8: [6],
+            9: [7],
+            10: [8],
+        }
+        assert mapping == expected_mapping
+
     def test_get_serialized_translation(self):
         root_alignment_id = "A340/alignment-CCF1.json"
         translation_alignment_id = "AC0A/alignment-9048.json"
@@ -47,3 +67,8 @@ class TestTranslationAlignmentTransfer(TestCase):
         )
         expected_serialized_json = read_json(DATA_DIR / "serialized_translation.json")
         assert serialized_json == expected_serialized_json
+
+
+work = TestTranslationAlignmentTransfer()
+work.setUp()
+work.test_get_translation_pechas_mapping()
