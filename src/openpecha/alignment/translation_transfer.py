@@ -10,9 +10,6 @@ logger = get_logger(__name__)
 
 
 class TranslationAlignmentTransfer:
-    def get_first_layer_path(self, pecha: Pecha) -> Path:
-        return next(pecha.layer_path.rglob("*.json"))
-
     def get_display_layer_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
