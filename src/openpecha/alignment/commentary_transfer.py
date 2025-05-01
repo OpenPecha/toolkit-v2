@@ -73,9 +73,9 @@ class CommentaryAlignmentTransfer:
         display_layer_path = self.get_display_layer_path(root_pecha)
 
         display_layer = load_layer(display_layer_path)
-        transfer_layer = load_layer(root_pecha.layer_path / root_alignment_id)
+        alignment_layer = load_layer(root_pecha.layer_path / root_alignment_id)
 
-        map = self.map_layer_to_layer(transfer_layer, display_layer)
+        map = self.map_layer_to_layer(alignment_layer, display_layer)
         return map
 
     def get_serialized_commentary(
