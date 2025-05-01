@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "openpecha"
-version = "0.0.1"
+name = "openpecha2"
+version = "0.1.0"
 description = "OpenPecha toolkit version 2"
 authors = [
-    "Tashi Tsering <ta3tsering@gmail.com>",
-    "Tenzin Tsundue <t
+    "Ta4tsering <ta3tsering@gmail.com>",
+    "Tenzin Tsundue <sundue@esukhia.org>",
 ]
 readme = "README.md"
 classifiers = [
@@ -50,10 +50,11 @@ build-backend = "poetry.core.masonry.api"
 "Homepage" = "https://github.com/OpenPecha/openpecha-project-template"
 "Bug Tracker" = "https://github.com/OpenPecha/openpecha-project-template/issues"
 
-[tool.commitizen]
-name = "cz_conventional_commits"
-version = "0.0.1"
-version_files = [
-    "pyproject.toml:version"
-]
-tag_format = "v$version"
+[tool.semantic_release]
+version_variable = ["pyproject.toml:version"]
+version_source = "tag"
+commit_message = "chore(release): version {version}"
+upload_to_pypi = true
+upload_to_release = true
+build_command = "poetry build"
+
