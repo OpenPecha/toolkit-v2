@@ -133,11 +133,9 @@ class TranslationAlignmentTransfer:
         )
 
         layer_path = translation_pecha.layer_path / translation_display_id
-
         anns = get_anns(load_layer(layer_path), include_span=True)
 
         segments = []
-
         mapped_segments = {}
         for src_idx, tgt_map in translation_map.items():
             translation_text = next(
@@ -149,7 +147,6 @@ class TranslationAlignmentTransfer:
                 "",
             )
             tgt_idx = tgt_map[0]
-
             root_idx = root_map[tgt_idx][0]
             mapped_segments[root_idx] = translation_text
 
