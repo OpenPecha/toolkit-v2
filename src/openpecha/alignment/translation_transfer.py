@@ -81,9 +81,9 @@ class TranslationAlignmentTransfer:
         tgt_layer_path = translation_pecha.layer_path / translation_alignment_id
 
         display_layer = AnnotationStore(file=str(display_layer_path))
-        transfer_layer = AnnotationStore(file=str(tgt_layer_path))
+        alignment_layer_path = AnnotationStore(file=str(tgt_layer_path))
 
-        map = self.map_layer_to_layer(display_layer, transfer_layer)
+        map = self.map_layer_to_layer(display_layer, alignment_layer_path)
 
         return map
 
@@ -132,3 +132,33 @@ class TranslationAlignmentTransfer:
             ) else serialized_content.append(text)
 
         return serialized_content
+
+    def get_serialized_translation_display(
+        self,
+        root_pecha: Pecha,
+        root_alignment_id: str,
+        translation_pecha: Pecha,
+        translation_alignment_id: str,
+    ):
+        """
+        Input: map from transfer_layer -> display_layer (One to Many)
+        Structure in a way such as : <chapter number><display idx>translation text
+        Note: From many relation in display layer, take first idx (Sefaria map limitation)
+        """
+        root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
+        translation_map = self.get_translation_pechas_mapping(
+            translation_pecha, translation_alignment_id
+        )
+
+        layer_path = self.get_display_layer_path(translation_pecha)
+
+        anns = self.extract_root_anns(AnnotationStore(file=str(layer_path)))
+
+        segments = []
+        for src_idx, tgt_map in translation_map.items():
+            translation_text = anns[src_idx]["text"]
+            tgt_idx = tgt_map[0]
+
+            root_idx = root_map[tgt_idx][0]
+            segments.append(f"<1><{root_idx}>{translation_text}")
+        return segments
