@@ -83,7 +83,7 @@ class TranslationAlignmentTransfer:
         display_layer = AnnotationStore(file=str(display_layer_path))
         transfer_layer = AnnotationStore(file=str(tgt_layer_path))
 
-        map = self.map_layer_to_layer(transfer_layer, display_layer)
+        map = self.map_layer_to_layer(display_layer, transfer_layer)
 
         return map
 

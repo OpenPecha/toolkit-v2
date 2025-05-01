@@ -41,16 +41,14 @@ class TestTranslationAlignmentTransfer(TestCase):
             self.translation_pecha, translation_alignment_id
         )
         expected_mapping = {
-            1: [1],
-            2: [1],
-            3: [2],
-            4: [3],
-            5: [3],
-            6: [4],
-            7: [5],
-            8: [6],
-            9: [7],
-            10: [8],
+            1: [1, 2],
+            2: [3],
+            3: [4, 5],
+            4: [6],
+            5: [7],
+            6: [8],
+            7: [9],
+            8: [10],
         }
         assert mapping == expected_mapping
 
