@@ -23,7 +23,7 @@ class TranslationAlignmentTransfer:
         Map annotations from src_layer to tgt_layer based on span overlap or containment.
         Returns a mapping from source indices to lists of target indices.
         """
-        mapping: Dict[int, List[int]] = {}
+        map: Dict[int, List[int]] = {}
 
         src_anns = get_anns(src_layer, include_span=True)
         tgt_anns = get_anns(tgt_layer, include_span=True)
@@ -31,29 +31,30 @@ class TranslationAlignmentTransfer:
         for src_ann in src_anns:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
             src_idx = int(src_ann["root_idx_mapping"])
-            mapping[src_idx] = []
+            map[src_idx] = []
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
                 tgt_idx = int(tgt_ann["root_idx_mapping"])
+
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
                 )
                 is_contained = tgt_start < src_start and tgt_end > src_end
                 is_edge_overlap = tgt_start == src_end or tgt_end == src_start
                 if (is_overlap or is_contained) and not is_edge_overlap:
-                    mapping[src_idx].append(tgt_idx)
+                    map[src_idx].append(tgt_idx)
 
-        return dict(sorted(mapping.items()))
+        return dict(sorted(map.items()))
 
     def get_root_pechas_mapping(
-        self, root_pecha: Pecha, root_alignment_id: str
+        self, root_pecha: Pecha, alignment_id: str
     ) -> Dict[int, List[int]]:
         """
         Get mapping from root_pecha's alignment layer to its display segmentation layer.
         """
         display_layer_path = self.get_display_layer_path(root_pecha)
         display_layer = load_layer(display_layer_path)
-        alignment_layer = load_layer(root_pecha.layer_path / root_alignment_id)
+        alignment_layer = load_layer(root_pecha.layer_path / alignment_id)
         return self.map_layer_to_layer(alignment_layer, display_layer)
 
     def get_translation_pechas_mapping(
@@ -65,7 +66,7 @@ class TranslationAlignmentTransfer:
         """
         Get Segmentation mapping from translation display pecha -> translation pecha
         """
-        display_layer_path = self.get_display_layer_path(translation_pecha)
+        display_layer_path = translation_pecha.layer_path / translation_display_id
         alignment_layer_path = translation_pecha.layer_path / translation_alignment_id
 
         display_layer = load_layer(display_layer_path)
