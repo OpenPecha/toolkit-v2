@@ -149,10 +149,17 @@ class TranslationAlignmentTransfer:
         anns = self.extract_anns(load_layer(layer_path))
 
         segments = []
+
+        mapped_segments = {}
         for src_idx, tgt_map in translation_map.items():
             translation_text = anns[src_idx]["text"]
             tgt_idx = tgt_map[0]
 
             root_idx = root_map[tgt_idx][0]
-            segments.append(f"<1><{root_idx}>{translation_text}")
+            mapped_segments[root_idx] = translation_text
+
+        max_root_idx = max(mapped_segments.keys(), default=0)
+        for i in range(1, max_root_idx + 1):
+            text = mapped_segments.get(i, "")
+            segments.append(text)
         return segments
