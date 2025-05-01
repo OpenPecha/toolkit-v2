@@ -40,29 +40,29 @@ class CommentaryAlignmentTransfer:
         Map annotations from src_layer to tgt_layer based on span overlap or containment.
         Returns a mapping from source indices to lists of target indices.
         """
-        mapping: Dict = {}
+        map: Dict[int, List[int]] = {}
 
-        src_anns = self.extract_root_anns(src_layer)
-        tgt_anns = self.extract_root_anns(tgt_layer)
+        src_anns = get_anns(src_layer, include_span=True)
+        tgt_anns = get_anns(tgt_layer, include_span=True)
 
-        for src_idx, src_span in src_anns.items():
-            src_start, src_end = src_span["Span"]["start"], src_span["Span"]["end"]
-            mapping[src_idx] = []
+        for src_ann in src_anns:
+            src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
+            src_idx = int(src_ann["root_idx_mapping"])
+            map[src_idx] = []
+            for tgt_ann in tgt_anns:
+                tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
+                tgt_idx = int(tgt_ann["root_idx_mapping"])
 
-            for tgt_idx, tgt_span in tgt_anns.items():
-                tgt_start, tgt_end = tgt_span["Span"]["start"], tgt_span["Span"]["end"]
-
-                # Check for mapping conditions
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
                 )
                 is_contained = tgt_start < src_start and tgt_end > src_end
                 is_edge_overlap = tgt_start == src_end or tgt_end == src_start
-                if is_overlap or is_contained and not is_edge_overlap:
-                    mapping[src_idx].append(tgt_idx)
+                if (is_overlap or is_contained) and not is_edge_overlap:
+                    map[src_idx].append(tgt_idx)
 
-        # Sort the mapping by source indices
-        return dict(sorted(mapping.items()))
+        # Sort the dictionary
+        return dict(sorted(map.items()))
 
     def get_root_pechas_mapping(
         self, pecha: Pecha, alignment_id: str
