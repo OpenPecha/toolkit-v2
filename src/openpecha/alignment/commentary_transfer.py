@@ -17,21 +17,11 @@ class CommentaryAlignmentTransfer:
     def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
-    def extract_root_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
-        """
-        Extract annotations from a STAM layer into a dictionary keyed by root index mapping.
-        """
-        anns = {}
-        for ann in layer.annotations():
-            start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {data.key().id(): str(data.value()) for data in ann}
-            root_idx = int(ann_metadata["root_idx_mapping"])
-            anns[root_idx] = {
-                "Span": {"start": start, "end": end},
-                "text": str(ann),
-                "root_idx_mapping": root_idx,
-            }
-        return anns
+    def ann_to_dict(self, anns: List[Dict]) -> Dict:
+        res = {}
+        for ann in anns:
+            res[int(ann["root_idx_mapping"])] = ann
+        return res
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
@@ -89,10 +79,12 @@ class CommentaryAlignmentTransfer:
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
         root_display_layer_path = self.get_segmentation_ann_path(root_pecha)
-        root_display_anns = self.extract_root_anns(load_layer(root_display_layer_path))
+        root_display_anns = self.ann_to_dict(
+            get_anns(load_layer(root_display_layer_path))
+        )
 
-        root_anns = self.extract_root_anns(
-            load_layer(root_pecha.layer_path / root_alignment_id)
+        root_anns = self.ann_to_dict(
+            get_anns(load_layer(root_pecha.layer_path / root_alignment_id))
         )
 
         commentary_anns = get_anns(

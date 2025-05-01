@@ -42,8 +42,8 @@ class TestCommentaryAlignmentTransfer(TestCase):
             commentary_alignment_id,
         )
 
-        expected_json = self.DATA_DIR / "expected_serialized_commentary.json"
-        assert read_json(expected_json) == serialized_json
+        expected_json = read_json(self.DATA_DIR / "expected_serialized_commentary.json")
+        assert serialized_json == expected_json
 
     def tearDown(self):
         pass
