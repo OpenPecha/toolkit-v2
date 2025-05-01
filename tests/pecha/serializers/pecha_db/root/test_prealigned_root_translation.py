@@ -53,3 +53,23 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
             Path(__file__).parent / "data/expected_prealigned_root_translation.json"
         )
         assert read_json(expected_json) == serialized_json
+
+    def test_prealigned_root_translation_pecha_with_display(self):
+        root_alignment_id = "A340/alignment-CCF1.json"
+        translation_alignment_id = "AC0A/alignment-9048.json"
+        translation_display_id = "AC0A/segmentation-E0A6.json"
+
+        serializer = PreAlignedRootTranslationSerializer()
+        serialized_json = serializer.serialize(
+            self.root_pecha,
+            root_alignment_id,
+            self.translation_pecha_with_display,
+            translation_alignment_id,
+            self.pecha_category,
+            translation_display_id,
+        )
+        expected_json = (
+            Path(__file__).parent
+            / "data/expected_prealigned_root_translation_with_display.json"
+        )
+        assert read_json(expected_json) == serialized_json

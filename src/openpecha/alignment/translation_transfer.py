@@ -133,6 +133,7 @@ class TranslationAlignmentTransfer:
         root_alignment_id: str,
         translation_pecha: Pecha,
         translation_alignment_id: str,
+        translation_display_id: str,
     ):
         """
         Input: map from transfer_layer -> display_layer (One to Many)
@@ -144,7 +145,7 @@ class TranslationAlignmentTransfer:
             translation_pecha, translation_alignment_id
         )
 
-        layer_path = self.get_display_layer_path(translation_pecha)
+        layer_path = translation_pecha.layer_path / translation_display_id
 
         anns = self.extract_anns(load_layer(layer_path))
 

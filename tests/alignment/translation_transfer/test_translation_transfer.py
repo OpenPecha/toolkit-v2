@@ -69,6 +69,7 @@ class TestTranslationAlignmentTransfer(TestCase):
     def test_get_serialized_translation_with_pecha_display(self):
         root_alignment_id = "A340/alignment-CCF1.json"
         translation_alignment_id = "AC0A/alignment-9048.json"
+        translation_display_id = "AC0A/segmentation-E0A6.json"
 
         translation_transfer = TranslationAlignmentTransfer()
         serialized_json = translation_transfer.get_serialized_translation_display(
@@ -76,6 +77,7 @@ class TestTranslationAlignmentTransfer(TestCase):
             root_alignment_id,
             self.translation_pecha,
             translation_alignment_id,
+            translation_display_id,
         )
         expected_serialized_json = read_json(
             DATA_DIR / "expected_serialized_translation_with_display.json"
