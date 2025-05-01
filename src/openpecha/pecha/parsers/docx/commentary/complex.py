@@ -7,7 +7,7 @@ from docx.shared import RGBColor
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType
 from openpecha.pecha.parsers import BaseParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
@@ -161,7 +161,7 @@ class DocxComplexCommentaryParser(BaseParser):
             doc = self.update_doc(doc, len(root_idx_mapping) + 1)
             updated_segment = segment.strip()
             curr_segment_ann = {
-                LayerEnum.ALIGNMENT.value: {
+                AnnotationType.ALIGNMENT.value: {
                     "start": char_count,
                     "end": char_count + len(updated_segment),
                 },
@@ -169,7 +169,7 @@ class DocxComplexCommentaryParser(BaseParser):
             }
         else:
             curr_segment_ann = {
-                LayerEnum.ALIGNMENT.value: {
+                AnnotationType.ALIGNMENT.value: {
                     "start": char_count,
                     "end": char_count + len(segment),
                 }
@@ -205,7 +205,10 @@ class DocxComplexCommentaryParser(BaseParser):
                         end = start + len(doc_style["texts"][idx])
                         sapche_anns.append(
                             {
-                                LayerEnum.SAPCHE.value: {"start": start, "end": end},
+                                AnnotationType.SAPCHE.value: {
+                                    "start": start,
+                                    "end": end,
+                                },
                                 "sapche_number": sapche_number,
                             }
                         )
@@ -215,7 +218,7 @@ class DocxComplexCommentaryParser(BaseParser):
                     #     end = start + len(doc_style["texts"][idx])
                     #     sapche_anns.append(
                     #         {
-                    #             LayerEnum.sapche.value: {
+                    #             AnnotationType.sapche.value: {
                     #                 "start": start,
                     #                 "end": end,
                     #             }
@@ -224,7 +227,7 @@ class DocxComplexCommentaryParser(BaseParser):
                 inner_char_count += len(doc_style["texts"][idx])
             inner_char_count += 1  # for newline
 
-        formatted_anns = self.merge_anns(sapche_anns, LayerEnum.SAPCHE)
+        formatted_anns = self.merge_anns(sapche_anns, AnnotationType.SAPCHE)
         self.temp_state["sapche"]["anns"].extend(formatted_anns)  # type: ignore
         updated_segment = "\n".join(
             ["".join(doc_style["texts"]) for doc_style in doc["styles"]]
@@ -233,7 +236,7 @@ class DocxComplexCommentaryParser(BaseParser):
 
     @staticmethod
     def merge_anns(
-        anns: List[Dict[str, Any]], ann_layer: LayerEnum
+        anns: List[Dict[str, Any]], ann_layer: AnnotationType
     ) -> List[Dict[str, Any]]:
         """
         Merge overlapping or consecutive sapche annotations.
@@ -265,9 +268,9 @@ class DocxComplexCommentaryParser(BaseParser):
         """
         if self.temp_state["meaning_segment"]["anns"]:
             meaning_segment_ann = self.temp_state["meaning_segment"]["anns"][0]  # type: ignore
-            meaning_segment_ann[LayerEnum.ALIGNMENT.value]["end"] -= self.temp_state[
-                "sapche"
-            ]["char_diff"]
+            meaning_segment_ann[AnnotationType.ALIGNMENT.value][
+                "end"
+            ] -= self.temp_state["sapche"]["char_diff"]
             self.meaning_segment_anns.append(meaning_segment_ann)
 
         self.sapche_anns.extend(self.temp_state["sapche"]["anns"])  # type: ignore
@@ -308,15 +311,15 @@ class DocxComplexCommentaryParser(BaseParser):
         basename = pecha.set_base(self.base)
 
         # Add meaning_segment layer
-        meaning_segment_layer, _ = pecha.add_layer(basename, LayerEnum.ALIGNMENT)
+        meaning_segment_layer, _ = pecha.add_layer(basename, AnnotationType.ALIGNMENT)
         for ann in self.meaning_segment_anns:
-            pecha.add_annotation(meaning_segment_layer, ann, LayerEnum.ALIGNMENT)
+            pecha.add_annotation(meaning_segment_layer, ann, AnnotationType.ALIGNMENT)
         meaning_segment_layer.save()
 
         # Add sapche layer
-        sapche_layer, _ = pecha.add_layer(basename, LayerEnum.SAPCHE)
+        sapche_layer, _ = pecha.add_layer(basename, AnnotationType.SAPCHE)
         for ann in self.sapche_anns:
-            pecha.add_annotation(sapche_layer, ann, LayerEnum.SAPCHE)
+            pecha.add_annotation(sapche_layer, ann, AnnotationType.SAPCHE)
         sapche_layer.save()
 
         pecha.set_metadata(

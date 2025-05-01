@@ -4,7 +4,7 @@
 
 # from openpecha.config import PECHAS_PATH
 # from openpecha.pecha import Pecha
-# from openpecha.pecha.layer import LayerEnum
+# from openpecha.pecha.layer import AnnotationType
 # from openpecha.pecha.parsers import BaseParser
 
 
@@ -171,26 +171,26 @@
 #         total_pages = 0
 
 #         if "segments" in self.temp_state["annotations"]:
-#             segment, _ = pecha.add_layer(base_name, LayerEnum.segmentation)
+#             segment, _ = pecha.add_layer(base_name, AnnotationType.segmentation)
 #             for segment_id, segment_span in self.temp_state["annotations"][
 #                 "segments"
 #             ].items():
 #                 segment_ann = {
-#                     LayerEnum.segmentation.value: segment_span["span"],
+#                     AnnotationType.segmentation.value: segment_span["span"],
 #                     "segment_id": segment_id,
 #                 }
-#                 pecha.add_annotation(segment, segment_ann, LayerEnum.segmentation)
+#                 pecha.add_annotation(segment, segment_ann, AnnotationType.segmentation)
 #             segment.save()
 #             total_segments = len(self.temp_state["annotations"]["segments"])
 
 #         if "pages" in self.temp_state["annotations"]:
-#             pagination, _ = pecha.add_layer(base_name, LayerEnum.pagination)
+#             pagination, _ = pecha.add_layer(base_name, AnnotationType.pagination)
 #             for page_id, page_ann in self.temp_state["annotations"]["pages"].items():
 #                 page_ann = {
-#                     LayerEnum.pagination.value: page_ann["span"],
+#                     AnnotationType.pagination.value: page_ann["span"],
 #                     "folio": page_id,
 #                 }
-#                 pecha.add_annotation(pagination, page_ann, LayerEnum.pagination)
+#                 pecha.add_annotation(pagination, page_ann, AnnotationType.pagination)
 #             pagination.save()
 #             total_pages = len(self.temp_state["annotations"]["pages"])
 

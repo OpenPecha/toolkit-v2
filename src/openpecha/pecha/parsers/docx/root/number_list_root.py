@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 from docx2python import docx2python
 
@@ -11,14 +11,14 @@ from openpecha.exceptions import (
     MetaDataValidationError,
 )
 from openpecha.pecha import Pecha, annotation_path
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
-from openpecha.pecha.parsers import BaseParser
+from openpecha.pecha.parsers import DocxBaseParser
 
 logger = get_logger(__name__)
 
 
-class DocxRootParser(BaseParser):
+class DocxRootParser(DocxBaseParser):
     def __init__(self):
         self.number_list_regex = r"^(\d+)\)\t(.*)"
 
@@ -108,7 +108,7 @@ class DocxRootParser(BaseParser):
         return (positions, base)
 
     def extract_segmentation_anns(
-        self, positions: List[Dict[str, int]], ann_type: LayerEnum
+        self, positions: List[Dict[str, int]], ann_type: AnnotationType
     ) -> List[Dict]:
         """Create segment annotations from position information.
 
@@ -150,7 +150,8 @@ class DocxRootParser(BaseParser):
     def parse(
         self,
         input: str | Path,
-        metadata: Dict[str, Any],
+        annotation_type: AnnotationType,
+        metadata: Dict,
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
@@ -173,9 +174,7 @@ class DocxRootParser(BaseParser):
         positions, base = self.extract_segmentation_coords(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        annotation_path = self.add_segmentation_layer(
-            pecha, positions, LayerEnum.SEGMENTATION
-        )
+        annotation_path = self.add_segmentation_layer(pecha, positions, annotation_type)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return (pecha, annotation_path)
@@ -205,7 +204,7 @@ class DocxRootParser(BaseParser):
         return pecha
 
     def add_segmentation_layer(
-        self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
+        self, pecha: Pecha, positions: List[Dict], ann_type: AnnotationType
     ) -> annotation_path:
 
         basename = list(pecha.bases.keys())[0]

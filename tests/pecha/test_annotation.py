@@ -10,7 +10,7 @@ from openpecha.pecha.annotations import (
     PechaId,
     Span,
 )
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 
 
 def test_span_end_must_not_be_less_than_start():
@@ -51,27 +51,27 @@ def test_annotation_model_minimal_alignment():
     align = PechaAlignment(pecha_id="I1234ABCD", alignment_id="align1")
     am = AnnotationModel(
         pecha_id="I1234ABCD",
-        type=LayerEnum.ALIGNMENT,
+        type=AnnotationType.ALIGNMENT,
         document_id="doc1",
         path="ann1",
         title="Test",
         aligned_to=align,
     )
     assert am.pecha_id == "I1234ABCD"
-    assert am.type == LayerEnum.ALIGNMENT
+    assert am.type == AnnotationType.ALIGNMENT
     assert am.aligned_to == align
 
 
 def test_annotation_model_minimal_non_alignment():
     am = AnnotationModel(
         pecha_id="I1234ABCD",
-        type=LayerEnum.SEGMENTATION,
+        type=AnnotationType.SEGMENTATION,
         document_id="doc1",
         path="ann1",
         title="Test",
     )
     assert am.pecha_id == "I1234ABCD"
-    assert am.type == LayerEnum.SEGMENTATION
+    assert am.type == AnnotationType.SEGMENTATION
     assert am.aligned_to is None
 
 
@@ -79,7 +79,7 @@ def test_annotation_model_with_alignment():
     align = PechaAlignment(pecha_id="I1234ABCD", alignment_id="align1")
     am = AnnotationModel(
         pecha_id="I1234ABCD",
-        type=LayerEnum.ALIGNMENT,
+        type=AnnotationType.ALIGNMENT,
         document_id="doc1",
         path="ann1",
         title="Test",
@@ -94,7 +94,7 @@ def test_annotation_model_invalid_pechaid():
     with pytest.raises(ValidationError):
         AnnotationModel(
             pecha_id="BADID",
-            type=LayerEnum.ALIGNMENT,
+            type=AnnotationType.ALIGNMENT,
             document_id="doc1",
             path="ann1",
             title="Test",
@@ -123,7 +123,7 @@ def test_annotation_model_missing_required():
     with pytest.raises(ValidationError):
         AnnotationModel(
             pecha_id="I1234ABCD",
-            type=LayerEnum.ALIGNMENT,
+            type=AnnotationType.ALIGNMENT,
             document_id="doc1",
             # path missing
             title="Test",
@@ -146,7 +146,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Annotation"
-        assert model.type == LayerEnum.SEGMENTATION
+        assert model.type == AnnotationType.SEGMENTATION
         assert model.aligned_to is None
 
     def test_valid_annotation_with_type(self):
@@ -163,7 +163,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Alignment Annotation"
-        assert model.type == LayerEnum.ALIGNMENT
+        assert model.type == AnnotationType.ALIGNMENT
         assert model.aligned_to is None
 
     def test_valid_annotation_with_alignment(self):
@@ -184,7 +184,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Annotation with Alignment"
-        assert model.type == LayerEnum.ALIGNMENT
+        assert model.type == AnnotationType.ALIGNMENT
         assert model.aligned_to is not None
         assert model.model_dump()["aligned_to"]["pecha_id"] == "I87654321"
         assert model.model_dump()["aligned_to"]["alignment_id"] == "ALIGN001"
@@ -202,7 +202,7 @@ class TestValidAnnotationModel:
         assert str(model.pecha_id) == "I12345678"
         assert model.document_id == "DOC123"
         assert model.title == "Test Dict Annotation"
-        assert model.type == LayerEnum.SEGMENTATION
+        assert model.type == AnnotationType.SEGMENTATION
 
 
 class TestInvalidAnnotationModel:
@@ -357,7 +357,7 @@ class TestAnnotationModelSerialization:
         assert data["pecha_id"] == "I12345678"  # Should be string not nested object
         assert data["document_id"] == "DOC123"
         assert data["title"] == "Serialization Test"
-        assert data["type"] == LayerEnum.ALIGNMENT
+        assert data["type"] == AnnotationType.ALIGNMENT
         assert data["path"] == "E11/layer.json"
         assert data["aligned_to"]["pecha_id"] == "I87654321"
         assert data["aligned_to"]["alignment_id"] == "ALIGN001"
