@@ -3,10 +3,11 @@ name = "openpecha2"
 version = "0.1.0"
 description = "OpenPecha toolkit version 2"
 authors = [
-    "Ta4tsering <ta3tsering@gmail.com>",
-    "Tenzin Tsundue <sundue@esukhia.org>",
+    "Tashi Tsering <tashitsering@esukhia.org>",
+    "Tenzin Tsundue <tsundue@esukhia.org>"
 ]
 readme = "README.md"
+packages = [{include = "openpecha", from = "src"}]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -14,7 +15,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+python = ">=3.10,<3.12"
 pydantic = ">=2.7.4"
 stam = "0.9.0"
 diff-match-patch = "20230430"
@@ -27,7 +28,6 @@ subprocess-run = "0.0.8"
 python-docx = ">=1.1.2"
 bo-sent-tokenizer = { git = "https://github.com/OpenPecha/bo_sent_tokenizer.git" }
 fast-antx = { git = "https://github.com/OpenPecha/fast-antx.git" }
-pecha-org-tools = { git = "https://github.com/OpenPecha/pecha_org_tools.git" }
 google-auth-httplib2 = ">=0.2.0"
 google-api-python-client = ">=2.156.0"
 docx2python = "3.3.0"
@@ -57,4 +57,3 @@ commit_message = "chore(release): version {version}"
 upload_to_pypi = true
 upload_to_release = true
 build_command = "poetry build"
-

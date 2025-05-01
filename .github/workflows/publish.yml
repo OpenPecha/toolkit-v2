@@ -19,17 +19,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      ### 🦀 Install Rust toolchain
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
       ### 🐍 Set Up Python
-      - name: Set up Python 3.9
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.11"
 
       ### 📥 Install Poetry
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: "1.7.1"
+          version: "1.8.2"
 
       ### 📚 Install Dependencies
       - name: Install dependencies
@@ -44,7 +48,7 @@ jobs:
 
       ### 🚀 Bump Version & Publish to PyPI using python-semantic-release
       - name: Semantic Release - Version Bump and Publish
-        uses: python-semantic-release/python-semantic-release@v7.34.6
+        uses: python-semantic-release/python-semantic-release@v8.7.2
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           pypi_token: ${{ secrets.PYPI_TOKEN }}
