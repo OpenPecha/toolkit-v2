@@ -78,9 +78,9 @@ class CommentaryAlignmentTransfer:
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
-        root_display_layer_path = self.get_segmentation_ann_path(root_pecha)
-        root_display_anns = self.index_annotations_by_root(
-            get_anns(load_layer(root_display_layer_path))
+        root_segmentation_path = self.get_segmentation_ann_path(root_pecha)
+        root_segmentation_anns = self.index_annotations_by_root(
+            get_anns(load_layer(root_segmentation_path))
         )
 
         root_anns = self.index_annotations_by_root(
@@ -114,13 +114,13 @@ class CommentaryAlignmentTransfer:
 
             # Dont include mapping if root_display is empty
             root_display_idx = root_map[root_idx][0]
-            idx_not_in_root_display = root_display_idx not in root_display_anns
+            idx_not_in_root_display = root_display_idx not in root_segmentation_anns
             if idx_not_in_root_display:
                 serialized_content.append(commentary_text)
                 continue
 
             is_root_display_empty = is_empty(
-                root_display_anns[root_display_idx]["text"]
+                root_segmentation_anns[root_display_idx]["text"]
             )
             if is_root_display_empty:
                 serialized_content.append(commentary_text)
