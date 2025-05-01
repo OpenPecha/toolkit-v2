@@ -72,7 +72,7 @@ class TranslationAlignmentTransfer:
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
         return self.map_layer_to_layer(segmentation_layer, alignment_layer)
 
-    def get_serialized_translation(
+    def get_serialized_translation_alignment(
         self,
         root_pecha: Pecha,
         root_alignment_id: str,
@@ -112,7 +112,7 @@ class TranslationAlignmentTransfer:
 
         return res
 
-    def get_serialized_translation_display(
+    def get_serialized_translation_segmentation(
         self,
         root_pecha: Pecha,
         root_alignment_id: str,

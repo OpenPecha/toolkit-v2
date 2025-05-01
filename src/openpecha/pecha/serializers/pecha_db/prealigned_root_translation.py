@@ -111,7 +111,7 @@ class PreAlignedRootTranslationSerializer:
         # Get content from root and translation pecha
         if translation_display_id:
             src_content = (
-                TranslationAlignmentTransfer().get_serialized_translation_display(
+                TranslationAlignmentTransfer().get_serialized_translation_segmentation(
                     root_pecha,
                     root_alignment_id,
                     translation_pecha,
@@ -120,11 +120,13 @@ class PreAlignedRootTranslationSerializer:
                 )
             )
         else:
-            src_content = TranslationAlignmentTransfer().get_serialized_translation(
-                root_pecha,
-                root_alignment_id,
-                translation_pecha,
-                translation_alignment_id,
+            src_content = (
+                TranslationAlignmentTransfer().get_serialized_translation_alignment(
+                    root_pecha,
+                    root_alignment_id,
+                    translation_pecha,
+                    translation_alignment_id,
+                )
             )
 
         tgt_content = self.get_root_content(
