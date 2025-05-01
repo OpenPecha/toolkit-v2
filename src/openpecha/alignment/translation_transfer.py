@@ -80,7 +80,7 @@ class TranslationAlignmentTransfer:
         translation_alignment_id: str,
     ) -> List[str]:
         """
-        Serialize translation segments so that each segment aligns with the display layer of the root pecha.
+        Serialize with Root Translation Alignment Text mapped to Root Segmentation Text
         """
 
         def is_empty(text: str) -> bool:
@@ -121,9 +121,7 @@ class TranslationAlignmentTransfer:
         translation_display_id: str,
     ):
         """
-        Input: map from transfer_layer -> display_layer (One to Many)
-        Structure in a way such as : <chapter number><display idx>translation text
-        Note: From many relation in display layer, take first idx (Sefaria map limitation)
+        Serialize with Root Translation Segmentation Text mapped to Root Segmentation Text
         """
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
         translation_map = self.get_translation_pechas_mapping(
