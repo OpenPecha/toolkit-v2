@@ -87,15 +87,14 @@ class TranslationAlignmentTransfer:
             return not text.strip().replace("\n", "")
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
-        translation_layer_path = (
+
+        translation_alignment_layer = load_layer(
             root_translation_pecha.layer_path / translation_alignment_id
         )
-        translation_anns = get_anns(
-            load_layer(translation_layer_path), include_span=True
-        )
+        anns = get_anns(translation_alignment_layer, include_span=True)
 
         mapped_segment: Dict[int, List[str]] = {}
-        for ann in translation_anns:
+        for ann in anns:
             root_idx = int(ann["root_idx_mapping"])
             translation_text = ann["text"]
             if not root_map.get(root_idx):
