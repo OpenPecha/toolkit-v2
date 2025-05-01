@@ -17,7 +17,7 @@ class CommentaryAlignmentTransfer:
     def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
-    def ann_to_dict(self, anns: List[Dict]) -> Dict:
+    def index_annotations_by_root(self, anns: List[Dict]) -> Dict:
         res = {}
         for ann in anns:
             res[int(ann["root_idx_mapping"])] = ann
@@ -79,11 +79,11 @@ class CommentaryAlignmentTransfer:
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
         root_display_layer_path = self.get_segmentation_ann_path(root_pecha)
-        root_display_anns = self.ann_to_dict(
+        root_display_anns = self.index_annotations_by_root(
             get_anns(load_layer(root_display_layer_path))
         )
 
-        root_anns = self.ann_to_dict(
+        root_anns = self.index_annotations_by_root(
             get_anns(load_layer(root_pecha.layer_path / root_alignment_id))
         )
 
