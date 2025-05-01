@@ -16,8 +16,12 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         self.DATA_DIR = Path("tests/alignment/translation_transfer/data")
         self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/I15C4AA72")
         self.translation_pecha = Pecha.from_path(
+            Path("tests/pecha/serializers/pecha_db/root/data/translation/I4FA57826")
+        )
+        self.translation_pecha_with_display = Pecha.from_path(
             self.DATA_DIR / "translation/I4FA57826"
         )
+
         self.pecha_category: List[Dict] = [
             {
                 "description": {"en": "", "bo": ""},
