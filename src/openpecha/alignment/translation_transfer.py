@@ -96,22 +96,20 @@ class TranslationAlignmentTransfer:
         mapped_segment: Dict[int, List[str]] = {}
         for ann in anns:
             root_idx = int(ann["root_idx_mapping"])
-            translation_text = ann["text"]
+            text = ann["text"]
             if not root_map.get(root_idx):
                 continue
-            root_display_idx = root_map[root_idx][0]
-            mapped_segment.setdefault(root_display_idx, []).append(translation_text)
+            root_segmentation_idx = root_map[root_idx][0]
+            mapped_segment.setdefault(root_segmentation_idx, []).append(text)
 
         max_root_idx = max(mapped_segment.keys(), default=0)
-        serialized_content = []
+        res = []
         for i in range(1, max_root_idx + 1):
             texts = mapped_segment.get(i, [])
             text = "\n".join(texts)
-            serialized_content.append("") if is_empty(
-                text
-            ) else serialized_content.append(text)
+            res.append("") if is_empty(text) else res.append(text)
 
-        return serialized_content
+        return res
 
     def get_serialized_translation_display(
         self,
@@ -134,10 +132,9 @@ class TranslationAlignmentTransfer:
         layer_path = translation_pecha.layer_path / translation_display_id
         anns = get_anns(load_layer(layer_path), include_span=True)
 
-        segments = []
         mapped_segments = {}
         for src_idx, tgt_map in translation_map.items():
-            translation_text = next(
+            text = next(
                 (
                     ann["text"]
                     for ann in anns
@@ -147,10 +144,11 @@ class TranslationAlignmentTransfer:
             )
             tgt_idx = tgt_map[0]
             root_idx = root_map[tgt_idx][0]
-            mapped_segments[root_idx] = translation_text
+            mapped_segments[root_idx] = text
 
+        res = []
         max_root_idx = max(mapped_segments.keys(), default=0)
         for i in range(1, max_root_idx + 1):
             text = mapped_segments.get(i, "")
-            segments.append(text)
-        return segments
+            res.append(text)
+        return res
