@@ -4,7 +4,7 @@ from typing import Dict, List
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.pecha import Pecha, load_layer
+from openpecha.pecha import Pecha, get_anns, load_layer
 
 logger = get_logger(__name__)
 
@@ -16,22 +16,6 @@ class TranslationAlignmentTransfer:
         """
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
-    def extract_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
-        """
-        Extract annotations from a STAM layer into a dictionary keyed by root index mapping.
-        """
-        anns = {}
-        for ann in layer:
-            start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {data.key().id(): str(data.value()) for data in ann}
-            root_idx = int(ann_metadata["root_idx_mapping"])
-            anns[root_idx] = {
-                "Span": {"start": start, "end": end},
-                "text": str(ann),
-                "root_idx_mapping": root_idx,
-            }
-        return anns
-
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
     ) -> Dict[int, List[int]]:
@@ -41,14 +25,16 @@ class TranslationAlignmentTransfer:
         """
         mapping: Dict[int, List[int]] = {}
 
-        src_anns = self.extract_anns(src_layer)
-        tgt_anns = self.extract_anns(tgt_layer)
+        src_anns = get_anns(src_layer, include_span=True)
+        tgt_anns = get_anns(tgt_layer, include_span=True)
 
-        for src_idx, src_span in src_anns.items():
-            src_start, src_end = src_span["Span"]["start"], src_span["Span"]["end"]
+        for src_ann in src_anns:
+            src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
+            src_idx = int(src_ann["root_idx_mapping"])
             mapping[src_idx] = []
-            for tgt_idx, tgt_span in tgt_anns.items():
-                tgt_start, tgt_end = tgt_span["Span"]["start"], tgt_span["Span"]["end"]
+            for tgt_ann in tgt_anns:
+                tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
+                tgt_idx = int(tgt_ann["root_idx_mapping"])
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
                 )
@@ -56,6 +42,7 @@ class TranslationAlignmentTransfer:
                 is_edge_overlap = tgt_start == src_end or tgt_end == src_start
                 if (is_overlap or is_contained) and not is_edge_overlap:
                     mapping[src_idx].append(tgt_idx)
+
         return dict(sorted(mapping.items()))
 
     def get_root_pechas_mapping(
@@ -103,20 +90,20 @@ class TranslationAlignmentTransfer:
         translation_layer_path = (
             root_translation_pecha.layer_path / translation_alignment_id
         )
-        translation_anns = self.extract_anns(load_layer(translation_layer_path))
-        root_display_layer_path = self.get_display_layer_path(root_pecha)
-        root_display_anns = self.extract_anns(load_layer(root_display_layer_path))
+        translation_anns = get_anns(
+            load_layer(translation_layer_path), include_span=True
+        )
 
         mapped_segment: Dict[int, List[str]] = {}
-        for ann in translation_anns.values():
-            root_idx = ann["root_idx_mapping"]
+        for ann in translation_anns:
+            root_idx = int(ann["root_idx_mapping"])
             translation_text = ann["text"]
             if not root_map.get(root_idx):
                 continue
             root_display_idx = root_map[root_idx][0]
             mapped_segment.setdefault(root_display_idx, []).append(translation_text)
 
-        max_root_idx = max(root_display_anns.keys(), default=0)
+        max_root_idx = max(mapped_segment.keys(), default=0)
         serialized_content = []
         for i in range(1, max_root_idx + 1):
             texts = mapped_segment.get(i, [])
@@ -147,13 +134,20 @@ class TranslationAlignmentTransfer:
 
         layer_path = translation_pecha.layer_path / translation_display_id
 
-        anns = self.extract_anns(load_layer(layer_path))
+        anns = get_anns(load_layer(layer_path), include_span=True)
 
         segments = []
 
         mapped_segments = {}
         for src_idx, tgt_map in translation_map.items():
-            translation_text = anns[src_idx]["text"]
+            translation_text = next(
+                (
+                    ann["text"]
+                    for ann in anns
+                    if int(ann["root_idx_mapping"]) == src_idx
+                ),
+                "",
+            )
             tgt_idx = tgt_map[0]
 
             root_idx = root_map[tgt_idx][0]
