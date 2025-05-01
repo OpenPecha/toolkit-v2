@@ -51,12 +51,11 @@ class OCRBaseParser(ABC):
         raise NotImplementedError
 
 
-class DummyParser(ABC):
+class DummyParser(BaseParser):
     @property
     def name(self):
         return self.__class__.__name__
 
-    @abstractmethod
     def parse(
         self,
         input: Any,
