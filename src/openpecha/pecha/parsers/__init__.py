@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 from openpecha.config import PECHAS_PATH
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, annotation_path
+from openpecha.pecha.layer import LayerEnum
 
 
 class BaseParser(ABC):
@@ -14,11 +15,12 @@ class BaseParser(ABC):
     @abstractmethod
     def parse(
         self,
-        input: Any,
+        input: str | Path,
+        annotation_type: LayerEnum,
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
-    ):
-        pass
+    ) -> Tuple[Pecha, annotation_path]:
+        raise NotImplementedError
 
 
 class OCRBaseParser(ABC):
@@ -31,14 +33,15 @@ class OCRBaseParser(ABC):
         self,
         dataprovider: Any,
     ) -> Pecha:
-        pass
+        raise NotImplementedError
 
 
 class DummyParser(BaseParser):
     def parse(
         self,
-        input: str,
-        metadata: Dict | Path,
+        input: str | Path,
+        annotation_type: LayerEnum,
+        metadata: Dict,
         output_path: Path = PECHAS_PATH,
-    ):
-        pass
+    ) -> Tuple[Pecha, annotation_path]:
+        raise NotImplementedError

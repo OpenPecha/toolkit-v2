@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 from docx2python import docx2python
 
@@ -150,7 +150,8 @@ class DocxRootParser(BaseParser):
     def parse(
         self,
         input: str | Path,
-        metadata: Dict[str, Any],
+        annotation_type: LayerEnum,
+        metadata: Dict,
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
@@ -173,9 +174,7 @@ class DocxRootParser(BaseParser):
         positions, base = self.extract_segmentation_coords(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        annotation_path = self.add_segmentation_layer(
-            pecha, positions, LayerEnum.SEGMENTATION
-        )
+        annotation_path = self.add_segmentation_layer(pecha, positions, annotation_type)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return (pecha, annotation_path)
