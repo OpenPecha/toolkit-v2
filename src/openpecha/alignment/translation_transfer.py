@@ -16,12 +16,12 @@ class TranslationAlignmentTransfer:
         """
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
-    def extract_root_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
+    def extract_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
         """
         Extract annotations from a STAM layer into a dictionary keyed by root index mapping.
         """
         anns = {}
-        for ann in layer.annotations():
+        for ann in layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
             ann_metadata = {data.key().id(): str(data.value()) for data in ann}
             root_idx = int(ann_metadata["root_idx_mapping"])
@@ -41,8 +41,8 @@ class TranslationAlignmentTransfer:
         """
         mapping: Dict[int, List[int]] = {}
 
-        src_anns = self.extract_root_anns(src_layer)
-        tgt_anns = self.extract_root_anns(tgt_layer)
+        src_anns = self.extract_anns(src_layer)
+        tgt_anns = self.extract_anns(tgt_layer)
 
         for src_idx, src_span in src_anns.items():
             src_start, src_end = src_span["Span"]["start"], src_span["Span"]["end"]
@@ -105,11 +105,11 @@ class TranslationAlignmentTransfer:
         translation_layer_path = (
             root_translation_pecha.layer_path / translation_alignment_id
         )
-        translation_anns = self.extract_root_anns(
+        translation_anns = self.extract_anns(
             AnnotationStore(file=str(translation_layer_path))
         )
         root_display_layer_path = self.get_display_layer_path(root_pecha)
-        root_display_anns = self.extract_root_anns(
+        root_display_anns = self.extract_anns(
             AnnotationStore(file=str(root_display_layer_path))
         )
 
@@ -152,7 +152,7 @@ class TranslationAlignmentTransfer:
 
         layer_path = self.get_display_layer_path(translation_pecha)
 
-        anns = self.extract_root_anns(AnnotationStore(file=str(layer_path)))
+        anns = self.extract_anns(AnnotationStore(file=str(layer_path)))
 
         segments = []
         for src_idx, tgt_map in translation_map.items():
