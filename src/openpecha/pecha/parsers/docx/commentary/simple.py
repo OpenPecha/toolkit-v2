@@ -11,14 +11,14 @@ from openpecha.exceptions import (
     MetaDataValidationError,
 )
 from openpecha.pecha import Pecha, annotation_path
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
-from openpecha.pecha.parsers import BaseParser
+from openpecha.pecha.parsers import DocxBaseParser
 
 logger = get_logger(__name__)
 
 
-class DocxSimpleCommentaryParser(BaseParser):
+class DocxSimpleCommentaryParser(DocxBaseParser):
     def __init__(self):
         self.number_list_regex = r"^(\d+)\)\t(.*)"
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
@@ -121,7 +121,7 @@ class DocxSimpleCommentaryParser(BaseParser):
     def parse(
         self,
         input: str | Path,
-        annotation_type: LayerEnum,
+        annotation_type: AnnotationType,
         metadata: Dict[str, Any],
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
@@ -175,7 +175,7 @@ class DocxSimpleCommentaryParser(BaseParser):
         return pecha
 
     def extract_segmentation_anns(
-        self, positions: List[Dict], ann_type: LayerEnum
+        self, positions: List[Dict], ann_type: AnnotationType
     ) -> List[Dict]:
         return [
             {
@@ -189,7 +189,7 @@ class DocxSimpleCommentaryParser(BaseParser):
         ]
 
     def add_segmentation_layer(
-        self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
+        self, pecha: Pecha, positions: List[Dict], ann_type: AnnotationType
     ) -> annotation_path:
 
         basename = list(pecha.bases.keys())[0]

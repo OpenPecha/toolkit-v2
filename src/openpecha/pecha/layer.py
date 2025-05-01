@@ -11,7 +11,7 @@ class LayerCollectionEnum(Enum):
     SEGMENTATION_ANNOTATION = "segmentation_annotation"
 
 
-class LayerEnum(str, Enum):
+class AnnotationType(str, Enum):
     SEGMENTATION = "segmentation"
     ALIGNMENT = "alignment"
 
@@ -34,51 +34,51 @@ class LayerGroupEnum(Enum):
     SEGMENTATION_TYPE = "segmentation_type"
 
 
-def get_layer_group(layer_type: LayerEnum) -> LayerGroupEnum:
+def get_layer_group(layer_type: AnnotationType) -> LayerGroupEnum:
     """return the annotation category where annotation type falls in"""
 
-    if layer_type in [LayerEnum.SEGMENTATION, LayerEnum.ALIGNMENT]:
+    if layer_type in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
         return LayerGroupEnum.SEGMENTATION_TYPE
 
     if layer_type in [
-        LayerEnum.CHAPTER,
-        LayerEnum.SAPCHE,
-        LayerEnum.PAGINATION,
+        AnnotationType.CHAPTER,
+        AnnotationType.SAPCHE,
+        AnnotationType.PAGINATION,
     ]:
         return LayerGroupEnum.STRUCTURE_TYPE
 
-    if layer_type == LayerEnum.LANGUAGE:
+    if layer_type == AnnotationType.LANGUAGE:
         return LayerGroupEnum.LANGUAGE_TYPE
 
-    if layer_type == LayerEnum.OCR_CONFIDENCE:
+    if layer_type == AnnotationType.OCR_CONFIDENCE:
         return LayerGroupEnum.OCR_CONFIDENCE_TYPE
 
-    if layer_type == LayerEnum.DURCHEN:
+    if layer_type == AnnotationType.DURCHEN:
         return LayerGroupEnum.SPELLING_VARIATION
 
     raise ValueError(f"Layer type {layer_type} has no defined LayerGroupEnum")
 
 
-def get_layer_collection(layer_type: LayerEnum) -> LayerCollectionEnum:
+def get_layer_collection(layer_type: AnnotationType) -> LayerCollectionEnum:
     """return the annotation category where annotation type falls in"""
 
-    if layer_type in [LayerEnum.SEGMENTATION, LayerEnum.ALIGNMENT]:
+    if layer_type in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
         return LayerCollectionEnum.SEGMENTATION_ANNOTATION
 
     if layer_type in [
-        LayerEnum.CHAPTER,
-        LayerEnum.SAPCHE,
-        LayerEnum.PAGINATION,
+        AnnotationType.CHAPTER,
+        AnnotationType.SAPCHE,
+        AnnotationType.PAGINATION,
     ]:
         return LayerCollectionEnum.STRUCTURE_ANNOTATION
 
-    if layer_type == LayerEnum.LANGUAGE:
+    if layer_type == AnnotationType.LANGUAGE:
         return LayerCollectionEnum.LANGUAGE_ANNOTATION
 
-    if layer_type == LayerEnum.OCR_CONFIDENCE:
+    if layer_type == AnnotationType.OCR_CONFIDENCE:
         return LayerCollectionEnum.OCR_ANNOTATION
 
-    if layer_type == LayerEnum.DURCHEN:
+    if layer_type == AnnotationType.DURCHEN:
         return LayerCollectionEnum.VARIATION_ANNOTATION
 
     raise ValueError(f"Layer type {layer_type} has no defined LayerCollectionEnum")

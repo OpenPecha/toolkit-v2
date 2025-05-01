@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.pedurma import PedurmaParser
 from openpecha.utils import read_json
 
@@ -27,8 +27,8 @@ def test_pedurma():
         expected_span_texts = ["༄༅། །", "འཕགས་པ་འཇམ་", "འདུད།", "རྣམ་"]
         for ann, expected_span in zip(parser.pedurma_anns, expected_span_texts):
             start, end = (
-                ann[LayerEnum.DURCHEN.value]["start"],
-                ann[LayerEnum.DURCHEN.value]["end"],
+                ann[AnnotationType.DURCHEN.value]["start"],
+                ann[AnnotationType.DURCHEN.value]["end"],
             )
             assert parser.base_text[start:end] == expected_span
 
@@ -56,7 +56,7 @@ def test_pedurma():
             parser.meaning_segment_anns, expected_meaning_segments
         ):
             start, end = (
-                ann[LayerEnum.SEGMENTATION.value]["start"],
-                ann[LayerEnum.SEGMENTATION.value]["end"],
+                ann[AnnotationType.SEGMENTATION.value]["start"],
+                ann[AnnotationType.SEGMENTATION.value]["end"],
             )
             assert parser.base_text[start:end] == expected_segment

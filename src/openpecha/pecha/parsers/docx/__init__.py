@@ -8,7 +8,7 @@ from openpecha.exceptions import (
     ParseNotReadyForThisAnnotation,
 )
 from openpecha.pecha import Pecha, annotation_path
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 
@@ -85,7 +85,7 @@ class DocxParser:
     def parse(
         self,
         docx_file: str | Path,
-        annotation_type: LayerEnum | str,
+        annotation_type: AnnotationType | str,
         metadatas: List[Dict],
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
@@ -102,10 +102,10 @@ class DocxParser:
             Pecha: Pecha object.
         """
 
-        # Accept both str and LayerEnum, convert str to LayerEnum
+        # Accept both str and AnnotationType, convert str to AnnotationType
         if isinstance(annotation_type, str):
             try:
-                annotation_type = LayerEnum(annotation_type)
+                annotation_type = AnnotationType(annotation_type)
             except ValueError:
                 raise ParseNotReadyForThisAnnotation(
                     f"Invalid annotation type: {annotation_type}"

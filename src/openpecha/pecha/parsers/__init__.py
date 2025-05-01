@@ -4,7 +4,23 @@ from typing import Any, Dict, Tuple
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha, annotation_path
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
+
+
+class DocxBaseParser(ABC):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
+    @abstractmethod
+    def parse(
+        self,
+        input: str | Path,
+        annotation_type: AnnotationType,
+        metadata: Dict,
+        output_path: Path = PECHAS_PATH,
+    ) -> Tuple[Pecha, annotation_path]:
+        raise NotImplementedError
 
 
 class BaseParser(ABC):
@@ -15,11 +31,10 @@ class BaseParser(ABC):
     @abstractmethod
     def parse(
         self,
-        input: str | Path,
-        annotation_type: LayerEnum,
+        input: Any,
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
-    ) -> Tuple[Pecha, annotation_path]:
+    ):
         raise NotImplementedError
 
 
@@ -36,12 +51,16 @@ class OCRBaseParser(ABC):
         raise NotImplementedError
 
 
-class DummyParser(BaseParser):
+class DummyParser(ABC):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
+    @abstractmethod
     def parse(
         self,
-        input: str | Path,
-        annotation_type: LayerEnum,
+        input: Any,
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
-    ) -> Tuple[Pecha, annotation_path]:
+    ) -> Pecha:
         raise NotImplementedError

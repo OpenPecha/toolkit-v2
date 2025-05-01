@@ -5,7 +5,7 @@ from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.blupdate import DiffMatchPatch
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 from openpecha.pecha.pecha_types import (
@@ -47,20 +47,20 @@ class DocxAnnotationParser:
     def add_annotation(
         self,
         pecha: Pecha,
-        type: LayerEnum | str,
+        type: AnnotationType | str,
         docx_file: Path,
         metadatas: List[Dict],
     ) -> Tuple[Pecha, annotation_path]:
         pecha_type: PechaType = get_pecha_type(metadatas)
 
-        # Accept both str and LayerEnum, convert str to LayerEnum
+        # Accept both str and AnnotationType, convert str to AnnotationType
         if isinstance(type, str):
             try:
-                type = LayerEnum(type)
+                type = AnnotationType(type)
             except ValueError:
                 raise ParseNotReadyForThisAnnotation(f"Invalid annotation type: {type}")
 
-        if type not in [LayerEnum.ALIGNMENT, LayerEnum.SEGMENTATION]:
+        if type not in [AnnotationType.ALIGNMENT, AnnotationType.SEGMENTATION]:
             raise ParseNotReadyForThisAnnotation(
                 f"Parser is not ready for the annotation type: {type}"
             )

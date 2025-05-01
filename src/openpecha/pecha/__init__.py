@@ -20,7 +20,7 @@ from openpecha.ids import (
     get_uuid,
 )
 from openpecha.pecha.blupdate import get_updated_layer_anns
-from openpecha.pecha.layer import LayerEnum, get_layer_collection, get_layer_group
+from openpecha.pecha.layer import AnnotationType, get_layer_collection, get_layer_group
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
@@ -97,12 +97,12 @@ class Pecha:
         return bases
 
     def load_layers(self):
-        layers: Dict[str, Dict[LayerEnum, List[AnnotationStore]]] = defaultdict(
+        layers: Dict[str, Dict[AnnotationType, List[AnnotationStore]]] = defaultdict(
             lambda: defaultdict(list)
         )
         for layer_file in self.layer_path.rglob("*.json"):
             base_name = layer_file.parent.name
-            ann_enum = LayerEnum(layer_file.stem.split("-")[0])
+            ann_enum = AnnotationType(layer_file.stem.split("-")[0])
             layers[base_name][ann_enum].append(AnnotationStore(file=str(layer_file)))
         return layers
 
@@ -127,11 +127,11 @@ class Pecha:
         (self.layer_path / base_name).mkdir(parents=True, exist_ok=True)
         return base_name
 
-    def add_layer(self, base_name: str, layer_type: LayerEnum):
+    def add_layer(self, base_name: str, layer_type: AnnotationType):
         """
         Inputs:
             base_name: .txt file which this annotation is associated with
-            layer_type: the type of annotation layer, it should be include in LayerEnum
+            layer_type: the type of annotation layer, it should be include in AnnotationType
 
         Process:
             - create an annotation store
@@ -159,18 +159,18 @@ class Pecha:
 
         return ann_store, ann_store_path
 
-    def check_annotation(self, annotation: Dict, layer_type: LayerEnum):
+    def check_annotation(self, annotation: Dict, layer_type: AnnotationType):
         """
         Inputs:annotation: annotation data
         Process: - check if the annotation data is valid
                 - raise error if the annotation data is invalid
         """
 
-        # Check if an annotation with LayerEnum is present in the annotation data
+        # Check if an annotation with AnnotationType is present in the annotation data
         if layer_type.value not in annotation.keys():
             raise ValueError(f"Annotation data should contain {layer_type.value} key.")
 
-        # Check if the annotation with LayerEnum has Span value as tuple
+        # Check if the annotation with AnnotationType has Span value as tuple
         if not isinstance(annotation[layer_type.value], Dict):
             raise ValueError(
                 f"The {layer_type.value} annotation should have a Span of 'start' and 'end'."
@@ -187,7 +187,7 @@ class Pecha:
                 )
 
     def add_annotation(
-        self, ann_store: AnnotationStore, annotation: Dict, layer_type: LayerEnum
+        self, ann_store: AnnotationStore, annotation: Dict, layer_type: AnnotationType
     ):
         """
         Inputs: layer: annotation store, data: annotation data
@@ -299,7 +299,7 @@ class Pecha:
 
         return relative_layer_path
 
-    def get_layer_by_ann_type(self, base_name: str, layer_type: LayerEnum):
+    def get_layer_by_ann_type(self, base_name: str, layer_type: AnnotationType):
         """
         Get layers by annotation type i.e Chapter, Sabche, Segment,...
         """
@@ -419,7 +419,7 @@ class Pecha:
         for layer_name, layer in source_pecha.get_layers(source_base_name):
             updated_anns = get_updated_layer_anns(source_base, target_base, layer)
             layer, _ = self.add_layer(
-                target_base_name, LayerEnum(layer_name.split("-")[0])
+                target_base_name, AnnotationType(layer_name.split("-")[0])
             )
             resource = next(layer.resources())
             for ann in updated_anns:
@@ -448,7 +448,8 @@ def get_anns(ann_store: AnnotationStore):
 
 def load_layer(path: Path) -> AnnotationStore:
     return AnnotationStore(file=str(path))
-  
+
+
 def get_annotations_data(ann_store: AnnotationStore):
     annotations = []
     for ann in ann_store:

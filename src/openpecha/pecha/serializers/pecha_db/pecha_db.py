@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.serializers import BaseSerializer
 from openpecha.utils import read_json
 
@@ -38,7 +38,7 @@ class PechaDBSerializer(BaseSerializer):
                 chapter_num += 1
                 text_index = 1
                 self.chapter[chapter_num] = []
-            for ann_store in pecha.layers[basename][LayerEnum.SEGMENTATION]:
+            for ann_store in pecha.layers[basename][AnnotationType.SEGMENTATION]:
                 for ann in list(ann_store):
                     segment_id = str(ann.data()[0])
                     segment_text = ann.text()[0]
@@ -84,8 +84,8 @@ class PechaDBSerializer(BaseSerializer):
         self.contents = []
         for _, layer in pecha.layers.items():
             curr_chapter = []
-            meaning_segment_layer = layer[LayerEnum.SEGMENTATION][0]
-            durchen_layer = layer[LayerEnum.DURCHEN][0]
+            meaning_segment_layer = layer[AnnotationType.SEGMENTATION][0]
+            durchen_layer = layer[AnnotationType.DURCHEN][0]
             for ann in meaning_segment_layer:
                 meaning_segment = str(ann)
                 text_selection = next(ann.textselections())

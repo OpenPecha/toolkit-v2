@@ -3,7 +3,7 @@ from pathlib import Path
 from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum, LayerGroupEnum
+from openpecha.pecha.layer import AnnotationType, LayerGroupEnum
 
 
 def test_pecha_read():
@@ -14,7 +14,9 @@ def test_pecha_read():
 
     base_path = pecha.pecha_path / "base"
     basefile_name = list(base_path.rglob("*.txt"))[0].stem
-    ann_store, _ = pecha.get_layer_by_ann_type(basefile_name, LayerEnum.SEGMENTATION)
+    ann_store, _ = pecha.get_layer_by_ann_type(
+        basefile_name, AnnotationType.SEGMENTATION
+    )
     assert isinstance(ann_store, AnnotationStore)
 
     expected_anns = [
@@ -28,6 +30,8 @@ def test_pecha_read():
     """ comparing annotations """
     dataset = list(ann_store.datasets())[0]
     key = dataset.key(LayerGroupEnum.SEGMENTATION_TYPE.value)
-    anns = list(dataset.data(key, value=LayerEnum.SEGMENTATION.value).annotations())
+    anns = list(
+        dataset.data(key, value=AnnotationType.SEGMENTATION.value).annotations()
+    )
     for ann, expected_ann in zip(anns, expected_anns):
         assert str(ann) == expected_ann

@@ -2,7 +2,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.ocr.data_source import HOCRIASource
 from openpecha.pecha.parsers.ocr.hocr import HOCRParser
 from openpecha.utils import read_json
@@ -128,7 +128,7 @@ def get_annotation_bounds(annotation):
 def _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
     """Test pagination layer annotations"""
     _, pagination_layer_file = pecha.get_layer_by_ann_type(
-        base_name, LayerEnum.PAGINATION
+        base_name, AnnotationType.PAGINATION
     )
     assert pagination_layer_file.exists(), "Pagination layer file should exist"
     assert pagination_layer_file.name.startswith(
@@ -171,7 +171,7 @@ def _test_pagination_layer(pecha, base_name, expected_pagination_layer_dict):
 def _test_confidence_layer(pecha, base_name, expected_confidence_layer_dict):
     """Test OCR confidence layer annotations"""
     _, confidence_layer_file = pecha.get_layer_by_ann_type(
-        base_name, LayerEnum.OCR_CONFIDENCE
+        base_name, AnnotationType.OCR_CONFIDENCE
     )
     assert confidence_layer_file.exists(), "OCR confidence layer file should exist"
     assert confidence_layer_file.name.startswith(

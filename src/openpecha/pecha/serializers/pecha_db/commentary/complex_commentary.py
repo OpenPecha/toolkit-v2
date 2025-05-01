@@ -7,7 +7,7 @@ from pecha_org_tools.translation import (
 
 from openpecha.exceptions import MetaDataValidationError
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import Language, PechaMetaData
 from openpecha.utils import get_text_direction_with_lang
 
@@ -66,7 +66,7 @@ class ComplexCommentarySerializer:
         """
         sapche_anns = []
         basename = next(pecha.base_path.rglob("*.txt")).stem
-        sapche_layer, _ = pecha.get_layer_by_ann_type(basename, LayerEnum.SAPCHE)
+        sapche_layer, _ = pecha.get_layer_by_ann_type(basename, AnnotationType.SAPCHE)
         for ann in sapche_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
             # Get metadata of the annotation
@@ -90,7 +90,7 @@ class ComplexCommentarySerializer:
         meaning_segment_anns = []
         basename = next(pecha.base_path.rglob("*.txt")).stem
         meaning_segment_layer, _ = pecha.get_layer_by_ann_type(
-            basename, LayerEnum.ALIGNMENT
+            basename, AnnotationType.ALIGNMENT
         )
         for ann in meaning_segment_layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()

@@ -11,14 +11,14 @@ from openpecha.exceptions import (
     MetaDataValidationError,
 )
 from openpecha.pecha import Pecha, annotation_path
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
-from openpecha.pecha.parsers import BaseParser
+from openpecha.pecha.parsers import DocxBaseParser
 
 logger = get_logger(__name__)
 
 
-class DocxRootParser(BaseParser):
+class DocxRootParser(DocxBaseParser):
     def __init__(self):
         self.number_list_regex = r"^(\d+)\)\t(.*)"
 
@@ -108,7 +108,7 @@ class DocxRootParser(BaseParser):
         return (positions, base)
 
     def extract_segmentation_anns(
-        self, positions: List[Dict[str, int]], ann_type: LayerEnum
+        self, positions: List[Dict[str, int]], ann_type: AnnotationType
     ) -> List[Dict]:
         """Create segment annotations from position information.
 
@@ -150,7 +150,7 @@ class DocxRootParser(BaseParser):
     def parse(
         self,
         input: str | Path,
-        annotation_type: LayerEnum,
+        annotation_type: AnnotationType,
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
@@ -204,7 +204,7 @@ class DocxRootParser(BaseParser):
         return pecha
 
     def add_segmentation_layer(
-        self, pecha: Pecha, positions: List[Dict], ann_type: LayerEnum
+        self, pecha: Pecha, positions: List[Dict], ann_type: AnnotationType
     ) -> annotation_path:
 
         basename = list(pecha.bases.keys())[0]

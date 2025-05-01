@@ -14,7 +14,7 @@ from pydantic import (
 from pydantic_core import core_schema
 
 from openpecha.ids import get_uuid
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 
 
 class Span(BaseModel):
@@ -87,16 +87,16 @@ class Citation(BaseAnnotation):
     pass
 
 
-def _get_annotation_class(layer_name: LayerEnum):
-    """Maps LayerEnum to Annotation class"""
+def _get_annotation_class(layer_name: AnnotationType):
+    """Maps AnnotationType to Annotation class"""
 
-    if layer_name == LayerEnum.PAGINATION:
+    if layer_name == AnnotationType.PAGINATION:
         return Pagination
-    elif layer_name == LayerEnum.LANGUAGE:
+    elif layer_name == AnnotationType.LANGUAGE:
         return Lang
-    elif layer_name == LayerEnum.CITATION:
+    elif layer_name == AnnotationType.CITATION:
         return Citation
-    elif layer_name == LayerEnum.OCR_CONFIDENCE:
+    elif layer_name == AnnotationType.OCR_CONFIDENCE:
         return OCRConfidence
     else:
         return BaseAnnotation
@@ -104,7 +104,7 @@ def _get_annotation_class(layer_name: LayerEnum):
 
 class Layer(BaseModel):
     id: str = Field(default=None)
-    annotation_type: LayerEnum
+    annotation_type: AnnotationType
     revision: str = Field(default="00001")
     annotations: Dict = Field(default_factory=dict)
 
@@ -158,7 +158,7 @@ class Layer(BaseModel):
 
 class OCRConfidenceLayer(Layer):
     confidence_threshold: float
-    annotation_type: LayerEnum = Field(default=LayerEnum.OCR_CONFIDENCE)
+    annotation_type: AnnotationType = Field(default=AnnotationType.OCR_CONFIDENCE)
 
 
 class PechaId(str):
@@ -191,8 +191,8 @@ class PechaAlignment(BaseModel):
 
 class AnnotationModel(BaseModel):
     pecha_id: PechaId = Field(..., description="Pecha ID")
-    type: LayerEnum = Field(
-        LayerEnum.SEGMENTATION, description="Type of the annotation"
+    type: AnnotationType = Field(
+        AnnotationType.SEGMENTATION, description="Type of the annotation"
     )
     document_id: str = Field(..., pattern="\\S")
     path: str = Field(..., pattern="\\S")

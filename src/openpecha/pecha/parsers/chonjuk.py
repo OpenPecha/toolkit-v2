@@ -5,7 +5,7 @@ from typing import Dict, List
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import BaseParser
 
 
@@ -33,7 +33,7 @@ class ChonjukChapterParser(BaseParser):
             curr_match = {
                 "chapter_number": match.span(1),
                 "chapter_title": match.span(2),
-                LayerEnum.CHAPTER.value: match.span(3),
+                AnnotationType.CHAPTER.value: match.span(3),
             }
             chapter_anns.append(curr_match)
         return chapter_anns
@@ -62,7 +62,7 @@ class ChonjukChapterParser(BaseParser):
             start, end = ann_spans["chapter_title"]
             chapter_title = text[start:end]
 
-            start, end = ann_spans[LayerEnum.CHAPTER.value]
+            start, end = ann_spans[AnnotationType.CHAPTER.value]
             # Update the offset (2 is char length of 'ch' before chapter number)
             offset += start - ann_spans["chapter_number"][0] + 2
 
@@ -71,7 +71,7 @@ class ChonjukChapterParser(BaseParser):
                 {
                     "chapter_number": chapter_number,
                     "chapter_title": chapter_title,
-                    LayerEnum.CHAPTER.value: {
+                    AnnotationType.CHAPTER.value: {
                         "start": Chapter_span[0],
                         "end": Chapter_span[1],
                     },
@@ -97,10 +97,10 @@ class ChonjukChapterParser(BaseParser):
 
         pecha = Pecha.create(output_path)
         base_name = pecha.set_base(self.cleaned_text)
-        layer, _ = pecha.add_layer(base_name, LayerEnum.CHAPTER)
+        layer, _ = pecha.add_layer(base_name, AnnotationType.CHAPTER)
 
         for ann in self.annotations:
-            pecha.add_annotation(layer, ann, LayerEnum.CHAPTER)
+            pecha.add_annotation(layer, ann, AnnotationType.CHAPTER)
 
         pecha.set_metadata({"id": pecha.id, "parser": self.name, **metadata})
         layer.save()

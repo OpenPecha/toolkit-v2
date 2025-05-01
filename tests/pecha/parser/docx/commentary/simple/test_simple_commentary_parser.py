@@ -4,7 +4,7 @@ from unittest import TestCase, mock
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
@@ -53,7 +53,7 @@ class TestDocxSimpleCommentaryParser(TestCase):
             mock_get_layer_id.return_value = "L001"
 
             pecha, layer_name = parser.parse(
-                self.input, LayerEnum.SEGMENTATION, self.metadata, Path(tempdir)
+                self.input, AnnotationType.SEGMENTATION, self.metadata, Path(tempdir)
             )
             assert isinstance(pecha, Pecha)
             assert layer_name == "B001/segmentation-L001.json"
