@@ -1,9 +1,10 @@
+from pathlib import Path
 from typing import Dict, List
 
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.pecha import Pecha, get_anns
+from openpecha.pecha import Pecha, get_anns, load_layer
 from openpecha.utils import (
     get_chapter_num_from_segment_num,
     process_segment_num_for_chapter,
@@ -13,7 +14,7 @@ logger = get_logger(__name__)
 
 
 class CommentaryAlignmentTransfer:
-    def get_display_layer_path(self, pecha: Pecha) -> Pecha:
+    def get_display_layer_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
     def extract_root_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
@@ -71,10 +72,8 @@ class CommentaryAlignmentTransfer:
         """
         display_layer_path = self.get_display_layer_path(root_pecha)
 
-        display_layer = AnnotationStore(file=str(display_layer_path))
-        transfer_layer = AnnotationStore(
-            file=str(root_pecha.layer_path / root_alignment_id)
-        )
+        display_layer = load_layer(display_layer_path)
+        transfer_layer = load_layer(root_pecha.layer_path / root_alignment_id)
 
         map = self.map_layer_to_layer(transfer_layer, display_layer)
         return map
@@ -93,18 +92,14 @@ class CommentaryAlignmentTransfer:
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
         root_display_layer_path = self.get_display_layer_path(root_pecha)
-        root_display_anns = self.extract_root_anns(
-            AnnotationStore(file=str(root_display_layer_path))
-        )
+        root_display_anns = self.extract_root_anns(load_layer(root_display_layer_path))
 
         root_anns = self.extract_root_anns(
-            AnnotationStore(file=str(root_pecha.layer_path / root_alignment_id))
+            load_layer(root_pecha.layer_path / root_alignment_id)
         )
 
         commentary_anns = get_anns(
-            AnnotationStore(
-                file=str(commentary_pecha.layer_path / commentary_alignment_id)
-            )
+            load_layer(commentary_pecha.layer_path / commentary_alignment_id)
         )
         serialized_content = []
         for ann in commentary_anns:
