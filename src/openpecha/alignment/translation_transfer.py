@@ -57,7 +57,10 @@ class TranslationAlignmentTransfer:
         return self.map_layer_to_layer(alignment_layer, display_layer)
 
     def get_translation_pechas_mapping(
-        self, translation_pecha: Pecha, translation_alignment_id: str
+        self,
+        translation_pecha: Pecha,
+        translation_alignment_id: str,
+        translation_display_id: str,
     ) -> Dict[int, List]:
         """
         Get Segmentation mapping from translation display pecha -> translation pecha
@@ -129,7 +132,7 @@ class TranslationAlignmentTransfer:
         """
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
         translation_map = self.get_translation_pechas_mapping(
-            translation_pecha, translation_alignment_id
+            translation_pecha, translation_alignment_id, translation_display_id
         )
 
         layer_path = translation_pecha.layer_path / translation_display_id

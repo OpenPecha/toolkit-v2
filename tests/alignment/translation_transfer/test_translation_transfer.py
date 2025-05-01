@@ -36,9 +36,11 @@ class TestTranslationAlignmentTransfer(TestCase):
 
     def test_get_translation_pechas_mapping(self):
         translation_alignment_id = "AC0A/alignment-9048.json"
+        translation_display_id = "AC0A/segmentation-E0A6.json"
+
         translation_transfer = TranslationAlignmentTransfer()
         mapping = translation_transfer.get_translation_pechas_mapping(
-            self.translation_pecha, translation_alignment_id
+            self.translation_pecha, translation_alignment_id, translation_display_id
         )
         expected_mapping = {
             1: [1, 2],
