@@ -5,7 +5,7 @@ from stam import AnnotationStore
 from openpecha.alignment.translation_transfer import TranslationAlignmentTransfer
 from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, load_layer
 from openpecha.pecha.serializers.pecha_db.utils import (
     FormatPechaCategory,
     get_metadata_for_pecha_org,
@@ -36,7 +36,7 @@ class PreAlignedRootTranslationSerializer:
             )
 
         try:
-            segment_layer = AnnotationStore(file=ann_store_path.as_posix())
+            segment_layer = load_layer(ann_store_path)
         except Exception as e:
             logger.error(
                 f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
@@ -63,7 +63,7 @@ class PreAlignedRootTranslationSerializer:
             )
 
         try:
-            translation_segment_layer = AnnotationStore(file=ann_store_path.as_posix())
+            translation_segment_layer = load_layer(ann_store_path)
         except Exception as e:
             logger.error(
                 f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
@@ -74,9 +74,7 @@ class PreAlignedRootTranslationSerializer:
         else:
             segments: Dict[int, List[str]] = {}
             for ann in translation_segment_layer:
-                ann_data = {}
-                for data in ann:
-                    ann_data[str(data.key().id())] = data.value().get()
+                ann_data = {data.key().id(): str(data.value()) for data in ann}
 
                 if "root_idx_mapping" in ann_data:
                     root_map = int(ann_data["root_idx_mapping"])

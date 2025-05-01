@@ -4,15 +4,12 @@ from typing import Dict, List
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, load_layer
 
 logger = get_logger(__name__)
 
 
 class TranslationAlignmentTransfer:
-    def load_layer(self, path: Path) -> AnnotationStore:
-        return AnnotationStore(file=str(path))
-
     def get_display_layer_path(self, pecha: Pecha) -> Path:
         """
         Return the path to the first segmentation layer JSON file in the pecha.
@@ -68,8 +65,8 @@ class TranslationAlignmentTransfer:
         Get mapping from root_pecha's alignment layer to its display segmentation layer.
         """
         display_layer_path = self.get_display_layer_path(root_pecha)
-        display_layer = self.load_layer(display_layer_path)
-        alignment_layer = self.load_layer(root_pecha.layer_path / root_alignment_id)
+        display_layer = load_layer(display_layer_path)
+        alignment_layer = load_layer(root_pecha.layer_path / root_alignment_id)
         return self.map_layer_to_layer(alignment_layer, display_layer)
 
     def get_translation_pechas_mapping(
@@ -81,8 +78,8 @@ class TranslationAlignmentTransfer:
         display_layer_path = self.get_display_layer_path(translation_pecha)
         alignment_layer_path = translation_pecha.layer_path / translation_alignment_id
 
-        display_layer = self.load_layer(display_layer_path)
-        alignment_layer = self.load_layer(alignment_layer_path)
+        display_layer = load_layer(display_layer_path)
+        alignment_layer = load_layer(alignment_layer_path)
 
         map = self.map_layer_to_layer(display_layer, alignment_layer)
 
@@ -106,9 +103,9 @@ class TranslationAlignmentTransfer:
         translation_layer_path = (
             root_translation_pecha.layer_path / translation_alignment_id
         )
-        translation_anns = self.extract_anns(self.load_layer(translation_layer_path))
+        translation_anns = self.extract_anns(load_layer(translation_layer_path))
         root_display_layer_path = self.get_display_layer_path(root_pecha)
-        root_display_anns = self.extract_anns(self.load_layer(root_display_layer_path))
+        root_display_anns = self.extract_anns(load_layer(root_display_layer_path))
 
         mapped_segment: Dict[int, List[str]] = {}
         for ann in translation_anns.values():
@@ -149,7 +146,7 @@ class TranslationAlignmentTransfer:
 
         layer_path = self.get_display_layer_path(translation_pecha)
 
-        anns = self.extract_anns(self.load_layer(layer_path))
+        anns = self.extract_anns(load_layer(layer_path))
 
         segments = []
         for src_idx, tgt_map in translation_map.items():

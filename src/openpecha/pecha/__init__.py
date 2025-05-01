@@ -444,3 +444,7 @@ def get_anns(ann_store: AnnotationStore):
         curr_ann = {**ann_data, "text": str(ann)}
         anns.append(curr_ann)
     return anns
+
+
+def load_layer(path: Path) -> AnnotationStore:
+    return AnnotationStore(file=str(path))
