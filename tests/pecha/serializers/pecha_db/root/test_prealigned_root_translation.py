@@ -33,7 +33,7 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
             },
         ]
 
-    def test_root_translation_pecha(self):
+    def test_prealigned_root_translation_pecha(self):
         root_alignment_id = "A340/alignment-CCF1.json"
         translation_alignment_id = "AC0A/alignment-9048.json"
 
