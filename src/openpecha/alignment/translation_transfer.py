@@ -93,19 +93,20 @@ class TranslationAlignmentTransfer:
         )
         anns = get_anns(translation_alignment_layer, include_span=True)
 
-        mapped_segment: Dict[int, List[str]] = {}
+        # Root segmentation idx and Root Translation Alignment Text mapping
+        map: Dict[int, List[str]] = {}
         for ann in anns:
             root_idx = int(ann["root_idx_mapping"])
             text = ann["text"]
             if not root_map.get(root_idx):
                 continue
             root_segmentation_idx = root_map[root_idx][0]
-            mapped_segment.setdefault(root_segmentation_idx, []).append(text)
+            map.setdefault(root_segmentation_idx, []).append(text)
 
-        max_root_idx = max(mapped_segment.keys(), default=0)
+        max_root_idx = max(map.keys(), default=0)
         res = []
         for i in range(1, max_root_idx + 1):
-            texts = mapped_segment.get(i, [])
+            texts = map.get(i, [])
             text = "\n".join(texts)
             res.append("") if is_empty(text) else res.append(text)
 
@@ -132,7 +133,8 @@ class TranslationAlignmentTransfer:
         layer_path = translation_pecha.layer_path / translation_display_id
         anns = get_anns(load_layer(layer_path), include_span=True)
 
-        mapped_segments = {}
+        # Root segmentation idx and Root Translation Segmentation Text mapping
+        map: Dict[int, str] = {}
         for src_idx, tgt_map in translation_map.items():
             text = next(
                 (
@@ -143,12 +145,12 @@ class TranslationAlignmentTransfer:
                 "",
             )
             tgt_idx = tgt_map[0]
-            root_idx = root_map[tgt_idx][0]
-            mapped_segments[root_idx] = text
+            root_segmentation_idx = root_map[tgt_idx][0]
+            map[root_segmentation_idx] = text
 
         res = []
-        max_root_idx = max(mapped_segments.keys(), default=0)
-        for i in range(1, max_root_idx + 1):
-            text = mapped_segments.get(i, "")
+        max_root_segmentation_idx = max(map.keys(), default=0)
+        for i in range(1, max_root_segmentation_idx + 1):
+            text = map.get(i, "")
             res.append(text)
         return res
