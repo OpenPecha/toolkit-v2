@@ -83,6 +83,7 @@ def _serialize_prealigned_root_translation_pecha(
         root_pecha,
         root_alignment_id,
         translation_pecha,
+        annotation_path,
         pecha_category,
     )
 

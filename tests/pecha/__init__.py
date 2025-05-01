@@ -78,7 +78,7 @@ class SharedPechaSetup:
                     pecha_id="I6944984E",
                     type=LayerEnum.ALIGNMENT,
                     document_id="d4",
-                    path="E949/alignment-2F29.json",
+                    path="BEC3/alignment-90C0.json",
                     title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
                     aligned_to=PechaAlignment(
                         pecha_id="IE60BBDE8", alignment_id="B8B3/segmentation-74F4.json"
@@ -99,7 +99,7 @@ class SharedPechaSetup:
                     path="FD22/alignment-599A.json",
                     title="\u0f51\u0f44\u0f0b\u0f42\u0fb1\u0f72\u0f44\u0f0b\u0f54\u0f0b\u0f62\u0f66\u0f0b\u0f63\u0f0b\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d commentary",
                     aligned_to=PechaAlignment(
-                        pecha_id="I6944984E", alignment_id="E949/alignment-2F29.json"
+                        pecha_id="I6944984E", alignment_id="BEC3/alignment-90C0.json"
                     ),
                 )
             ],

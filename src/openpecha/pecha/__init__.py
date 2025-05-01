@@ -446,6 +446,9 @@ def get_anns(ann_store: AnnotationStore):
     return anns
 
 
+def load_layer(path: Path) -> AnnotationStore:
+    return AnnotationStore(file=str(path))
+  
 def get_annotations_data(ann_store: AnnotationStore):
     annotations = []
     for ann in ann_store:
