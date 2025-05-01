@@ -66,10 +66,10 @@ class TranslationAlignmentTransfer:
         """
         display_layer_path = self.get_display_layer_path(root_pecha)
         display_layer = AnnotationStore(file=str(display_layer_path))
-        transfer_layer = AnnotationStore(
+        alignment_layer = AnnotationStore(
             file=str(root_pecha.layer_path / root_alignment_id)
         )
-        return self.map_layer_to_layer(transfer_layer, display_layer)
+        return self.map_layer_to_layer(alignment_layer, display_layer)
 
     def get_translation_pechas_mapping(
         self, translation_pecha: Pecha, translation_alignment_id: str
@@ -78,12 +78,12 @@ class TranslationAlignmentTransfer:
         Get Segmentation mapping from translation display pecha -> translation pecha
         """
         display_layer_path = self.get_display_layer_path(translation_pecha)
-        tgt_layer_path = translation_pecha.layer_path / translation_alignment_id
+        alignment_layer_path = translation_pecha.layer_path / translation_alignment_id
 
         display_layer = AnnotationStore(file=str(display_layer_path))
-        alignment_layer_path = AnnotationStore(file=str(tgt_layer_path))
+        alignment_layer = AnnotationStore(file=str(alignment_layer_path))
 
-        map = self.map_layer_to_layer(display_layer, alignment_layer_path)
+        map = self.map_layer_to_layer(display_layer, alignment_layer)
 
         return map
 
