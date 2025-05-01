@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 
 
 class TranslationAlignmentTransfer:
-    def get_display_layer_path(self, pecha: Pecha) -> Path:
+    def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
         """
         Return the path to the first segmentation layer JSON file in the pecha.
         """
@@ -44,6 +44,7 @@ class TranslationAlignmentTransfer:
                 if (is_overlap or is_contained) and not is_edge_overlap:
                     map[src_idx].append(tgt_idx)
 
+        # Sort the dictionary
         return dict(sorted(map.items()))
 
     def get_root_pechas_mapping(
@@ -52,7 +53,7 @@ class TranslationAlignmentTransfer:
         """
         Get mapping from pecha's alignment layer to segmentation layer.
         """
-        segmentation_ann_path = self.get_display_layer_path(pecha)
+        segmentation_ann_path = self.get_segmentation_ann_path(pecha)
         segmentation_layer = load_layer(segmentation_ann_path)
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
         return self.map_layer_to_layer(alignment_layer, segmentation_layer)
