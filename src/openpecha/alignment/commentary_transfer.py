@@ -14,7 +14,7 @@ logger = get_logger(__name__)
 
 
 class CommentaryAlignmentTransfer:
-    def get_display_layer_path(self, pecha: Pecha) -> Path:
+    def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
     def extract_root_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
@@ -65,18 +65,15 @@ class CommentaryAlignmentTransfer:
         return dict(sorted(mapping.items()))
 
     def get_root_pechas_mapping(
-        self, root_pecha: Pecha, root_alignment_id: str
-    ) -> Dict[int, List]:
+        self, pecha: Pecha, alignment_id: str
+    ) -> Dict[int, List[int]]:
         """
-        Get segmentation mapping from root_pecha -> root_display_pecha
+        Get mapping from pecha's alignment layer to segmentation layer.
         """
-        display_layer_path = self.get_display_layer_path(root_pecha)
-
-        display_layer = load_layer(display_layer_path)
-        alignment_layer = load_layer(root_pecha.layer_path / root_alignment_id)
-
-        map = self.map_layer_to_layer(alignment_layer, display_layer)
-        return map
+        segmentation_ann_path = self.get_segmentation_ann_path(pecha)
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(alignment_layer, segmentation_layer)
 
     def get_serialized_commentary(
         self,
@@ -91,7 +88,7 @@ class CommentaryAlignmentTransfer:
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
-        root_display_layer_path = self.get_display_layer_path(root_pecha)
+        root_display_layer_path = self.get_segmentation_ann_path(root_pecha)
         root_display_anns = self.extract_root_anns(load_layer(root_display_layer_path))
 
         root_anns = self.extract_root_anns(
