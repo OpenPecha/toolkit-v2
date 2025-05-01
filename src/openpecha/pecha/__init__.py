@@ -20,7 +20,11 @@ from openpecha.ids import (
     get_uuid,
 )
 from openpecha.pecha.blupdate import get_updated_layer_anns
-from openpecha.pecha.layer import AnnotationType, get_layer_collection, get_layer_group
+from openpecha.pecha.layer import (
+    AnnotationType,
+    get_annotation_collection_type,
+    get_annotation_group_type,
+)
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
@@ -153,7 +157,7 @@ class Pecha:
             id=base_name,
             filename=f"../../base/{base_name}.txt",
         )
-        dataset_id = get_layer_collection(layer_type).value
+        dataset_id = get_annotation_collection_type(layer_type).value
         ann_store.add_dataset(id=dataset_id)
         self.layers[base_name][layer_type].append(ann_store)
 
@@ -202,7 +206,7 @@ class Pecha:
         # Get annotation metadata / payloads
         ann_data = {k: v for k, v in annotation.items() if not isinstance(v, Dict)}
         # Add main annotation such as Chapter, Sabche, Segment into the annotation data
-        ann_data[get_layer_group(layer_type).value] = layer_type.value
+        ann_data[get_annotation_group_type(layer_type).value] = layer_type.value
 
         # Get the start and end of the annotation
         start, end = (

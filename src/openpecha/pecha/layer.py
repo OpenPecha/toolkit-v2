@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class LayerCollectionEnum(Enum):
+class AnnotationCollectionType(Enum):
     """In STAM, this is used for setting DataSet id"""
 
     STRUCTURE_ANNOTATION = "structure_annotation"
@@ -26,7 +26,7 @@ class AnnotationType(str, Enum):
     BOOK_TITLE = "book_title"
 
 
-class LayerGroupEnum(Enum):
+class AnnotationGroupType(Enum):
     STRUCTURE_TYPE = "structure_type"
     SPELLING_VARIATION = "spelling_variation"
     OCR_CONFIDENCE_TYPE = "ocr_confidence_type"
@@ -34,51 +34,53 @@ class LayerGroupEnum(Enum):
     SEGMENTATION_TYPE = "segmentation_type"
 
 
-def get_layer_group(layer_type: AnnotationType) -> LayerGroupEnum:
+def get_annotation_group_type(layer_type: AnnotationType) -> AnnotationGroupType:
     """return the annotation category where annotation type falls in"""
 
     if layer_type in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
-        return LayerGroupEnum.SEGMENTATION_TYPE
+        return AnnotationGroupType.SEGMENTATION_TYPE
 
     if layer_type in [
         AnnotationType.CHAPTER,
         AnnotationType.SAPCHE,
         AnnotationType.PAGINATION,
     ]:
-        return LayerGroupEnum.STRUCTURE_TYPE
+        return AnnotationGroupType.STRUCTURE_TYPE
 
     if layer_type == AnnotationType.LANGUAGE:
-        return LayerGroupEnum.LANGUAGE_TYPE
+        return AnnotationGroupType.LANGUAGE_TYPE
 
     if layer_type == AnnotationType.OCR_CONFIDENCE:
-        return LayerGroupEnum.OCR_CONFIDENCE_TYPE
+        return AnnotationGroupType.OCR_CONFIDENCE_TYPE
 
     if layer_type == AnnotationType.DURCHEN:
-        return LayerGroupEnum.SPELLING_VARIATION
+        return AnnotationGroupType.SPELLING_VARIATION
 
-    raise ValueError(f"Layer type {layer_type} has no defined LayerGroupEnum")
+    raise ValueError(f"Layer type {layer_type} has no defined AnnotationGroupType")
 
 
-def get_layer_collection(layer_type: AnnotationType) -> LayerCollectionEnum:
+def get_annotation_collection_type(
+    layer_type: AnnotationType,
+) -> AnnotationCollectionType:
     """return the annotation category where annotation type falls in"""
 
     if layer_type in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
-        return LayerCollectionEnum.SEGMENTATION_ANNOTATION
+        return AnnotationCollectionType.SEGMENTATION_ANNOTATION
 
     if layer_type in [
         AnnotationType.CHAPTER,
         AnnotationType.SAPCHE,
         AnnotationType.PAGINATION,
     ]:
-        return LayerCollectionEnum.STRUCTURE_ANNOTATION
+        return AnnotationCollectionType.STRUCTURE_ANNOTATION
 
     if layer_type == AnnotationType.LANGUAGE:
-        return LayerCollectionEnum.LANGUAGE_ANNOTATION
+        return AnnotationCollectionType.LANGUAGE_ANNOTATION
 
     if layer_type == AnnotationType.OCR_CONFIDENCE:
-        return LayerCollectionEnum.OCR_ANNOTATION
+        return AnnotationCollectionType.OCR_ANNOTATION
 
     if layer_type == AnnotationType.DURCHEN:
-        return LayerCollectionEnum.VARIATION_ANNOTATION
+        return AnnotationCollectionType.VARIATION_ANNOTATION
 
-    raise ValueError(f"Layer type {layer_type} has no defined LayerCollectionEnum")
+    raise ValueError(f"Layer type {layer_type} has no defined AnnotationCollectionType")

@@ -3,7 +3,7 @@ from pathlib import Path
 from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import AnnotationType, LayerGroupEnum
+from openpecha.pecha.layer import AnnotationGroupType, AnnotationType
 
 
 def test_pecha_read():
@@ -29,7 +29,7 @@ def test_pecha_read():
 
     """ comparing annotations """
     dataset = list(ann_store.datasets())[0]
-    key = dataset.key(LayerGroupEnum.SEGMENTATION_TYPE.value)
+    key = dataset.key(AnnotationGroupType.SEGMENTATION_TYPE.value)
     anns = list(
         dataset.data(key, value=AnnotationType.SEGMENTATION.value).annotations()
     )
