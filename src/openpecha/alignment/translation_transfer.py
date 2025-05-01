@@ -47,34 +47,29 @@ class TranslationAlignmentTransfer:
         return dict(sorted(map.items()))
 
     def get_root_pechas_mapping(
-        self, root_pecha: Pecha, alignment_id: str
+        self, pecha: Pecha, alignment_id: str
     ) -> Dict[int, List[int]]:
         """
-        Get mapping from root_pecha's alignment layer to its display segmentation layer.
+        Get mapping from pecha's alignment layer to segmentation layer.
         """
-        display_layer_path = self.get_display_layer_path(root_pecha)
-        display_layer = load_layer(display_layer_path)
-        alignment_layer = load_layer(root_pecha.layer_path / alignment_id)
-        return self.map_layer_to_layer(alignment_layer, display_layer)
+        segmentation_ann_path = self.get_display_layer_path(pecha)
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(alignment_layer, segmentation_layer)
 
     def get_translation_pechas_mapping(
         self,
-        translation_pecha: Pecha,
-        translation_alignment_id: str,
-        translation_display_id: str,
+        pecha: Pecha,
+        alignment_id: str,
+        segmentation_id: str,
     ) -> Dict[int, List]:
         """
-        Get Segmentation mapping from translation display pecha -> translation pecha
+        Get Segmentation mapping from segmentation to alignment layer.
         """
-        display_layer_path = translation_pecha.layer_path / translation_display_id
-        alignment_layer_path = translation_pecha.layer_path / translation_alignment_id
-
-        display_layer = load_layer(display_layer_path)
-        alignment_layer = load_layer(alignment_layer_path)
-
-        map = self.map_layer_to_layer(display_layer, alignment_layer)
-
-        return map
+        segmentation_ann_path = pecha.layer_path / segmentation_id
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(segmentation_layer, alignment_layer)
 
     def get_serialized_translation(
         self,
