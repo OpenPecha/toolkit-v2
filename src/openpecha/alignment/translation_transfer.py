@@ -10,6 +10,10 @@ logger = get_logger(__name__)
 
 
 class TranslationAlignmentTransfer:
+    @staticmethod
+    def is_empty(text: str) -> bool:
+        return not text.strip().replace("\n", "")
+
     def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
         """
         Return the path to the first segmentation layer JSON file in the pecha.
@@ -72,6 +76,15 @@ class TranslationAlignmentTransfer:
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
         return self.map_layer_to_layer(segmentation_layer, alignment_layer)
 
+    def get_serialized_from_mapping(self, mapping: Dict[int, List[str]]):
+        max_root_idx = max(mapping.keys(), default=0)
+        res = []
+        for i in range(1, max_root_idx + 1):
+            texts = mapping.get(i, [])
+            text = "\n".join(texts)
+            res.append("") if self.is_empty(text) else res.append(text)
+        return res
+
     def get_serialized_translation_alignment(
         self,
         root_pecha: Pecha,
@@ -82,10 +95,6 @@ class TranslationAlignmentTransfer:
         """
         Serialize with Root Translation Alignment Text mapped to Root Segmentation Text
         """
-
-        def is_empty(text: str) -> bool:
-            return not text.strip().replace("\n", "")
-
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
         layer = load_layer(root_translation_pecha.layer_path / translation_alignment_id)
@@ -101,14 +110,7 @@ class TranslationAlignmentTransfer:
             root_segmentation_idx = root_map[root_idx][0]
             map.setdefault(root_segmentation_idx, []).append(text)
 
-        max_root_idx = max(map.keys(), default=0)
-        res = []
-        for i in range(1, max_root_idx + 1):
-            texts = map.get(i, [])
-            text = "\n".join(texts)
-            res.append("") if is_empty(text) else res.append(text)
-
-        return res
+        return self.get_serialized_from_mapping(map)
 
     def get_serialized_translation_segmentation(
         self,
@@ -130,18 +132,13 @@ class TranslationAlignmentTransfer:
         anns = get_anns(layer, include_span=True)
 
         # Root segmentation idx and Root Translation Segmentation Text mapping
-        map: Dict[int, str] = {}
+        map: Dict[int, List[str]] = {}
         for ann in anns:
             text = ann["text"]
             idx = int(ann["root_idx_mapping"])
 
             aligned_idx = translation_map[idx][0]
             root_segmentation_idx = root_map[aligned_idx][0]
-            map[root_segmentation_idx] = text
+            map.setdefault(root_segmentation_idx, []).append(text)
 
-        res = []
-        max_root_segmentation_idx = max(map.keys(), default=0)
-        for i in range(1, max_root_segmentation_idx + 1):
-            text = map.get(i, "")
-            res.append(text)
-        return res
+        return self.get_serialized_from_mapping(map)
