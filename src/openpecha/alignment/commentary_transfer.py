@@ -14,12 +14,16 @@ logger = get_logger(__name__)
 
 
 def is_empty(text: str) -> bool:
-    """Return True if text is empty or contains only newlines."""
+    """
+    Return True if text is empty or contains only newlines.
+    """
     return not text.strip().replace("\n", "")
 
 
 def parse_root_mapping(mapping: str) -> List[int]:
-    """Parse root_idx_mapping string like '1,2-4' into a sorted list of ints."""
+    """
+    Parse root_idx_mapping string like '1,2-4' into a sorted list of ints.
+    """
     res = []
     for part in mapping.strip().split(","):
         part = part.strip()
@@ -34,19 +38,25 @@ def parse_root_mapping(mapping: str) -> List[int]:
 
 class CommentaryAlignmentTransfer:
     def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
-        """Return the path to the first segmentation layer JSON file in the pecha."""
+        """
+        Return the path to the first segmentation layer JSON file in the pecha.
+        """
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
     def index_annotations_by_root(
         self, anns: List[Dict[str, Any]]
     ) -> Dict[int, Dict[str, Any]]:
-        """Return a dict mapping root_idx_mapping to the annotation dict."""
+        """
+        Return a dict mapping root_idx_mapping to the annotation dict.
+        """
         return {int(ann["root_idx_mapping"]): ann for ann in anns}
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
     ) -> Dict[int, List[int]]:
-        """Map annotations from src_layer to tgt_layer based on span overlap or containment."""
+        """
+        Map annotations from src_layer to tgt_layer based on span overlap or containment.
+        """
         mapping: Dict[int, List[int]] = {}
         src_anns = get_anns(src_layer, include_span=True)
         tgt_anns = get_anns(tgt_layer, include_span=True)
@@ -57,6 +67,7 @@ class CommentaryAlignmentTransfer:
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
                 tgt_idx = int(tgt_ann["root_idx_mapping"])
+
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
                 )
@@ -69,7 +80,9 @@ class CommentaryAlignmentTransfer:
     def get_root_pechas_mapping(
         self, pecha: Pecha, alignment_id: str
     ) -> Dict[int, List[int]]:
-        """Get mapping from pecha's alignment layer to segmentation layer."""
+        """
+        Get mapping from pecha's alignment layer to segmentation layer.
+        """
         segmentation_ann_path = self.get_segmentation_ann_path(pecha)
         segmentation_layer = load_layer(segmentation_ann_path)
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
