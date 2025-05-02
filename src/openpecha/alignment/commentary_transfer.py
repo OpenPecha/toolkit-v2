@@ -112,12 +112,13 @@ class CommentaryAlignmentTransfer:
 
         res: List[str] = []
         for ann in commentary_anns:
-            root_indices = parse_root_mapping(ann["root_idx_mapping"])
-            root_idx = root_indices[0]
             commentary_text = ann["text"]
 
             if is_empty(commentary_text):
                 continue
+
+            root_indices = parse_root_mapping(ann["root_idx_mapping"])
+            root_idx = root_indices[0]
 
             if root_idx not in root_anns or is_empty(root_anns[root_idx]["text"]):
                 res.append(commentary_text)
