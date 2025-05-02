@@ -10,7 +10,7 @@ from openpecha.pecha.serializers.pecha_db.utils import (
 )
 from openpecha.utils import (
     chunk_strings,
-    get_chapter_num_from_segment_num,
+    get_chapter_for_segment,
     process_segment_num_for_chapter,
 )
 
@@ -47,7 +47,7 @@ class SimpleCommentarySerializer:
         Output Format: string
         """
         root_map = int(ann["root_idx_mapping"])
-        chapter_num = get_chapter_num_from_segment_num(root_map)
+        chapter_num = get_chapter_for_segment(root_map)
 
         processed_root_map = process_segment_num_for_chapter(root_map)
         if "root_idx_mapping" in ann:

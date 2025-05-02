@@ -93,7 +93,7 @@ def chunk_strings(strings: List[str], chunk_size=NO_OF_CHAPTER_SEGMENT):
     return [strings[i : i + chunk_size] for i in range(0, len(strings), chunk_size)]
 
 
-def get_chapter_num_from_segment_num(
+def get_chapter_for_segment(
     segment_num: int, no_of_chapter_segment: int = NO_OF_CHAPTER_SEGMENT
 ) -> int:
     """
