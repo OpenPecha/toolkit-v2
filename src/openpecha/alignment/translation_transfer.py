@@ -126,8 +126,8 @@ class TranslationAlignmentTransfer:
             translation_pecha, translation_alignment_id, translation_display_id
         )
 
-        layer_path = translation_pecha.layer_path / translation_display_id
-        anns = get_anns(load_layer(layer_path), include_span=True)
+        layer = load_layer(translation_pecha.layer_path / translation_display_id)
+        anns = get_anns(layer, include_span=True)
 
         # Root segmentation idx and Root Translation Segmentation Text mapping
         map: Dict[int, str] = {}
