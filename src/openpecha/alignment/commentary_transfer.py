@@ -158,6 +158,57 @@ class CommentaryAlignmentTransfer:
                 res.append(result)
         return res
 
+    def get_serialized_commentary_segmentation(
+        self,
+        root_pecha: Pecha,
+        root_alignment_id: str,
+        commentary_pecha: Pecha,
+        commentary_alignment_id: str,
+        commentary_segmentation_id: str,
+    ) -> List[str]:
+        root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
+        commentary_map = self.get_commentary_pechas_mapping(
+            commentary_pecha, commentary_alignment_id, commentary_segmentation_id
+        )
+
+        root_segmentation_path = self.get_segmentation_ann_path(root_pecha)
+        root_segmentation_anns = self.index_annotations_by_root(
+            get_anns(load_layer(root_segmentation_path))
+        )
+        root_anns = self.index_annotations_by_root(
+            get_anns(load_layer(root_pecha.layer_path / root_alignment_id))
+        )
+        commentary_segmentation_anns = get_anns(
+            load_layer(commentary_pecha.layer_path / commentary_segmentation_id)
+        )
+
+        res: List[str] = []
+        for ann in commentary_segmentation_anns:
+            text = ann["text"]
+            if is_empty(text):
+                continue
+
+            aligned_idx = commentary_map[int(ann["root_idx_mapping"])][0]
+
+            if not self.is_valid_ann(root_anns, aligned_idx):
+                res.append(text)
+
+            root_display_idx = root_map[aligned_idx][0]
+            if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
+                res.append(text)
+
+            chapter_num = get_chapter_for_segment(root_display_idx)
+            processed_root_display_idx = adjust_segment_num_for_chapter(
+                root_display_idx
+            )
+            res.append(
+                self.format_serialized_commentary(
+                    chapter_num, processed_root_display_idx, text
+                )
+            )
+
+        return res
+
     @staticmethod
     def format_serialized_commentary(chapter_num: int, seg_idx: int, text: str) -> str:
         """Format the serialized commentary string."""

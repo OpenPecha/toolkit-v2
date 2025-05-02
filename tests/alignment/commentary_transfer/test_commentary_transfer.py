@@ -69,11 +69,24 @@ class TestCommentaryAlignmentTransfer(TestCase):
         expected_json = read_json(self.DATA_DIR / "expected_serialized_commentary.json")
         assert serialized_json == expected_json
 
+    def test_get_serialized_commentary_segmentation(self):
+        root_alignment_id = "B8B3/alignment-F81A.json"
+        commentary_alignment_id = "BEC3/alignment-90C0.json"
+        commentary_segmentation_id = "BEC3/segmentation-0C09.json"
+
+        serializer = CommentaryAlignmentTransfer()
+        serialized_json = serializer.get_serialized_commentary_segmentation(
+            self.root_pecha,
+            root_alignment_id,
+            self.commentary_pecha,
+            commentary_alignment_id,
+            commentary_segmentation_id,
+        )
+
+        expected_json = read_json(
+            self.DATA_DIR / "expected_serialized_commentary_with_display.json"
+        )
+        assert serialized_json == expected_json
+
     def tearDown(self):
         pass
-
-
-work = TestCommentaryAlignmentTransfer()
-work.setUp()
-
-work.test_get_commentary_pechas_mapping()
