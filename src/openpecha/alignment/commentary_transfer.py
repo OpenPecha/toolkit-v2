@@ -34,6 +34,11 @@ def parse_root_mapping(mapping: str) -> List[int]:
 
 
 class CommentaryAlignmentTransfer:
+    @staticmethod
+    def get_first_valid_root_idx(ann) -> int | None:
+        indices = parse_root_mapping(ann["root_idx_mapping"])
+        return indices[0] if indices else None
+
     def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
         """
         Return the path to the first segmentation layer JSON file in the pecha.
@@ -107,10 +112,6 @@ class CommentaryAlignmentTransfer:
             load_layer(commentary_pecha.layer_path / commentary_alignment_id)
         )
 
-        def get_first_valid_root_idx(ann) -> int | None:
-            indices = parse_root_mapping(ann["root_idx_mapping"])
-            return indices[0] if indices else None
-
         def is_valid_root_idx(idx):
             return idx in root_anns and not is_empty(root_anns[idx]["text"])
 
@@ -125,7 +126,7 @@ class CommentaryAlignmentTransfer:
             if is_empty(commentary_text):
                 continue
 
-            root_idx = get_first_valid_root_idx(ann)
+            root_idx = self.get_first_valid_root_idx(ann)
             if root_idx is None or not is_valid_root_idx(root_idx):
                 res.append(commentary_text)
                 continue
