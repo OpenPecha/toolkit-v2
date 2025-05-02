@@ -68,7 +68,12 @@ class CommentaryAlignmentTransfer:
         tgt_anns = get_anns(tgt_layer, include_span=True)
         for src_ann in src_anns:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
-            src_idx = int(src_ann["root_idx_mapping"])
+            if "-" in src_ann["root_idx_mapping"] or "," in src_ann["root_idx_mapping"]:
+                src_idx = self.get_first_valid_root_idx(src_ann)
+                if src_idx is None:
+                    continue
+            else:
+                src_idx = int(src_ann["root_idx_mapping"])
             mapping[src_idx] = []
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
@@ -90,6 +95,17 @@ class CommentaryAlignmentTransfer:
         Get mapping from pecha's alignment layer to segmentation layer.
         """
         segmentation_ann_path = self.get_segmentation_ann_path(pecha)
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(alignment_layer, segmentation_layer)
+
+    def get_commentary_pechas_mapping(
+        self, pecha: Pecha, alignment_id: str, segmentation_id: str
+    ) -> Dict[int, List[int]]:
+        """
+        Get mapping from pecha's segmentation layer to alignment layer.
+        """
+        segmentation_ann_path = pecha.layer_path / segmentation_id
         segmentation_layer = load_layer(segmentation_ann_path)
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
         return self.map_layer_to_layer(alignment_layer, segmentation_layer)

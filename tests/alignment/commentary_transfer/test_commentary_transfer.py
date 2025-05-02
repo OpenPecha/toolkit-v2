@@ -30,6 +30,25 @@ class TestCommentaryAlignmentTransfer(TestCase):
         }
         assert mapping == expected_mapping
 
+    def test_get_commentary_pechas_mapping(self):
+        commentary_alignment_id = "BEC3/alignment-90C0.json"
+        commentary_segmentation_id = "BEC3/segmentation-0C09.json"
+
+        serializer = CommentaryAlignmentTransfer()
+        mapping = serializer.get_commentary_pechas_mapping(
+            self.commentary_pecha, commentary_alignment_id, commentary_segmentation_id
+        )
+        expected_mapping = {
+            2: [3],
+            4: [4],
+            5: [5, 6],
+            6: [7, 8],
+            7: [9],
+            8: [10, 11],
+            9: [12],
+        }
+        assert mapping == expected_mapping
+
     def test_get_serialized_commentary(self):
         root_alignment_id = "B8B3/alignment-F81A.json"
         commentary_alignment_id = "BEC3/alignment-90C0.json"
@@ -47,3 +66,9 @@ class TestCommentaryAlignmentTransfer(TestCase):
 
     def tearDown(self):
         pass
+
+
+work = TestCommentaryAlignmentTransfer()
+work.setUp()
+
+work.test_get_commentary_pechas_mapping()
