@@ -76,7 +76,7 @@ class TranslationAlignmentTransfer:
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
         return self.map_layer_to_layer(segmentation_layer, alignment_layer)
 
-    def mapping_to_text_list(self, mapping: Dict[int, List[str]]):
+    def mapping_to_text_list(self, mapping: Dict[int, List[str]]) -> List[str]:
         """
         Flatten the mapping from Translation to Root Text
         """

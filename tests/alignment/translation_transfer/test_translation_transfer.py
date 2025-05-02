@@ -85,13 +85,3 @@ class TestTranslationAlignmentTransfer(TestCase):
             DATA_DIR / "expected_serialized_translation_with_display.json"
         )
         assert serialized_json == expected_serialized_json
-
-
-work = TestTranslationAlignmentTransfer()
-work.setUp()
-
-work.test_get_root_pechas_mapping()
-work.test_get_translation_pechas_mapping()
-
-work.test_get_serialized_translation_alignment()
-work.test_get_serialized_translation_segmentation()
