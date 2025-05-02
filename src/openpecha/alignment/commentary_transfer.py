@@ -109,27 +109,32 @@ class CommentaryAlignmentTransfer:
         commentary_anns = get_anns(
             load_layer(commentary_pecha.layer_path / commentary_alignment_id)
         )
-        serialized_content: List[str] = []
+
+        res: List[str] = []
         for ann in commentary_anns:
             root_indices = parse_root_mapping(ann["root_idx_mapping"])
             root_idx = root_indices[0]
             commentary_text = ann["text"]
+
             if is_empty(commentary_text):
                 continue
+
             if root_idx not in root_anns or is_empty(root_anns[root_idx]["text"]):
-                serialized_content.append(commentary_text)
+                res.append(commentary_text)
                 continue
+
             root_display_idx = root_map[root_idx][0]
             if root_display_idx not in root_segmentation_anns or is_empty(
                 root_segmentation_anns[root_display_idx]["text"]
             ):
-                serialized_content.append(commentary_text)
+                res.append(commentary_text)
                 continue
+
             chapter_num = get_chapter_num_from_segment_num(root_display_idx)
             processed_root_display_idx = process_segment_num_for_chapter(
                 root_display_idx
             )
-            serialized_content.append(
+            res.append(
                 f"<{chapter_num}><{processed_root_display_idx}>{commentary_text}"
             )
-        return serialized_content
+        return res
