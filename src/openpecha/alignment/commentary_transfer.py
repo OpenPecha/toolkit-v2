@@ -107,24 +107,31 @@ class CommentaryAlignmentTransfer:
             load_layer(commentary_pecha.layer_path / commentary_alignment_id)
         )
 
+        def get_first_valid_root_idx(ann) -> int | None:
+            indices = parse_root_mapping(ann["root_idx_mapping"])
+            return indices[0] if indices else None
+
+        def is_valid_root_idx(idx):
+            return idx in root_anns and not is_empty(root_anns[idx]["text"])
+
+        def is_valid_root_display_idx(idx):
+            return idx in root_segmentation_anns and not is_empty(
+                root_segmentation_anns[idx]["text"]
+            )
+
         res: List[str] = []
         for ann in commentary_anns:
             commentary_text = ann["text"]
-
             if is_empty(commentary_text):
                 continue
 
-            root_indices = parse_root_mapping(ann["root_idx_mapping"])
-            root_idx = root_indices[0]
-
-            if root_idx not in root_anns or is_empty(root_anns[root_idx]["text"]):
+            root_idx = get_first_valid_root_idx(ann)
+            if root_idx is None or not is_valid_root_idx(root_idx):
                 res.append(commentary_text)
                 continue
 
             root_display_idx = root_map[root_idx][0]
-            if root_display_idx not in root_segmentation_anns or is_empty(
-                root_segmentation_anns[root_display_idx]["text"]
-            ):
+            if not is_valid_root_display_idx(root_display_idx):
                 res.append(commentary_text)
                 continue
 
