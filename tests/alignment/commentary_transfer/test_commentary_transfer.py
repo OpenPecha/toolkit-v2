@@ -39,13 +39,18 @@ class TestCommentaryAlignmentTransfer(TestCase):
             self.commentary_pecha, commentary_alignment_id, commentary_segmentation_id
         )
         expected_mapping = {
-            2: [3],
+            1: [2],
+            2: [2],
+            3: [2],
             4: [4],
-            5: [5, 6],
-            6: [7, 8],
-            7: [9],
-            8: [10, 11],
-            9: [12],
+            5: [5],
+            6: [5],
+            7: [6],
+            8: [6],
+            9: [7],
+            10: [8],
+            11: [8],
+            12: [9],
         }
         assert mapping == expected_mapping
 
