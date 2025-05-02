@@ -118,25 +118,40 @@ class CommentaryAlignmentTransfer:
 
         res: List[str] = []
         for ann in commentary_anns:
-            commentary_text = ann["text"]
-            if is_empty(commentary_text):
-                continue
-
-            root_idx = self.get_first_valid_root_idx(ann)
-            if root_idx is None or not self.is_valid_ann(root_anns, root_idx):
-                res.append(commentary_text)
-                continue
-
-            root_display_idx = root_map[root_idx][0]
-            if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
-                res.append(commentary_text)
-                continue
-
-            chapter_num = get_chapter_for_segment(root_display_idx)
-            processed_root_display_idx = adjust_segment_num_for_chapter(
-                root_display_idx
+            result = self.process_commentary_ann(
+                ann, root_anns, root_map, root_segmentation_anns
             )
-            res.append(
-                f"<{chapter_num}><{processed_root_display_idx}>{commentary_text}"
-            )
+            if result is not None:
+                res.append(result)
         return res
+
+    @staticmethod
+    def format_serialized_commentary(chapter_num: int, seg_idx: int, text: str) -> str:
+        """Format the serialized commentary string."""
+        return f"<{chapter_num}><{seg_idx}>{text}"
+
+    def process_commentary_ann(
+        self,
+        ann: dict,
+        root_anns: dict,
+        root_map: dict,
+        root_segmentation_anns: dict,
+    ) -> str | None:
+        """Process a single commentary annotation and return the serialized string, or None if not valid."""
+        commentary_text = ann["text"]
+        if is_empty(commentary_text):
+            return None
+
+        root_idx = self.get_first_valid_root_idx(ann)
+        if root_idx is None or not self.is_valid_ann(root_anns, root_idx):
+            return commentary_text
+
+        root_display_idx = root_map[root_idx][0]
+        if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
+            return commentary_text
+
+        chapter_num = get_chapter_for_segment(root_display_idx)
+        processed_root_display_idx = adjust_segment_num_for_chapter(root_display_idx)
+        return self.format_serialized_commentary(
+            chapter_num, processed_root_display_idx, commentary_text
+        )
