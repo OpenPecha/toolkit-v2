@@ -62,32 +62,46 @@ class CommentaryAlignmentTransfer:
     ) -> Dict[int, List[int]]:
         """
         Map annotations from src_layer to tgt_layer based on span overlap or containment.
+        Returns a mapping from source indices to lists of target indices.
         """
+
+        def extract_idx(ann: dict) -> int:
+            """Helper to extract a single int index from root_idx_mapping."""
+            if "-" in ann["root_idx_mapping"] or "," in ann["root_idx_mapping"]:
+                idx = self.get_first_valid_root_idx(ann)
+                if idx is None:
+                    raise ValueError(
+                        f"Invalid root_idx_mapping: {ann['root_idx_mapping']}"
+                    )
+                return idx
+            return int(ann["root_idx_mapping"])
+
+        def is_match(src_start, src_end, tgt_start, tgt_end):
+            """Helper to check if spans overlap or are contained (not edge overlap)."""
+            is_overlap = (
+                src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
+            )
+            is_contained = tgt_start < src_start and tgt_end > src_end
+            is_edge_overlap = tgt_start == src_end or tgt_end == src_start
+            return (is_overlap or is_contained) and not is_edge_overlap
+
         mapping: Dict[int, List[int]] = {}
         src_anns = get_anns(src_layer, include_span=True)
         tgt_anns = get_anns(tgt_layer, include_span=True)
         for src_ann in src_anns:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
-            src_idx = int(src_ann["root_idx_mapping"])
+            try:
+                src_idx = extract_idx(src_ann)
+            except ValueError:
+                continue
             mapping[src_idx] = []
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
-                if (
-                    "-" in tgt_ann["root_idx_mapping"]
-                    or "," in tgt_ann["root_idx_mapping"]
-                ):
-                    tgt_idx = self.get_first_valid_root_idx(tgt_ann)
-                    if tgt_idx is None:
-                        continue
-                else:
-                    tgt_idx = int(tgt_ann["root_idx_mapping"])
-
-                is_overlap = (
-                    src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
-                )
-                is_contained = tgt_start < src_start and tgt_end > src_end
-                is_edge_overlap = tgt_start == src_end or tgt_end == src_start
-                if (is_overlap or is_contained) and not is_edge_overlap:
+                try:
+                    tgt_idx = extract_idx(tgt_ann)
+                except ValueError:
+                    continue
+                if is_match(src_start, src_end, tgt_start, tgt_end):
                     mapping[src_idx].append(tgt_idx)
         return dict(sorted(mapping.items()))
 
