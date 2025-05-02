@@ -88,10 +88,8 @@ class TranslationAlignmentTransfer:
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
 
-        translation_alignment_layer = load_layer(
-            root_translation_pecha.layer_path / translation_alignment_id
-        )
-        anns = get_anns(translation_alignment_layer, include_span=True)
+        layer = load_layer(root_translation_pecha.layer_path / translation_alignment_id)
+        anns = get_anns(layer, include_span=True)
 
         # Root segmentation idx and Root Translation Alignment Text mapping
         map: Dict[int, List[str]] = {}
