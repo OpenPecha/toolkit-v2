@@ -76,7 +76,10 @@ class TranslationAlignmentTransfer:
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
         return self.map_layer_to_layer(segmentation_layer, alignment_layer)
 
-    def get_serialized_from_mapping(self, mapping: Dict[int, List[str]]):
+    def mapping_to_text_list(self, mapping: Dict[int, List[str]]):
+        """
+        Flatten the mapping from Translation to Root Text
+        """
         max_root_idx = max(mapping.keys(), default=0)
         res = []
         for i in range(1, max_root_idx + 1):
@@ -110,7 +113,7 @@ class TranslationAlignmentTransfer:
             root_segmentation_idx = root_map[aligned_idx][0]
             map.setdefault(root_segmentation_idx, []).append(text)
 
-        return self.get_serialized_from_mapping(map)
+        return self.mapping_to_text_list(map)
 
     def get_serialized_translation_segmentation(
         self,
@@ -141,4 +144,4 @@ class TranslationAlignmentTransfer:
             root_segmentation_idx = root_map[aligned_idx][0]
             map.setdefault(root_segmentation_idx, []).append(text)
 
-        return self.get_serialized_from_mapping(map)
+        return self.mapping_to_text_list(map)
