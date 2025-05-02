@@ -103,11 +103,11 @@ class TranslationAlignmentTransfer:
         # Root segmentation idx and Root Translation Alignment Text mapping
         map: Dict[int, List[str]] = {}
         for ann in anns:
-            root_idx = int(ann["root_idx_mapping"])
+            aligned_idx = int(ann["root_idx_mapping"])
             text = ann["text"]
-            if not root_map.get(root_idx):
+            if not root_map.get(aligned_idx):
                 continue
-            root_segmentation_idx = root_map[root_idx][0]
+            root_segmentation_idx = root_map[aligned_idx][0]
             map.setdefault(root_segmentation_idx, []).append(text)
 
         return self.get_serialized_from_mapping(map)
