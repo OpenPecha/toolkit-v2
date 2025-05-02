@@ -102,7 +102,7 @@ def get_chapter_for_segment(
     return math.ceil(segment_num / no_of_chapter_segment)
 
 
-def process_segment_num_for_chapter(
+def adjust_segment_num_for_chapter(
     segment_num: int, no_of_chapter_segment: int = NO_OF_CHAPTER_SEGMENT
 ) -> int:
     return (

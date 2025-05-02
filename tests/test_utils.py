@@ -1,8 +1,8 @@
 from openpecha.utils import (
+    adjust_segment_num_for_chapter,
     chunk_strings,
     get_chapter_for_segment,
     parse_root_mapping,
-    process_segment_num_for_chapter,
 )
 
 
@@ -77,20 +77,20 @@ def test_get_chapter_num_from_segment_num():
 def test_process_segment_num_for_chapter():
     segment_num = 1
     no_of_chapter_segment = 100
-    assert process_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 1
+    assert adjust_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 1
 
     segment_num = 100
     no_of_chapter_segment = 100
-    assert process_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 100
+    assert adjust_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 100
 
     segment_num = 101
     no_of_chapter_segment = 100
-    assert process_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 1
+    assert adjust_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 1
 
     segment_num = 200
     no_of_chapter_segment = 100
-    assert process_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 100
+    assert adjust_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 100
 
     segment_num = 893
     no_of_chapter_segment = 100
-    assert process_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 93
+    assert adjust_segment_num_for_chapter(segment_num, no_of_chapter_segment) == 93

@@ -9,9 +9,9 @@ from openpecha.pecha.serializers.pecha_db.utils import (
     get_metadata_for_pecha_org,
 )
 from openpecha.utils import (
+    adjust_segment_num_for_chapter,
     chunk_strings,
     get_chapter_for_segment,
-    process_segment_num_for_chapter,
 )
 
 logger = get_logger(__name__)
@@ -49,7 +49,7 @@ class SimpleCommentarySerializer:
         root_map = int(ann["root_idx_mapping"])
         chapter_num = get_chapter_for_segment(root_map)
 
-        processed_root_map = process_segment_num_for_chapter(root_map)
+        processed_root_map = adjust_segment_num_for_chapter(root_map)
         if "root_idx_mapping" in ann:
             return f"<{chapter_num}><{processed_root_map}>{ann['text'].strip()}"
         return ann["text"].strip()

@@ -5,7 +5,7 @@ from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha, get_anns, load_layer
-from openpecha.utils import get_chapter_for_segment, process_segment_num_for_chapter
+from openpecha.utils import adjust_segment_num_for_chapter, get_chapter_for_segment
 
 logger = get_logger(__name__)
 
@@ -129,7 +129,7 @@ class CommentaryAlignmentTransfer:
                 continue
 
             chapter_num = get_chapter_for_segment(root_display_idx)
-            processed_root_display_idx = process_segment_num_for_chapter(
+            processed_root_display_idx = adjust_segment_num_for_chapter(
                 root_display_idx
             )
             res.append(
