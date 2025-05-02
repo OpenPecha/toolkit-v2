@@ -121,17 +121,17 @@ class TranslationAlignmentTransfer:
         root_alignment_id: str,
         translation_pecha: Pecha,
         translation_alignment_id: str,
-        translation_display_id: str,
+        translation_segmentation_id: str,
     ):
         """
         Serialize with Root Translation Segmentation Text mapped to Root Segmentation Text
         """
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
         translation_map = self.get_translation_pechas_mapping(
-            translation_pecha, translation_alignment_id, translation_display_id
+            translation_pecha, translation_alignment_id, translation_segmentation_id
         )
 
-        layer = load_layer(translation_pecha.layer_path / translation_display_id)
+        layer = load_layer(translation_pecha.layer_path / translation_segmentation_id)
         anns = get_anns(layer, include_span=True)
 
         # Root segmentation idx and Root Translation Segmentation Text mapping
