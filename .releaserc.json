@@ -14,10 +14,16 @@
         {"type": "build", "release": "patch"},
         {"type": "ci", "release": "patch"},
         {"type": "chore", "release": "patch"},
+        {"subject": "*", "release": "patch"},
+        {"body": "*", "release": "patch"},
         {"message": "*", "release": "patch"}
       ],
       "parserOpts": {
-        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"],
+        "headerPattern": "^(?:(?:fix|feat|docs|style|refactor|perf|test|build|ci|chore)(?:\\(.*\\))?:|(.*))",
+        "headerCorrespondence": ["type", "subject"],
+        "mergePattern": "^Merge.*",
+        "mergeCorrespondence": ["message"]
       }
     }],
     "@semantic-release/release-notes-generator",
