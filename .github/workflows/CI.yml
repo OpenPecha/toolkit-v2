@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: "3.10"
 
@@ -26,16 +26,18 @@ jobs:
       run: |
         pip install -U pip
         pip install -e .
-        pip install .[dev]
+        pip install ".[dev]"
 
     - name: Test with pytest
       env:
         GITHUB_TOKEN: "dummy value"
         ANTHROPIC_API_KEY: "dummy value"
-      run: PYTHONPATH=src pytest
+        PYTHONPATH: ${GITHUB_WORKSPACE}
+      run: pytest
 
     - name: Test Coverage
       env:
           GITHUB_TOKEN: "dummy value"
           ANTHROPIC_API_KEY: "dummy value"
-      run: PYTHONPATH=src pytest --cov openpecha
+          PYTHONPATH: ${GITHUB_WORKSPACE}
+      run: pytest --cov openpecha
