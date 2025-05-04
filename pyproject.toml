@@ -51,9 +51,7 @@ dev = [
 "Bug Tracker" = "https://github.com/OpenPecha/openpecha-project-template/issues"
 
 [tool.semantic_release]
-version_variable = [
-    "pyproject.toml:version"
-]
+version_toml = ["pyproject.toml:project.version"]
 branch = "main"
 upload_to_pypi = true
 upload_to_release = true
