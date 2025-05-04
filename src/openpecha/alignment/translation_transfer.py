@@ -4,98 +4,85 @@ from typing import Dict, List
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, load_layer
 
 logger = get_logger(__name__)
 
 
 class TranslationAlignmentTransfer:
-    def get_first_layer_path(self, pecha: Pecha) -> Path:
-        return next(pecha.layer_path.rglob("*.json"))
-
-    def get_display_layer_path(self, pecha: Pecha) -> Pecha:
+    def get_display_layer_path(self, pecha: Pecha) -> Path:
+        """
+        Return the path to the first segmentation layer JSON file in the pecha.
+        """
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
-    def base_update(self, src_pecha: Pecha, tgt_pecha: Pecha) -> Path:
+    def extract_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
         """
-        1. Take the layer from src pecha
-        2. Migrate the layer to tgt pecha using base update
-        """
-        src_base_name = list(src_pecha.bases.keys())[0]
-        tgt_base_name = list(tgt_pecha.bases.keys())[0]
-        tgt_pecha.merge_pecha(src_pecha, src_base_name, tgt_base_name)
-
-        src_layer_name = next(src_pecha.layer_path.rglob("*.json")).name
-        new_layer_path = tgt_pecha.layer_path / tgt_base_name / src_layer_name
-        return new_layer_path
-
-    def extract_root_anns(self, layer: AnnotationStore) -> Dict:
-        """
-        Extract annotation from layer(STAM)
+        Extract annotations from a STAM layer into a dictionary keyed by root index mapping.
         """
         anns = {}
-        for ann in layer.annotations():
+        for ann in layer:
             start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {}
-            for data in ann:
-                ann_metadata[data.key().id()] = str(data.value())
-            anns[int(ann_metadata["root_idx_mapping"])] = {
+            ann_metadata = {data.key().id(): str(data.value()) for data in ann}
+            root_idx = int(ann_metadata["root_idx_mapping"])
+            anns[root_idx] = {
                 "Span": {"start": start, "end": end},
                 "text": str(ann),
-                "root_idx_mapping": int(ann_metadata["root_idx_mapping"]),
+                "root_idx_mapping": root_idx,
             }
         return anns
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
-    ):
+    ) -> Dict[int, List[int]]:
         """
-        1. Extract annotations from source and target layers
-        2. Map the annotations from source to target layer
-        src_layer -> tgt_layer (One to Many)
+        Map annotations from src_layer to tgt_layer based on span overlap or containment.
+        Returns a mapping from source indices to lists of target indices.
         """
-        mapping: Dict = {}
+        mapping: Dict[int, List[int]] = {}
 
-        src_anns = self.extract_root_anns(src_layer)
-        tgt_anns = self.extract_root_anns(tgt_layer)
+        src_anns = self.extract_anns(src_layer)
+        tgt_anns = self.extract_anns(tgt_layer)
 
         for src_idx, src_span in src_anns.items():
             src_start, src_end = src_span["Span"]["start"], src_span["Span"]["end"]
             mapping[src_idx] = []
-
             for tgt_idx, tgt_span in tgt_anns.items():
                 tgt_start, tgt_end = tgt_span["Span"]["start"], tgt_span["Span"]["end"]
-
-                # Check for mapping conditions
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
                 )
                 is_contained = tgt_start < src_start and tgt_end > src_end
                 is_edge_overlap = tgt_start == src_end or tgt_end == src_start
-                if is_overlap or is_contained and not is_edge_overlap:
+                if (is_overlap or is_contained) and not is_edge_overlap:
                     mapping[src_idx].append(tgt_idx)
-
-        # Sort the mapping by source indices
         return dict(sorted(mapping.items()))
 
     def get_root_pechas_mapping(
         self, root_pecha: Pecha, root_alignment_id: str
-    ) -> Dict[int, List]:
+    ) -> Dict[int, List[int]]:
         """
-        Get segmentation mapping from root_pecha -> root_display_pecha
+        Get mapping from root_pecha's alignment layer to its display segmentation layer.
         """
         display_layer_path = self.get_display_layer_path(root_pecha)
-        # new_tgt_layer = self.base_update(root_pecha, root_display_pecha)
+        display_layer = load_layer(display_layer_path)
+        alignment_layer = load_layer(root_pecha.layer_path / root_alignment_id)
+        return self.map_layer_to_layer(alignment_layer, display_layer)
 
-        display_layer = AnnotationStore(file=str(display_layer_path))
-        transfer_layer = AnnotationStore(
-            file=str(root_pecha.layer_path / root_alignment_id)
-        )
+    def get_translation_pechas_mapping(
+        self, translation_pecha: Pecha, translation_alignment_id: str
+    ) -> Dict[int, List]:
+        """
+        Get Segmentation mapping from translation display pecha -> translation pecha
+        """
+        display_layer_path = self.get_display_layer_path(translation_pecha)
+        alignment_layer_path = translation_pecha.layer_path / translation_alignment_id
 
-        map = self.map_layer_to_layer(transfer_layer, display_layer)
+        display_layer = load_layer(display_layer_path)
+        alignment_layer = load_layer(alignment_layer_path)
 
-        # Clean up the layer
-        # new_tgt_layer.unlink()
+        map = self.map_layer_to_layer(display_layer, alignment_layer)
+
         return map
 
     def get_serialized_translation(
@@ -103,50 +90,77 @@ class TranslationAlignmentTransfer:
         root_pecha: Pecha,
         root_alignment_id: str,
         root_translation_pecha: Pecha,
+        translation_alignment_id: str,
     ) -> List[str]:
-        def is_empty(text):
-            """Check if text is empty or contains only newlines."""
+        """
+        Serialize translation segments so that each segment aligns with the display layer of the root pecha.
+        """
+
+        def is_empty(text: str) -> bool:
             return not text.strip().replace("\n", "")
 
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
-
-        translation_layer_path = self.get_first_layer_path(root_translation_pecha)
-        translation_anns = self.extract_root_anns(
-            AnnotationStore(file=str(translation_layer_path))
+        translation_layer_path = (
+            root_translation_pecha.layer_path / translation_alignment_id
         )
-
+        translation_anns = self.extract_anns(load_layer(translation_layer_path))
         root_display_layer_path = self.get_display_layer_path(root_pecha)
-        root_display_anns = self.extract_root_anns(
-            AnnotationStore(file=str(root_display_layer_path))
-        )
+        root_display_anns = self.extract_anns(load_layer(root_display_layer_path))
 
-        mapped_segment = {}
-        for idx, ann in translation_anns.items():
+        mapped_segment: Dict[int, List[str]] = {}
+        for ann in translation_anns.values():
             root_idx = ann["root_idx_mapping"]
             translation_text = ann["text"]
-
-            if root_map[root_idx] == []:
+            if not root_map.get(root_idx):
                 continue
-
             root_display_idx = root_map[root_idx][0]
+            mapped_segment.setdefault(root_display_idx, []).append(translation_text)
 
-            if root_display_idx not in mapped_segment:
-                mapped_segment[root_display_idx] = [translation_text]
-
-            else:
-                mapped_segment[root_display_idx].append(translation_text)
-
-        max_root_idx = max(root_display_anns.keys())
-
+        max_root_idx = max(root_display_anns.keys(), default=0)
         serialized_content = []
         for i in range(1, max_root_idx + 1):
-            if i not in mapped_segment:
-                serialized_content.append("")
-            else:
-                text = "\n".join(mapped_segment[i])
-                if is_empty(text):
-                    serialized_content.append("")
-                else:
-                    serialized_content.append(text)
+            texts = mapped_segment.get(i, [])
+            text = "\n".join(texts)
+            serialized_content.append("") if is_empty(
+                text
+            ) else serialized_content.append(text)
 
         return serialized_content
+
+    def get_serialized_translation_display(
+        self,
+        root_pecha: Pecha,
+        root_alignment_id: str,
+        translation_pecha: Pecha,
+        translation_alignment_id: str,
+        translation_display_id: str,
+    ):
+        """
+        Input: map from transfer_layer -> display_layer (One to Many)
+        Structure in a way such as : <chapter number><display idx>translation text
+        Note: From many relation in display layer, take first idx (Sefaria map limitation)
+        """
+        root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
+        translation_map = self.get_translation_pechas_mapping(
+            translation_pecha, translation_alignment_id
+        )
+
+        layer_path = translation_pecha.layer_path / translation_display_id
+
+        anns = self.extract_anns(load_layer(layer_path))
+
+        segments = []
+
+        mapped_segments = {}
+        for src_idx, tgt_map in translation_map.items():
+            translation_text = anns[src_idx]["text"]
+            tgt_idx = tgt_map[0]
+
+            root_idx = root_map[tgt_idx][0]
+            mapped_segments[root_idx] = translation_text
+
+        max_root_idx = max(mapped_segments.keys(), default=0)
+        for i in range(1, max_root_idx + 1):
+            text = mapped_segments.get(i, "")
+            segments.append(text)
+        return segments

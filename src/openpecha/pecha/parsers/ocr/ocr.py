@@ -21,7 +21,7 @@ from openpecha.pecha.annotations import (
     Page,
     Span,
 )
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import (
     Copyright_copyrighted,
     Copyright_public_domain,
@@ -701,22 +701,24 @@ class OCRParser(OCRBaseParser):
         layers = {}
         if state["pagination_annotations"]:
             layer = Layer(
-                annotation_type=LayerEnum.PAGINATION,
+                annotation_type=AnnotationType.PAGINATION,
                 annotations=state["pagination_annotations"],
             )
-            layers[LayerEnum.PAGINATION] = layer
+            layers[AnnotationType.PAGINATION] = layer
         if state["language_annotations"]:
             annotations = self.merge_short_language_annotations(
                 state["language_annotations"]
             )
-            layer = Layer(annotation_type=LayerEnum.LANGUAGE, annotations=annotations)
-            layers[LayerEnum.LANGUAGE] = layer
+            layer = Layer(
+                annotation_type=AnnotationType.LANGUAGE, annotations=annotations
+            )
+            layers[AnnotationType.LANGUAGE] = layer
         if state["low_confidence_annotations"]:
             layer = OCRConfidenceLayer(
                 confidence_threshold=self.ocr_confidence_threshold,
                 annotations=state["low_confidence_annotations"],
             )
-            layers[LayerEnum.OCR_CONFIDENCE] = layer
+            layers[AnnotationType.OCR_CONFIDENCE] = layer
         return state["base_layer"], layers, state["word_confidences"]
 
     def get_copyright_and_license_info(self, bdata):
@@ -860,13 +862,13 @@ class OCRParser(OCRBaseParser):
                                 "end": ann.span.end,
                             }
                         }
-                        if layer_type == LayerEnum.PAGINATION:
+                        if layer_type == AnnotationType.PAGINATION:
                             ann_dict.update(
                                 {"imgnum": ann.imgnum, "reference": ann.reference}
                             )
-                        elif layer_type == LayerEnum.LANGUAGE:
+                        elif layer_type == AnnotationType.LANGUAGE:
                             ann_dict.update({"language": ann.language})
-                        elif layer_type == LayerEnum.OCR_CONFIDENCE:
+                        elif layer_type == AnnotationType.OCR_CONFIDENCE:
                             ann_dict.update({"confidence": ann.confidence})
                             if ann.nb_below_threshold is not None:
                                 ann_dict["nb_below_threshold"] = ann.nb_below_threshold

@@ -4,6 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
@@ -51,7 +52,9 @@ class TestDocxRootParser(TestCase):
             )
             mock_get_base_id.return_value = "B001"
             mock_get_layer_id.return_value = "L001"
-            pecha, layer_name = self.parser.parse(bo_docx_file, metadata, OUTPUT_DIR)
+            pecha, layer_name = self.parser.parse(
+                bo_docx_file, AnnotationType.SEGMENTATION, metadata, OUTPUT_DIR
+            )
 
             assert isinstance(pecha, Pecha)
             assert layer_name == "B001/segmentation-L001.json"
@@ -98,7 +101,9 @@ class TestDocxRootParser(TestCase):
             mock_get_base_id.return_value = "B002"
             mock_get_layer_id.return_value = "L002"
 
-            pecha, layer_name = self.parser.parse(en_docx_file, metadata, OUTPUT_DIR)
+            pecha, layer_name = self.parser.parse(
+                en_docx_file, AnnotationType.SEGMENTATION, metadata, OUTPUT_DIR
+            )
 
             assert isinstance(pecha, Pecha)
             assert layer_name == "B002/segmentation-L002.json"

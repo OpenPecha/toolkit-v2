@@ -103,7 +103,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
         ]
 
         translation_ann_path = "FD22/alignment-599A.json"
-        annotation_path = "E949/alignment-2F29.json"
+        annotation_path = "BEC3/alignment-90C0.json"
 
         serializer = Serializer()
         serializer.serialize(
@@ -170,5 +170,6 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha,
             root_alignment_path,
             self.root_translation_pecha,
+            annotation_path,
             self.pecha_category,
         )

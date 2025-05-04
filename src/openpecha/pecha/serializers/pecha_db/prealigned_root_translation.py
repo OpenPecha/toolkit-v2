@@ -5,7 +5,7 @@ from stam import AnnotationStore
 from openpecha.alignment.translation_transfer import TranslationAlignmentTransfer
 from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, load_layer
 from openpecha.pecha.serializers.pecha_db.utils import (
     FormatPechaCategory,
     get_metadata_for_pecha_org,
@@ -36,7 +36,7 @@ class PreAlignedRootTranslationSerializer:
             )
 
         try:
-            segment_layer = AnnotationStore(file=ann_store_path.as_posix())
+            segment_layer = load_layer(ann_store_path)
         except Exception as e:
             logger.error(
                 f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
@@ -63,7 +63,7 @@ class PreAlignedRootTranslationSerializer:
             )
 
         try:
-            translation_segment_layer = AnnotationStore(file=ann_store_path.as_posix())
+            translation_segment_layer = load_layer(ann_store_path)
         except Exception as e:
             logger.error(
                 f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
@@ -74,9 +74,7 @@ class PreAlignedRootTranslationSerializer:
         else:
             segments: Dict[int, List[str]] = {}
             for ann in translation_segment_layer:
-                ann_data = {}
-                for data in ann:
-                    ann_data[str(data.key().id())] = data.value().get()
+                ann_data = {data.key().id(): str(data.value()) for data in ann}
 
                 if "root_idx_mapping" in ann_data:
                     root_map = int(ann_data["root_idx_mapping"])
@@ -97,7 +95,9 @@ class PreAlignedRootTranslationSerializer:
         root_pecha: Pecha,
         root_alignment_id: str,
         translation_pecha: Pecha,
+        translation_alignment_id: str,
         pecha_category: List[Dict],
+        translation_display_id: str | None = None,
     ) -> Dict:
         # Format Category
         formatted_category = FormatPechaCategory().format_root_category(
@@ -109,9 +109,23 @@ class PreAlignedRootTranslationSerializer:
         translation_metadata = get_metadata_for_pecha_org(translation_pecha)
 
         # Get content from root and translation pecha
-        src_content = TranslationAlignmentTransfer().get_serialized_translation(
-            root_pecha, root_alignment_id, translation_pecha
-        )
+        if translation_display_id:
+            src_content = (
+                TranslationAlignmentTransfer().get_serialized_translation_display(
+                    root_pecha,
+                    root_alignment_id,
+                    translation_pecha,
+                    translation_alignment_id,
+                    translation_display_id,
+                )
+            )
+        else:
+            src_content = TranslationAlignmentTransfer().get_serialized_translation(
+                root_pecha,
+                root_alignment_id,
+                translation_pecha,
+                translation_alignment_id,
+            )
 
         tgt_content = self.get_root_content(
             root_pecha, root_pecha.get_segmentation_layer_path()

@@ -2,8 +2,13 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
+from openpecha.exceptions import (
+    MetaDataMissingError,
+    MetaDataValidationError,
+    ParseNotReadyForThisAnnotation,
+)
 from openpecha.pecha import Pecha, annotation_path
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
 
@@ -80,6 +85,7 @@ class DocxParser:
     def parse(
         self,
         docx_file: str | Path,
+        annotation_type: AnnotationType | str,
         metadatas: List[Dict],
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
@@ -95,11 +101,22 @@ class DocxParser:
         Returns:
             Pecha: Pecha object.
         """
+
+        # Accept both str and AnnotationType, convert str to AnnotationType
+        if isinstance(annotation_type, str):
+            try:
+                annotation_type = AnnotationType(annotation_type)
+            except ValueError:
+                raise ParseNotReadyForThisAnnotation(
+                    f"Invalid annotation type: {annotation_type}"
+                )
+
         is_commentary = self.is_commentary_pecha(metadatas)
 
         if is_commentary:
             pecha, annotation_path = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
+                annotation_type=annotation_type,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
@@ -107,6 +124,7 @@ class DocxParser:
         else:
             pecha, annotation_path = DocxRootParser().parse(
                 input=docx_file,
+                annotation_type=annotation_type,
                 metadata=metadatas[0],
                 pecha_id=pecha_id,
             )

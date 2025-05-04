@@ -3,7 +3,7 @@ from typing import Dict, List
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
 
 
@@ -18,9 +18,9 @@ class DocxAnnotationUpdate:
         layer_name = self.extract_layer_name(layer_path)
         return layer_name.split("-")[-1]
 
-    def extract_layer_enum(self, layer_path: str) -> LayerEnum:
+    def extract_layer_enum(self, layer_path: str) -> AnnotationType:
         layer_name = self.extract_layer_name(layer_path)
-        return LayerEnum(layer_name.split("-")[0])
+        return AnnotationType(layer_name.split("-")[0])
 
     def update_annotation(
         self, pecha: Pecha, annotation_path: str, docx_file: Path, metadatas: List[Dict]

@@ -34,12 +34,52 @@ class TestTranslationAlignmentTransfer(TestCase):
         }
         assert mapping == expected_mapping
 
+    def test_get_translation_pechas_mapping(self):
+        translation_alignment_id = "AC0A/alignment-9048.json"
+        translation_transfer = TranslationAlignmentTransfer()
+        mapping = translation_transfer.get_translation_pechas_mapping(
+            self.translation_pecha, translation_alignment_id
+        )
+        expected_mapping = {
+            1: [1, 2],
+            2: [3],
+            3: [4, 5],
+            4: [6],
+            5: [7],
+            6: [8],
+            7: [9],
+            8: [10],
+        }
+        assert mapping == expected_mapping
+
     def test_get_serialized_translation(self):
         root_alignment_id = "A340/alignment-CCF1.json"
+        translation_alignment_id = "AC0A/alignment-9048.json"
 
         translation_transfer = TranslationAlignmentTransfer()
         serialized_json = translation_transfer.get_serialized_translation(
-            self.root_pecha, root_alignment_id, self.translation_pecha
+            self.root_pecha,
+            root_alignment_id,
+            self.translation_pecha,
+            translation_alignment_id,
         )
         expected_serialized_json = read_json(DATA_DIR / "serialized_translation.json")
+        assert serialized_json == expected_serialized_json
+
+    def test_get_serialized_translation_with_pecha_display(self):
+        root_alignment_id = "A340/alignment-CCF1.json"
+        translation_alignment_id = "AC0A/alignment-9048.json"
+        translation_display_id = "AC0A/segmentation-E0A6.json"
+
+        translation_transfer = TranslationAlignmentTransfer()
+        serialized_json = translation_transfer.get_serialized_translation_display(
+            self.root_pecha,
+            root_alignment_id,
+            self.translation_pecha,
+            translation_alignment_id,
+            translation_display_id,
+        )
+        expected_serialized_json = read_json(
+            DATA_DIR / "expected_serialized_translation_with_display.json"
+        )
         assert serialized_json == expected_serialized_json

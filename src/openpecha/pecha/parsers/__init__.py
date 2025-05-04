@@ -1,9 +1,26 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 from openpecha.config import PECHAS_PATH
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, annotation_path
+from openpecha.pecha.layer import AnnotationType
+
+
+class DocxBaseParser(ABC):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
+    @abstractmethod
+    def parse(
+        self,
+        input: str | Path,
+        annotation_type: AnnotationType,
+        metadata: Dict,
+        output_path: Path = PECHAS_PATH,
+    ) -> Tuple[Pecha, annotation_path]:
+        raise NotImplementedError
 
 
 class BaseParser(ABC):
@@ -18,7 +35,7 @@ class BaseParser(ABC):
         metadata: Dict,
         output_path: Path = PECHAS_PATH,
     ):
-        pass
+        raise NotImplementedError
 
 
 class OCRBaseParser(ABC):
@@ -31,14 +48,18 @@ class OCRBaseParser(ABC):
         self,
         dataprovider: Any,
     ) -> Pecha:
-        pass
+        raise NotImplementedError
 
 
 class DummyParser(BaseParser):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
     def parse(
         self,
-        input: str,
-        metadata: Dict | Path,
+        input: Any,
+        metadata: Dict,
         output_path: Path = PECHAS_PATH,
-    ):
-        pass
+    ) -> Pecha:
+        raise NotImplementedError

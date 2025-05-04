@@ -4,7 +4,7 @@ from unittest import TestCase
 from stam import AnnotationStore
 
 from openpecha.pecha import get_anns
-from openpecha.pecha.layer import LayerEnum
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
 from openpecha.utils import read_json
 from tests.pecha import SharedPechaSetup
@@ -24,7 +24,7 @@ class TestDocxAnnotationParser(TestCase, SharedPechaSetup):
         }
 
     def test_root_pecha(self):
-        type = LayerEnum.ALIGNMENT
+        type = AnnotationType.ALIGNMENT
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
@@ -44,7 +44,7 @@ class TestDocxAnnotationParser(TestCase, SharedPechaSetup):
         assert new_anns == expected_new_anns
 
     def test_commentary_pecha(self):
-        type = LayerEnum.ALIGNMENT
+        type = AnnotationType.ALIGNMENT
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )
