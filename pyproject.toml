@@ -1,12 +1,9 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "openpecha"
-version = "0.0.1"
+version = "2.1.0"
 authors = [
-  { name="OpenPecha", email="dev@openpecha.org" },
+    {name = "Tashi Tsering", email = "tashitsering@esukhia.org"},
+    {name = "Tenzin Tsundue", email = "tsundue@esukhia.org"}
 ]
 description = "OpenPecha toolkit version 2"
 readme = "README.md"
@@ -30,7 +27,7 @@ dependencies = [
   "python-docx >= 1.1.2",
   "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
   "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
-  "pecha_org_tools @ git+https://github.com/OpenPecha/pecha_org_tools.git",
+  "pecha_org_tools == 0.0.8",
   "google-auth-httplib2 >= 0.2.0",
   "google-api-python-client >= 2.156.0",
   "docx2python == 3.3.0",
@@ -52,3 +49,12 @@ dev = [
 [project.urls]
 "Homepage" = "https://github.com/OpenPecha/openpecha-project-template"
 "Bug Tracker" = "https://github.com/OpenPecha/openpecha-project-template/issues"
+
+[tool.semantic_release]
+version_variable = [
+    "pyproject.toml:version"
+]
+branch = "main"
+upload_to_pypi = true
+upload_to_release = true
+build_command = "pip install build && python -m build"
