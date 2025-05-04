@@ -11,7 +11,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.10]
+        python-version: ["3.10"]
 
     steps:
       - uses: actions/checkout@v3
@@ -48,7 +48,7 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: "3.10"
 
       - name: Python Semantic Release
         uses: python-semantic-release/python-semantic-release@v7.34.6
