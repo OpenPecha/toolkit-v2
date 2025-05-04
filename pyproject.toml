@@ -1,59 +1,60 @@
-[tool.poetry]
-name = "openpecha2"
-version = "0.1.0"
-description = "OpenPecha toolkit version 2"
+[project]
+name = "openpecha"
+version = "2.1.0"
 authors = [
-    "Tashi Tsering <tashitsering@esukhia.org>",
-    "Tenzin Tsundue <tsundue@esukhia.org>"
+    {name = "Tashi Tsering", email = "tashitsering@esukhia.org"},
+    {name = "Tenzin Tsundue", email = "tsundue@esukhia.org"}
 ]
+description = "OpenPecha toolkit version 2"
 readme = "README.md"
-packages = [{include = "openpecha", from = "src"}]
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.12"
-pydantic = ">=2.7.4"
-stam = "0.9.0"
-diff-match-patch = "20230430"
-PyGithub = ">=2.3.0"
-pyewts = "0.2.0"
-toml = ">=0.10.2"
-GitPython = ">=3.1.0,<4.0"
-botok = ">=0.8.12"
-subprocess-run = "0.0.8"
-python-docx = ">=1.1.2"
-bo-sent-tokenizer = { git = "https://github.com/OpenPecha/bo_sent_tokenizer.git" }
-fast-antx = { git = "https://github.com/OpenPecha/fast-antx.git" }
-google-auth-httplib2 = ">=0.2.0"
-google-api-python-client = ">=2.156.0"
-docx2python = "3.3.0"
-boto3 = ">=1.34.0"
-botocore = ">=1.34.0"
-rdflib = ">=5.0.0"
-fonttools = { version = ">=4.37.3", extras = ["unicode"] }
-beautifulsoup4 = ">=4.12.0"
+dependencies = [
+  "pydantic >= 2.7.4",
+  "stam ==  0.9.0",
+  "diff-match-patch==20230430",
+  "PyGithub >= 2.3.0",
+  "pyewts == 0.2.0",
+  "toml >= 0.10.2",
+  "GitPython>=3.1.0, <4.0",
+  "botok >= 0.8.12",
+  "subprocess.run == 0.0.8",
+  "python-docx >= 1.1.2",
+  "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
+  "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
+  "pecha_org_tools == 0.0.8",
+  "google-auth-httplib2 >= 0.2.0",
+  "google-api-python-client >= 2.156.0",
+  "docx2python == 3.3.0",
+  "boto3 >= 1.34.0",
+  "botocore >= 1.34.0",
+  "rdflib>=5.0.0",
+  "fonttools[unicode] >= 4.37.3",
+  "bs4==0.0.2"
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^7.1"
-pytest-cov = "*"
-pre-commit = "*"
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pre-commit",
+]
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.urls]
+[project.urls]
 "Homepage" = "https://github.com/OpenPecha/openpecha-project-template"
 "Bug Tracker" = "https://github.com/OpenPecha/openpecha-project-template/issues"
 
 [tool.semantic_release]
-version_variable = ["pyproject.toml:version"]
-version_source = "tag"
-commit_message = "chore(release): version {version}"
+version_variable = [
+    "pyproject.toml:version"
+]
+branch = "main"
 upload_to_pypi = true
 upload_to_release = true
-build_command = "poetry build"
+build_command = "pip install build && python -m build"

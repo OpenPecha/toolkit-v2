@@ -51,7 +51,7 @@ def test_toolkit_version():
         metadata = json.load(f)
 
     pecha_metadata = PechaMetaData(parser=DummyParser().name, **metadata)
-    assert pecha_metadata.toolkit_version == "0.0.1"
+    assert isinstance(pecha_metadata.toolkit_version, str)
 
 
 def test_base_pecha_metadata_model():

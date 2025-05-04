@@ -1,4 +1,4 @@
-name: Publish Python Package
+name: Publish
 
 on:
   push:
@@ -6,49 +6,47 @@ on:
       - main
 
 jobs:
-  build-and-publish:
+  test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.12]
 
     steps:
-      ### 📦 Checkout Code
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v1
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
         with:
-          fetch-depth: 0
+          python-version: ${{ matrix.python-version }}
 
-      ### 🦀 Install Rust toolchain
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      ### 🐍 Set Up Python
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      ### 📥 Install Poetry
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: "1.8.2"
-
-      ### 📚 Install Dependencies
       - name: Install dependencies
         run: |
-          poetry config virtualenvs.create false
-          poetry install
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip install -e .
 
-      ### ✅ Run Tests
-      - name: Run tests
+      - name: Run Test
+        env:
+          GITHUB_ORG: ${{ secrets.GH_ORG }}
+          GITHUB_TOKEN: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          PYTHONPATH: ${GITHUB_WORKSPACE}
         run: |
-          poetry run pytest
+          pytest
 
-      ### 🚀 Bump Version & Publish to PyPI using python-semantic-release
-      - name: Semantic Release - Version Bump and Publish
-        uses: python-semantic-release/python-semantic-release@v8.7.2
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+
+      - name: Python Semantic Release
+        uses: python-semantic-release/python-semantic-release@v7.34.6
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           pypi_token: ${{ secrets.PYPI_TOKEN }}
