@@ -82,14 +82,24 @@ def _serialize_prealigned_commentary_pecha(
     commentary_pecha = pechas[0]
 
     root_alignment_id = get_aligned_id(metadatas[0]["annotations"], annotation_path)
-
-    return PreAlignedCommentarySerializer().serialize(
-        root_pecha,
-        root_alignment_id,
-        commentary_pecha,
-        annotation_path,
-        pecha_category,
-    )
+    if is_segmentation_annotation(metadatas[0]["annotations"], annotation_path):
+        return PreAlignedCommentarySerializer().serialize(
+            root_pecha,
+            root_alignment_id,
+            commentary_pecha,
+            annotation_path,
+            pecha_category,
+        )
+    else:
+        commentary_segmentation_id = metadatas[0]["annotations"][0].path
+        return PreAlignedCommentarySerializer().serialize(
+            root_pecha,
+            root_alignment_id,
+            commentary_pecha,
+            annotation_path,
+            pecha_category,
+            commentary_segmentation_id,
+        )
 
 
 def _serialize_prealigned_root_translation_pecha(
