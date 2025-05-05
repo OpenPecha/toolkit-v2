@@ -74,7 +74,8 @@ def _serialize_prealigned_commentary_pecha(
 ):
     root_pecha = pechas[1]
     commentary_pecha = pechas[0]
-    root_alignment_id = metadatas[0]["annotations"][0].aligned_to.alignment_id
+
+    root_alignment_id = get_aligned_id(metadatas[0]["annotations"], annotation_path)
     return PreAlignedCommentarySerializer().serialize(
         root_pecha,
         root_alignment_id,
