@@ -19,8 +19,6 @@ logger = get_logger(__name__)
 
 
 # Handler functions for each PechaType
-
-
 def _serialize_root_pecha(pechas, metadatas, pecha_category, annotation_path):
     return RootSerializer().serialize(pechas[0], annotation_path, pecha_category)
 
@@ -79,13 +77,24 @@ def _serialize_prealigned_root_translation_pecha(
     root_pecha = pechas[1]
     root_alignment_id = metadatas[0]["annotations"][0].aligned_to.alignment_id
     translation_pecha = pechas[0]
-    return PreAlignedRootTranslationSerializer().serialize(
-        root_pecha,
-        root_alignment_id,
-        translation_pecha,
-        annotation_path,
-        pecha_category,
-    )
+    if annotation_path == metadatas[0]["annotations"][0].path:
+        return PreAlignedRootTranslationSerializer().serialize(
+            root_pecha,
+            root_alignment_id,
+            translation_pecha,
+            annotation_path,
+            pecha_category,
+        )
+    else:
+        translation_segmentation_id = metadatas[0]["annotations"][0].id
+        return PreAlignedRootTranslationSerializer().serialize(
+            root_pecha,
+            root_alignment_id,
+            translation_pecha,
+            annotation_path,
+            pecha_category,
+            translation_segmentation_id,
+        )
 
 
 # Registry mapping PechaType to handler function
