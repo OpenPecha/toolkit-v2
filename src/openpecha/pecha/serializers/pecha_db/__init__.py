@@ -31,6 +31,12 @@ def get_aligned_id(ann_models: List[AnnotationModel], annotation_path: str):
     return None
 
 
+def is_segmentation_annotation(
+    ann_models: List[AnnotationModel], annotation_path: str
+) -> bool:
+    return annotation_path == ann_models[0].path
+
+
 # Handler functions for each PechaType
 def _serialize_root_pecha(pechas, metadatas, pecha_category, annotation_path):
     return RootSerializer().serialize(pechas[0], annotation_path, pecha_category)
@@ -89,11 +95,6 @@ def _serialize_prealigned_commentary_pecha(
 def _serialize_prealigned_root_translation_pecha(
     pechas, metadatas, pecha_category, annotation_path
 ):
-    def is_segmentation_annotation(
-        ann_models: List[AnnotationModel], annotation_path: str
-    ) -> bool:
-        return annotation_path == ann_models[0].path
-
     root_pecha = pechas[1]
     root_alignment_id = get_aligned_id(metadatas[0]["annotations"], annotation_path)
     translation_pecha = pechas[0]
