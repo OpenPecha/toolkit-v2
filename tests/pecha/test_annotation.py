@@ -324,7 +324,7 @@ class TestInvalidAnnotationModel:
                 pecha_id="I12345678",
                 document_id="DOC123",
                 title="Missing Alignment ID Test",
-                type="Alignment",
+                type="alignment",
                 aligned_to={
                     "pecha_id": "I87654321",
                     # Missing alignment_id
@@ -333,7 +333,6 @@ class TestInvalidAnnotationModel:
 
         errors = exc_info.value.errors()
         assert any("aligned_to" in str(err) for err in errors)
-        assert any("alignment_id" in str(err) for err in errors)
 
 
 class TestAnnotationModelSerialization:
@@ -399,8 +398,3 @@ class TestAnnotationModelSerialization:
         assert "pecha_id" in required_fields
         assert "document_id" in required_fields
         assert "title" in required_fields
-
-
-work = TestInvalidAnnotationModel()
-work.test_invalid_pecha_id_format()
-work.test_invalid_aligned_to()

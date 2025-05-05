@@ -186,7 +186,9 @@ class PechaRelationship(str, Enum):
 
 class PechaAlignment(BaseModel):
     pecha_id: PechaId = Field(..., description="Pecha ID")
-    alignment_id: str = Field(..., pattern="\\S", description="Alignment ID")
+    alignment_id: Optional[str] = Field(
+        default=None, pattern="\\S", description="Alignment ID"
+    )
 
 
 class AnnotationModel(BaseModel):
