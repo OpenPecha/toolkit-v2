@@ -97,7 +97,7 @@ class PreAlignedRootTranslationSerializer:
         translation_pecha: Pecha,
         translation_alignment_id: str,
         pecha_category: List[Dict],
-        translation_display_id: str | None = None,
+        translation_segmentation_id: str | None = None,
     ) -> Dict:
         # Format Category
         formatted_category = FormatPechaCategory().format_root_category(
@@ -109,14 +109,14 @@ class PreAlignedRootTranslationSerializer:
         translation_metadata = get_metadata_for_pecha_org(translation_pecha)
 
         # Get content from root and translation pecha
-        if translation_display_id:
+        if translation_segmentation_id:
             src_content = (
                 TranslationAlignmentTransfer().get_serialized_translation_segmentation(
                     root_pecha,
                     root_alignment_id,
                     translation_pecha,
                     translation_alignment_id,
-                    translation_display_id,
+                    translation_segmentation_id,
                 )
             )
         else:
