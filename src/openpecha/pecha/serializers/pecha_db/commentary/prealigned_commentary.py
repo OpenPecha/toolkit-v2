@@ -21,6 +21,7 @@ class PreAlignedCommentarySerializer:
         commentary_pecha: Pecha,
         commentary_alignment_id: str,
         pecha_category: List[Dict],
+        commentary_segmentation_id: str | None = None,
     ):
         # Format Category
         root_title = get_pecha_title(root_pecha, "en")
@@ -37,9 +38,20 @@ class PreAlignedCommentarySerializer:
 
         # Get content
         src_content: List[List[str]] = []
-        tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
-            root_pecha, root_alignment_id, commentary_pecha, commentary_alignment_id
-        )
+        if commentary_segmentation_id:
+            tgt_content = (
+                CommentaryAlignmentTransfer().get_serialized_commentary_segmentation(
+                    root_pecha,
+                    root_alignment_id,
+                    commentary_pecha,
+                    commentary_alignment_id,
+                    commentary_segmentation_id,
+                )
+            )
+        else:
+            tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
+                root_pecha, root_alignment_id, commentary_pecha, commentary_alignment_id
+            )
         # Preprocess newlines in content
         tgt_content = [
             line.replace("\\n", "<br>").replace("\n", "<br>") for line in tgt_content
