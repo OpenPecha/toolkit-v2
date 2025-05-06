@@ -232,7 +232,7 @@ class Pecha:
                 )
         try:
             ann_store.annotate(
-                target=text_selector, data=prepared_ann_data, id=annotation.get("id")
+                target=text_selector, data=prepared_ann_data, id=get_annotation_id()
             )
         except Exception as e:
             raise StamAddAnnotationError(
