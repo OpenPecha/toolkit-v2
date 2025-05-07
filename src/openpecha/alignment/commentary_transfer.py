@@ -1,36 +1,61 @@
-from typing import Dict, List
+from pathlib import Path
+from typing import Any, Dict, List
 
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.pecha import Pecha, get_anns
-from openpecha.utils import (
-    get_chapter_num_from_segment_num,
-    process_segment_num_for_chapter,
-)
+from openpecha.pecha import Pecha, get_anns, load_layer
+from openpecha.utils import adjust_segment_num_for_chapter, get_chapter_for_segment
 
 logger = get_logger(__name__)
 
 
+def is_empty(text: str) -> bool:
+    """
+    Return True if text is empty or contains only newlines.
+    """
+    return not text.strip().replace("\n", "")
+
+
+def parse_root_mapping(mapping: str) -> List[int]:
+    """
+    Parse root_idx_mapping string like '1,2-4' into a sorted list of ints.
+    """
+    res = []
+    for part in mapping.strip().split(","):
+        part = part.strip()
+        if "-" in part:
+            start, end = part.split("-")
+            res.extend(list(range(int(start), int(end) + 1)))
+        else:
+            res.append(int(part))
+    res.sort()
+    return res
+
+
 class CommentaryAlignmentTransfer:
-    def get_display_layer_path(self, pecha: Pecha) -> Pecha:
+    @staticmethod
+    def get_first_valid_root_idx(ann) -> int | None:
+        indices = parse_root_mapping(ann["root_idx_mapping"])
+        return indices[0] if indices else None
+
+    @staticmethod
+    def is_valid_ann(anns: Dict[int, Dict[str, Any]], idx: int) -> bool:
+        return idx in anns and not is_empty(anns[idx]["text"])
+
+    def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
+        """
+        Return the path to the first segmentation layer JSON file in the pecha.
+        """
         return next(pecha.layer_path.rglob("segmentation-*.json"))
 
-    def extract_root_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
+    def index_annotations_by_root(
+        self, anns: List[Dict[str, Any]]
+    ) -> Dict[int, Dict[str, Any]]:
         """
-        Extract annotations from a STAM layer into a dictionary keyed by root index mapping.
+        Return a dict mapping root_idx_mapping to the annotation dict.
         """
-        anns = {}
-        for ann in layer.annotations():
-            start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {data.key().id(): str(data.value()) for data in ann}
-            root_idx = int(ann_metadata["root_idx_mapping"])
-            anns[root_idx] = {
-                "Span": {"start": start, "end": end},
-                "text": str(ann),
-                "root_idx_mapping": root_idx,
-            }
-        return anns
+        return {int(ann["root_idx_mapping"]): ann for ann in anns}
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
@@ -39,45 +64,68 @@ class CommentaryAlignmentTransfer:
         Map annotations from src_layer to tgt_layer based on span overlap or containment.
         Returns a mapping from source indices to lists of target indices.
         """
-        mapping: Dict = {}
 
-        src_anns = self.extract_root_anns(src_layer)
-        tgt_anns = self.extract_root_anns(tgt_layer)
+        def extract_idx(ann: dict) -> int:
+            """Helper to extract a single int index from root_idx_mapping."""
+            if "-" in ann["root_idx_mapping"] or "," in ann["root_idx_mapping"]:
+                idx = self.get_first_valid_root_idx(ann)
+                if idx is None:
+                    raise ValueError(
+                        f"Invalid root_idx_mapping: {ann['root_idx_mapping']}"
+                    )
+                return idx
+            return int(ann["root_idx_mapping"])
 
-        for src_idx, src_span in src_anns.items():
-            src_start, src_end = src_span["Span"]["start"], src_span["Span"]["end"]
+        def is_match(src_start, src_end, tgt_start, tgt_end):
+            """Helper to check if spans overlap or are contained (not edge overlap)."""
+            is_overlap = (
+                src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
+            )
+            is_contained = tgt_start < src_start and tgt_end > src_end
+            is_edge_overlap = tgt_start == src_end or tgt_end == src_start
+            return (is_overlap or is_contained) and not is_edge_overlap
+
+        mapping: Dict[int, List[int]] = {}
+        src_anns = get_anns(src_layer, include_span=True)
+        tgt_anns = get_anns(tgt_layer, include_span=True)
+        for src_ann in src_anns:
+            src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
+            try:
+                src_idx = extract_idx(src_ann)
+            except ValueError:
+                continue
             mapping[src_idx] = []
-
-            for tgt_idx, tgt_span in tgt_anns.items():
-                tgt_start, tgt_end = tgt_span["Span"]["start"], tgt_span["Span"]["end"]
-
-                # Check for mapping conditions
-                is_overlap = (
-                    src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
-                )
-                is_contained = tgt_start < src_start and tgt_end > src_end
-                is_edge_overlap = tgt_start == src_end or tgt_end == src_start
-                if is_overlap or is_contained and not is_edge_overlap:
+            for tgt_ann in tgt_anns:
+                tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
+                try:
+                    tgt_idx = extract_idx(tgt_ann)
+                except ValueError:
+                    continue
+                if is_match(src_start, src_end, tgt_start, tgt_end):
                     mapping[src_idx].append(tgt_idx)
-
-        # Sort the mapping by source indices
         return dict(sorted(mapping.items()))
 
     def get_root_pechas_mapping(
-        self, root_pecha: Pecha, root_alignment_id: str
-    ) -> Dict[int, List]:
+        self, pecha: Pecha, alignment_id: str
+    ) -> Dict[int, List[int]]:
         """
-        Get segmentation mapping from root_pecha -> root_display_pecha
+        Get mapping from pecha's alignment layer to segmentation layer.
         """
-        display_layer_path = self.get_display_layer_path(root_pecha)
+        segmentation_ann_path = self.get_segmentation_ann_path(pecha)
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(alignment_layer, segmentation_layer)
 
-        display_layer = AnnotationStore(file=str(display_layer_path))
-        transfer_layer = AnnotationStore(
-            file=str(root_pecha.layer_path / root_alignment_id)
-        )
-
-        map = self.map_layer_to_layer(transfer_layer, display_layer)
-        return map
+    def get_commentary_pechas_mapping(
+        self, pecha: Pecha, alignment_id: str, segmentation_id: str
+    ) -> Dict[int, List[int]]:
+        """
+        Get mapping from pecha's segmentation layer to alignment layer.
+        """
+        segmentation_ann_path = pecha.layer_path / segmentation_id
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(segmentation_layer, alignment_layer)
 
     def get_serialized_commentary(
         self,
@@ -86,81 +134,108 @@ class CommentaryAlignmentTransfer:
         commentary_pecha: Pecha,
         commentary_alignment_id: str,
     ) -> List[str]:
-        def is_empty(text):
-            """Check if text is empty or contains only newlines."""
-            return not text.strip().replace("\n", "")
-
+        """
+        Serialize commentary annotations with root/segmentation mapping and formatting.
+        """
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
-
-        root_display_layer_path = self.get_display_layer_path(root_pecha)
-        root_display_anns = self.extract_root_anns(
-            AnnotationStore(file=str(root_display_layer_path))
+        root_segmentation_path = self.get_segmentation_ann_path(root_pecha)
+        root_segmentation_anns = self.index_annotations_by_root(
+            get_anns(load_layer(root_segmentation_path))
         )
-
-        root_anns = self.extract_root_anns(
-            AnnotationStore(file=str(root_pecha.layer_path / root_alignment_id))
+        root_anns = self.index_annotations_by_root(
+            get_anns(load_layer(root_pecha.layer_path / root_alignment_id))
         )
-
         commentary_anns = get_anns(
-            AnnotationStore(
-                file=str(commentary_pecha.layer_path / commentary_alignment_id)
-            )
+            load_layer(commentary_pecha.layer_path / commentary_alignment_id)
         )
-        serialized_content = []
+
+        res: List[str] = []
         for ann in commentary_anns:
-            root_indices = parse_root_mapping(ann["root_idx_mapping"])
-            root_idx = root_indices[0]
-            commentary_text = ann["text"]
-
-            # Skip if commentary is empty
-            is_commentary_empty = is_empty(commentary_text)
-            if is_commentary_empty:
-                continue
-
-            # Dont include mapping if root is empty
-            idx_not_in_root = root_idx not in root_anns
-            if idx_not_in_root:
-                serialized_content.append(commentary_text)
-                continue
-
-            is_root_empty = is_empty(root_anns[root_idx]["text"])
-            if is_root_empty:
-                serialized_content.append(commentary_text)
-                continue
-
-            # Dont include mapping if root_display is empty
-            root_display_idx = root_map[root_idx][0]
-            idx_not_in_root_display = root_display_idx not in root_display_anns
-            if idx_not_in_root_display:
-                serialized_content.append(commentary_text)
-                continue
-
-            is_root_display_empty = is_empty(
-                root_display_anns[root_display_idx]["text"]
+            result = self.process_commentary_ann(
+                ann, root_anns, root_map, root_segmentation_anns
             )
-            if is_root_display_empty:
-                serialized_content.append(commentary_text)
+            if result is not None:
+                res.append(result)
+        return res
+
+    def get_serialized_commentary_segmentation(
+        self,
+        root_pecha: Pecha,
+        root_alignment_id: str,
+        commentary_pecha: Pecha,
+        commentary_alignment_id: str,
+        commentary_segmentation_id: str,
+    ) -> List[str]:
+        root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
+        commentary_map = self.get_commentary_pechas_mapping(
+            commentary_pecha, commentary_alignment_id, commentary_segmentation_id
+        )
+
+        root_segmentation_path = self.get_segmentation_ann_path(root_pecha)
+        root_segmentation_anns = self.index_annotations_by_root(
+            get_anns(load_layer(root_segmentation_path))
+        )
+        root_anns = self.index_annotations_by_root(
+            get_anns(load_layer(root_pecha.layer_path / root_alignment_id))
+        )
+        commentary_segmentation_anns = get_anns(
+            load_layer(commentary_pecha.layer_path / commentary_segmentation_id)
+        )
+
+        res: List[str] = []
+        for ann in commentary_segmentation_anns:
+            text = ann["text"]
+            if is_empty(text):
                 continue
 
-            chapter_num = get_chapter_num_from_segment_num(root_display_idx)
-            processed_root_display_idx = process_segment_num_for_chapter(
+            aligned_idx = commentary_map[int(ann["root_idx_mapping"])][0]
+
+            if not self.is_valid_ann(root_anns, aligned_idx):
+                res.append(text)
+
+            root_display_idx = root_map[aligned_idx][0]
+            if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
+                res.append(text)
+
+            chapter_num = get_chapter_for_segment(root_display_idx)
+            processed_root_display_idx = adjust_segment_num_for_chapter(
                 root_display_idx
             )
-            serialized_content.append(
-                f"<{chapter_num}><{processed_root_display_idx}>{commentary_text}"
+            res.append(
+                self.format_serialized_commentary(
+                    chapter_num, processed_root_display_idx, text
+                )
             )
-        return serialized_content
 
+        return res
 
-def parse_root_mapping(mapping: str) -> List[int]:
-    res = []
-    for map in mapping.strip().split(","):
-        map = map.strip()
-        if "-" in map:
-            start, end = map.split("-")
-            res.extend(list(range(int(start), int(end) + 1)))
-        else:
-            res.append(int(map))
+    @staticmethod
+    def format_serialized_commentary(chapter_num: int, seg_idx: int, text: str) -> str:
+        """Format the serialized commentary string."""
+        return f"<{chapter_num}><{seg_idx}>{text}"
 
-    res.sort()
-    return res
+    def process_commentary_ann(
+        self,
+        ann: dict,
+        root_anns: dict,
+        root_map: dict,
+        root_segmentation_anns: dict,
+    ) -> str | None:
+        """Process a single commentary annotation and return the serialized string, or None if not valid."""
+        commentary_text = ann["text"]
+        if is_empty(commentary_text):
+            return None
+
+        root_idx = self.get_first_valid_root_idx(ann)
+        if root_idx is None or not self.is_valid_ann(root_anns, root_idx):
+            return commentary_text
+
+        root_display_idx = root_map[root_idx][0]
+        if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
+            return commentary_text
+
+        chapter_num = get_chapter_for_segment(root_display_idx)
+        processed_root_display_idx = adjust_segment_num_for_chapter(root_display_idx)
+        return self.format_serialized_commentary(
+            chapter_num, processed_root_display_idx, commentary_text
+        )

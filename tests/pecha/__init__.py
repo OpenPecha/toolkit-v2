@@ -122,6 +122,31 @@ class SharedPechaSetup:
                 )
             ],
         }
+        self.prealigned_root_translation_segmentation_pecha_metadata = {
+            "translation_of": "IE60BBDE8",
+            "commentary_of": None,
+            **self.root_translation_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I62E00D78",
+                    type=AnnotationType.SEGMENTATION,
+                    document_id="d3",
+                    path="D93E/segmentation-2143.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation",
+                    aligned_to=PechaAlignment(pecha_id="IE60BBDE8", alignment_id=None),
+                ),
+                AnnotationModel(
+                    pecha_id="I62E00D78",
+                    type=AnnotationType.ALIGNMENT,
+                    document_id="d3",
+                    path="D93E/alignment-0216.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ translation 1",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/alignment-F81A.json"
+                    ),
+                ),
+            ],
+        }
 
         self.prealigned_commentary_pecha_metadata = {
             "translation_of": None,
@@ -138,6 +163,31 @@ class SharedPechaSetup:
                         pecha_id="IE60BBDE8", alignment_id="B8B3/alignment-F81A.json"
                     ),
                 )
+            ],
+        }
+        self.prealigned_commentary_segmentation_pecha_metadata = {
+            "translation_of": None,
+            "commentary_of": "IE60BBDE8",
+            **self.commentary_pecha.metadata.to_dict(),
+            "annotations": [
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=AnnotationType.SEGMENTATION,
+                    document_id="d4",
+                    path="E949/segmentation-2134.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(pecha_id="IE60BBDE8", alignment_id=None),
+                ),
+                AnnotationModel(
+                    pecha_id="I6944984E",
+                    type=AnnotationType.ALIGNMENT,
+                    document_id="d4",
+                    path="E949/alignment-2F29.json",
+                    title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
+                    aligned_to=PechaAlignment(
+                        pecha_id="IE60BBDE8", alignment_id="B8B3/alignment-F81A.json"
+                    ),
+                ),
             ],
         }
 

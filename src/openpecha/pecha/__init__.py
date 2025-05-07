@@ -232,7 +232,7 @@ class Pecha:
                 )
         try:
             ann_store.annotate(
-                target=text_selector, data=prepared_ann_data, id=annotation.get("id")
+                target=text_selector, data=prepared_ann_data, id=get_annotation_id()
             )
         except Exception as e:
             raise StamAddAnnotationError(
@@ -439,13 +439,18 @@ class Pecha:
             layer.save()
 
 
-def get_anns(ann_store: AnnotationStore):
+def get_anns(ann_store: AnnotationStore, include_span: bool = False):
     anns = []
     for ann in ann_store:
         ann_data = {}
         for data in ann:
             ann_data[data.key().id()] = data.value().get()
         curr_ann = {**ann_data, "text": str(ann)}
+        if include_span:
+            curr_ann["Span"] = {
+                "start": ann.offset().begin().value(),
+                "end": ann.offset().end().value(),
+            }
         anns.append(curr_ann)
     return anns
 

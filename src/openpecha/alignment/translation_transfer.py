@@ -4,33 +4,21 @@ from typing import Dict, List
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
-from openpecha.pecha import Pecha, load_layer
+from openpecha.pecha import Pecha, get_anns, load_layer
 
 logger = get_logger(__name__)
 
 
 class TranslationAlignmentTransfer:
-    def get_display_layer_path(self, pecha: Pecha) -> Path:
+    @staticmethod
+    def is_empty(text: str) -> bool:
+        return not text.strip().replace("\n", "")
+
+    def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
         """
         Return the path to the first segmentation layer JSON file in the pecha.
         """
         return next(pecha.layer_path.rglob("segmentation-*.json"))
-
-    def extract_anns(self, layer: AnnotationStore) -> Dict[int, Dict]:
-        """
-        Extract annotations from a STAM layer into a dictionary keyed by root index mapping.
-        """
-        anns = {}
-        for ann in layer:
-            start, end = ann.offset().begin().value(), ann.offset().end().value()
-            ann_metadata = {data.key().id(): str(data.value()) for data in ann}
-            root_idx = int(ann_metadata["root_idx_mapping"])
-            anns[root_idx] = {
-                "Span": {"start": start, "end": end},
-                "text": str(ann),
-                "root_idx_mapping": root_idx,
-            }
-        return anns
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
@@ -39,53 +27,68 @@ class TranslationAlignmentTransfer:
         Map annotations from src_layer to tgt_layer based on span overlap or containment.
         Returns a mapping from source indices to lists of target indices.
         """
-        mapping: Dict[int, List[int]] = {}
+        map: Dict[int, List[int]] = {}
 
-        src_anns = self.extract_anns(src_layer)
-        tgt_anns = self.extract_anns(tgt_layer)
+        src_anns = get_anns(src_layer, include_span=True)
+        tgt_anns = get_anns(tgt_layer, include_span=True)
 
-        for src_idx, src_span in src_anns.items():
-            src_start, src_end = src_span["Span"]["start"], src_span["Span"]["end"]
-            mapping[src_idx] = []
-            for tgt_idx, tgt_span in tgt_anns.items():
-                tgt_start, tgt_end = tgt_span["Span"]["start"], tgt_span["Span"]["end"]
+        for src_ann in src_anns:
+            src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
+            src_idx = int(src_ann["root_idx_mapping"])
+            map[src_idx] = []
+            for tgt_ann in tgt_anns:
+                tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
+                tgt_idx = int(tgt_ann["root_idx_mapping"])
+
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
                 )
                 is_contained = tgt_start < src_start and tgt_end > src_end
                 is_edge_overlap = tgt_start == src_end or tgt_end == src_start
                 if (is_overlap or is_contained) and not is_edge_overlap:
-                    mapping[src_idx].append(tgt_idx)
-        return dict(sorted(mapping.items()))
+                    map[src_idx].append(tgt_idx)
+
+        # Sort the dictionary
+        return dict(sorted(map.items()))
 
     def get_root_pechas_mapping(
-        self, root_pecha: Pecha, root_alignment_id: str
+        self, pecha: Pecha, alignment_id: str
     ) -> Dict[int, List[int]]:
         """
-        Get mapping from root_pecha's alignment layer to its display segmentation layer.
+        Get mapping from pecha's alignment layer to segmentation layer.
         """
-        display_layer_path = self.get_display_layer_path(root_pecha)
-        display_layer = load_layer(display_layer_path)
-        alignment_layer = load_layer(root_pecha.layer_path / root_alignment_id)
-        return self.map_layer_to_layer(alignment_layer, display_layer)
+        segmentation_ann_path = self.get_segmentation_ann_path(pecha)
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(alignment_layer, segmentation_layer)
 
     def get_translation_pechas_mapping(
-        self, translation_pecha: Pecha, translation_alignment_id: str
+        self,
+        pecha: Pecha,
+        alignment_id: str,
+        segmentation_id: str,
     ) -> Dict[int, List]:
         """
-        Get Segmentation mapping from translation display pecha -> translation pecha
+        Get Segmentation mapping from segmentation to alignment layer.
         """
-        display_layer_path = self.get_display_layer_path(translation_pecha)
-        alignment_layer_path = translation_pecha.layer_path / translation_alignment_id
+        segmentation_ann_path = pecha.layer_path / segmentation_id
+        segmentation_layer = load_layer(segmentation_ann_path)
+        alignment_layer = load_layer(pecha.layer_path / alignment_id)
+        return self.map_layer_to_layer(segmentation_layer, alignment_layer)
 
-        display_layer = load_layer(display_layer_path)
-        alignment_layer = load_layer(alignment_layer_path)
+    def mapping_to_text_list(self, mapping: Dict[int, List[str]]) -> List[str]:
+        """
+        Flatten the mapping from Translation to Root Text
+        """
+        max_root_idx = max(mapping.keys(), default=0)
+        res = []
+        for i in range(1, max_root_idx + 1):
+            texts = mapping.get(i, [])
+            text = "\n".join(texts)
+            res.append("") if self.is_empty(text) else res.append(text)
+        return res
 
-        map = self.map_layer_to_layer(display_layer, alignment_layer)
-
-        return map
-
-    def get_serialized_translation(
+    def get_serialized_translation_alignment(
         self,
         root_pecha: Pecha,
         root_alignment_id: str,
@@ -93,74 +96,52 @@ class TranslationAlignmentTransfer:
         translation_alignment_id: str,
     ) -> List[str]:
         """
-        Serialize translation segments so that each segment aligns with the display layer of the root pecha.
+        Serialize with Root Translation Alignment Text mapped to Root Segmentation Text
         """
-
-        def is_empty(text: str) -> bool:
-            return not text.strip().replace("\n", "")
-
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
-        translation_layer_path = (
-            root_translation_pecha.layer_path / translation_alignment_id
-        )
-        translation_anns = self.extract_anns(load_layer(translation_layer_path))
-        root_display_layer_path = self.get_display_layer_path(root_pecha)
-        root_display_anns = self.extract_anns(load_layer(root_display_layer_path))
 
-        mapped_segment: Dict[int, List[str]] = {}
-        for ann in translation_anns.values():
-            root_idx = ann["root_idx_mapping"]
-            translation_text = ann["text"]
-            if not root_map.get(root_idx):
+        layer = load_layer(root_translation_pecha.layer_path / translation_alignment_id)
+        anns = get_anns(layer, include_span=True)
+
+        # Root segmentation idx and Root Translation Alignment Text mapping
+        map: Dict[int, List[str]] = {}
+        for ann in anns:
+            aligned_idx = int(ann["root_idx_mapping"])
+            text = ann["text"]
+            if not root_map.get(aligned_idx):
                 continue
-            root_display_idx = root_map[root_idx][0]
-            mapped_segment.setdefault(root_display_idx, []).append(translation_text)
+            root_segmentation_idx = root_map[aligned_idx][0]
+            map.setdefault(root_segmentation_idx, []).append(text)
 
-        max_root_idx = max(root_display_anns.keys(), default=0)
-        serialized_content = []
-        for i in range(1, max_root_idx + 1):
-            texts = mapped_segment.get(i, [])
-            text = "\n".join(texts)
-            serialized_content.append("") if is_empty(
-                text
-            ) else serialized_content.append(text)
+        return self.mapping_to_text_list(map)
 
-        return serialized_content
-
-    def get_serialized_translation_display(
+    def get_serialized_translation_segmentation(
         self,
         root_pecha: Pecha,
         root_alignment_id: str,
         translation_pecha: Pecha,
         translation_alignment_id: str,
-        translation_display_id: str,
+        translation_segmentation_id: str,
     ):
         """
-        Input: map from transfer_layer -> display_layer (One to Many)
-        Structure in a way such as : <chapter number><display idx>translation text
-        Note: From many relation in display layer, take first idx (Sefaria map limitation)
+        Serialize with Root Translation Segmentation Text mapped to Root Segmentation Text
         """
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
         translation_map = self.get_translation_pechas_mapping(
-            translation_pecha, translation_alignment_id
+            translation_pecha, translation_alignment_id, translation_segmentation_id
         )
 
-        layer_path = translation_pecha.layer_path / translation_display_id
+        layer = load_layer(translation_pecha.layer_path / translation_segmentation_id)
+        anns = get_anns(layer, include_span=True)
 
-        anns = self.extract_anns(load_layer(layer_path))
+        # Root segmentation idx and Root Translation Segmentation Text mapping
+        map: Dict[int, List[str]] = {}
+        for ann in anns:
+            text = ann["text"]
+            idx = int(ann["root_idx_mapping"])
 
-        segments = []
+            aligned_idx = translation_map[idx][0]
+            root_segmentation_idx = root_map[aligned_idx][0]
+            map.setdefault(root_segmentation_idx, []).append(text)
 
-        mapped_segments = {}
-        for src_idx, tgt_map in translation_map.items():
-            translation_text = anns[src_idx]["text"]
-            tgt_idx = tgt_map[0]
-
-            root_idx = root_map[tgt_idx][0]
-            mapped_segments[root_idx] = translation_text
-
-        max_root_idx = max(mapped_segments.keys(), default=0)
-        for i in range(1, max_root_idx + 1):
-            text = mapped_segments.get(i, "")
-            segments.append(text)
-        return segments
+        return self.mapping_to_text_list(map)

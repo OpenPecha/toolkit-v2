@@ -148,6 +148,35 @@ class TestSerializer(TestCase, SharedPechaSetup):
         )
 
     @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary.PreAlignedCommentarySerializer.serialize"
+    )
+    def test_prealigned_commentary_segmentation_pecha(self, mock_commentary_serialize):
+        mock_commentary_serialize.return_value = {}
+
+        pechas = [self.commentary_pecha, self.root_pecha]
+        metadatas = [
+            self.prealigned_commentary_segmentation_pecha_metadata,
+            self.root_pecha_metadata,
+        ]
+
+        annotation_path = "E949/alignment-2F29.json"
+        root_alignment_path = "B8B3/alignment-F81A.json"
+        commentary_segmentation_path = "E949/segmentation-2134.json"
+
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
+
+        mock_commentary_serialize.assert_called_once()
+        mock_commentary_serialize.assert_called_with(
+            self.root_pecha,
+            root_alignment_path,
+            self.commentary_pecha,
+            annotation_path,
+            self.pecha_category,
+            commentary_segmentation_path,
+        )
+
+    @mock.patch(
         "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
     )
     def test_prealigned_root_translation_pecha(self, mock_translation_serialize):
@@ -172,4 +201,35 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_translation_pecha,
             annotation_path,
             self.pecha_category,
+        )
+
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"
+    )
+    def test_prealigned_root_translation_segmentation_pecha(
+        self, mock_translation_serialize
+    ):
+        mock_translation_serialize.return_value = {}
+
+        pechas = [self.root_translation_pecha, self.root_pecha]
+        metadatas = [
+            self.prealigned_root_translation_segmentation_pecha_metadata,
+            self.root_pecha_metadata,
+        ]
+
+        annotation_path = "D93E/alignment-0216.json"
+        root_alignment_path = "B8B3/alignment-F81A.json"
+        translation_segmentation_id = "D93E/segmentation-2143.json"
+
+        serializer = Serializer()
+        serializer.serialize(pechas, metadatas, self.pecha_category, annotation_path)
+
+        mock_translation_serialize.assert_called_once()
+        mock_translation_serialize.assert_called_with(
+            self.root_pecha,
+            root_alignment_path,
+            self.root_translation_pecha,
+            annotation_path,
+            self.pecha_category,
+            translation_segmentation_id,
         )
