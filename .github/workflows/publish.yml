@@ -58,20 +58,31 @@ jobs:
           else
             echo "PYPI_TOKEN is set. Will be used for publishing."
           fi
-          
-      - name: Python Semantic Release
+        
+      # First, use semantic-release just for versioning
+      - name: Python Semantic Release for versioning
         id: release
         uses: python-semantic-release/python-semantic-release@v7.34.6
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           pypi_token: ${{ secrets.PYPI_TOKEN }}
           
-      # Add a dedicated step for PyPI publishing as backup
-      - name: Build and Publish Package (Backup)
+      # Manual build and publish with proper permissions
+      - name: Build and Publish Package
         run: |
+          # Fix permissions issue
+          mkdir -p src/openpecha.egg-info
+          chmod -R 777 src/
+          
+          # Install build tools
           pip install build twine
+          
+          # Build the package
           python -m build
+          
           echo "Built package files:"
           ls -la dist/
+          
+          # Upload to PyPI
           echo "Uploading to PyPI..."
           python -m twine upload dist/* --verbose --non-interactive -u __token__ -p ${{ secrets.PYPI_TOKEN }}
