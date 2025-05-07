@@ -85,14 +85,45 @@ jobs:
           fi
           
       # First, use semantic-release just for versioning
+      # Replace only this section in your existing workflow:
+
+      # First, use semantic-release just for versioning
       - name: Python Semantic Release for versioning
         id: release
         uses: python-semantic-release/python-semantic-release@v7.34.6
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Get current and new version
+        id: version_check
+        run: |
+          # Get current version from PyPI
+          PYPI_VERSION=$(pip index versions openpecha 2>/dev/null | grep -oP '(?<=\().*(?=\))' | cut -d ',' -f1 || echo "0.0.0")
+          echo "Current PyPI version: $PYPI_VERSION"
           
+          # Get new version after semantic-release
+          if [ -f "pyproject.toml" ]; then
+            NEW_VERSION=$(grep -o 'version = "[^"]*"' pyproject.toml | head -1 | cut -d'"' -f2)
+          elif [ -f "openpecha/__init__.py" ]; then
+            NEW_VERSION=$(grep -o '__version__ = "[^"]*"' openpecha/__init__.py | cut -d'"' -f2)
+          elif [ -f "setup.py" ]; then
+            NEW_VERSION=$(grep -o "version=['\"][^'\"]*['\"]" setup.py | cut -d'"' -f2 | cut -d"'" -f2)
+          else
+            echo "Could not locate version file"
+            exit 1
+          fi
+          echo "New version: $NEW_VERSION"
+          
+          if [ "$PYPI_VERSION" = "$NEW_VERSION" ]; then
+            echo "No version change detected. Will skip upload."
+            echo "should_upload=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version updated from $PYPI_VERSION to $NEW_VERSION. Will proceed with upload."
+            echo "should_upload=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and Publish Package
+        if: steps.version_check.outputs.should_upload == 'true'
         run: |
           # Install build tools
           pip install build twine
@@ -111,3 +142,9 @@ jobs:
           # Upload to PyPI
           echo "Uploading to PyPI..."
           python -m twine upload dist/* --verbose --non-interactive -u __token__ -p ${{ secrets.PYPI_TOKEN }}
+
+      - name: Skip upload due to unchanged version
+        if: steps.version_check.outputs.should_upload == 'false'
+        run: |
+          echo "Skipping PyPI upload because the version was not updated."
+          echo "Check your semantic-release configuration and make sure version files are being updated properly."

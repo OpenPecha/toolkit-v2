@@ -53,15 +53,14 @@ dev = [
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
 branch = "main"
-upload_to_pypi = true
-upload_to_release = true # This is for creating GitHub releases
+upload_to_pypi = false  # Disable direct PyPI upload; handled by workflow
+upload_to_release = true  # This is for creating GitHub releases
 build_command = "pip install build && python -m build"
 
-# Add these for commit analysis and version bumping logic:
-commit_message_style = "angular" # Uses angular conventions for parsing
-major_on_breaking_change = true  # Default, but good to be explicit
+# Use angular commit style for parsing (conventional commits)
+commit_message_style = "angular"
+major_on_breaking_change = true  # Default, but explicit
 minor_on_feat = true             # Default for angular style
 patch_on_fix = true              # Default for angular style
 
-# Optional but good for consistency:
-tag_format = "v{version}" # Default, explicitly stating 's version tag tag_format
+tag_format = "v{version}"  # Git tag format
