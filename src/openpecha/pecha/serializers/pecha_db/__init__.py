@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
-from openpecha.pecha import Pecha, metadata
+from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
 from openpecha.pecha.pecha_types import PechaType, get_aligned_id, get_pecha_type
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
