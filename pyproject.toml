@@ -64,4 +64,4 @@ minor_on_feat = true             # Default for angular style
 patch_on_fix = true              # Default for angular style
 
 # Optional but good for consistency:
-tag_format = "v{version}" # Default, explicitly stating it
+tag_format = "v{version}" # Default, explicitly stating 's version tag tag_format
