@@ -5,28 +5,21 @@
       "preset": "angular",
       "releaseRules": [
         {"type": "feat", "release": "minor"},
-        {"type": "fix", "release": "patch"},
-        {"type": "docs", "release": "patch"},
-        {"type": "style", "release": "patch"},
-        {"type": "refactor", "release": "patch"},
-        {"type": "perf", "release": "patch"},
-        {"type": "test", "release": "patch"},
-        {"type": "build", "release": "patch"},
-        {"type": "ci", "release": "patch"},
-        {"type": "chore", "release": "patch"},
-        {"subject": "*", "release": "patch"},
-        {"body": "*", "release": "patch"},
-        {"message": "*", "release": "patch"}
+        {"type": "fix", "release": "patch"}
       ],
       "parserOpts": {
-        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"],
-        "headerPattern": "^(?:(?:fix|feat|docs|style|refactor|perf|test|build|ci|chore)(?:\\(.*\\))?:|(.*))",
-        "headerCorrespondence": ["type", "subject"],
-        "mergePattern": "^Merge.*",
-        "mergeCorrespondence": ["message"]
+        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
       }
     }],
-    "@semantic-release/release-notes-generator",
+    ["@semantic-release/release-notes-generator", {
+      "preset": "angular",
+      "parserOpts": {
+        "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES"]
+      },
+      "writerOpts": {
+        "commitsSort": ["subject", "scope"]
+      }
+    }],
     "@semantic-release/github",
     "@semantic-release/pypi"
   ]
