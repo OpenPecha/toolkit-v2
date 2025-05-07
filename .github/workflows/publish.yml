@@ -65,7 +65,7 @@ jobs:
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           pypi_token: ${{ secrets.PYPI_TOKEN }}
-          additional_options: "-vv --upload-to-pypi"
+          additional_options: "-vv" # Just adding verbosity, removing the invalid flag
         
       # Explicit build and publish as a backup
       - name: Build and Publish Package (Backup)
