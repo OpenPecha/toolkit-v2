@@ -69,21 +69,34 @@ jobs:
           
       - name: Build and Publish Package
         run: |
+
           # Install build tools
-          pip install build twine
-          
+          pip install build twine toml
+
           # Build the package using a temp directory approach
           TEMP_DIR=$(mktemp -d)
           cp -r . $TEMP_DIR/
           cd $TEMP_DIR
           
-          # Temporarily modify pyproject.toml to remove GitHub dependencies
+          # Remove GitHub dependencies from pyproject.toml before building
           python -c "
           import toml
+
+          # Load the pyproject.toml file
           with open('pyproject.toml', 'r') as f:
-            data = toml.load(f)
-          # We don't need to modify anything since Git dependencies are already in optionals
-          # Just build the package as is
+            config = toml.load(f)
+
+          # Move GitHub dependencies to a separate variable for reference
+          github_deps = [dep for dep in config['project']['dependencies'] if '@git+' in dep]
+
+          # Remove GitHub dependencies from main dependencies
+          config['project']['dependencies'] = [dep for dep in config['project']['dependencies'] if '@git+' not in dep]
+
+          # Write modified pyproject.toml
+          with open('pyproject.toml', 'w') as f:
+            toml.dump(config, f)
+
+          print('GitHub dependencies removed from main dependencies list')
           "
           
           # Build the package in the temp directory
