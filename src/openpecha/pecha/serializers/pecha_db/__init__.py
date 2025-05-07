@@ -166,6 +166,7 @@ class Serializer:
         self,
         pechas: List[Pecha],
         metadatas: List[Dict[str, Any]],
+        annotations: Dict[str, List[AnnotationModel]],
         pecha_category: List[Dict[str, Dict[str, str]]],
         annotation_path: str,
     ):
