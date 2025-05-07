@@ -49,6 +49,29 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
+      # ADD THESE DEBUGGING STEPS:
+      - name: Debug Git Information
+        run: |
+          echo "--- Current Directory ---"
+          pwd
+          echo "--- Git Status ---"
+          git status
+          echo "--- Current Branch ---"
+          git branch --show-current
+          echo "--- Remote URLs ---"
+          git remote -v
+          echo "--- Fetching all tags from remote again (force) ---"
+          echo "# Forcing can sometimes help with CI caching or sparse checkouts if any happened before"
+          git fetch --all --tags --force
+          echo "--- All Local Tags ---"
+          git tag -l
+          echo "--- Recent Commits on Current Branch (with decoration) ---"
+          git log --decorate --oneline -n 30 
+          echo "--- Details for v2.1.0 tag (if it exists locally) ---"
+          git show v2.1.0 --pretty=fuller || echo "Error: v2.1.0 tag not found by 'git show' in CI"
+          echo "--- python-semantic-release version ---"
+          pip install python-semantic-release # Ensure it's installed if not already via action's env
+          python -m semantic_release --version
 
       - name: Python Semantic Release
         uses: python-semantic-release/python-semantic-release@v7.34.6
