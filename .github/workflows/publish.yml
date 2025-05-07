@@ -50,8 +50,30 @@ jobs:
         with:
           python-version: "3.10"
           
-      - name: Python Semantic Release
+      - name: Verify PyPI Token Presence
+        run: |
+          if [ -z "${{ secrets.PYPI_TOKEN }}" ]; then
+            echo "WARNING: PYPI_TOKEN is not set!"
+            exit 1
+          else
+            echo "PYPI_TOKEN is set. Will be used for publishing."
+          fi
+          
+      - name: Python Semantic Release with Debug
+        id: release
         uses: python-semantic-release/python-semantic-release@v7.34.6
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           pypi_token: ${{ secrets.PYPI_TOKEN }}
+          additional_options: "-vv --upload-to-pypi"
+        
+      # Explicit build and publish as a backup
+      - name: Build and Publish Package (Backup)
+        if: success()
+        run: |
+          pip install build twine
+          python -m build
+          echo "Built package files:"
+          ls -la dist/
+          echo "Uploading to PyPI..."
+          python -m twine upload dist/* --verbose --non-interactive -u __token__ -p ${{ secrets.PYPI_TOKEN }}
