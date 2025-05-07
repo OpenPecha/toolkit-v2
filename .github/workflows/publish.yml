@@ -59,17 +59,15 @@ jobs:
             echo "PYPI_TOKEN is set. Will be used for publishing."
           fi
           
-      - name: Python Semantic Release with Debug
+      - name: Python Semantic Release
         id: release
         uses: python-semantic-release/python-semantic-release@v7.34.6
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
           pypi_token: ${{ secrets.PYPI_TOKEN }}
-          additional_options: "-vv" # Just adding verbosity, removing the invalid flag
-        
-      # Explicit build and publish as a backup
+          
+      # Add a dedicated step for PyPI publishing as backup
       - name: Build and Publish Package (Backup)
-        if: success()
         run: |
           pip install build twine
           python -m build
