@@ -38,7 +38,7 @@ class SharedPechaSetup:
                 type=AnnotationType.SEGMENTATION,
                 document_id="d2",
                 path="B8B3/segmentation-74F4.json",
-                title="\u0f51\u0f44\u0f0b\u0f42\u0fb1\u0f72\u0f44\u0f0b\u0f54\u0f0b\u0f62\u0f66\u0f0b\u0f63\u0f0b\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d segmentation",
+                title="དབུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation",
                 aligned_to=None,
             ),
             AnnotationModel(
@@ -46,7 +46,7 @@ class SharedPechaSetup:
                 type=AnnotationType.ALIGNMENT,
                 document_id="d2",
                 path="B8B3/alignment-74F4.json",
-                title="\u0f51\u0f44\u0f0b\u0f42\u0fb1\u0f72\u0f44\u0f0b\u0f54\u0f0b\u0f62\u0f66\u0f0b\u0f63\u0f0b\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d alignment",
+                title="དབུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ alignment",
                 aligned_to=None,
             ),
         ]
@@ -98,7 +98,7 @@ class SharedPechaSetup:
                 type=AnnotationType.ALIGNMENT,
                 document_id="d4",
                 path="FD22/alignment-599A.json",
-                title="\u0f51\u0f44\u0f0b\u0f42\u0fb1\u0f72\u0f44\u0f0b\u0f54\u0f0b\u0f62\u0f66\u0f0b\u0f63\u0f0b\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d\u0f66\u0f7c\u0f44\u0f0b\u0f62\u0f92\u0fb1\u0f72\u0f0b\u0f0d commentary",
+                title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤  commentary",
                 aligned_to=PechaAlignment(
                     pecha_id="I6944984E", alignment_id="BEC3/alignment-90C0.json"
                 ),
