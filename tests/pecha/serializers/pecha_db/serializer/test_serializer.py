@@ -85,7 +85,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha.id: self.root_pecha_annotations,
             self.commentary_pecha.id: self.commentary_pecha_annotations,
         }
-        annotation_path = "E949/alignment-2F29.json"
+        annotation_path = "BEC3/alignment-90C0.json"
 
         serializer = Serializer()
         serializer.serialize(
