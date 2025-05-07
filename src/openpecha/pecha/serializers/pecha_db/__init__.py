@@ -35,9 +35,10 @@ def _serialize_root_pecha(
 def _serialize_root_translation_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
+    root_alignment_id = get_aligned_id(annotations[pechas[0].id], annotation_path)
     return RootSerializer().serialize(
         pechas[1],
-        annotations[pechas[1].id][0].path,
+        root_alignment_id,
         pecha_category,
         pechas[0],
         annotation_path,
