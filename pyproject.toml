@@ -1,6 +1,6 @@
 [project]
 name = "openpecha"
-version = "2.1.5"
+version = "2.1.4"
 authors = [
     {name = "Tashi Tsering", email = "tashitsering@esukhia.org"},
     {name = "Tenzin Tsundue", email = "tsundue@esukhia.org"}
@@ -14,6 +14,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+# Keep all regular dependencies
 dependencies = [
   "pydantic >= 2.7.4",
   "stam ==  0.9.0",
@@ -25,8 +26,7 @@ dependencies = [
   "botok >= 0.8.12",
   "subprocess.run == 0.0.8",
   "python-docx >= 1.1.2",
-  "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
-  "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
+  # Remove GitHub dependencies from here
   "pecha_org_tools == 0.0.8",
   "google-auth-httplib2 >= 0.2.0",
   "google-api-python-client >= 2.156.0",
@@ -44,7 +44,18 @@ dev = [
     "pytest-cov",
     "pre-commit",
 ]
-
+# Add GitHub dependencies as optional
+github = [
+    "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
+    "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
+]
+all = [
+    "pytest",
+    "pytest-cov",
+    "pre-commit",
+    "bo-sent-tokenizer @ git+https://github.com/OpenPecha/bo_sent_tokenizer.git",
+    "fast_antx @ git+https://github.com/OpenPecha/fast-antx.git",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/OpenPecha/openpecha-project-template"
