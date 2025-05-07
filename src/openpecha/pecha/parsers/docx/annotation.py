@@ -8,12 +8,7 @@ from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
-from openpecha.pecha.pecha_types import (
-    PechaType,
-    get_pecha_type,
-    is_commentary_related_pecha,
-    is_root_related_pecha,
-)
+from openpecha.pecha.pecha_types import is_root_related_pecha
 
 pecha_id = str
 
@@ -51,7 +46,6 @@ class DocxAnnotationParser:
         docx_file: Path,
         metadatas: List[Dict],
     ) -> Tuple[Pecha, annotation_path]:
-        pecha_type: PechaType = get_pecha_type(metadatas)
 
         # Accept both str and AnnotationType, convert str to AnnotationType
         if isinstance(type, str):
@@ -69,7 +63,7 @@ class DocxAnnotationParser:
         new_basename = list(pecha.bases.keys())[0]
         new_base = pecha.get_base(new_basename)
 
-        if is_root_related_pecha(pecha_type):
+        if is_root_related_pecha(metadatas):
             parser = DocxRootParser()
             coords, old_base = parser.extract_segmentation_coords(docx_file)
 
@@ -80,7 +74,7 @@ class DocxAnnotationParser:
             )
             return (pecha, annotation_path)
 
-        elif is_commentary_related_pecha(pecha_type):
+        else:
             commentary_parser = DocxSimpleCommentaryParser()
             (
                 coords,
@@ -95,6 +89,3 @@ class DocxAnnotationParser:
                 f"Alignment Annotation is successfully added to Pecha {pecha.id}"
             )
             return (pecha, annotation_path)
-
-        else:
-            raise ValueError(f"Unknown pecha type: {pecha_type}")
