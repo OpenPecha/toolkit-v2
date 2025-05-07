@@ -58,12 +58,20 @@ def _serialize_commentary_translation_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
     root_title = Serializer.get_root_en_title(metadatas, pechas)
+
+    commentary_pecha = pechas[1]
+    translation_pecha = pechas[0]
+
+    commentary_alignment_id = get_aligned_id(
+        annotations[translation_pecha.id], annotation_path
+    )
+
     return SimpleCommentarySerializer().serialize(
-        pechas[1],
-        annotations[pechas[1].id][0].path,
+        commentary_pecha,
+        commentary_alignment_id,
         pecha_category,
         root_title,
-        pechas[0],
+        translation_pecha,
         annotation_path,
     )
 
