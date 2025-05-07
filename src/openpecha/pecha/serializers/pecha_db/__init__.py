@@ -74,8 +74,10 @@ def _serialize_prealigned_commentary_pecha(
     root_pecha = pechas[1]
     commentary_pecha = pechas[0]
 
-    root_alignment_id = get_aligned_id(annotations[pechas[0].id], annotation_path)
-    if is_segmentation_annotation(annotations[pechas[0].id], annotation_path):
+    root_alignment_id = get_aligned_id(
+        annotations[commentary_pecha.id], annotation_path
+    )
+    if is_segmentation_annotation(annotations[commentary_pecha.id], annotation_path):
         return PreAlignedCommentarySerializer().serialize(
             root_pecha,
             root_alignment_id,
@@ -84,7 +86,7 @@ def _serialize_prealigned_commentary_pecha(
             pecha_category,
         )
     else:
-        commentary_segmentation_id = annotations[pechas[0].id][0].path
+        commentary_segmentation_id = annotations[commentary_pecha.id][0].path
         return PreAlignedCommentarySerializer().serialize(
             root_pecha,
             root_alignment_id,
@@ -99,10 +101,12 @@ def _serialize_prealigned_root_translation_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
     root_pecha = pechas[1]
-    root_alignment_id = get_aligned_id(annotations[pechas[0].id], annotation_path)
     translation_pecha = pechas[0]
+    root_alignment_id = get_aligned_id(
+        annotations[translation_pecha.id], annotation_path
+    )
 
-    if is_segmentation_annotation(annotations[pechas[0].id], annotation_path):
+    if is_segmentation_annotation(annotations[translation_pecha.id], annotation_path):
         return PreAlignedRootTranslationSerializer().serialize(
             root_pecha,
             root_alignment_id,
@@ -111,7 +115,7 @@ def _serialize_prealigned_root_translation_pecha(
             pecha_category,
         )
     else:
-        translation_segmentation_id = annotations[pechas[0].id][0].path
+        translation_segmentation_id = annotations[translation_pecha.id][0].path
         return PreAlignedRootTranslationSerializer().serialize(
             root_pecha,
             root_alignment_id,
