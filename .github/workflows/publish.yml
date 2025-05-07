@@ -38,6 +38,10 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+      contents: write  # Needed for semantic-release to update version
 
     steps:
       - uses: actions/checkout@v3
@@ -50,39 +54,23 @@ jobs:
         with:
           python-version: "3.10"
           
-      - name: Verify PyPI Token Presence
-        run: |
-          if [ -z "${{ secrets.PYPI_TOKEN }}" ]; then
-            echo "WARNING: PYPI_TOKEN is not set!"
-            exit 1
-          else
-            echo "PYPI_TOKEN is set. Will be used for publishing."
-          fi
-        
       # First, use semantic-release just for versioning
       - name: Python Semantic Release for versioning
         id: release
         uses: python-semantic-release/python-semantic-release@v7.34.6
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
+          # Only version, no upload
+          additional_options: "--no-upload-to-pypi --no-upload-to-release"
           
-      # Manual build and publish with proper permissions
-      - name: Build and Publish Package
+      # Build the package in the runner (not in a container)
+      - name: Build package
         run: |
-          # Fix permissions issue
-          mkdir -p src/openpecha.egg-info
-          chmod -R 777 src/
-          
-          # Install build tools
-          pip install build twine
-          
-          # Build the package
+          pip install build
           python -m build
           
-          echo "Built package files:"
-          ls -la dist/
-          
-          # Upload to PyPI
-          echo "Uploading to PyPI..."
-          python -m twine upload dist/* --verbose --non-interactive -u __token__ -p ${{ secrets.PYPI_TOKEN }}
+      # Use the official PyPA action for publishing to PyPI
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
