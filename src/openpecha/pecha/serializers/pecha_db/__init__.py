@@ -19,18 +19,6 @@ from openpecha.pecha.serializers.pecha_db.root import RootSerializer
 logger = get_logger(__name__)
 
 
-def get_aligned_id(ann_models: List[AnnotationModel], annotation_path: str):
-    """
-    Get the alignment id from List of AnnotationModel
-    """
-    for ann_model in ann_models:
-        if annotation_path == ann_model.path:
-            aligned_to = ann_model.aligned_to
-            if aligned_to and aligned_to.alignment_id:
-                return aligned_to.alignment_id
-    return None
-
-
 def is_segmentation_annotation(
     ann_models: List[AnnotationModel], annotation_path: str
 ) -> bool:

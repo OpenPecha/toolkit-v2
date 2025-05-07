@@ -3,6 +3,7 @@ from pathlib import Path
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel, PechaAlignment
 from openpecha.pecha.layer import AnnotationType
+from openpecha.pecha.pecha_types import get_aligned_id
 
 
 class SharedPechaSetup:
