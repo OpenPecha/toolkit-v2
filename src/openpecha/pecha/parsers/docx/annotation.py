@@ -44,7 +44,7 @@ class DocxAnnotationParser:
         pecha: Pecha,
         type: AnnotationType | str,
         docx_file: Path,
-        metadatas: List[Tuple[str, Any]],
+        metadatas: List[Any],
     ) -> Tuple[Pecha, annotation_path]:
 
         # Accept both str and AnnotationType, convert str to AnnotationType

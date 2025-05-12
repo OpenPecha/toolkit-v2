@@ -33,15 +33,12 @@ class SharedPechaSetup:
             self.commentary_translation_pecha_path
         )
 
-        self.root_pecha_metadata = (
-            "IA6E66F92",
-            DummyMetadataModel(
-                **{
-                    "translation_of": None,
-                    "commentary_of": None,
-                    **self.root_pecha.metadata.to_dict(),
-                }
-            ),
+        self.root_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": None,
+                "commentary_of": None,
+                **self.root_pecha.metadata.to_dict(),
+            }
         )
         self.root_pecha_annotations = [
             AnnotationModel(
@@ -62,15 +59,12 @@ class SharedPechaSetup:
             ),
         ]
 
-        self.root_translation_pecha_metadata = (
-            "I62E00D78",
-            DummyMetadataModel(
-                **{
-                    "translation_of": "IE60BBDE8",
-                    "commentary_of": None,
-                    **self.root_translation_pecha.metadata.to_dict(),
-                }
-            ),
+        self.root_translation_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": "IE60BBDE8",
+                "commentary_of": None,
+                **self.root_translation_pecha.metadata.to_dict(),
+            }
         )
         self.root_translation_pecha_annotations = [
             AnnotationModel(
@@ -85,15 +79,12 @@ class SharedPechaSetup:
             )
         ]
 
-        self.commentary_pecha_metadata = (
-            "I77BD6EA9",
-            DummyMetadataModel(
-                **{
-                    "translation_of": None,
-                    "commentary_of": "IE60BBDE8",
-                    **self.commentary_pecha.metadata.to_dict(),
-                }
-            ),
+        self.commentary_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": None,
+                "commentary_of": "IE60BBDE8",
+                **self.commentary_pecha.metadata.to_dict(),
+            }
         )
         self.commentary_pecha_annotations = [
             AnnotationModel(
@@ -108,15 +99,12 @@ class SharedPechaSetup:
             )
         ]
 
-        self.commentary_translation_pecha_metadata = (
-            "I94DBDA91",
-            DummyMetadataModel(
-                **{
-                    "translation_of": "I6944984E",
-                    "commentary_of": None,
-                    **self.commentary_translation_pecha.metadata.to_dict(),
-                }
-            ),
+        self.commentary_translation_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": "I6944984E",
+                "commentary_of": None,
+                **self.commentary_translation_pecha.metadata.to_dict(),
+            }
         )
         self.commentary_translation_pecha_annotations = [
             AnnotationModel(
@@ -131,15 +119,12 @@ class SharedPechaSetup:
             )
         ]
 
-        self.prealigned_root_translation_pecha_metadata = (
-            "I62E00D78",
-            DummyMetadataModel(
-                **{
-                    "translation_of": "IE60BBDE8",
-                    "commentary_of": None,
-                    **self.root_translation_pecha.metadata.to_dict(),
-                }
-            ),
+        self.prealigned_root_translation_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": "IE60BBDE8",
+                "commentary_of": None,
+                **self.root_translation_pecha.metadata.to_dict(),
+            }
         )
         self.prealigned_root_translation_pecha_annotations = [
             AnnotationModel(
@@ -155,14 +140,13 @@ class SharedPechaSetup:
         ]
 
         self.prealigned_root_translation_segmentation_pecha_metadata = (
-            "I62E00D78",
             DummyMetadataModel(
                 **{
                     "translation_of": "IE60BBDE8",
                     "commentary_of": None,
                     **self.root_translation_pecha.metadata.to_dict(),
                 }
-            ),
+            )
         )
         self.prealigned_root_translation_segmentation_pecha_annotations = [
             AnnotationModel(
@@ -185,15 +169,12 @@ class SharedPechaSetup:
             ),
         ]
 
-        self.prealigned_commentary_pecha_metadata = (
-            "I77BD6EA9",
-            DummyMetadataModel(
-                **{
-                    "translation_of": None,
-                    "commentary_of": "IE60BBDE8",
-                    **self.commentary_pecha.metadata.to_dict(),
-                }
-            ),
+        self.prealigned_commentary_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": None,
+                "commentary_of": "IE60BBDE8",
+                **self.commentary_pecha.metadata.to_dict(),
+            }
         )
         self.prealigned_commentary_pecha_annotations = [
             AnnotationModel(
@@ -208,15 +189,12 @@ class SharedPechaSetup:
             )
         ]
 
-        self.prealigned_commentary_segmentation_pecha_metadata = (
-            "I77BD6EA9",
-            DummyMetadataModel(
-                **{
-                    "translation_of": None,
-                    "commentary_of": "IE60BBDE8",
-                    **self.commentary_pecha.metadata.to_dict(),
-                }
-            ),
+        self.prealigned_commentary_segmentation_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": None,
+                "commentary_of": "IE60BBDE8",
+                **self.commentary_pecha.metadata.to_dict(),
+            }
         )
         self.prealigned_commentary_segmentation_pecha_annotations = [
             AnnotationModel(
@@ -239,15 +217,12 @@ class SharedPechaSetup:
             ),
         ]
 
-        self.prealigned_commentary_translation_pecha_metadata = (
-            "I94DBDA91",
-            DummyMetadataModel(
-                **{
-                    "translation_of": "I6944984E",
-                    "commentary_of": None,
-                    **self.commentary_translation_pecha.metadata.to_dict(),
-                }
-            ),
+        self.prealigned_commentary_translation_pecha_metadata = DummyMetadataModel(
+            **{
+                "translation_of": "I6944984E",
+                "commentary_of": None,
+                **self.commentary_translation_pecha.metadata.to_dict(),
+            }
         )
         self.prealigned_commentary_translation_pecha_annotations = [
             AnnotationModel(

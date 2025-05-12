@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any
 from unittest import TestCase
 
 from openpecha.pecha.parsers.docx import DocxParser
@@ -18,7 +18,7 @@ extra_fields = {
     "usage_title": {"en": "Illuminating the Intent Chapter 6"},
 }
 
-MetadataType = Tuple[str, Any]
+MetadataType = Any
 
 
 class TestDocxParser(TestCase):
