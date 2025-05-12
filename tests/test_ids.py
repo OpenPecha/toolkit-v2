@@ -89,4 +89,4 @@ def test_get_collection_id():
 
 def test_get_annotation_id():
     ann_id = get_annotation_id()
-    assert len(ann_id) == 8
+    assert len(ann_id) == 10
