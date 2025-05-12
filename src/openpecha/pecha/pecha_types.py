@@ -44,10 +44,7 @@ def get_pecha_type(
     annotation_path: str,
 ) -> PechaType:
     is_commentary = is_commentary_pecha(metadatas)
-    logger.info(f"is Pecha Commentary ? {str(is_commentary)}")
-
     is_translation = is_translation_pecha(metadatas)
-    logger.info(f"is Pecha translation ? {str(is_translation)}")
 
     if is_commentary:
         if is_translation:
