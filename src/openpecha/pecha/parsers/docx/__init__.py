@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import (
@@ -68,7 +68,7 @@ class PechaOrgPechaMetaDataValidator:
 
 
 class DocxParser:
-    def is_commentary_pecha(self, metadatas: List[Tuple[str, Dict]]) -> bool:
+    def is_commentary_pecha(self, metadatas: List[Tuple[str, Any]]) -> bool:
         """Checks if the given metadata corresponds to a commentary Pecha.
 
         Args:
@@ -78,7 +78,7 @@ class DocxParser:
             bool: True if the Pecha is a commentary, otherwise False.
         """
         for metadata in metadatas:
-            if "commentary_of" in metadata[1] and metadata[1]["commentary_of"]:
+            if metadata[1].commentary_of:
                 return True
         return False
 
@@ -86,7 +86,7 @@ class DocxParser:
         self,
         docx_file: str | Path,
         annotation_type: AnnotationType | str,
-        metadatas: List[Tuple[str, Dict]],
+        metadatas: List[Tuple[str, Any]],
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
         """Parses a DOCX file and generates a Pecha object based on its type.

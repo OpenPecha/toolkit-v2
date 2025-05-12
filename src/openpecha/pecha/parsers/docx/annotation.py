@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
@@ -44,7 +44,7 @@ class DocxAnnotationParser:
         pecha: Pecha,
         type: AnnotationType | str,
         docx_file: Path,
-        metadatas: List[Tuple[str, Dict]],
+        metadatas: List[Tuple[str, Any]],
     ) -> Tuple[Pecha, annotation_path]:
 
         # Accept both str and AnnotationType, convert str to AnnotationType
