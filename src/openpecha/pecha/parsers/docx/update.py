@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, List, Tuple
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
@@ -27,7 +27,7 @@ class DocxAnnotationUpdate:
         pecha: Pecha,
         annotation_path: str,
         docx_file: Path,
-        metadatas: List[Tuple[str, Dict]],
+        metadatas: List[Tuple[str, Any]],
     ) -> Pecha:
         type = self.extract_layer_enum(annotation_path)
         layer_id = self.extract_layer_id(annotation_path)
