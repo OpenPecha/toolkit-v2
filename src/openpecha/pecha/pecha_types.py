@@ -71,7 +71,9 @@ def is_commentary_pecha(metadatas: List[Tuple[str, Any]]) -> bool:
     Pecha can be i) Root Pecha ii) Commentary Pecha
     Output: True if Commentary Pecha, False otherwise
     """
+    logger.info(f"Metadata Chain: {metadatas}")
     for metadata in metadatas:
+        logger.info(f"Commentary Value {metadata[1].commentary_of}")
         if metadata[1].commentary_of:
             return True
     return False
