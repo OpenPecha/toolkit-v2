@@ -109,8 +109,13 @@ class RootSerializer:
             formatted_category["bo"],
             formatted_category["en"],
         )
+        logger.info("Pecha Category successfully formatted.")
+        logger.info(f"Root Category: {root_category}")
+        logger.info(f"Root Translation Category: {translation_category}")
+
         # Get the metadata for root and translation pecha
         root_metadata = get_metadata_for_pecha_org(pecha)
+        logger.info(f"Root metadata for pecha.org: {root_metadata} ")
 
         if translation_pecha:
             translation_metadata = get_metadata_for_pecha_org(translation_pecha)
@@ -118,6 +123,7 @@ class RootSerializer:
             translation_metadata = get_metadata_for_pecha_org(
                 pecha, lang=Language.english.value
             )
+        logger.info(f"Root Translation metadata for pecha.org {translation_metadata}")
 
         # Get content from root and translation pecha
         root_content = self.get_root_content(pecha, pecha.layer_path / ann_id)
@@ -127,6 +133,7 @@ class RootSerializer:
             )
         else:
             translation_content = []
+        logger.info("Content successfully recieved from Pecha for serialization.")
 
         # Preprocess newlines in content
         root_content = [
