@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
@@ -23,7 +23,11 @@ class DocxAnnotationUpdate:
         return AnnotationType(layer_name.split("-")[0])
 
     def update_annotation(
-        self, pecha: Pecha, annotation_path: str, docx_file: Path, metadatas: List[Dict]
+        self,
+        pecha: Pecha,
+        annotation_path: str,
+        docx_file: Path,
+        metadatas: List[Tuple[str, Dict]],
     ) -> Pecha:
         type = self.extract_layer_enum(annotation_path)
         layer_id = self.extract_layer_id(annotation_path)

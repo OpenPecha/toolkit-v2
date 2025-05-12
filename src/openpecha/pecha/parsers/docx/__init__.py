@@ -68,7 +68,7 @@ class PechaOrgPechaMetaDataValidator:
 
 
 class DocxParser:
-    def is_commentary_pecha(self, metadatas: List[Dict]) -> bool:
+    def is_commentary_pecha(self, metadatas: List[Tuple[str, Dict]]) -> bool:
         """Checks if the given metadata corresponds to a commentary Pecha.
 
         Args:
@@ -78,7 +78,7 @@ class DocxParser:
             bool: True if the Pecha is a commentary, otherwise False.
         """
         for metadata in metadatas:
-            if "commentary_of" in metadata and metadata["commentary_of"]:
+            if "commentary_of" in metadata[1] and metadata[1]["commentary_of"]:
                 return True
         return False
 
@@ -86,7 +86,7 @@ class DocxParser:
         self,
         docx_file: str | Path,
         annotation_type: AnnotationType | str,
-        metadatas: List[Dict],
+        metadatas: List[Tuple[str, Dict]],
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
         """Parses a DOCX file and generates a Pecha object based on its type.
@@ -117,7 +117,7 @@ class DocxParser:
             pecha, annotation_path = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 annotation_type=annotation_type,
-                metadata=metadatas[0],
+                metadata=metadatas[0][1],
                 pecha_id=pecha_id,
             )
             return (pecha, annotation_path)
@@ -125,7 +125,7 @@ class DocxParser:
             pecha, annotation_path = DocxRootParser().parse(
                 input=docx_file,
                 annotation_type=annotation_type,
-                metadata=metadatas[0],
+                metadata=metadatas[0][1],
                 pecha_id=pecha_id,
             )
             return (pecha, annotation_path)

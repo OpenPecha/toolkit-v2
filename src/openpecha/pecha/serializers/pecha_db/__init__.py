@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
@@ -147,11 +147,13 @@ PECHA_SERIALIZER_REGISTRY = {
 
 class Serializer:
     @staticmethod
-    def get_root_en_title(metadatas: List[Dict], pechas: List[Pecha]) -> str:
+    def get_root_en_title(
+        metadatas: List[Tuple[str, Dict]], pechas: List[Pecha]
+    ) -> str:
         """
         Commentary Pecha serialized JSON should have the root English title.
         """
-        root_metadata = metadatas[-1]
+        root_metadata = metadatas[-1][1]
         root_pecha = pechas[-1]
         title = root_metadata.get("title")
         if not isinstance(title, dict):
@@ -170,7 +172,7 @@ class Serializer:
     def serialize(
         self,
         pechas: List[Pecha],
-        metadatas: List[Dict[str, Any]],
+        metadatas: List[Tuple[str, Dict]],
         annotations: Dict[str, List[AnnotationModel]],
         pecha_category: List[Dict[str, Dict[str, str]]],
         annotation_path: str,

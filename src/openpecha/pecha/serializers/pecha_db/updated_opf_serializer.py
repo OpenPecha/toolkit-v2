@@ -1,6 +1,6 @@
 import re
 import subprocess
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.exceptions import GithubRepoError
@@ -112,7 +112,9 @@ class UpdatedRootSerializer(UpdateSerializeJson):
         return root_json
 
 
-def update_serialize_json(pecha: Pecha, metadatas: List[Dict], json: Dict) -> Dict:
+def update_serialize_json(
+    pecha: Pecha, metadatas: List[Tuple[str, Dict]], json: Dict
+) -> Dict:
     is_commentary = is_commentary_pecha(metadatas)
     is_translation = is_translation_pecha(metadatas)
     if is_commentary:

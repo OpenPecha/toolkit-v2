@@ -1,4 +1,4 @@
-from typing import Collection, Dict
+from typing import Dict, Tuple
 from unittest import TestCase
 
 from openpecha.pecha.parsers.docx import DocxParser
@@ -17,7 +17,7 @@ extra_fields = {
     "usage_title": {"en": "Illuminating the Intent Chapter 6"},
 }
 
-MetadataType = Dict[str, str | Dict[str, str] | Collection[str] | None]
+MetadataType = Tuple[str, Dict]
 
 
 class TestDocxParser(TestCase):
@@ -28,63 +28,87 @@ class TestDocxParser(TestCase):
         # this is the root pecha
 
         metadatas: list[MetadataType] = [
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                **extra_fields,
-            },
+            (
+                "root id",
+                {
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                },
+            )
         ]
         assert not self.parser.is_commentary_pecha(metadatas)
 
     def test_root_translation_pecha(self):
         # translation of root pecha
         metadatas: list[MetadataType] = [
-            {
-                "translation_of": "P0001",
-                "commentary_of": None,
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                **extra_fields,
-            },
+            (
+                "root translation id",
+                {
+                    "translation_of": "P0001",
+                    "commentary_of": None,
+                    **extra_fields,
+                },
+            ),
+            (
+                "root id",
+                {
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                },
+            ),
         ]
         assert not self.parser.is_commentary_pecha(metadatas)
 
     def test_commentary_pecha(self):
         metadatas: list[MetadataType] = [
-            {
-                "translation_of": None,
-                "commentary_of": "P0001",
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                **extra_fields,
-            },
+            (
+                "commentary id",
+                {
+                    "translation_of": None,
+                    "commentary_of": "P0001",
+                    **extra_fields,
+                },
+            ),
+            (
+                "root id",
+                {
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                },
+            ),
         ]
         assert self.parser.is_commentary_pecha(metadatas)
 
     def test_commentary_translation_pecha(self):
         # translation of commentary pecha
         metadatas: list[MetadataType] = [
-            {
-                "translation_of": "P0001",
-                "commentary_of": None,
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": "P0002",
-                **extra_fields,
-            },
-            {
-                "translation_of": None,
-                "commentary_of": None,
-                **extra_fields,
-            },
+            (
+                "commentary translatio id",
+                {
+                    "translation_of": "P0001",
+                    "commentary_of": None,
+                    **extra_fields,
+                },
+            ),
+            (
+                "commentary id",
+                {
+                    "translation_of": None,
+                    "commentary_of": "P0002",
+                    **extra_fields,
+                },
+            ),
+            (
+                "root id",
+                {
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                },
+            ),
         ]
         assert self.parser.is_commentary_pecha(metadatas)
 
