@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha
@@ -39,7 +39,7 @@ def get_aligned_id(ann_models: List[AnnotationModel], annotation_path: str):
 
 def get_pecha_type(
     pechas: List[Pecha],
-    metadatas: List[Tuple[str, Any]],
+    metadatas: List[Any],
     annotations: Dict[str, List[AnnotationModel]],
     annotation_path: str,
 ) -> PechaType:
@@ -66,26 +66,24 @@ def get_pecha_type(
         return PechaType.root_pecha
 
 
-def is_commentary_pecha(metadatas: List[Tuple[str, Any]]) -> bool:
+def is_commentary_pecha(metadatas: List[Any]) -> bool:
     """
     Pecha can be i) Root Pecha ii) Commentary Pecha
     Output: True if Commentary Pecha, False otherwise
     """
-    logger.info(f"Metadata Chain: {metadatas}")
     for metadata in metadatas:
-        logger.info(f"Commentary Value {metadata[1].commentary_of}")
-        if metadata[1].commentary_of:
+        if metadata.commentary_of:
             return True
     return False
 
 
-def is_translation_pecha(metadatas: List[Tuple[str, Any]]) -> bool:
+def is_translation_pecha(metadatas: List[Any]) -> bool:
     """
     Return
         True if i) Translation of Root Pecha ii) Translation of Commentary Pecha
         False otherwise
     """
-    if metadatas[0][1].translation_of:
+    if metadatas[0].translation_of:
         return True
     return False
 
@@ -113,11 +111,11 @@ def has_version_of(
     return False
 
 
-def is_root_related_pecha(metadatas: List[Tuple[str, Any]]) -> bool:
+def is_root_related_pecha(metadatas: List[Any]) -> bool:
     """
     Returns True if the pecha type is root-related.
     """
     for metadata in metadatas:
-        if metadata[1].commentary_of:
+        if metadata.commentary_of:
             return False
     return True

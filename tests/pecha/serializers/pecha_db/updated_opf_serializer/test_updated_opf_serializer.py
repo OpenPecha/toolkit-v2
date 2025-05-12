@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.updated_opf_serializer import (
@@ -8,7 +8,7 @@ from openpecha.pecha.serializers.pecha_db.updated_opf_serializer import (
 from openpecha.utils import read_json
 from tests.pecha import DummyMetadataModel
 
-MetadataType = Tuple[str, Any]
+MetadataType = Any
 
 extra_fields: Dict[str, str | Dict[str, str] | List[str] | None] = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
@@ -41,35 +41,26 @@ def test_updated_commentary_translation_serializer():
         f"tests/pecha/serializers/pecha_db/updated_opf_serializer/data/{pecha_id}"
     )
     metadatas: list[MetadataType] = [
-        (
-            "P0003",
-            DummyMetadataModel(
-                **{
-                    "translation_of": "P0001",
-                    "commentary_of": None,
-                    **extra_fields,
-                }
-            ),
+        DummyMetadataModel(
+            **{
+                "translation_of": "P0001",
+                "commentary_of": None,
+                **extra_fields,
+            }
         ),
-        (
-            "P0001",
-            DummyMetadataModel(
-                **{
-                    "translation_of": None,
-                    "commentary_of": "P0002",
-                    **extra_fields,
-                }
-            ),
+        DummyMetadataModel(
+            **{
+                "translation_of": None,
+                "commentary_of": "P0002",
+                **extra_fields,
+            }
         ),
-        (
-            "P0002",
-            DummyMetadataModel(
-                **{
-                    "translation_of": None,
-                    "commentary_of": None,
-                    **extra_fields,
-                }
-            ),
+        DummyMetadataModel(
+            **{
+                "translation_of": None,
+                "commentary_of": None,
+                **extra_fields,
+            }
         ),
     ]
     pecha = Pecha.from_path(pecha_path)
@@ -96,25 +87,19 @@ def test_updated_root_translation_serializer():
         f"tests/pecha/serializers/pecha_db/updated_opf_serializer/data/{pecha_id}"
     )
     metadatas: list[MetadataType] = [
-        (
-            "P0002",
-            DummyMetadataModel(
-                **{
-                    "translation_of": "P0001",
-                    "commentary_of": None,
-                    **extra_fields,
-                }
-            ),
+        DummyMetadataModel(
+            **{
+                "translation_of": "P0001",
+                "commentary_of": None,
+                **extra_fields,
+            }
         ),
-        (
-            "P0001",
-            DummyMetadataModel(
-                **{
-                    "translation_of": None,
-                    "commentary_of": None,
-                    **extra_fields,
-                }
-            ),
+        DummyMetadataModel(
+            **{
+                "translation_of": None,
+                "commentary_of": None,
+                **extra_fields,
+            }
         ),
     ]
     pecha = Pecha.from_path(pecha_path)
