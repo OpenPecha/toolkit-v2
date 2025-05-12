@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.updated_opf_serializer import (
@@ -7,7 +7,7 @@ from openpecha.pecha.serializers.pecha_db.updated_opf_serializer import (
 )
 from openpecha.utils import read_json
 
-MetadataType = Dict[str, str | Dict[str, str] | List[str] | None]
+MetadataType = Tuple[str, Dict]
 
 extra_fields: Dict[str, str | Dict[str, str] | List[str] | None] = {
     "author": {"en": "DPO and Claude-3-5-sonnet-20241022"},
@@ -40,21 +40,30 @@ def test_updated_commentary_translation_serializer():
         f"tests/pecha/serializers/pecha_db/updated_opf_serializer/data/{pecha_id}"
     )
     metadatas: list[MetadataType] = [
-        {
-            "translation_of": "P0001",
-            "commentary_of": None,
-            **extra_fields,
-        },
-        {
-            "translation_of": None,
-            "commentary_of": "P0002",
-            **extra_fields,
-        },
-        {
-            "translation_of": None,
-            "commentary_of": None,
-            **extra_fields,
-        },
+        (
+            "P0003",
+            {
+                "translation_of": "P0001",
+                "commentary_of": None,
+                **extra_fields,
+            },
+        ),
+        (
+            "P0001",
+            {
+                "translation_of": None,
+                "commentary_of": "P0002",
+                **extra_fields,
+            },
+        ),
+        (
+            "P0002",
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                **extra_fields,
+            },
+        ),
     ]
     pecha = Pecha.from_path(pecha_path)
     updated_commentary_json = update_serialize_json(
@@ -80,16 +89,22 @@ def test_updated_root_translation_serializer():
         f"tests/pecha/serializers/pecha_db/updated_opf_serializer/data/{pecha_id}"
     )
     metadatas: list[MetadataType] = [
-        {
-            "translation_of": "P0001",
-            "commentary_of": None,
-            **extra_fields,
-        },
-        {
-            "translation_of": None,
-            "commentary_of": None,
-            **extra_fields,
-        },
+        (
+            "P0002",
+            {
+                "translation_of": "P0001",
+                "commentary_of": None,
+                **extra_fields,
+            },
+        ),
+        (
+            "P0001",
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                **extra_fields,
+            },
+        ),
     ]
     pecha = Pecha.from_path(pecha_path)
 

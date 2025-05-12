@@ -27,11 +27,14 @@ class SharedPechaSetup:
             self.commentary_translation_pecha_path
         )
 
-        self.root_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": None,
-            **self.root_pecha.metadata.to_dict(),
-        }
+        self.root_pecha_metadata = (
+            "IA6E66F92",
+            {
+                "translation_of": None,
+                "commentary_of": None,
+                **self.root_pecha.metadata.to_dict(),
+            },
+        )
         self.root_pecha_annotations = [
             AnnotationModel(
                 pecha_id="IA6E66F92",
@@ -51,11 +54,14 @@ class SharedPechaSetup:
             ),
         ]
 
-        self.root_translation_pecha_metadata = {
-            "translation_of": "IE60BBDE8",
-            "commentary_of": None,
-            **self.root_translation_pecha.metadata.to_dict(),
-        }
+        self.root_translation_pecha_metadata = (
+            "I62E00D78",
+            {
+                "translation_of": "IE60BBDE8",
+                "commentary_of": None,
+                **self.root_translation_pecha.metadata.to_dict(),
+            },
+        )
         self.root_translation_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I62E00D78",
@@ -69,11 +75,14 @@ class SharedPechaSetup:
             )
         ]
 
-        self.commentary_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": "IE60BBDE8",
-            **self.commentary_pecha.metadata.to_dict(),
-        }
+        self.commentary_pecha_metadata = (
+            "I77BD6EA9",
+            {
+                "translation_of": None,
+                "commentary_of": "IE60BBDE8",
+                **self.commentary_pecha.metadata.to_dict(),
+            },
+        )
         self.commentary_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I6944984E",
@@ -87,11 +96,14 @@ class SharedPechaSetup:
             )
         ]
 
-        self.commentary_translation_pecha_metadata = {
-            "translation_of": "I6944984E",
-            "commentary_of": None,
-            **self.commentary_translation_pecha.metadata.to_dict(),
-        }
+        self.commentary_translation_pecha_metadata = (
+            "I94DBDA91",
+            {
+                "translation_of": "I6944984E",
+                "commentary_of": None,
+                **self.commentary_translation_pecha.metadata.to_dict(),
+            },
+        )
         self.commentary_translation_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I94DBDA91",
@@ -105,11 +117,14 @@ class SharedPechaSetup:
             )
         ]
 
-        self.prealigned_root_translation_pecha_metadata = {
-            "translation_of": "IE60BBDE8",
-            "commentary_of": None,
-            **self.root_translation_pecha.metadata.to_dict(),
-        }
+        self.prealigned_root_translation_pecha_metadata = (
+            "I62E00D78",
+            {
+                "translation_of": "IE60BBDE8",
+                "commentary_of": None,
+                **self.root_translation_pecha.metadata.to_dict(),
+            },
+        )
         self.prealigned_root_translation_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I62E00D78",
@@ -123,11 +138,14 @@ class SharedPechaSetup:
             )
         ]
 
-        self.prealigned_root_translation_segmentation_pecha_metadata = {
-            "translation_of": "IE60BBDE8",
-            "commentary_of": None,
-            **self.root_translation_pecha.metadata.to_dict(),
-        }
+        self.prealigned_root_translation_segmentation_pecha_metadata = (
+            "I62E00D78",
+            {
+                "translation_of": "IE60BBDE8",
+                "commentary_of": None,
+                **self.root_translation_pecha.metadata.to_dict(),
+            },
+        )
         self.prealigned_root_translation_segmentation_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I62E00D78",
@@ -149,11 +167,14 @@ class SharedPechaSetup:
             ),
         ]
 
-        self.prealigned_commentary_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": "IE60BBDE8",
-            **self.commentary_pecha.metadata.to_dict(),
-        }
+        self.prealigned_commentary_pecha_metadata = (
+            "I77BD6EA9",
+            {
+                "translation_of": None,
+                "commentary_of": "IE60BBDE8",
+                **self.commentary_pecha.metadata.to_dict(),
+            },
+        )
         self.prealigned_commentary_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I6944984E",
@@ -167,11 +188,14 @@ class SharedPechaSetup:
             )
         ]
 
-        self.prealigned_commentary_segmentation_pecha_metadata = {
-            "translation_of": None,
-            "commentary_of": "IE60BBDE8",
-            **self.commentary_pecha.metadata.to_dict(),
-        }
+        self.prealigned_commentary_segmentation_pecha_metadata = (
+            "I77BD6EA9",
+            {
+                "translation_of": None,
+                "commentary_of": "IE60BBDE8",
+                **self.commentary_pecha.metadata.to_dict(),
+            },
+        )
         self.prealigned_commentary_segmentation_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I6944984E",
@@ -193,11 +217,14 @@ class SharedPechaSetup:
             ),
         ]
 
-        self.prealigned_commentary_translation_pecha_metadata = {
-            "translation_of": "I6944984E",
-            "commentary_of": None,
-            **self.commentary_translation_pecha.metadata.to_dict(),
-        }
+        self.prealigned_commentary_translation_pecha_metadata = (
+            "I94DBDA91",
+            {
+                "translation_of": "I6944984E",
+                "commentary_of": None,
+                **self.commentary_translation_pecha.metadata.to_dict(),
+            },
+        )
         self.prealigned_commentary_translation_pecha_annotations = [
             AnnotationModel(
                 pecha_id="I94DBDA91",
