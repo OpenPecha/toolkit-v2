@@ -11,7 +11,7 @@ def get_id(prefix, length):
 
 
 def get_annotation_id():
-    return get_id("", length=8)
+    return get_id("", length=10)
 
 
 def get_base_id():
