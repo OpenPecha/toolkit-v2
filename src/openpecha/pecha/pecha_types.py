@@ -98,6 +98,10 @@ def has_version_of(
     root_pecha = pechas[-1]
     parent_pecha = pechas[-2]
 
+    logger.info(f"Annotations: {annotations}")
+    logger.info(f"Root Pecha Annotations: {annotations[root_pecha.id]}")
+    logger.info(f"Commentary Pecha Annotations: {annotations[parent_pecha.id]}")
+
     if len(annotations.keys()) == 3:
         annotation_path = get_aligned_id(annotations[pechas[0].id], annotation_path)
 
