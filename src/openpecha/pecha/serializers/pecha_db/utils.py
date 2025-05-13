@@ -40,15 +40,16 @@ class FormatPechaCategory:
         for cate_info in pecha_category:
             logger.info(f"List Pecha category: {cate_info}")
             logger.info(f"List Pecha category name: {cate_info.name}")
-            logger.info(f"List pecha category name: {cate_info.name.get('bo')}")
-            bo_name = cate_info.name.get("bo")
-            en_name = cate_info.name.get("en")
+            logger.info(f"List pecha category name bo : {cate_info.name['bo']}")
+            logger.info(f"List pecha category description: {cate_info.description.bo}")
+            bo_name = cate_info.name["bo"]
+            en_name = cate_info.name["en"]
 
-            bo_desc = cate_info.description.get("bo")
-            en_desc = cate_info.description.get("en")
+            bo_desc = cate_info.description["bo"]
+            en_desc = cate_info.description["en"]
 
-            bo_short_desc = cate_info.short_description.get("bo")
-            en_short_desc = cate_info.short_description.get("en")
+            bo_short_desc = cate_info.short_description["bo"]
+            en_short_desc = cate_info.short_description["en"]
             if category == {}:
                 category = {
                     "bo": [],
