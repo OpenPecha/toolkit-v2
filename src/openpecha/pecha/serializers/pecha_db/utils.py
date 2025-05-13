@@ -82,9 +82,13 @@ class FormatPechaCategory:
         2.Add pecha title to category
         """
         category = self.get_category(pecha_category)
+        logger.info(f"Pecha {pecha.id} category formatted to add pecha Title")
 
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
+        logger.info(
+            f"Pecha Title extracted. BO title: {bo_title}, EN title: {en_title}"
+        )
 
         category = self.assign_category(category, "root")
 
@@ -153,6 +157,8 @@ def get_metadata_for_pecha_org(pecha: Pecha, lang: str | None = None):
 
 def get_pecha_title(pecha: Pecha, lang: str):
     pecha_title = pecha.metadata.title
+    logger.info(f"Pecha title: {pecha_title}")
+
     if isinstance(pecha_title, dict):
         title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())
 
