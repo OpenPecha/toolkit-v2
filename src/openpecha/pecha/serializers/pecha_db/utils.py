@@ -37,6 +37,7 @@ class FormatPechaCategory:
         """
         category: Dict = {}
         for cate_info in pecha_category:
+            logger.info(f"List Pecha Category: {cate_info}")
             bo_name = cate_info["name"].get("bo", "")
             en_name = cate_info["name"].get("en", "")
 
@@ -45,6 +46,7 @@ class FormatPechaCategory:
 
             bo_short_desc = cate_info["short_description"].get("bo", "")
             en_short_desc = cate_info["short_description"].get("en", "")
+            logger.info(f"Next List Pecha Category: {cate_info}")
 
             if category == {}:
                 category = {
