@@ -78,7 +78,7 @@ class DocxParser:
             bool: True if the Pecha is a commentary, otherwise False.
         """
         for metadata in metadatas:
-            if metadata[1].commentary_of:
+            if metadata.commentary_of:
                 return True
         return False
 
@@ -117,7 +117,7 @@ class DocxParser:
             pecha, annotation_path = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 annotation_type=annotation_type,
-                metadata=metadatas[0][1],
+                metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
             return (pecha, annotation_path)
@@ -125,7 +125,7 @@ class DocxParser:
             pecha, annotation_path = DocxRootParser().parse(
                 input=docx_file,
                 annotation_type=annotation_type,
-                metadata=metadatas[0][1],
+                metadata=metadatas[0],
                 pecha_id=pecha_id,
             )
             return (pecha, annotation_path)
