@@ -2,18 +2,13 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from docx2python import docx2python
-
 from openpecha.config import PECHAS_PATH, get_logger
-from openpecha.exceptions import (
-    EmptyFileError,
-    FileNotFoundError,
-    MetaDataValidationError,
-)
+from openpecha.exceptions import FileNotFoundError, MetaDataValidationError
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
+from openpecha.pecha.parsers.docx.utils import extract_text_from_docx
 
 logger = get_logger(__name__)
 
@@ -21,39 +16,6 @@ logger = get_logger(__name__)
 class DocxRootParser(DocxBaseParser):
     def __init__(self):
         self.number_list_regex = r"^(\d+)\)\t(.*)"
-
-    def normalize_text(self, text: str):
-        text = self.normalize_whitespaces(text)
-        text = self.normalize_newlines(text)
-        text = text.strip()
-        return text
-
-    @staticmethod
-    def normalize_whitespaces(text: str):
-        """
-        If there are spaces or tab between newlines, it will be removed.
-        """
-        return re.sub(r"\n[\s\t]+\n", "\n\n", text)
-
-    @staticmethod
-    def normalize_newlines(text: str):
-        """
-        If there are more than 2 newlines continuously, it will replace it with 2 newlines.
-        """
-        return re.sub(r"\n{3,}", "\n\n", text)
-
-    def extract_text_from_docx(self, docx_file: Path) -> str:
-        text = docx2python(docx_file).text
-        if not text:
-            logger.warning(
-                f"The docx file {str(docx_file)} is empty or contains only whitespace."
-            )
-            raise EmptyFileError(
-                f"[Error] The document '{str(docx_file)}' is empty or contains only whitespace."
-            )
-
-        text = self.normalize_text(text)
-        return text
 
     def extract_numbered_list(self, text: str) -> Dict[str, str]:
         """
@@ -143,7 +105,7 @@ class DocxRootParser(DocxBaseParser):
             - Base text containing all segments
         """
         # Extract and normalize text
-        text = self.extract_text_from_docx(docx_file)
+        text = extract_text_from_docx(docx_file)
         numbered_text = self.extract_numbered_list(text)
         return self.calculate_segment_coordinates(numbered_text)
 
