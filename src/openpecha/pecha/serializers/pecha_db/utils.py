@@ -38,14 +38,30 @@ class FormatPechaCategory:
         category: Dict = {}
         for cate_info in pecha_category:
             logger.info(f"List Pecha Category: {cate_info}")
-            bo_name = cate_info["name"].get("bo", "")
-            en_name = cate_info["name"].get("en", "")
+            bo_name = cate_info["name"].get("bo", "") if cate_info["name"] else ""
+            en_name = cate_info["name"].get("en", "") if cate_info["name"] else ""
 
-            bo_desc = cate_info["description"].get("bo", "")
-            en_desc = cate_info["description"].get("en", "")
+            bo_desc = (
+                cate_info["description"].get("bo", "")
+                if cate_info["description"]
+                else ""
+            )
+            en_desc = (
+                cate_info["description"].get("en", "")
+                if cate_info["description"]
+                else ""
+            )
 
-            bo_short_desc = cate_info["short_description"].get("bo", "")
-            en_short_desc = cate_info["short_description"].get("en", "")
+            bo_short_desc = (
+                cate_info["short_description"].get("bo", "")
+                if cate_info["short_description"]
+                else ""
+            )
+            en_short_desc = (
+                cate_info["short_description"].get("en", "")
+                if cate_info["short_description"]
+                else ""
+            )
             logger.info(f"Next List Pecha Category: {cate_info}")
 
             if category == {}:
