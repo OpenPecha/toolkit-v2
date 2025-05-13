@@ -1,4 +1,5 @@
 from typing import Any, Dict, List
+
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha
@@ -34,8 +35,12 @@ class FormatPechaCategory:
         """
         Get the category of the Pecha
         """
+        logger.info(f"Pecha category: {pecha_category}")
         category: Dict = {}
         for cate_info in pecha_category:
+            logger.info(f"List Pecha category: {cate_info}")
+            logger.info(f"List Pecha category name: {cate_info.name}")
+            logger.info(f"List pecha category name: {cate_info.name.get('bo')}")
             bo_name = cate_info.name.get("bo")
             en_name = cate_info.name.get("en")
 
@@ -45,7 +50,7 @@ class FormatPechaCategory:
             bo_short_desc = cate_info.short_description.get("bo")
             en_short_desc = cate_info.short_description.get("en")
             if category == {}:
-                category = {    
+                category = {
                     "bo": [],
                     "en": [],
                 }
@@ -80,7 +85,6 @@ class FormatPechaCategory:
         2.Add pecha title to category
         """
         category = self.get_category(pecha_category)
-
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
 
