@@ -37,14 +37,15 @@ class FormatPechaCategory:
         """
         category: Dict = {}
         for cate_info in pecha_category:
-            bo_name = cate_info["name"].get("bo")
-            en_name = cate_info["name"].get("en")
+            bo_name = cate_info["name"].get("bo", "")
+            en_name = cate_info["name"].get("en", "")
 
-            bo_desc = cate_info["description"].get("bo")
-            en_desc = cate_info["description"].get("en")
+            bo_desc = cate_info["description"].get("bo", "")
+            en_desc = cate_info["description"].get("en", "")
 
-            bo_short_desc = cate_info["short_description"].get("bo")
-            en_short_desc = cate_info["short_description"].get("en")
+            bo_short_desc = cate_info["short_description"].get("bo", "")
+            en_short_desc = cate_info["short_description"].get("en", "")
+
             if category == {}:
                 category = {
                     "bo": [],
