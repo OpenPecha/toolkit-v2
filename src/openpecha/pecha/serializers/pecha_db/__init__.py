@@ -96,6 +96,9 @@ def _serialize_prealigned_commentary_pecha(
         )
     else:
         commentary_segmentation_id = annotations[commentary_pecha.id][0].path
+        logger.info(
+            f"Serializing PreAligned Commentary Pecha with segmentation id: {commentary_segmentation_id}"
+        )
         return PreAlignedCommentarySerializer().serialize(
             root_pecha,
             root_alignment_id,
