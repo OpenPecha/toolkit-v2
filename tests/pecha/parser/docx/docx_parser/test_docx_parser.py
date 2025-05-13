@@ -29,15 +29,12 @@ class TestDocxParser(TestCase):
         # this is the root pecha
 
         metadatas: list[MetadataType] = [
-            (
-                "root id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": None,
-                        "commentary_of": None,
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                }
             )
         ]
         assert not self.parser.is_commentary_pecha(metadatas)
@@ -45,50 +42,38 @@ class TestDocxParser(TestCase):
     def test_root_translation_pecha(self):
         # translation of root pecha
         metadatas: list[MetadataType] = [
-            (
-                "root translation id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": "P0001",
-                        "commentary_of": None,
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": "P0001",
+                    "commentary_of": None,
+                    **extra_fields,
+                }
             ),
-            (
-                "root id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": None,
-                        "commentary_of": None,
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                }
             ),
         ]
         assert not self.parser.is_commentary_pecha(metadatas)
 
     def test_commentary_pecha(self):
         metadatas: list[MetadataType] = [
-            (
-                "commentary id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": None,
-                        "commentary_of": "P0001",
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": None,
+                    "commentary_of": "P0001",
+                    **extra_fields,
+                }
             ),
-            (
-                "root id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": None,
-                        "commentary_of": None,
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                }
             ),
         ]
         assert self.parser.is_commentary_pecha(metadatas)
@@ -96,35 +81,26 @@ class TestDocxParser(TestCase):
     def test_commentary_translation_pecha(self):
         # translation of commentary pecha
         metadatas: list[MetadataType] = [
-            (
-                "commentary translatio id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": "P0001",
-                        "commentary_of": None,
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": "P0001",
+                    "commentary_of": None,
+                    **extra_fields,
+                }
             ),
-            (
-                "commentary id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": None,
-                        "commentary_of": "P0002",
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": None,
+                    "commentary_of": "P0002",
+                    **extra_fields,
+                }
             ),
-            (
-                "root id",
-                DummyMetadataModel(
-                    **{
-                        "translation_of": None,
-                        "commentary_of": None,
-                        **extra_fields,
-                    }
-                ),
+            DummyMetadataModel(
+                **{
+                    "translation_of": None,
+                    "commentary_of": None,
+                    **extra_fields,
+                }
             ),
         ]
         assert self.parser.is_commentary_pecha(metadatas)
