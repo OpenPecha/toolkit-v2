@@ -105,9 +105,11 @@ def has_version_of(
     if len(annotations.keys()) == 3:
         annotation_path = get_aligned_id(annotations[pechas[0].id], annotation_path)
 
-    aligned_root_id = get_aligned_id(annotations[parent_pecha.id], annotation_path)
+    associated_root_alignment_id = get_aligned_id(
+        annotations[parent_pecha.id], annotation_path
+    )
 
-    if aligned_root_id != annotations[root_pecha.id][0].path:
+    if associated_root_alignment_id.split("/")[1].startswith("alignment"):
         return True
     return False
 
