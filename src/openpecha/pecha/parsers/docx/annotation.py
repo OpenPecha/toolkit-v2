@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+from stam import AnnotationStore
+
 from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
-from openpecha.pecha import Pecha, annotation_path
+from openpecha.pecha import Pecha, annotation_path, get_anns
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -68,7 +70,14 @@ class DocxAnnotationParser:
             coords, old_base = parser.extract_segmentation_coords(docx_file)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
+            logger.info(f"Updated Coordinate: {updated_coords}")
+
             annotation_path = parser.add_segmentation_layer(pecha, updated_coords, type)
+            anns = get_anns(
+                AnnotationStore(file=str(pecha.layer_path / annotation_path))
+            )
+            logger.info(f"New Updated Annotations: {anns}")
+
             logger.info(
                 f"Alignment Annotation is successfully added to Pecha {pecha.id}"
             )
