@@ -113,11 +113,14 @@ class DocxParser:
 
         is_commentary = self.is_commentary_pecha(metadatas)
 
+        # Convert metadata: MetadataModel to Dict
+        metadata = metadatas[0].model_dump()
+
         if is_commentary:
             pecha, annotation_path = DocxSimpleCommentaryParser().parse(
                 input=docx_file,
                 annotation_type=annotation_type,
-                metadata=metadatas[0],
+                metadata=metadata,
                 pecha_id=pecha_id,
             )
             return (pecha, annotation_path)
@@ -125,7 +128,7 @@ class DocxParser:
             pecha, annotation_path = DocxRootParser().parse(
                 input=docx_file,
                 annotation_type=annotation_type,
-                metadata=metadatas[0],
+                metadata=metadata,
                 pecha_id=pecha_id,
             )
             return (pecha, annotation_path)
