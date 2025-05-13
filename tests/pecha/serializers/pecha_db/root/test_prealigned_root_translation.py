@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Any
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
@@ -7,11 +7,12 @@ from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
     PreAlignedRootTranslationSerializer,
 )
 from openpecha.utils import read_json
+from tests.pecha import SharedPechaSetup, DummyPechaCategoryModel
 
 null = None
 
 
-class TestPreAlignedRootTranslationSerializer(TestCase):
+class TestPreAlignedRootTranslationSerializer(TestCase, SharedPechaSetup):
     def setUp(self):
         self.DATA_DIR = Path("tests/alignment/translation_transfer/data")
         self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/I15C4AA72")
@@ -22,19 +23,19 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
             self.DATA_DIR / "translation/I4FA57826"
         )
 
-        self.pecha_category: List[Dict] = [
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།"},
-                "parent": null,
-            },
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Vajra Cutter", "bo": "རྡོ་རྗེ་གཅོད་པ།"},
-                "parent": "the-buddha's-teachings",
-            },
+        self.pecha_category: List[Any] = [
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།"},
+                parent=null,
+            ),
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Vajra Cutter", "bo": "རྡོ་རྗེ་གཅོད་པ།"},
+                parent="the-buddha's-teachings",
+            ),
         ]
 
     def test_prealigned_root_translation_pecha(self):

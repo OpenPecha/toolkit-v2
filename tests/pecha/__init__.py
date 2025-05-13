@@ -11,6 +11,11 @@ class DummyMetadataModel:
             setattr(self, k, v)
 
 
+class DummyPechaCategoryModel:
+    def __init__(self, **args):
+        for k, v in args.items():
+            setattr(self, k, v)
+
 class SharedPechaSetup:
     def setup_pechas(self):
         self.root_pecha_path = Path(
@@ -236,3 +241,4 @@ class SharedPechaSetup:
                 ),
             )
         ]
+        

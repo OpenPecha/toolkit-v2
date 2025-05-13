@@ -7,27 +7,28 @@ from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
 from openpecha.utils import read_json
+from tests.pecha import SharedPechaSetup, DummyPechaCategoryModel
 
 DATA_DIR = Path(__file__).parent / "data"
 null = None
 
 
-class TestSimpleCommentarySerializer(TestCase):
+class TestSimpleCommentarySerializer(TestCase, SharedPechaSetup):
     def setUp(self):
 
-        self.pecha_category: List[Dict[Any, Any]] = [
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
-                "parent": null,
-            },
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།"},
-                "parent": "madhyamaka",
-            },
+        self.pecha_category: List[Any] = [
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                parent=null,
+            ),
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།"},
+                parent="madhyamaka",
+            ),
         ]
 
     def test_bo_commentary_serializer(self):
