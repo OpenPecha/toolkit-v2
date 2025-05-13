@@ -37,7 +37,6 @@ class FormatPechaCategory:
         """
         category: Dict = {}
         for cate_info in pecha_category:
-            logger.info(f"List Pecha Category: {cate_info}")
             bo_name = cate_info["name"].get("bo", "") if cate_info["name"] else ""
             en_name = cate_info["name"].get("en", "") if cate_info["name"] else ""
 
@@ -62,7 +61,6 @@ class FormatPechaCategory:
                 if cate_info["short_description"]
                 else ""
             )
-            logger.info(f"Next List Pecha Category: {cate_info}")
 
             if category == {}:
                 category = {
@@ -175,7 +173,6 @@ def get_metadata_for_pecha_org(pecha: Pecha, lang: str | None = None):
 
 def get_pecha_title(pecha: Pecha, lang: str):
     pecha_title = pecha.metadata.title
-    logger.info(f"Pecha title: {pecha_title}")
 
     if isinstance(pecha_title, dict):
         title = pecha_title.get(lang.lower()) or pecha_title.get(lang.upper())

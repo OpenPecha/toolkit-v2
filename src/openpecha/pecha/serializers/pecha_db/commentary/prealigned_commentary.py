@@ -35,6 +35,9 @@ class PreAlignedCommentarySerializer:
         # Get metadata
         src_metadata = get_metadata_for_pecha_org(commentary_pecha)
         tgt_metadata = get_metadata_for_pecha_org(commentary_pecha, "bo")
+        logger.info(
+            f"Pecha {commentary_pecha.id} Metadata successfully prepared for pecha.org website."
+        )
 
         # Get content
         src_content: List[List[str]] = []

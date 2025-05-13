@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional
 
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
@@ -19,10 +19,20 @@ from openpecha.pecha.serializers.pecha_db.root import RootSerializer
 logger = get_logger(__name__)
 
 
-def is_segmentation_annotation(
-    ann_models: List[AnnotationModel], annotation_path: str
-) -> bool:
-    return annotation_path == ann_models[0].path
+def has_segmentation_annotation(ann_models: List[AnnotationModel]) -> bool:
+    for ann_model in ann_models:
+        path = ann_model.path
+        if path.split("/")[1].startswith("segmentation"):
+            return True
+    return False
+
+
+def get_segmentation_id(ann_models: List[AnnotationModel]) -> Optional[str]:
+    for ann_model in ann_models:
+        path = ann_model.path
+        if path.split("/")[1].startswith("segmentation"):
+            return path
+    return None
 
 
 # Handler functions for each PechaType
@@ -86,16 +96,13 @@ def _serialize_prealigned_commentary_pecha(
     root_alignment_id = get_aligned_id(
         annotations[commentary_pecha.id], annotation_path
     )
-    if is_segmentation_annotation(annotations[commentary_pecha.id], annotation_path):
-        return PreAlignedCommentarySerializer().serialize(
-            root_pecha,
-            root_alignment_id,
-            commentary_pecha,
-            annotation_path,
-            pecha_category,
+
+    commentary_ann_models = annotations[commentary_pecha.id]
+    if has_segmentation_annotation(commentary_ann_models):
+        commentary_segmentation_id = get_segmentation_id(commentary_ann_models)
+        logger.info(
+            f"Serializing PreAligned Commentary Pecha with segmentation id: {commentary_segmentation_id}"
         )
-    else:
-        commentary_segmentation_id = annotations[commentary_pecha.id][0].path
         return PreAlignedCommentarySerializer().serialize(
             root_pecha,
             root_alignment_id,
@@ -103,6 +110,14 @@ def _serialize_prealigned_commentary_pecha(
             annotation_path,
             pecha_category,
             commentary_segmentation_id,
+        )
+    else:
+        return PreAlignedCommentarySerializer().serialize(
+            root_pecha,
+            root_alignment_id,
+            commentary_pecha,
+            annotation_path,
+            pecha_category,
         )
 
 
@@ -115,16 +130,9 @@ def _serialize_prealigned_root_translation_pecha(
         annotations[translation_pecha.id], annotation_path
     )
 
-    if is_segmentation_annotation(annotations[translation_pecha.id], annotation_path):
-        return PreAlignedRootTranslationSerializer().serialize(
-            root_pecha,
-            root_alignment_id,
-            translation_pecha,
-            annotation_path,
-            pecha_category,
-        )
-    else:
-        translation_segmentation_id = annotations[translation_pecha.id][0].path
+    translation_ann_models = annotations[translation_pecha.id]
+    if has_segmentation_annotation(translation_ann_models):
+        translation_segmentation_id = get_segmentation_id(translation_ann_models)
         return PreAlignedRootTranslationSerializer().serialize(
             root_pecha,
             root_alignment_id,
@@ -132,6 +140,14 @@ def _serialize_prealigned_root_translation_pecha(
             annotation_path,
             pecha_category,
             translation_segmentation_id,
+        )
+    else:
+        return PreAlignedRootTranslationSerializer().serialize(
+            root_pecha,
+            root_alignment_id,
+            translation_pecha,
+            annotation_path,
+            pecha_category,
         )
 
 
