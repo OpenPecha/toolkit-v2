@@ -41,7 +41,6 @@ class FormatPechaCategory:
             logger.info(f"List Pecha category: {cate_info}")
             logger.info(f"List Pecha category name: {cate_info.name}")
             logger.info(f"List pecha category name bo : {cate_info.name['bo']}")
-            logger.info(f"List pecha category description: {cate_info.description.bo}")
             bo_name = cate_info.name["bo"]
             en_name = cate_info.name["en"]
 
