@@ -1,5 +1,4 @@
-from typing import Dict, List
-
+from typing import Any, Dict, List
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha
@@ -31,22 +30,22 @@ class FormatPechaCategory:
             "enShortDesc": "",
         }
 
-    def get_category(self, pecha_category: List[Dict[str, Dict]]):
+    def get_category(self, pecha_category: List[Any]):
         """
         Get the category of the Pecha
         """
         category: Dict = {}
         for cate_info in pecha_category:
-            bo_name = cate_info["name"].get("bo")
-            en_name = cate_info["name"].get("en")
+            bo_name = cate_info.name.get("bo")
+            en_name = cate_info.name.get("en")
 
-            bo_desc = cate_info["description"].get("bo")
-            en_desc = cate_info["description"].get("en")
+            bo_desc = cate_info.description.get("bo")
+            en_desc = cate_info.description.get("en")
 
-            bo_short_desc = cate_info["short_description"].get("bo")
-            en_short_desc = cate_info["short_description"].get("en")
+            bo_short_desc = cate_info.short_description.get("bo")
+            en_short_desc = cate_info.short_description.get("en")
             if category == {}:
-                category = {
+                category = {    
                     "bo": [],
                     "en": [],
                 }
@@ -95,7 +94,7 @@ class FormatPechaCategory:
     def format_commentary_category(
         self,
         pecha: Pecha,
-        pecha_category: List[Dict],
+        pecha_category: List[Any],
         root_title: str,
     ):
         """

@@ -1,22 +1,24 @@
 from unittest import TestCase
 
 from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
+from typing import List, Any
+from tests.pecha import DummyPechaCategoryModel
 
 null = None
 
-pecha_category = [
-    {
-        "description": {"en": "", "bo": ""},
-        "short_description": {"en": "", "bo": ""},
-        "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
-        "parent": None,
-    },
-    {
-        "description": {"en": "", "bo": ""},
-        "short_description": {"en": "", "bo": ""},
-        "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
-        "parent": "madhyamaka",
-    },
+pecha_category: List[Any] = [
+    DummyPechaCategoryModel(
+        description={"en": "", "bo": ""},
+        short_description={"en": "", "bo": ""},
+        name={"en": "Madhyamaka", "bo": "དབུ་མ།"},
+        parent=None,
+    ),
+    DummyPechaCategoryModel(
+        description={"en": "", "bo": ""},
+        short_description={"en": "", "bo": ""},
+        name={"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
+        parent="madhyamaka",
+    ),
 ]
 
 expected_category = {

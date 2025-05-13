@@ -1,16 +1,17 @@
 from pathlib import Path
 from unittest import TestCase, mock
-
+from typing import Any, List
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
     PreAlignedCommentarySerializer,
 )
 from openpecha.utils import read_json
+from tests.pecha import SharedPechaSetup, DummyPechaCategoryModel
 
 null = None
 
 
-class TestPreAlignedCommentarySerializer(TestCase):
+class TestPreAlignedCommentarySerializer(TestCase, SharedPechaSetup):
     def setUp(self):
         self.DATA_DIR = Path("tests/alignment/commentary_transfer/data")
         self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/IA6E66F92")
@@ -21,19 +22,19 @@ class TestPreAlignedCommentarySerializer(TestCase):
         )
 
         # Create the patcher and set return_value
-        self.pecha_category = [
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
-                "parent": null,
-            },
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།"},
-                "parent": "madhyamaka",
-            },
+        self.pecha_category: List[Any] = [
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                parent=null,
+            ),
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།"},
+                parent="madhyamaka",
+            ),
         ]
 
     @mock.patch(

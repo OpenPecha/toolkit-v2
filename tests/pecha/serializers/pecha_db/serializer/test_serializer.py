@@ -1,28 +1,29 @@
-from typing import Dict, List
+from typing import Any, List
 from unittest import TestCase, mock
 
 from openpecha.pecha.serializers.pecha_db import Serializer
-from tests.pecha import SharedPechaSetup
+from tests.pecha import SharedPechaSetup, DummyPechaCategoryModel
 
 null = None
+
 
 
 class TestSerializer(TestCase, SharedPechaSetup):
     def setUp(self):
         self.setup_pechas()
-        self.pecha_category: List[Dict] = [
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
-                "parent": null,
-            },
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
-                "parent": "madhyamaka",
-            },
+        self.pecha_category: List[Any] = [
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                parent=null,
+            ),
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
+                parent="madhyamaka",
+            ),
         ]
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")

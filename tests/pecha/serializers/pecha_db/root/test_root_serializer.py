@@ -4,6 +4,7 @@ from unittest import TestCase
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.root import RootSerializer
 from openpecha.utils import read_json
+from tests.pecha import DummyPechaCategoryModel
 
 DATA_DIR = Path(__file__).parent / "data"
 null = None
@@ -11,19 +12,19 @@ null = None
 
 class TestRootSerializer(TestCase):
     def setUp(self):
-        self.pecha_category = [
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།"},
-                "parent": null,
-            },
-            {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Vajra Cutter", "bo": "རྡོ་རྗེ་གཅོད་པ།"},
-                "parent": "the-buddha's-teachings",
-            },
+        self.pecha_category: List[Any] = [
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།"},
+                parent=null,
+            ),
+            DummyPechaCategoryModel(
+                description={"en": "", "bo": ""},
+                short_description={"en": "", "bo": ""},
+                name={"en": "Vajra Cutter", "bo": "རྡོ་རྗེ་གཅོད་པ།"},
+                parent="the-buddha's-teachings",
+            ),
         ]
 
     def test_root_pecha(self):
