@@ -106,6 +106,7 @@ class DocxRootParser(DocxBaseParser):
         """
         # Extract and normalize text
         text = extract_text_from_docx(docx_file)
+        logger.info(f"Extracted text: {text}")
         numbered_text = self.extract_numbered_list(text)
         return self.calculate_segment_coordinates(numbered_text)
 
