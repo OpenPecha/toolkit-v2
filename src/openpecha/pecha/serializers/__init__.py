@@ -42,6 +42,12 @@ class SerializerLogicHandler:
         metadata_chain = get_metadatachain_from_metadatatree(metadatatree, pecha_id)
         pecha_chain = [pechatree[metadata.id] for metadata in metadata_chain]  # noqa
 
+        root_pecha_lang = metadata_chain[-1].language
+        if root_pecha_lang not in ["bo", "lzh"]:
+            raise ValueError(
+                f"Pecha id: {pecha_id} points to Root Pecha: {metadata_chain[-1].id} where it language is {root_pecha_lang}.Language should be from 'bo' or 'lzh'."
+            )
+
         match base_language:
             case "bo":
                 # pecha.org website centered around bo Root text.
