@@ -184,13 +184,6 @@ class CommentaryAlignmentTransfer:
         logger.info(
             "Root and Commentary Annotations retrieved for Commentary Transfer."
         )
-        logger.info(f"Root Annotation Mapping: {root_map}")
-        logger.info(f"Commentary Annotation Mapping: {commentary_map}")
-        logger.info(f"Root Segmentation Annotations: {root_segmentation_anns}")
-        logger.info(f"Root Alignment Annotations: {root_anns}")
-        logger.info(
-            f"Commentary Segmentation Annotations {commentary_segmentation_anns}"
-        )
 
         res: List[str] = []
         for ann in commentary_segmentation_anns:
