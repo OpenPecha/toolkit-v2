@@ -253,6 +253,9 @@ class CommentaryAlignmentTransfer:
         if root_idx is None or not self.is_valid_ann(root_anns, root_idx):
             return commentary_text
 
+        if not root_map[root_idx]:
+            return commentary_text
+
         root_display_idx = root_map[root_idx][0]
         if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
             return commentary_text
