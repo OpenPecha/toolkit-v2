@@ -168,9 +168,14 @@ class Serializer:
         """
         Commentary Pecha serialized JSON should have the root English title.
         """
+        logger.info(f"Metadatachain: {metadatas}")
+
         root_metadata = metadatas[-1]
         root_pecha = pechas[-1]
         title = root_metadata.title
+        logger.info(f"Root Metadata: {root_metadata}")
+        logger.info(f"Root title: {title}")
+
         if not isinstance(title, dict):
             logger.error(f"Title should be a dictionary in Root Pecha {root_pecha.id}.")
             raise MetaDataValidationError(
