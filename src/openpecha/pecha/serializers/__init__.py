@@ -42,4 +42,17 @@ class SerializerLogicHandler:
         metadata_chain = get_metadatachain_from_metadatatree(metadatatree, pecha_id)
         pecha_chain = [pechatree[metadata.id] for metadata in metadata_chain]  # noqa
 
+        match base_language:
+            case "bo":
+                # pecha.org website centered around bo Root text.
+                pass
+
+            case "lzh":
+                # fodian.org website centered around lzh Root text.
+                pass
+
+            case _:
+                raise ValueError(
+                    f"Invalid base language {base_language} is passed for Serialization. Should be from 'bo' or 'lzh'."
+                )
         pass
