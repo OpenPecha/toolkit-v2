@@ -172,16 +172,8 @@ class Serializer:
 
         root_metadata = metadatas[-1]
         root_pecha = pechas[-1]
-        title = root_metadata.title
-        logger.info(f"Root Metadata: {root_metadata}")
-        logger.info(f"Root title: {title}")
 
-        if not isinstance(title, dict):
-            logger.error(f"Title should be a dictionary in Root Pecha {root_pecha.id}.")
-            raise MetaDataValidationError(
-                f"Title should be a dictionary in Root Pecha {root_pecha.id}."
-            )
-        en_title = next((title[key] for key in title if key.lower() == "en"), None)
+        en_title = root_metadata.title["en"]
         if not en_title:
             logger.error(f"English title is missing in Root Pecha {root_pecha.id}.")
             raise MetaDataMissingError(

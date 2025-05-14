@@ -97,7 +97,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.commentary_pecha,
             annotation_path,
             self.pecha_category,
-            self.root_pecha.metadata.title["EN"],
+            self.root_pecha.metadata.title["en"],
         )
 
     @mock.patch(
@@ -133,7 +133,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.commentary_pecha,
             annotation_path,
             self.pecha_category,
-            self.root_pecha.metadata.title["EN"],
+            self.root_pecha.metadata.title["en"],
             self.commentary_translation_pecha,
             translation_ann_path,
         )
