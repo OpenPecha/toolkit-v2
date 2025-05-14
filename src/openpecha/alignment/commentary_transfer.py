@@ -184,11 +184,17 @@ class CommentaryAlignmentTransfer:
         logger.info(
             "Root and Commentary Annotations retrieved for Commentary Transfer."
         )
+        logger.info(f"Root Annotation Mapping: {root_map}")
+        logger.info(f"Commentary Annotation Mapping: {commentary_map}")
+        logger.info(f"Root Segmentation Annotations: {root_segmentation_anns}")
+        logger.info(f"Root Alignment Annotations: {root_anns}")
+        logger.info(
+            f"Commentary Segmentation Annotations {commentary_segmentation_anns}"
+        )
 
-        try:
-
-            res: List[str] = []
-            for ann in commentary_segmentation_anns:
+        res: List[str] = []
+        for ann in commentary_segmentation_anns:
+            try:
                 text = ann["text"]
                 if is_empty(text):
                     continue
@@ -211,11 +217,10 @@ class CommentaryAlignmentTransfer:
                         chapter_num, processed_root_display_idx, text
                     )
                 )
-
-        except Exception as e:
-            logger.error(
-                f"Error in get_serialized_commentary_segmentation: {e}", exc_info=True
-            )
+            except Exception as e:
+                logger.error(
+                    f"Error processing annotation: {ann}\nException: {e}", exc_info=True
+                )
         return res
 
     @staticmethod
