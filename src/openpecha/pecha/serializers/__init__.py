@@ -4,6 +4,7 @@ from typing import Any, Dict, List
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
+from openpecha.pecha.serializers.pecha_db import Serializer
 from openpecha.pecha.serializers.utils import (
     find_related_pecha_id,
     get_metadatachain_from_metadatatree,
@@ -51,11 +52,23 @@ class SerializerLogicHandler:
         match base_language:
             case "bo":
                 # pecha.org website centered around bo Root text.
-                pass
+                if root_pecha_lang == "bo":
+                    return Serializer().serialize(
+                        pecha_chain,
+                        metadata_chain,
+                        annotations,
+                        pecha_category,
+                        annotation_path,
+                    )
+                if root_pecha_lang == "lzh":
+                    pass
 
             case "lzh":
                 # fodian.org website centered around lzh Root text.
-                pass
+                if root_pecha_lang == "bo":
+                    pass
+                if root_pecha_lang == "lzh":
+                    pass
 
             case _:
                 raise ValueError(
