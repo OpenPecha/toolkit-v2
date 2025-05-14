@@ -181,32 +181,41 @@ class CommentaryAlignmentTransfer:
         commentary_segmentation_anns = get_anns(
             load_layer(commentary_pecha.layer_path / commentary_segmentation_id)
         )
+        logger.info(
+            "Root and Commentary Annotations retrieved for Commentary Transfer."
+        )
 
-        res: List[str] = []
-        for ann in commentary_segmentation_anns:
-            text = ann["text"]
-            if is_empty(text):
-                continue
+        try:
 
-            aligned_idx = commentary_map[int(ann["root_idx_mapping"])][0]
+            res: List[str] = []
+            for ann in commentary_segmentation_anns:
+                text = ann["text"]
+                if is_empty(text):
+                    continue
 
-            if not self.is_valid_ann(root_anns, aligned_idx):
-                res.append(text)
+                aligned_idx = commentary_map[int(ann["root_idx_mapping"])][0]
 
-            root_display_idx = root_map[aligned_idx][0]
-            if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
-                res.append(text)
+                if not self.is_valid_ann(root_anns, aligned_idx):
+                    res.append(text)
 
-            chapter_num = get_chapter_for_segment(root_display_idx)
-            processed_root_display_idx = adjust_segment_num_for_chapter(
-                root_display_idx
-            )
-            res.append(
-                self.format_serialized_commentary(
-                    chapter_num, processed_root_display_idx, text
+                root_display_idx = root_map[aligned_idx][0]
+                if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
+                    res.append(text)
+
+                chapter_num = get_chapter_for_segment(root_display_idx)
+                processed_root_display_idx = adjust_segment_num_for_chapter(
+                    root_display_idx
                 )
-            )
+                res.append(
+                    self.format_serialized_commentary(
+                        chapter_num, processed_root_display_idx, text
+                    )
+                )
 
+        except Exception as e:
+            logger.error(
+                f"Error in get_serialized_commentary_segmentation: {e}", exc_info=True
+            )
         return res
 
     @staticmethod

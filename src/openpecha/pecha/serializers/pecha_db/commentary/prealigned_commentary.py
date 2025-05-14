@@ -55,6 +55,9 @@ class PreAlignedCommentarySerializer:
             tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
                 root_pecha, root_alignment_id, commentary_pecha, commentary_alignment_id
             )
+        logger.info(
+            f"Alignment transfered content is extracted successfully for {commentary_pecha.id}."
+        )
         # Preprocess newlines in content
         tgt_content = [
             line.replace("\\n", "<br>").replace("\n", "<br>") for line in tgt_content
@@ -62,9 +65,6 @@ class PreAlignedCommentarySerializer:
 
         # Chapterize content
         chapterized_tgt_content = chunk_strings(tgt_content)
-        logger.info(
-            f"Alignment transfered content is extracted successfully for {commentary_pecha.id}."
-        )
 
         serialized_json = {
             "source": {
