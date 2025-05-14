@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
@@ -26,6 +26,25 @@ class BaseSerializer(ABC):
 
 
 class SerializerLogicHandler:
+    @staticmethod
+    def get_root_translation_pecha_id(
+        metadatatree: List[Any], pecha_id: str, lang: str
+    ) -> Optional[str]:
+        """
+        1. Get metadata chain from metadata tree
+        2. Get Root pecha. (last element of metadata chain)
+        3. Get Root Translation Pecha id by comparing with lang given.
+            i.e if lang = 'lzh', get lzh root translation pecha
+        """
+        metadata_chain = get_metadatachain_from_metadatatree(metadatatree, pecha_id)
+        root_pecha_id = metadata_chain[-1].id
+
+        for metadata in metadatatree:
+            if metadata.language == lang and metadata.translation_of == root_pecha_id:
+                return metadata.id
+
+        return None
+
     def serialize(
         self,
         pechatree: Dict[str, Pecha],
@@ -66,7 +85,18 @@ class SerializerLogicHandler:
             case "lzh":
                 # fodian.org website centered around lzh Root text.
                 if root_pecha_lang == "bo":
+                    serialized = Serializer().serialize(  # noqa
+                        pecha_chain,
+                        metadata_chain,
+                        annotations,
+                        pecha_category,
+                        annotation_path,
+                    )
+                    lzh_root_pecha_id = self.get_root_translation_pecha_id(  # noqa
+                        metadatatree, pecha_id, "lzh"
+                    )
                     pass
+
                 if root_pecha_lang == "lzh":
                     pass
 
