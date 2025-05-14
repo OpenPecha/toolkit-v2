@@ -199,14 +199,23 @@ class CommentaryAlignmentTransfer:
                 if is_empty(text):
                     continue
 
-                aligned_idx = commentary_map[int(ann["root_idx_mapping"])][0]
+                if not commentary_map[int(ann["root_idx_mapping"])]:
+                    res.append(text)
+                    continue
 
+                aligned_idx = commentary_map[int(ann["root_idx_mapping"])][0]
                 if not self.is_valid_ann(root_anns, aligned_idx):
                     res.append(text)
+                    continue
+
+                if not root_map[aligned_idx]:
+                    res.append(text)
+                    continue
 
                 root_display_idx = root_map[aligned_idx][0]
                 if not self.is_valid_ann(root_segmentation_anns, root_display_idx):
                     res.append(text)
+                    continue
 
                 chapter_num = get_chapter_for_segment(root_display_idx)
                 processed_root_display_idx = adjust_segment_num_for_chapter(
@@ -242,6 +251,9 @@ class CommentaryAlignmentTransfer:
 
         root_idx = self.get_first_valid_root_idx(ann)
         if root_idx is None or not self.is_valid_ann(root_anns, root_idx):
+            return commentary_text
+
+        if not root_map[root_idx]:
             return commentary_text
 
         root_display_idx = root_map[root_idx][0]
