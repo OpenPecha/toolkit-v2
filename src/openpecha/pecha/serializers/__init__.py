@@ -32,7 +32,19 @@ def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
     pass
 
 
-PECHA_SERIALIZER_REGISTRY = {PechaType.root_pecha: _serialize_root_pecha}
+def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
+    # Change the Title mapping
+    title = pecha.metadata.title["en"]
+
+    serialized_json["source"]["categories"][-1]["base_text_titles"] = [title]
+    serialized_json["target"]["categories"][-1]["base_text_titles"] = [title]
+    return serialized_json
+
+
+PECHA_SERIALIZER_REGISTRY = {
+    PechaType.root_pecha: _serialize_root_pecha,
+    PechaType.commentary_pecha: _serialize_commentary_pecha,
+}
 
 
 class SerializerLogicHandler:
