@@ -11,6 +11,7 @@ from openpecha.pecha.serializers.utils import (
     find_related_pecha_id,
     get_metadatachain_from_metadatatree,
 )
+from openpecha.utils import chunk_strings
 
 
 class BaseSerializer(ABC):
@@ -27,12 +28,59 @@ class BaseSerializer(ABC):
         pass
 
 
+def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
+    base_name = list(pecha.bases.keys())[0]
+    segments = []
+    for _, ann_store in pecha.get_layers(base_name=base_name):
+        for ann in list(ann_store):
+            segment_text = ann.text()[0]
+            segments.append(segment_text)
+    return chunk_strings(segments)
+
+
 def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
+    target_book = {
+        "title": pecha.metadata.title[pecha.metadata.language.value],
+        "language": pecha.metadata.language.value,
+        "versionSource": pecha.metadata.source if pecha.metadata.source else "",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": get_pecha_segments(pecha),
+    }
+    serialized_json["target"]["books"][0] = target_book
+    return serialized_json
 
-    pass
+
+def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
+    if serialized_json["source"]["books"][0]["language"] == "lzh":
+        source_book = {
+            "title": pecha.metadata.title[Language.english.value],
+            "language": Language.english.value,
+            "versionSource": "",
+            "direction": "ltr",
+            "completestatus": "done",
+            "content": [],
+        }
+        target_book = serialized_json["source"]["books"][0]
+    else:
+        source_book = serialized_json["source"]["books"][0]
+        target_book = {
+            "title": pecha.metadata.title[Language.literal_chinese.value],
+            "language": Language.literal_chinese.value,
+            "versionSource": pecha.metadata.source if pecha.metadata.source else "",
+            "direction": "ltr",
+            "completestatus": "done",
+            "content": get_pecha_segments(pecha),
+        }
+    serialized_json["target"]["books"][0] = target_book
+    serialized_json["source"]["books"][0] = source_book
+    return serialized_json
 
 
-PECHA_SERIALIZER_REGISTRY = {PechaType.root_pecha: _serialize_root_pecha}
+PECHA_SERIALIZER_REGISTRY = {
+    PechaType.root_pecha: _serialize_root_pecha,
+    PechaType.root_translation_pecha: _serialize_root_translation_pecha,
+}
 
 
 class SerializerLogicHandler:
