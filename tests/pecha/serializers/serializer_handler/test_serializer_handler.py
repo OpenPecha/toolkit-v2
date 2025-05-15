@@ -25,7 +25,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.commentary_pecha)
         assert (
             handler == _serialize_commentary_pecha
-        ), "Serializer Logic Handler not properly retrieved in case of Commentary Pecha Type."
+        ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
         # Tibetan Commentary
         serialized = read_json(
@@ -38,14 +38,14 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         )
         assert (
             expected_serialized == updated_serialized
-        ), "Serializer Logic handler isnt working in Tibetan Commentary Pecha case for Fodian website."
+        ), f"{PechaType.commentary_pecha} fodian serialization failed.."
 
     def test_commentary_translation_pecha(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.commentary_translation_pecha)
 
         assert (
             handler == _serialize_commentary_translation_pecha
-        ), "Serializer Logic Handler not properly retrieved in case of Commentary Translation Pecha Type."
+        ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
         # Commentary Pecha other than Tibetan Language
         serialized = read_json(
@@ -57,4 +57,4 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         )
         assert (
             expected_serialized == updated_serialized
-        ), "Serializer Logic handler isnt working in Tibetan Commentary Translation Pecha case for Fodian website."
+        ), f"{PechaType.commentary_translation_pecha} fodian serialization failed.."
