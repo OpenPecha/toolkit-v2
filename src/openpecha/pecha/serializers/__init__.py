@@ -77,9 +77,11 @@ def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
     return serialized_json
 
 
-PECHA_SERIALIZER_REGISTRY = {PechaType.root_pecha: _serialize_root_pecha}
+PECHA_SERIALIZER_REGISTRY = {
+    PechaType.root_pecha: _serialize_root_translation_pecha,
+    PechaType.root_translation_pecha: _serialize_root_translation_pecha
 
-
+}
 class SerializerLogicHandler:
     @staticmethod
     def get_root_translation_pecha_id(
