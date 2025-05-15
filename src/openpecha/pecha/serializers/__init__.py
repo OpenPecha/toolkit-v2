@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
+from openpecha.pecha.metadata import Language
 from openpecha.pecha.serializers.pecha_db import Serializer
 from openpecha.pecha.serializers.utils import (
     find_related_pecha_id,
@@ -63,15 +64,18 @@ class SerializerLogicHandler:
         pecha_chain = [pechatree[metadata.id] for metadata in metadata_chain]  # noqa
 
         root_pecha_lang = metadata_chain[-1].language
-        if root_pecha_lang not in ["bo", "lzh"]:
+        if root_pecha_lang not in [
+            Language.tibetan.value,
+            Language.literal_chinese.value,
+        ]:
             raise ValueError(
                 f"Pecha id: {pecha_id} points to Root Pecha: {metadata_chain[-1].id} where it language is {root_pecha_lang}.Language should be from 'bo' or 'lzh'."
             )
 
         match base_language:
-            case "bo":
+            case Language.tibetan.value:
                 # pecha.org website centered around bo Root text.
-                if root_pecha_lang == "bo":
+                if root_pecha_lang == Language.tibetan.value:
                     return Serializer().serialize(
                         pecha_chain,
                         metadata_chain,
@@ -79,12 +83,12 @@ class SerializerLogicHandler:
                         pecha_category,
                         annotation_path,
                     )
-                if root_pecha_lang == "lzh":
+                if root_pecha_lang == Language.literal_chinese.value:
                     pass
 
-            case "lzh":
+            case Language.literal_chinese.value:
                 # fodian.org website centered around lzh Root text.
-                if root_pecha_lang == "bo":
+                if root_pecha_lang == Language.tibetan.value:
                     serialized = Serializer().serialize(  # noqa
                         pecha_chain,
                         metadata_chain,
@@ -93,11 +97,11 @@ class SerializerLogicHandler:
                         annotation_path,
                     )
                     lzh_root_pecha_id = self.get_root_translation_pecha_id(  # noqa
-                        metadatatree, pecha_id, "lzh"
+                        metadatatree, pecha_id, Language.literal_chinese.value
                     )
                     pass
 
-                if root_pecha_lang == "lzh":
+                if root_pecha_lang == Language.literal_chinese.value:
                     pass
 
             case _:
