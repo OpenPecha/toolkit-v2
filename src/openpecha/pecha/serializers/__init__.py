@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
 from openpecha.pecha.metadata import Language
+from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 from openpecha.pecha.serializers.pecha_db import Serializer
 from openpecha.pecha.serializers.utils import (
     find_related_pecha_id,
@@ -24,6 +25,14 @@ class BaseSerializer(ABC):
         source_type: str,
     ):
         pass
+
+
+def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
+
+    pass
+
+
+PECHA_SERIALIZER_REGISTRY = {PechaType.root_pecha: _serialize_root_pecha}
 
 
 class SerializerLogicHandler:
@@ -72,6 +81,9 @@ class SerializerLogicHandler:
                 f"Pecha id: {pecha_id} points to Root Pecha: {metadata_chain[-1].id} where it language is {root_pecha_lang}.Language should be from 'bo' or 'lzh'."
             )
 
+        pecha_type = get_pecha_type(
+            pecha_chain, metadata_chain, annotations, annotation_path
+        )
         match base_language:
             case Language.tibetan.value:
                 # pecha.org website centered around bo Root text.
@@ -89,17 +101,26 @@ class SerializerLogicHandler:
             case Language.literal_chinese.value:
                 # fodian.org website centered around lzh Root text.
                 if root_pecha_lang == Language.tibetan.value:
-                    serialized = Serializer().serialize(  # noqa
+                    serialized = Serializer().serialize(
                         pecha_chain,
                         metadata_chain,
                         annotations,
                         pecha_category,
                         annotation_path,
                     )
-                    lzh_root_pecha_id = self.get_root_translation_pecha_id(  # noqa
+                    lzh_root_pecha_id = self.get_root_translation_pecha_id(
                         metadatatree, pecha_id, Language.literal_chinese.value
                     )
-                    pass
+                    if not lzh_root_pecha_id:
+                        raise ValueError(
+                            f"literal Chinese Pecha no where present in MetadataTree: {metadatatree}."
+                        )
+                    lzh_root_pecha = pechatree[lzh_root_pecha_id]
+
+                    handler = PECHA_SERIALIZER_REGISTRY.get(pecha_type)
+                    if not handler:
+                        raise ValueError(f"Unsupported pecha type: {pecha_type}")
+                    return handler(serialized, lzh_root_pecha)
 
                 if root_pecha_lang == Language.literal_chinese.value:
                     pass
