@@ -11,7 +11,7 @@
   "toolkit_version": "2.1.0",
   "parser": "DocxRootParser",
   "initial_creation_type": "google_docx",
-  "language": null,
+  "language": "lzh",
   "source_metadata": {
     "translation_of": "IA6E66F92",
     "commentary_of": null
