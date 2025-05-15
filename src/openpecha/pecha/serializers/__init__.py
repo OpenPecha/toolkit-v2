@@ -41,9 +41,14 @@ def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
     return serialized_json
 
 
+def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha):
+    pass
+
+
 PECHA_SERIALIZER_REGISTRY = {
     PechaType.root_pecha: _serialize_root_pecha,
     PechaType.commentary_pecha: _serialize_commentary_pecha,
+    PechaType.commentary_translation_pecha: _serialize_commentary_translation_pecha,
 }
 
 
