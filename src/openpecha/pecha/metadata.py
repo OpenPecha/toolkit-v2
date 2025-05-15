@@ -19,6 +19,7 @@ class InitialCreationType(Enum):
 class Language(Enum):
     tibetan = "bo"
     english = "en"
+    literal_chinese = "lzh"
     chinese = "zh"
     sanskrit = "sa"
     italian = "it"
