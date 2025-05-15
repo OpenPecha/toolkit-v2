@@ -27,12 +27,7 @@ class BaseSerializer(ABC):
         pass
 
 
-def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
-
-    pass
-
-
-def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
+def modify_root_title_mapping(serialized_json: Dict, pecha: Pecha):
     # Change the Title mapping
     title = pecha.metadata.title["en"]
 
@@ -41,12 +36,22 @@ def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
     return serialized_json
 
 
+def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
+
+    pass
+
+
+def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
+    serialized_json = modify_root_title_mapping(serialized_json, pecha)
+    return serialized_json
+
+
 def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha):
     """
     1. Modify the Title Mapping
     2. Remove the tibetan content from the `target` field from serialized_json.
     """
-    serialized = _serialize_commentary_pecha(serialized_json, pecha)
+    serialized = modify_root_title_mapping(serialized_json, pecha)
     serialized["target"]["books"][0]["content"] = []
     return serialized
 
