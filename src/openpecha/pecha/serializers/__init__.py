@@ -42,7 +42,13 @@ def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
 
 
 def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha):
-    pass
+    """
+    1. Modify the Title Mapping
+    2. Remove the tibetan content from the `target` field from serialized_json.
+    """
+    serialized = _serialize_commentary_pecha(serialized_json, pecha)
+    serialized["target"]["books"][0]["content"] = []
+    return serialized
 
 
 PECHA_SERIALIZER_REGISTRY = {
