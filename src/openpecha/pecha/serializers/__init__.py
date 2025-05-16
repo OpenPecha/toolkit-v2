@@ -138,11 +138,19 @@ def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha)
     return serialized
 
 
+def _serialize_prealigned_commentary_pecha(serialized_json: Dict, pecha: Pecha):
+    pass
+
+def _serialize_prealigned_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha):
+    pass
+
 PECHA_SERIALIZER_REGISTRY = {
     PechaType.root_pecha: _serialize_root_pecha,
     PechaType.root_translation_pecha: _serialize_root_translation_pecha,
     PechaType.commentary_pecha: _serialize_commentary_pecha,
     PechaType.commentary_translation_pecha: _serialize_commentary_translation_pecha,
+    PechaType.prealigned_commentary_pecha: _serialize_prealigned_commentary_pecha,
+    PechaType.prealigned_commentary_translation_pecha: _serialize_prealigned_commentary_translation_pecha,
 }
 
 
