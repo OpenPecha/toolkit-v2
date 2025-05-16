@@ -132,6 +132,7 @@ class FormatPechaCategory:
 
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
+        # lzh_title = get_pecha_title(pecha, "lzh")
         logger.info(
             f"Pecha Title extracted. BO title: {bo_title}, EN title: {en_title}"
         )
@@ -140,7 +141,7 @@ class FormatPechaCategory:
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-        category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
+        # category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
 
         return category
 
@@ -158,13 +159,13 @@ class FormatPechaCategory:
 
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
-        lzh_title = get_pecha_title(pecha, "lzh")
+        # lzh_title = get_pecha_title(pecha, "lzh")
 
         category = self.assign_category(category, "commentary")
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-        category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
+        # category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
 
         mapping = {
             "base_text_titles": [root_title],
@@ -174,7 +175,7 @@ class FormatPechaCategory:
 
         category["bo"][-1].update(mapping)
         category["en"][-1].update(mapping)
-        category["lzh"][-1].update(mapping)
+        # category["lzh"][-1].update(mapping)
 
         return category
 

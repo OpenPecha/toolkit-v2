@@ -14,19 +14,27 @@ pecha_category = [
     {
         "description": null,
         "short_description": null,
-        "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "lzh": "中观论著"},
+        "name": {
+            "en": "Madhyamaka treatises",
+            "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
+            "lzh": "中观论著",
+        },
         "parent": "madhyamaka",
     },
 ]
 
 expected_category = {
     "bo": [
-        {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""}, 
+        {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
         {"name": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "heDesc": "", "heShortDesc": ""},
     ],
     "en": [
         {"name": "Madhyamaka", "enDesc": "", "enShortDesc": ""},
         {"name": "Madhyamaka treatises", "enDesc": "", "enShortDesc": ""},
+    ],
+    "lzh": [
+        {"name": "中观", "lzhDesc": "", "lzhShortDesc": ""},
+        {"name": "中观论著", "lzhDesc": "", "lzhShortDesc": ""},
     ],
 }
 
