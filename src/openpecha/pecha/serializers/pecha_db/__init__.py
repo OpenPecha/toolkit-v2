@@ -67,9 +67,14 @@ def _serialize_root_translation_pecha(
 def _serialize_commentary_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
-    root_title = Serializer.get_root_en_title(metadatas, pechas)
+    # Format Category
+    root_title = Serializer().get_root_en_title(metadatas, pechas)
+    formatted_category = FormatPechaCategory().format_commentary_category(
+        pechas[0], pecha_category, root_title
+    )
+
     return SimpleCommentarySerializer().serialize(
-        pechas[0], annotation_path, pecha_category, root_title
+        pechas[0], annotation_path, formatted_category
     )
 
 
@@ -77,6 +82,9 @@ def _serialize_commentary_translation_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
     root_title = Serializer.get_root_en_title(metadatas, pechas)
+    formatted_category = FormatPechaCategory().format_commentary_category(
+        pechas[1], pecha_category, root_title
+    )
 
     commentary_pecha = pechas[1]
     translation_pecha = pechas[0]
@@ -88,8 +96,7 @@ def _serialize_commentary_translation_pecha(
     return SimpleCommentarySerializer().serialize(
         commentary_pecha,
         commentary_alignment_id,
-        pecha_category,
-        root_title,
+        formatted_category,
         translation_pecha,
         annotation_path,
     )

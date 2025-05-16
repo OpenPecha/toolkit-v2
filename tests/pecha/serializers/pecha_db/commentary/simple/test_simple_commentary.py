@@ -6,6 +6,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
+from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 from openpecha.utils import read_json
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -25,7 +26,11 @@ class TestSimpleCommentarySerializer(TestCase):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།", "lzh": "入中论"},
+                "name": {
+                    "en": "Entering the Middle Way",
+                    "bo": "དབུ་མ་ལ་འཇུག་པ།",
+                    "lzh": "入中论",
+                },
                 "parent": "madhyamaka",
             },
         ]
@@ -35,11 +40,13 @@ class TestSimpleCommentarySerializer(TestCase):
         annotation_path = "E949/alignment-2F29.json"
 
         serializer = SimpleCommentarySerializer()
+
+        root_title = "Entering the Middle Way Chapter 6, verses 1 to 64"
+        formatted_category = FormatPechaCategory().format_commentary_category(
+            pecha, self.pecha_category, root_title
+        )
         serialized_json = serializer.serialize(
-            pecha,
-            annotation_path,
-            self.pecha_category,
-            "Entering the Middle Way Chapter 6, verses 1 to 64",
+            pecha, annotation_path, formatted_category
         )
         expected_serialized_json = read_json(DATA_DIR / "bo/commentary_serialized.json")
         assert serialized_json == expected_serialized_json
@@ -52,11 +59,15 @@ class TestSimpleCommentarySerializer(TestCase):
         translation_ann_path = "FD22/alignment-599A.json"
 
         serializer = SimpleCommentarySerializer()
+
+        root_title = "Entering the Middle Way Chapter 6, verses 1 to 64"
+        formatted_category = FormatPechaCategory().format_commentary_category(
+            pecha, self.pecha_category, root_title
+        )
         serialized_json = serializer.serialize(
             pecha,
             annotation_path,
-            self.pecha_category,
-            "Entering the Middle Way Chapter 6, verses 1 to 64",
+            formatted_category,
             translation_pecha,
             translation_ann_path,
         )
@@ -72,11 +83,15 @@ class TestSimpleCommentarySerializer(TestCase):
         translation_ann_path = "B97E/alignment-22A8.json"
 
         serializer = SimpleCommentarySerializer()
+
+        root_title = "Entering the Middle Way Chapter 6, verses 1 to 64"
+        formatted_category = FormatPechaCategory().format_commentary_category(
+            pecha, self.pecha_category, root_title
+        )
         serialized_json = serializer.serialize(
             pecha,
             annotation_path,
-            self.pecha_category,
-            "Entering the Middle Way Chapter 6, verses 1 to 64",
+            formatted_category,
             translation_pecha,
             translation_ann_path,
         )

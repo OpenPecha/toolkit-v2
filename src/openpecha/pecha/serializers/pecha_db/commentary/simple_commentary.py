@@ -1,13 +1,10 @@
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha, get_anns
-from openpecha.pecha.serializers.pecha_db.utils import (
-    FormatPechaCategory,
-    get_metadata_for_pecha_org,
-)
+from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
 from openpecha.utils import (
     adjust_segment_num_for_chapter,
     chunk_strings,
@@ -58,16 +55,12 @@ class SimpleCommentarySerializer:
         self,
         pecha: Pecha,
         annotation_path: str,
-        pecha_category: List[Dict],
-        root_title: str,
+        pecha_category: Dict,
         translation_pecha: Pecha | None = None,
         translation_ann_path: str | None = None,
     ):
-        # Format Category
-        formatted_category = FormatPechaCategory().format_commentary_category(
-            pecha, pecha_category, root_title
-        )
-        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
+
+        src_category, tgt_category = pecha_category["en"], pecha_category["bo"]
 
         # Get the metadata for Commentary and Commentary Translation pecha
         if translation_pecha:
