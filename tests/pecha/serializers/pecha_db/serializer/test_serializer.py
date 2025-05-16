@@ -1,4 +1,3 @@
-from typing import Dict, List
 from unittest import TestCase, mock
 
 from openpecha.pecha.serializers.pecha_db import Serializer
@@ -10,20 +9,6 @@ null = None
 class TestSerializer(TestCase, SharedPechaSetup):
     def setUp(self):
         self.setup_pechas()
-        self.pecha_category: List[Dict] = [
-            {
-                "description": null,
-                "short_description": null,
-                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།", "lzh": "中观"},
-                "parent": null,
-            },
-            {
-                "description": null,
-                "short_description": null,
-                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "lzh": "中观论著"},
-                "parent": "madhyamaka",
-            },
-        ]
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")
     def test_root_pecha(self, mock_translation_serialize):

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict, List
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel, PechaAlignment
@@ -11,8 +12,30 @@ class DummyMetadataModel:
             setattr(self, k, v)
 
 
+null = None
+
+
 class SharedPechaSetup:
     def setup_pechas(self):
+        self.pecha_category: List[Dict] = [
+            {
+                "description": null,
+                "short_description": null,
+                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།", "lzh": "中观"},
+                "parent": null,
+            },
+            {
+                "description": null,
+                "short_description": null,
+                "name": {
+                    "en": "Madhyamaka treatises",
+                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
+                    "lzh": "中观论著",
+                },
+                "parent": "madhyamaka",
+            },
+        ]
+
         self.root_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/root/IA6E66F92"
         )
