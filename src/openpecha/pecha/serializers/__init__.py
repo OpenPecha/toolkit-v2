@@ -13,6 +13,7 @@ from openpecha.pecha.serializers.utils import (
     get_metadatachain_from_metadatatree,
 )
 from openpecha.utils import chunk_strings
+from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 
 
 class BaseSerializer(ABC):
@@ -54,10 +55,10 @@ def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
     return chunk_strings(segments)
 
 
-def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
+def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]):
     source_book = {
-        "title": pecha.metadata.title[Language.english.value],
-        "language": Language.english.value,
+        "title": pecha.metadata.title[Language.tibetan.value],
+        "language": Language.tibetan.value,
         "versionSource": pecha.metadata.source if pecha.metadata.source else "",
         "direction": "ltr",
         "completestatus": "done",
@@ -71,13 +72,17 @@ def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
         "completestatus": "done",
         "content": get_pecha_segments(pecha),
     }
+    category = FormatPechaCategory().format_root_category(
+            pecha, pecha_category
+        )
     serialized_json["source"]["books"][0] = source_book
     serialized_json["target"]["books"][0] = target_book
-
+    serialized_json["source"]["categories"] = category["en"]
+    serialized_json["target"]["categories"] = category["lzh"]
     return serialized_json
 
 
-def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
+def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]):
     if (
         serialized_json["source"]["books"][0]["language"]
         == Language.literal_chinese.value
@@ -103,6 +108,10 @@ def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
         }
     serialized_json["target"]["books"][0] = target_book
     serialized_json["source"]["books"][0] = source_book
+
+    category = FormatPechaCategory().format_root_category(pecha, pecha_category)
+    serialized_json["source"]["categories"] = category["en"]
+    serialized_json["target"]["categories"] = category["lzh"]
     return serialized_json
 
 
@@ -151,7 +160,7 @@ def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha)
     return serialized
 
 
-def _serialize_prealigned_commentary_pecha(serialized_json: Dict, pecha: Pecha):
+def _serialize_prealigned_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
     serialized = modify_root_title_mapping(serialized_json, pecha)
 
     target_book = serialized_json["target"]["books"][0]
@@ -161,14 +170,14 @@ def _serialize_prealigned_commentary_pecha(serialized_json: Dict, pecha: Pecha):
     return serialized
 
 
-def _serialize_prealigned_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
-    serialized = modify_root_title_mapping(serialized_json, pecha)
+# def _serialize_prealigned_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
+#     serialized = modify_root_title_mapping(serialized_json, pecha)
 
-    target_book = serialized_json["target"]["books"][0]
+#     target_book = serialized_json["target"]["books"][0]
 
-    serialized["source"]["books"][0] = deepcopy(target_book)
-    reset_target_to_empty_chinese(target_book)
-    return serialized
+#     serialized["source"]["books"][0] = deepcopy(target_book)
+#     reset_target_to_empty_chinese(target_book)
+#     return serialized
 
 
 PECHA_SERIALIZER_REGISTRY = {
@@ -266,7 +275,7 @@ class SerializerLogicHandler:
                     handler = PECHA_SERIALIZER_REGISTRY.get(pecha_type)
                     if not handler:
                         raise ValueError(f"Unsupported pecha type: {pecha_type}")
-                    return handler(serialized, lzh_root_pecha)
+                    return handler(serialized, lzh_root_pecha, pecha_category)
 
                 if root_pecha_lang == Language.literal_chinese.value:
                     pass

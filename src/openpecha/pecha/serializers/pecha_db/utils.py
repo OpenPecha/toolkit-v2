@@ -3,6 +3,7 @@ from typing import Dict, List
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha
+from openpecha.pecha.metadata import Language
 from openpecha.utils import get_text_direction_with_lang
 
 logger = get_logger(__name__)
@@ -22,8 +23,8 @@ class FormatPechaCategory:
         }
         self.lzh_root_category = {
             "name": "根本颂",
-            "lzhDesc": "",
-            "lzhShortDesc": "",
+            "heDesc": "",
+            "heShortDesc": "",
         }
         self.bo_commentary_category = {
             "name": "འགྲེལ་བ།",
@@ -37,8 +38,8 @@ class FormatPechaCategory:
         }
         self.lzh_commentary_category = {
             "name": "注释",
-            "lzhDesc": "",
-            "lzhShortDesc": "",
+            "heDesc": "",
+            "heShortDesc": "",
         }
 
     def get_category(self, pecha_category: List[Dict[str, Dict]]):
@@ -104,8 +105,8 @@ class FormatPechaCategory:
             category["lzh"].append(
                 {
                     "name": lzh_name,
-                    "lzhDesc": lzh_desc,
-                    "lzhShortDesc": lzh_short_desc,
+                    "heDesc": lzh_desc,
+                    "heShortDesc": lzh_short_desc,
                 }
             )
 
@@ -132,7 +133,7 @@ class FormatPechaCategory:
 
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
-        # lzh_title = get_pecha_title(pecha, "lzh")
+        lzh_title = get_pecha_title(pecha, "lzh") if Language.literal_chinese.value in pecha.metadata.title.keys() else ""
         logger.info(
             f"Pecha Title extracted. BO title: {bo_title}, EN title: {en_title}"
         )
@@ -141,7 +142,7 @@ class FormatPechaCategory:
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-        # category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
+        category["lzh"].append({"name": lzh_title, "heDesc": "", "heShortDesc": ""})
 
         return category
 
@@ -159,13 +160,12 @@ class FormatPechaCategory:
 
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
-        # lzh_title = get_pecha_title(pecha, "lzh")
-
+        lzh_title = get_pecha_title(pecha, "lzh") if Language.literal_chinese.value in pecha.metadata.title.keys() else ""
         category = self.assign_category(category, "commentary")
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-        # category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
+        category["lzh"].append({"name": lzh_title, "heDesc": "", "heShortDesc": ""})
 
         mapping = {
             "base_text_titles": [root_title],
@@ -175,7 +175,7 @@ class FormatPechaCategory:
 
         category["bo"][-1].update(mapping)
         category["en"][-1].update(mapping)
-        # category["lzh"][-1].update(mapping)
+        category["lzh"][-1].update(mapping)
 
         return category
 

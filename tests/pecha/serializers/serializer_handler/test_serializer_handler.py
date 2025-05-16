@@ -15,10 +15,25 @@ from openpecha.pecha.serializers import (
 from openpecha.utils import read_json, write_json
 from tests.pecha import SharedPechaSetup
 
+null = None
 
 class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
     def setUp(self):
         self.setup_pechas()
+        self.pecha_category_vajra_cutter = [
+            {
+                "description": null,
+                "short_description": null,
+                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།", "lzh": "佛陀教法"},
+                "parent": null,
+            },
+            {
+                "description": null,
+                "short_description": null,
+                "name": {"en": "Vajra Cutter", "bo": "རྡོ་རྗེ་གཅོད་པ།", "lzh": "金刚经"},
+                "parent": "the-buddha's-teachings",
+            },
+        ]
 
         self.lzh_root_pecha = Pecha.from_path(
             Path("tests/pecha/serializers/serializer_handler/data/lzh_root/ID0CDF467")
@@ -29,11 +44,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         assert handler == _serialize_root_pecha
 
         serialized = read_json(
-            "tests/pecha/serializers/pecha_db/root/data/expected_root_output.json"
+            "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_root_output.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha)
-
-        # write_json("tests/pecha/serializers/serializer_handler/data/expected_root_pecha_serialized.json", updated_serialized)
+        updated_serialized = handler(serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter)
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_pecha_serialized.json"
         )
@@ -44,13 +57,15 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         assert handler == _serialize_root_translation_pecha
 
         serialized = read_json(
-            "tests/pecha/serializers/serializer_handler/data/root_translation.json"
+            "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_root_translation.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        updated_serialized = handler(serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter)
+        # write_json("temp.json", updated_serialized)
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_translation_pecha_with_lzh_source_serialized.json"
         )
         assert expected_serialized == updated_serialized
+
 
     def test_root_translation_pecha(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.root_translation_pecha)
