@@ -17,7 +17,7 @@
         "enShortDesc": ""
       },
       {
-        "name": "Vajra Cutter Root Book",
+        "name": "Illuminating the Intent Chapter 6, verses 1 to 64",
         "enDesc": "",
         "enShortDesc": ""
       }
@@ -36,29 +36,29 @@
   "target": {
     "categories": [
       {
-        "name": "སངས་རྒྱས་ཀྱི་བཀའ།",
+        "name": "佛陀教法",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "name": "金刚经",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྩ་བ།",
+        "name": "根本颂",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྡོ་རྗེ་གཅོད་པ་རྩ་བ་དེབ།",
+        "name": "《明解密意》第六品 第一至六十四頌",
         "heDesc": "",
         "heShortDesc": ""
       }
     ],
     "books": [
       {
-        "title": "心专注平等安住于一切方所",
+        "title": "《明解密意》第六品 第一至六十四頌",
         "language": "lzh",
         "versionSource": "",
         "direction": "ltr",

@@ -33,8 +33,8 @@ expected_category = {
         {"name": "Madhyamaka treatises", "enDesc": "", "enShortDesc": ""},
     ],
     "lzh": [
-        {"name": "中观", "lzhDesc": "", "lzhShortDesc": ""},
-        {"name": "中观论著", "lzhDesc": "", "lzhShortDesc": ""},
+        {"name": "中观", "heDesc": "", "heShortDesc": ""},
+        {"name": "中观论著", "heDesc": "", "heShortDesc": ""},
     ],
 }
 
