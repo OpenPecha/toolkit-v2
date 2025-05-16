@@ -50,12 +50,15 @@ def _serialize_root_pecha(
 def _serialize_root_translation_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
+    formatted_category = FormatPechaCategory().format_root_category(
+        pechas[1], pecha_category
+    )
     root_alignment_id = get_aligned_id(annotations[pechas[0].id], annotation_path)
     logger.info(f"Root Alignment ID: {root_alignment_id}")
     return RootSerializer().serialize(
         pechas[1],
         root_alignment_id,
-        pecha_category,
+        formatted_category,
         pechas[0],
         annotation_path,
     )

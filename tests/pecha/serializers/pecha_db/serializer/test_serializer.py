@@ -73,11 +73,15 @@ class TestSerializer(TestCase, SharedPechaSetup):
             pechas, metadatas, annotations, self.pecha_category, annotation_path
         )
 
+        formmatted_category = FormatPechaCategory().format_root_category(
+            self.root_pecha, self.pecha_category
+        )
+
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
             self.root_pecha,
             root_ann_path,
-            self.pecha_category,
+            formmatted_category,
             self.root_translation_pecha,
             annotation_path,
         )
