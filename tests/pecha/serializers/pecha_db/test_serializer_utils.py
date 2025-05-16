@@ -6,22 +6,22 @@ null = None
 
 pecha_category = [
     {
-        "description": {"en": "", "bo": ""},
-        "short_description": {"en": "", "bo": ""},
-        "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
+        "description": null,
+        "short_description": null,
+        "name": {"en": "Madhyamaka", "bo": "དབུ་མ།", "lzh": "中观"},
         "parent": None,
     },
     {
-        "description": {"en": "", "bo": ""},
-        "short_description": {"en": "", "bo": ""},
-        "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
+        "description": null,
+        "short_description": null,
+        "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "lzh": "中观论著"},
         "parent": "madhyamaka",
     },
 ]
 
 expected_category = {
     "bo": [
-        {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""},
+        {"name": "དབུ་མ།", "heDesc": "", "heShortDesc": ""}, 
         {"name": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "heDesc": "", "heShortDesc": ""},
     ],
     "en": [
