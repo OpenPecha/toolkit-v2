@@ -37,48 +37,39 @@ def modify_root_title_mapping(serialized_json: Dict, pecha: Pecha):
     return serialized_json
 
 
+def reset_target_to_empty_chinese(target_book: Dict):
+    target_book["language"] = Language.literal_chinese.value
+    target_book["versionSource"] = ""
+    target_book["content"] = []
+
+
 def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
 
     pass
 
 
-def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
+def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
     serialized_json = modify_root_title_mapping(serialized_json, pecha)
 
-    target_book = serialized_json["target"]["books"][0]
     source_book = serialized_json["source"]["books"][0]
-
+    target_book = serialized_json["target"]["books"][0]
     tgt_content = target_book.get("content", [])
 
     if tgt_content:
-        # If target has content, make it source and reset target
+        # Move target to source, reset target
         serialized_json["source"]["books"][0] = deepcopy(target_book)
+        reset_target_to_empty_chinese(target_book)
 
-        serialized_json["target"]["books"][0][
-            "language"
-        ] = Language.literal_chinese.value
-        serialized_json["target"]["books"][0]["versionSource"] = ""
-        serialized_json["target"]["books"][0]["content"] = []
     else:
-        # If target content is empty, check if source is in literal_chinese
         src_lang = source_book.get("language")
-
         if src_lang == Language.literal_chinese.value:
-            # Swap source and target if source is in literal_chinese
+            # Swap source and target
             (
                 serialized_json["source"]["books"][0],
                 serialized_json["target"]["books"][0],
-            ) = (
-                deepcopy(target_book),
-                deepcopy(source_book),
-            )
+            ) = (deepcopy(target_book), deepcopy(source_book))
         else:
-            # Reset target to be an empty literal_chinese version
-            serialized_json["target"]["books"][0][
-                "language"
-            ] = Language.literal_chinese.value
-            serialized_json["target"]["books"][0]["versionSource"] = ""
-            serialized_json["target"]["books"][0]["content"] = []
+            reset_target_to_empty_chinese(target_book)
 
     return serialized_json
 
