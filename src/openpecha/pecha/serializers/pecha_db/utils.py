@@ -20,6 +20,11 @@ class FormatPechaCategory:
             "enDesc": "",
             "enShortDesc": "",
         }
+        self.lzh_root_category = {
+            "name": "根本颂",
+            "lzhDesc": "",
+            "lzhShortDesc": "",
+        }
         self.bo_commentary_category = {
             "name": "འགྲེལ་བ།",
             "heDesc": "",
@@ -30,8 +35,13 @@ class FormatPechaCategory:
             "enDesc": "",
             "enShortDesc": "",
         }
+        self.lzh_commentary_category = {
+            "name": "注释",
+            "lzhDesc": "",
+            "lzhShortDesc": "",
+        }
 
-    def get_category(self, pecha_category: List[Dict[str, Dict]]):
+    def get_category(self, pecha_category: List[Dict[str, Dict]], base_language: str):
         """
         Get the category of the Pecha
         """
@@ -39,6 +49,7 @@ class FormatPechaCategory:
         for cate_info in pecha_category:
             bo_name = cate_info["name"].get("bo", "") if cate_info["name"] else ""
             en_name = cate_info["name"].get("en", "") if cate_info["name"] else ""
+            lzh_name = cate_info["name"].get("lzh", "") if cate_info["name"] else ""
 
             bo_desc = (
                 cate_info["description"].get("bo", "")
@@ -50,7 +61,11 @@ class FormatPechaCategory:
                 if cate_info["description"]
                 else ""
             )
-
+            lzh_desc = (
+                cate_info["description"].get("lzh", "")
+                if cate_info["description"]
+                else ""
+            )
             bo_short_desc = (
                 cate_info["short_description"].get("bo", "")
                 if cate_info["short_description"]
@@ -61,11 +76,16 @@ class FormatPechaCategory:
                 if cate_info["short_description"]
                 else ""
             )
-
+            lzh_short_desc = (
+                cate_info["short_description"].get("lzh", "")
+                if cate_info["short_description"]
+                else ""
+            )
             if category == {}:
                 category = {
                     "bo": [],
                     "en": [],
+                    "lzh": [],
                 }
             category["bo"].append(
                 {
@@ -81,15 +101,25 @@ class FormatPechaCategory:
                     "enShortDesc": en_short_desc,
                 }
             )
+            category["lzh"].append(
+                {
+                    "name": lzh_name,
+                    "lzhDesc": lzh_desc,
+                    "lzhShortDesc": lzh_short_desc,
+                }
+            )
+
         return category
 
     def assign_category(self, category, type: str):
         if type == "root":
             category["bo"].append(self.bo_root_category)
             category["en"].append(self.en_root_category)
+            category["lzh"].append(self.lzh_root_category)
         else:
             category["bo"].append(self.bo_commentary_category)
             category["en"].append(self.en_commentary_category)
+            category["lzh"].append(self.lzh_commentary_category)
         return category
 
     def format_root_category(self, pecha: Pecha, pecha_category: List[Dict]):
@@ -110,6 +140,7 @@ class FormatPechaCategory:
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+        category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
 
         return category
 
@@ -127,11 +158,13 @@ class FormatPechaCategory:
 
         bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
+        lzh_title = get_pecha_title(pecha, "lzh")
 
         category = self.assign_category(category, "commentary")
 
         category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
+        category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
 
         mapping = {
             "base_text_titles": [root_title],
@@ -141,6 +174,7 @@ class FormatPechaCategory:
 
         category["bo"][-1].update(mapping)
         category["en"][-1].update(mapping)
+        category["lzh"][-1].update(mapping)
 
         return category
 
@@ -159,7 +193,7 @@ def get_metadata_for_pecha_org(pecha: Pecha, lang: str | None = None):
         else get_pecha_title(pecha, pecha.metadata.language.value)
     )
 
-    title = title if lang in ["bo", "en"] else f"{title}[{lang}]"
+    title = title if lang in ["bo", "en", "lzh"] else f"{title}[{lang}]"
     source = pecha.metadata.source if pecha.metadata.source else ""
 
     return {
