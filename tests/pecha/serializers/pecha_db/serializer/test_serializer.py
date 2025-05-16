@@ -265,12 +265,16 @@ class TestSerializer(TestCase, SharedPechaSetup):
         )
 
         mock_translation_serialize.assert_called_once()
+
+        formatted_category = FormatPechaCategory().format_root_category(
+            self.root_pecha, self.pecha_category
+        )
         mock_translation_serialize.assert_called_with(
             self.root_pecha,
             root_alignment_path,
             self.root_translation_pecha,
             annotation_path,
-            self.pecha_category,
+            formatted_category,
         )
 
     @mock.patch(
@@ -301,11 +305,15 @@ class TestSerializer(TestCase, SharedPechaSetup):
         )
 
         mock_translation_serialize.assert_called_once()
+
+        formatted_category = FormatPechaCategory().format_root_category(
+            self.root_pecha, self.pecha_category
+        )
         mock_translation_serialize.assert_called_with(
             self.root_pecha,
             root_alignment_path,
             self.root_translation_pecha,
             annotation_path,
-            self.pecha_category,
+            formatted_category,
             translation_segmentation_id,
         )

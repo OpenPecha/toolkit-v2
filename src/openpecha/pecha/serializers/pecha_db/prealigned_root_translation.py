@@ -6,10 +6,7 @@ from openpecha.alignment.translation_transfer import TranslationAlignmentTransfe
 from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
 from openpecha.pecha import Pecha, load_layer
-from openpecha.pecha.serializers.pecha_db.utils import (
-    FormatPechaCategory,
-    get_metadata_for_pecha_org,
-)
+from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
 from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
@@ -96,14 +93,12 @@ class PreAlignedRootTranslationSerializer:
         root_alignment_id: str,
         translation_pecha: Pecha,
         translation_alignment_id: str,
-        pecha_category: List[Dict],
+        pecha_category: Dict,
         translation_segmentation_id: str | None = None,
     ) -> Dict:
         # Format Category
-        formatted_category = FormatPechaCategory().format_root_category(
-            root_pecha, pecha_category
-        )
-        bo_category, en_category = formatted_category["bo"], formatted_category["en"]
+
+        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
         # Get the metadata for root and translation pecha
         root_metadata = get_metadata_for_pecha_org(root_pecha)
         translation_metadata = get_metadata_for_pecha_org(translation_pecha)

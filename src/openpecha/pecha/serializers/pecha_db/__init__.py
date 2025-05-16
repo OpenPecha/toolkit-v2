@@ -147,6 +147,11 @@ def _serialize_prealigned_root_translation_pecha(
 ):
     root_pecha = pechas[1]
     translation_pecha = pechas[0]
+
+    formatted_category = FormatPechaCategory().format_root_category(
+        root_pecha, pecha_category
+    )
+
     root_alignment_id = get_aligned_id(
         annotations[translation_pecha.id], annotation_path
     )
@@ -159,7 +164,7 @@ def _serialize_prealigned_root_translation_pecha(
             root_alignment_id,
             translation_pecha,
             annotation_path,
-            pecha_category,
+            formatted_category,
             translation_segmentation_id,
         )
     else:
@@ -168,7 +173,7 @@ def _serialize_prealigned_root_translation_pecha(
             root_alignment_id,
             translation_pecha,
             annotation_path,
-            pecha_category,
+            formatted_category,
         )
 
 

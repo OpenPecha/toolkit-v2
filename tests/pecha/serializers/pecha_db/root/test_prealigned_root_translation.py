@@ -6,6 +6,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
     PreAlignedRootTranslationSerializer,
 )
+from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 from openpecha.utils import read_json
 
 null = None
@@ -26,7 +27,11 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།", "lzh": "佛陀教法"},
+                "name": {
+                    "en": "The Buddha's Teachings",
+                    "bo": "སངས་རྒྱས་ཀྱི་བཀའ།",
+                    "lzh": "佛陀教法",
+                },
                 "parent": null,
             },
             {
@@ -41,13 +46,16 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         root_alignment_id = "A340/alignment-CCF1.json"
         translation_alignment_id = "AC0A/alignment-9048.json"
 
+        formatted_category = FormatPechaCategory().format_root_category(
+            self.root_pecha, self.pecha_category
+        )
         serializer = PreAlignedRootTranslationSerializer()
         serialized_json = serializer.serialize(
             self.root_pecha,
             root_alignment_id,
             self.translation_pecha,
             translation_alignment_id,
-            self.pecha_category,
+            formatted_category,
         )
         expected_json = (
             Path(__file__).parent / "data/expected_prealigned_root_translation.json"
@@ -59,13 +67,17 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         translation_alignment_id = "AC0A/alignment-9048.json"
         translation_display_id = "AC0A/segmentation-E0A6.json"
 
+        formatted_category = FormatPechaCategory().format_root_category(
+            self.root_pecha, self.pecha_category
+        )
+
         serializer = PreAlignedRootTranslationSerializer()
         serialized_json = serializer.serialize(
             self.root_pecha,
             root_alignment_id,
             self.translation_pecha_with_display,
             translation_alignment_id,
-            self.pecha_category,
+            formatted_category,
             translation_display_id,
         )
         expected_json = (
