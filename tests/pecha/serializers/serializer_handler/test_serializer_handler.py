@@ -181,13 +181,18 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/en/commentary_serialized.json"
         )
-        pecha_chain = [self.commentary_pecha, self.root_pecha]
+        pecha_chain = [
+            self.commentary_translation_pecha,
+            self.commentary_pecha,
+            self.root_pecha,
+        ]
         updated_serialized = handler(
             serialized,
             self.lzh_root_pecha,
             self.pecha_category_vajra_cutter,
             pecha_chain,
         )
+
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/en.json"
         )
@@ -200,7 +205,11 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/pecha_db/commentary/simple/data/zh/commentary_serialized.json"
         )
         serialized["source"]["books"][0]["language"] = Language.literal_chinese.value
-        pecha_chain = [self.commentary_pecha, self.root_pecha]
+        pecha_chain = [
+            self.commentary_translation_pecha,
+            self.commentary_pecha,
+            self.root_pecha,
+        ]
         updated_serialized = handler(
             serialized,
             self.lzh_root_pecha,
@@ -232,9 +241,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             self.pecha_category_vajra_cutter,
             pecha_chain,
         )
-        from openpecha.utils import write_json
 
-        write_json("temp.json", updated_serialized)
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_prealigned_commentary.json"
         )

@@ -177,17 +177,38 @@ def _serialize_commentary_translation_pecha(
     1. Modify the Title Mapping
     2. Remove the tibetan content from the `target` field from serialized_json.
     """
+    # Modify the Pecha Category
+    commentary_pecha, root_pecha = pecha_chain[1], pecha_chain[2]
+    root_title = root_pecha.metadata.title.get("en", "")
+    category = FormatPechaCategory().format_commentary_category(
+        commentary_pecha, pecha_category, root_title
+    )
+    serialized_json["source"]["categories"] = category["en"]
+    serialized_json["target"]["categories"] = category["lzh"]
+
     serialized = modify_root_title_mapping(serialized_json, pecha)
 
     source_book = serialized_json["source"]["books"][0]
     target_book = serialized_json["target"]["books"][0]
 
     if source_book["language"] == Language.literal_chinese.value:
-        serialized["source"]["books"][0] = deepcopy(target_book)
         serialized["target"]["books"][0] = deepcopy(source_book)
+        serialized["source"]["books"][0] = {
+            "title": commentary_pecha.metadata.title.get("en", ""),
+            "language": Language.english.value,
+            "versionSource": commentary_pecha.metadata.source
+            if commentary_pecha.metadata.source
+            else "",
+            "direction": "ltr",
+            "completestatus": "done",
+            "content": [],
+        }
+
         return serialized
 
-    reset_target_to_empty_chinese(target_book)
+    commentary_lzh_title = commentary_pecha.metadata.title.get("lzh", "")
+    reset_target_to_empty_chinese(target_book, commentary_lzh_title)
+
     return serialized
 
 

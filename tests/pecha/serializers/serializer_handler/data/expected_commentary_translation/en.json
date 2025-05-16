@@ -2,12 +2,12 @@
   "source": {
     "categories": [
       {
-        "name": "Madhyamaka",
+        "name": "The Buddha's Teachings",
         "enDesc": "",
         "enShortDesc": ""
       },
       {
-        "name": "Entering the Middle Way",
+        "name": "Vajra Cutter",
         "enDesc": "",
         "enShortDesc": ""
       },
@@ -29,7 +29,7 @@
     ],
     "books": [
       {
-        "title": "Illuminating the Intent Chapter 6, verses 1 to 64[en]",
+        "title": "Illuminating the Intent Chapter 6, verses 1 to 64",
         "language": "en",
         "versionSource": "https://library.bdrc.io/",
         "direction": "ltr",
@@ -49,12 +49,12 @@
   "target": {
     "categories": [
       {
-        "name": "中观",
+        "name": "佛陀教法",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "入中论",
+        "name": "金刚经",
         "heDesc": "",
         "heShortDesc": ""
       },
@@ -64,7 +64,7 @@
         "heShortDesc": ""
       },
       {
-        "name": "《明解密意》第六品 第一至六十四頌",
+        "name": "《解深密经》第六品，第一至六十四偈",
         "heDesc": "",
         "heShortDesc": "",
         "base_text_titles": [
