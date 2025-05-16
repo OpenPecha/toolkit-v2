@@ -39,6 +39,16 @@ def modify_root_title_mapping(serialized_json: Dict, pecha: Pecha):
     return serialized_json
 
 
+def assign_lang_code_to_title(serialized_json: Dict):
+    source_title = serialized_json["source"]["books"][0]["title"]
+    lang = serialized_json["source"]["books"][0]["language"]
+
+    if lang != Language.english.value:
+        serialized_json["source"]["books"][0]["title"] = f"{source_title} [{lang}]"
+
+    return serialized_json
+
+
 def reset_target_to_empty_chinese(target_book: Dict, lzh_title: Optional[str] = None):
     target_book["title"] = lzh_title
     target_book["language"] = Language.literal_chinese.value
@@ -335,8 +345,8 @@ class SerializerLogicHandler:
                     handler = PECHA_SERIALIZER_REGISTRY.get(pecha_type)
                     if not handler:
                         raise ValueError(f"Unsupported pecha type: {pecha_type}")
-                    return handler(
-                        serialized, lzh_root_pecha, pecha_category, pecha_chain
+                    return assign_lang_code_to_title(
+                        handler(serialized, lzh_root_pecha, pecha_category, pecha_chain)
                     )
 
                 if root_pecha_lang == Language.literal_chinese.value:

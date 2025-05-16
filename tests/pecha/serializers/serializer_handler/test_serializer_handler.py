@@ -12,6 +12,7 @@ from openpecha.pecha.serializers import (
     _serialize_prealigned_commentary_pecha,
     _serialize_root_pecha,
     _serialize_root_translation_pecha,
+    assign_lang_code_to_title,
 )
 from openpecha.utils import read_json
 from tests.pecha import SharedPechaSetup
@@ -53,11 +54,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_root_output.json"
         )
         pecha_chain = [self.root_pecha]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_pecha_serialized.json"
@@ -72,11 +75,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_root_translation.json"
         )
         pecha_chain = [self.root_translation_pecha, self.root_pecha]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_translation_pecha_with_lzh_source_serialized.json"
@@ -91,11 +96,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_translation_output.json"
         )
         pecha_chain = [self.root_translation_pecha, self.root_pecha]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_translation_pecha_serialized.json"
@@ -113,11 +120,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/pecha_db/commentary/simple/data/bo/commentary_serialized.json"
         )
         pecha_chain = [self.commentary_pecha, self.root_pecha]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
 
         expected_serialized = read_json(
@@ -134,11 +143,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         # Emptying tgt content for Proper Testing
         serialized["target"]["books"][0]["content"] = []
         pecha_chain = [self.commentary_pecha, self.root_pecha]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
 
         expected_serialized = read_json(
@@ -156,11 +167,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized["target"]["books"][0]["content"] = []
         serialized["source"]["books"][0]["language"] = Language.literal_chinese.value
         pecha_chain = [self.commentary_pecha, self.root_pecha]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
 
         expected_serialized = read_json(
@@ -186,11 +199,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             self.commentary_pecha,
             self.root_pecha,
         ]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
 
         expected_serialized = read_json(
@@ -210,11 +225,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             self.commentary_pecha,
             self.root_pecha,
         ]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/lzh.json"
@@ -235,11 +252,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/pecha_db/commentary/prealigned_simple/data/expected_serialized.json"
         )
         pecha_chain = [self.commentary_pecha, self.root_pecha]
-        updated_serialized = handler(
-            serialized,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
 
         expected_serialized = read_json(
@@ -258,15 +277,17 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         ), f"Handler mismatch for {PechaType.prealigned_root_translation_pecha}"
 
         # EN Case
-        serialized_json = read_json(
+        serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_prealigned_root_translation_with_display.json"
         )
         pecha_chain = [self.root_translation_pecha, self.root_pecha]
-        updated_serialized = handler(
-            serialized_json,
-            self.lzh_root_pecha,
-            self.pecha_category_vajra_cutter,
-            pecha_chain,
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
         )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_prealigned_root_translation_serialized.json"
