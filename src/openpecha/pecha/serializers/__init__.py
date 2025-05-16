@@ -161,10 +161,14 @@ def _serialize_prealigned_commentary_pecha(serialized_json: Dict, pecha: Pecha):
     return serialized
 
 
-def _serialize_prealigned_commentary_translation_pecha(
-    serialized_json: Dict, pecha: Pecha
-):
-    pass
+def _serialize_prealigned_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
+    serialized = modify_root_title_mapping(serialized_json, pecha)
+
+    target_book = serialized_json["target"]["books"][0]
+
+    serialized["source"]["books"][0] = deepcopy(target_book)
+    reset_target_to_empty_chinese(target_book)
+    return serialized
 
 
 PECHA_SERIALIZER_REGISTRY = {
@@ -173,7 +177,7 @@ PECHA_SERIALIZER_REGISTRY = {
     PechaType.commentary_pecha: _serialize_commentary_pecha,
     PechaType.commentary_translation_pecha: _serialize_commentary_translation_pecha,
     PechaType.prealigned_commentary_pecha: _serialize_prealigned_commentary_pecha,
-    PechaType.prealigned_commentary_translation_pecha: _serialize_prealigned_commentary_translation_pecha,
+    PechaType.prealigned_root_translation_pecha: _serialize_root_translation_pecha,
 }
 
 
