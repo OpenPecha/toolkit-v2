@@ -13,7 +13,7 @@ from openpecha.pecha.serializers import (
     _serialize_root_pecha,
     _serialize_root_translation_pecha,
 )
-from openpecha.utils import read_json, write_json
+from openpecha.utils import read_json
 from tests.pecha import SharedPechaSetup
 
 null = None
@@ -207,7 +207,6 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             self.pecha_category_vajra_cutter,
             pecha_chain,
         )
-        write_json("temp.json", updated_serialized)
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/lzh.json"
         )

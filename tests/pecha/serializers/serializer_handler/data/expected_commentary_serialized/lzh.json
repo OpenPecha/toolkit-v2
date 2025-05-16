@@ -2,12 +2,12 @@
   "source": {
     "categories": [
       {
-        "name": "Madhyamaka",
+        "name": "The Buddha's Teachings",
         "enDesc": "",
         "enShortDesc": ""
       },
       {
-        "name": "Entering the Middle Way",
+        "name": "Vajra Cutter",
         "enDesc": "",
         "enShortDesc": ""
       },
@@ -41,22 +41,22 @@
   "target": {
     "categories": [
       {
-        "name": "དབུ་མ།",
+        "name": "佛陀教法",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "དབུ་མ་ལ་འཇུག་པ།",
+        "name": "金刚经",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "འགྲེལ་བ།",
+        "name": "注释",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡ ནས་ ༦༤",
+        "name": "《解深密经》第六品，第一至六十四偈",
         "heDesc": "",
         "heShortDesc": "",
         "base_text_titles": [
