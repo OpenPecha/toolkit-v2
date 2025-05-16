@@ -15,6 +15,7 @@ from openpecha.pecha.serializers.pecha_db.prealigned_root_translation import (
     PreAlignedRootTranslationSerializer,
 )
 from openpecha.pecha.serializers.pecha_db.root import RootSerializer
+from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 
 logger = get_logger(__name__)
 
@@ -39,7 +40,11 @@ def get_segmentation_id(ann_models: List[AnnotationModel]) -> Optional[str]:
 def _serialize_root_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
-    return RootSerializer().serialize(pechas[0], annotation_path, pecha_category)
+    # Format Category
+    formatted_category = FormatPechaCategory().format_root_category(
+        pechas[0], pecha_category
+    )
+    return RootSerializer().serialize(pechas[0], annotation_path, formatted_category)
 
 
 def _serialize_root_translation_pecha(

@@ -2,6 +2,7 @@ from typing import Dict, List
 from unittest import TestCase, mock
 
 from openpecha.pecha.serializers.pecha_db import Serializer
+from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 from tests.pecha import SharedPechaSetup
 
 null = None
@@ -20,7 +21,11 @@ class TestSerializer(TestCase, SharedPechaSetup):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "lzh": "中观论著"},
+                "name": {
+                    "en": "Madhyamaka treatises",
+                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
+                    "lzh": "中观论著",
+                },
                 "parent": "madhyamaka",
             },
         ]
@@ -39,9 +44,12 @@ class TestSerializer(TestCase, SharedPechaSetup):
             pechas, metadatas, annotations, self.pecha_category, annotation_path
         )
 
+        formmatted_category = FormatPechaCategory().format_root_category(
+            self.root_pecha, self.pecha_category
+        )
         mock_translation_serialize.assert_called_once()
         mock_translation_serialize.assert_called_with(
-            self.root_pecha, annotation_path, self.pecha_category
+            self.root_pecha, annotation_path, formmatted_category
         )
 
     @mock.patch("openpecha.pecha.serializers.pecha_db.root.RootSerializer.serialize")

@@ -6,10 +6,7 @@ from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
 from openpecha.pecha import Pecha
 from openpecha.pecha.metadata import Language
-from openpecha.pecha.serializers.pecha_db.utils import (
-    FormatPechaCategory,
-    get_metadata_for_pecha_org,
-)
+from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
 from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
@@ -96,18 +93,14 @@ class RootSerializer:
         self,
         pecha: Pecha,
         ann_id: str,
-        pecha_category: List[Dict],
+        pecha_category: Dict,
         translation_pecha: Pecha | None = None,
         translation_ann_id: str | None = None,
     ) -> Dict:
 
-        # Format Category
-        formatted_category = FormatPechaCategory().format_root_category(
-            pecha, pecha_category
-        )
         root_category, translation_category = (
-            formatted_category["bo"],
-            formatted_category["en"],
+            pecha_category["bo"],
+            pecha_category["en"],
         )
         logger.info("Pecha Category successfully formatted.")
         logger.info(f"Root Category: {root_category}")
