@@ -164,10 +164,17 @@ def _serialize_commentary_pecha(
         src_lang = source_book.get("language")
         if src_lang == Language.literal_chinese.value:
             # Swap source and target
-            (
-                serialized_json["source"]["books"][0],
-                serialized_json["target"]["books"][0],
-            ) = (deepcopy(target_book), deepcopy(source_book))
+            serialized_json["target"]["books"][0] = deepcopy(source_book)
+            serialized_json["source"]["books"][0] = {
+                "title": commentary_pecha.metadata.title.get("en", ""),
+                "language": Language.english.value,
+                "versionSource": commentary_pecha.metadata.source
+                if commentary_pecha.metadata.source
+                else "",
+                "direction": "ltr",
+                "completestatus": "done",
+                "content": [],
+            }
         else:
             reset_target_to_empty_chinese(target_book, commentary_lzh_title)
 
