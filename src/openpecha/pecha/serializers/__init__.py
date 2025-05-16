@@ -51,7 +51,7 @@ def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
 
 
 def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
-    if serialized_json["source"]["books"][0]["language"] == "lzh":
+    if serialized_json["source"]["books"][0]["language"] == Language.literal_chinese.value:
         source_book = {
             "title": pecha.metadata.title[Language.english.value],
             "language": Language.english.value,
