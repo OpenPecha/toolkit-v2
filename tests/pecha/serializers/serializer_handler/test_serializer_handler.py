@@ -34,7 +34,22 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         updated_serialized = handler(serialized, self.lzh_root_pecha)
 
         expected_serialized = read_json(
-            "tests/pecha/serializers/serializer_handler/data/expected_commentary_pecha_serialized.json"
+            "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/bo.json"
+        )
+        assert (
+            expected_serialized == updated_serialized
+        ), f"{PechaType.commentary_pecha} fodian serialization failed.."
+
+        # EN Commentary
+        serialized = read_json(
+            "tests/pecha/serializers/pecha_db/commentary/simple/data/en/commentary_serialized.json"
+        )
+        # Emptying tgt content for Proper Testing
+        serialized["target"]["books"][0]["content"] = []
+        updated_serialized = handler(serialized, self.lzh_root_pecha)
+
+        expected_serialized = read_json(
+            "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/en.json"
         )
         assert (
             expected_serialized == updated_serialized
