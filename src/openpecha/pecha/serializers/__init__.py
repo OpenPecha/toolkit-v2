@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from openpecha.utils import chunk_strings
@@ -26,6 +27,20 @@ class BaseSerializer(ABC):
     ):
         pass
 
+
+def modify_root_title_mapping(serialized_json: Dict, pecha: Pecha):
+    # Change the Title mapping
+    title = pecha.metadata.title["en"]
+
+    serialized_json["source"]["categories"][-1]["base_text_titles"] = [title]
+    serialized_json["target"]["categories"][-1]["base_text_titles"] = [title]
+    return serialized_json
+
+
+def reset_target_to_empty_chinese(target_book: Dict):
+    target_book["language"] = Language.literal_chinese.value
+    target_book["versionSource"] = ""
+    target_book["content"] = []
 
 def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
     base_name = list(pecha.bases.keys())[0]
@@ -87,12 +102,29 @@ def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
 
 
 
-def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha):
-    # Change the Title mapping
-    title = pecha.metadata.title["en"]
+def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
+    serialized_json = modify_root_title_mapping(serialized_json, pecha)
 
-    serialized_json["source"]["categories"][-1]["base_text_titles"] = [title]
-    serialized_json["target"]["categories"][-1]["base_text_titles"] = [title]
+    source_book = serialized_json["source"]["books"][0]
+    target_book = serialized_json["target"]["books"][0]
+    tgt_content = target_book.get("content", [])
+
+    if tgt_content:
+        # Move target to source, reset target
+        serialized_json["source"]["books"][0] = deepcopy(target_book)
+        reset_target_to_empty_chinese(target_book)
+
+    else:
+        src_lang = source_book.get("language")
+        if src_lang == Language.literal_chinese.value:
+            # Swap source and target
+            (
+                serialized_json["source"]["books"][0],
+                serialized_json["target"]["books"][0],
+            ) = (deepcopy(target_book), deepcopy(source_book))
+        else:
+            reset_target_to_empty_chinese(target_book)
+
     return serialized_json
 
 
@@ -101,7 +133,7 @@ def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha)
     1. Modify the Title Mapping
     2. Remove the tibetan content from the `target` field from serialized_json.
     """
-    serialized = _serialize_commentary_pecha(serialized_json, pecha)
+    serialized = modify_root_title_mapping(serialized_json, pecha)
     serialized["target"]["books"][0]["content"] = []
     return serialized
 

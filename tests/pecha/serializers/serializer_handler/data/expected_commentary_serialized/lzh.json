@@ -1,0 +1,88 @@
+{
+  "source": {
+    "categories": [
+      {
+        "name": "Madhyamaka",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Entering the Middle Way",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Commentary text",
+        "enDesc": "",
+        "enShortDesc": ""
+      },
+      {
+        "name": "Illuminating the Intent Chapter 6, verses 1 to 64",
+        "enDesc": "",
+        "enShortDesc": "",
+        "base_text_titles": [
+          "Illuminating the Intent Chapter 6, verses 1 to 64"
+        ],
+        "base_text_mapping": "many_to_one",
+        "link": "Commentary"
+      }
+    ],
+    "books": [
+      {
+        "title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡ ནས་ ༦༤",
+        "language": "bo",
+        "versionSource": "https://library.bdrc.io/",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": []
+      }
+    ]
+  },
+  "target": {
+    "categories": [
+      {
+        "name": "དབུ་མ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "དབུ་མ་ལ་འཇུག་པ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "འགྲེལ་བ།",
+        "heDesc": "",
+        "heShortDesc": ""
+      },
+      {
+        "name": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡ ནས་ ༦༤",
+        "heDesc": "",
+        "heShortDesc": "",
+        "base_text_titles": [
+          "Illuminating the Intent Chapter 6, verses 1 to 64"
+        ],
+        "base_text_mapping": "many_to_one",
+        "link": "Commentary"
+      }
+    ],
+    "books": [
+      {
+        "title": "《解深密经》第六品，第一至六十四偈[zh]",
+        "language": "lzh",
+        "versionSource": "https://library.bdrc.io/",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": [
+          [
+            "<1><1>以心安住于禅定中， 直接趋向佛陀正法。 通过见到缘起实相， 以智慧住而得寂灭。",
+            "<1><2>如同一位具眼之人， 能轻易引导盲人群。 至其所欲之目的地， 智慧亦引无明功德，趋向菩提。",
+            "<1><3>由于通达甚深法义， 来自经典与正理思， 故随龙树圣者传承， 如是宣说此法要义。",
+            "<1><4>即使仍是凡夫之身， 每当听闻空性法义， 内心生起反复欢喜， 由此强烈喜悦之情。",
+            "<1><5>喜极而泣泪湿双目， 遍身汗毛为之竖立。"
+          ]
+        ]
+      }
+    ]
+  }
+}

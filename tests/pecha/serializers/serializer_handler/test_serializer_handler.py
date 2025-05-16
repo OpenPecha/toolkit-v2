@@ -2,6 +2,7 @@ from pathlib import Path
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
+from openpecha.pecha.metadata import Language
 from openpecha.pecha.pecha_types import PechaType
 from openpecha.pecha.serializers import (
     PECHA_SERIALIZER_REGISTRY,
@@ -69,27 +70,58 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.commentary_pecha)
         assert (
             handler == _serialize_commentary_pecha
-        ), "Serializer Logic Handler not properly retrieved in case of Commentary Pecha Type."
+        ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
-        # Tibetan Commentary
+        # BO Commentary Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/bo/commentary_serialized.json"
         )
         updated_serialized = handler(serialized, self.lzh_root_pecha)
 
         expected_serialized = read_json(
-            "tests/pecha/serializers/serializer_handler/data/expected_commentary_pecha_serialized.json"
+            "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/bo.json"
         )
         assert (
             expected_serialized == updated_serialized
-        ), "Serializer Logic handler isnt working in Tibetan Commentary Pecha case for Fodian website."
+        ), f"{PechaType.commentary_pecha} fodian serialization failed.."
+
+        # EN Commentary Case
+        serialized = read_json(
+            "tests/pecha/serializers/pecha_db/commentary/simple/data/en/commentary_serialized.json"
+        )
+        # Emptying tgt content for Proper Testing
+        serialized["target"]["books"][0]["content"] = []
+        updated_serialized = handler(serialized, self.lzh_root_pecha)
+
+        expected_serialized = read_json(
+            "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/en.json"
+        )
+        assert (
+            expected_serialized == updated_serialized
+        ), f"{PechaType.commentary_pecha} fodian serialization failed.."
+
+        # LZH Commentary Case
+        serialized = read_json(
+            "tests/pecha/serializers/pecha_db/commentary/simple/data/zh/commentary_serialized.json"
+        )
+        # Emptying tgt content for Proper Testing
+        serialized["target"]["books"][0]["content"] = []
+        serialized["source"]["books"][0]["language"] = Language.literal_chinese.value
+        updated_serialized = handler(serialized, self.lzh_root_pecha)
+
+        expected_serialized = read_json(
+            "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/lzh.json"
+        )
+        assert (
+            expected_serialized == updated_serialized
+        ), f"{PechaType.commentary_pecha} fodian serialization failed.."
 
     def test_commentary_translation_pecha(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.commentary_translation_pecha)
 
         assert (
             handler == _serialize_commentary_translation_pecha
-        ), "Serializer Logic Handler not properly retrieved in case of Commentary Translation Pecha Type."
+        ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
         # Commentary Pecha other than Tibetan Language
         serialized = read_json(
@@ -101,4 +133,4 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         )
         assert (
             expected_serialized == updated_serialized
-        ), "Serializer Logic handler isnt working in Tibetan Commentary Translation Pecha case for Fodian website."
+        ), f"{PechaType.commentary_translation_pecha} fodian serialization failed.."
