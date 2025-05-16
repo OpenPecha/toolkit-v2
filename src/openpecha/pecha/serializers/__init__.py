@@ -218,12 +218,25 @@ def _serialize_prealigned_commentary_pecha(
     pecha_category: List[Dict[str, Dict]],
     pecha_chain: List[Pecha],
 ) -> Dict:
+    # Modify the Pecha Category
+    commentary_pecha, root_pecha = pecha_chain[0], pecha_chain[1]
+    root_title = root_pecha.metadata.title.get("en", "")
+    category = FormatPechaCategory().format_commentary_category(
+        commentary_pecha, pecha_category, root_title
+    )
+
     serialized = modify_root_title_mapping(serialized_json, pecha)
 
     target_book = serialized_json["target"]["books"][0]
 
     serialized["source"]["books"][0] = deepcopy(target_book)
-    reset_target_to_empty_chinese(target_book)
+
+    commentary_lzh_title = commentary_pecha.metadata.title.get("lzh", "")
+    reset_target_to_empty_chinese(target_book, commentary_lzh_title)
+
+    serialized["source"]["categories"] = category["en"]
+    serialized["target"]["categories"] = category["lzh"]
+
     return serialized
 
 

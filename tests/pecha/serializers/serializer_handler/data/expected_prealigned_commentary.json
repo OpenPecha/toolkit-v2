@@ -2,12 +2,12 @@
   "source": {
     "categories": [
       {
-        "name": "Madhyamaka",
+        "name": "The Buddha's Teachings",
         "enDesc": "",
         "enShortDesc": ""
       },
       {
-        "name": "Entering the Middle Way",
+        "name": "Vajra Cutter",
         "enDesc": "",
         "enShortDesc": ""
       },
@@ -29,7 +29,7 @@
     ],
     "books": [
       {
-        "title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤[bo]",
+        "title": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
         "language": "bo",
         "versionSource": "http://purl.bdrc.io/resource/WA1NLM688",
         "direction": "ltr",
@@ -53,12 +53,12 @@
   "target": {
     "categories": [
       {
-        "name": "中观",
+        "name": "佛陀教法",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "入中论",
+        "name": "金刚经",
         "heDesc": "",
         "heShortDesc": ""
       },
@@ -68,7 +68,7 @@
         "heShortDesc": ""
       },
       {
-        "name": "《明解密意》第六品 第一至六十四頌",
+        "name": "《解深密经》第六品，第一至六十四偈",
         "heDesc": "",
         "heShortDesc": "",
         "base_text_titles": [
@@ -80,7 +80,7 @@
     ],
     "books": [
       {
-        "title": "《明解密意》第六品 第一至六十四頌",
+        "title": "《解深密经》第六品，第一至六十四偈",
         "language": "lzh",
         "versionSource": "",
         "direction": "ltr",
