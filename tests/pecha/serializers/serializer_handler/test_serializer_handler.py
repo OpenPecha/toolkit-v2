@@ -6,12 +6,12 @@ from openpecha.pecha.metadata import Language
 from openpecha.pecha.pecha_types import PechaType
 from openpecha.pecha.serializers import (
     PECHA_SERIALIZER_REGISTRY,
-    _serialize_root_pecha,
-    _serialize_root_translation_pecha,
     _serialize_commentary_pecha,
     _serialize_commentary_translation_pecha,
+    _serialize_root_pecha,
+    _serialize_root_translation_pecha,
 )
-from openpecha.utils import read_json, write_json
+from openpecha.utils import read_json
 from tests.pecha import SharedPechaSetup
 
 
@@ -38,7 +38,6 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         )
         assert expected_serialized == updated_serialized
 
-
     def test_root_translation_pecha_with_lzh_as_source(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.root_translation_pecha)
         assert handler == _serialize_root_translation_pecha
@@ -64,7 +63,6 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/serializer_handler/data/expected_root_translation_pecha_serialized.json"
         )
         assert expected_serialized == updated_serialized
-
 
     def test_commentary_pecha(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.commentary_pecha)
@@ -123,13 +121,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             handler == _serialize_commentary_translation_pecha
         ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
-        # Commentary Pecha other than Tibetan Language
+        # EN Commentary Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/en/commentary_serialized.json"
         )
         updated_serialized = handler(serialized, self.lzh_root_pecha)
         expected_serialized = read_json(
-            "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation_pecha_serialized.json"
+            "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/en.json"
         )
         assert (
             expected_serialized == updated_serialized
