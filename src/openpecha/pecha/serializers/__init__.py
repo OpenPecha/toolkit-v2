@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
+from openpecha.utils import chunk_strings
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
 from openpecha.pecha.metadata import Language
@@ -42,10 +42,64 @@ def reset_target_to_empty_chinese(target_book: Dict):
     target_book["versionSource"] = ""
     target_book["content"] = []
 
+def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
+    base_name = list(pecha.bases.keys())[0]
+    segments = []
+    for _, ann_store in pecha.get_layers(base_name=base_name):
+        for ann in list(ann_store):
+            segment_text = ann.text()[0]
+            segments.append(segment_text)
+    return chunk_strings(segments)
+
 
 def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
+    source_book = {
+        "title": pecha.metadata.title[Language.english.value],
+        "language": Language.english.value,
+        "versionSource": pecha.metadata.source if pecha.metadata.source else "",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": serialized_json["target"]["books"][0]["content"],
+    }
+    target_book = {
+        "title": pecha.metadata.title[pecha.metadata.language.value],
+        "language": pecha.metadata.language.value,
+        "versionSource": pecha.metadata.source if pecha.metadata.source else "",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": get_pecha_segments(pecha),
+    }
+    serialized_json["source"]["books"][0] = source_book
+    serialized_json["target"]["books"][0] = target_book
 
-    pass
+    return serialized_json
+
+
+def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
+    if serialized_json["source"]["books"][0]["language"] == Language.literal_chinese.value:
+        source_book = {
+            "title": pecha.metadata.title[Language.english.value],
+            "language": Language.english.value,
+            "versionSource": "",
+            "direction": "ltr",
+            "completestatus": "done",
+            "content": [],
+        }
+        target_book = serialized_json["source"]["books"][0]
+    else:
+        source_book = serialized_json["source"]["books"][0]
+        target_book = {
+            "title": pecha.metadata.title[Language.literal_chinese.value],
+            "language": Language.literal_chinese.value,
+            "versionSource": pecha.metadata.source if pecha.metadata.source else "",
+            "direction": "ltr",
+            "completestatus": "done",
+            "content": get_pecha_segments(pecha),
+        }
+    serialized_json["target"]["books"][0] = target_book
+    serialized_json["source"]["books"][0] = source_book
+    return serialized_json
+
 
 
 def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
@@ -86,6 +140,7 @@ def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha)
 
 PECHA_SERIALIZER_REGISTRY = {
     PechaType.root_pecha: _serialize_root_pecha,
+    PechaType.root_translation_pecha: _serialize_root_translation_pecha,
     PechaType.commentary_pecha: _serialize_commentary_pecha,
     PechaType.commentary_translation_pecha: _serialize_commentary_translation_pecha,
 }
