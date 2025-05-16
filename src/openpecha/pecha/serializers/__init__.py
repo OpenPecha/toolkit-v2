@@ -38,6 +38,14 @@ def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
 
 
 def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
+    source_book = {
+        "title": pecha.metadata.title[Language.english.value],
+        "language": Language.english.value,
+        "versionSource": pecha.metadata.source if pecha.metadata.source else "",
+        "direction": "ltr",
+        "completestatus": "done",
+        "content": serialized_json["target"]["books"][0]["content"],
+    }
     target_book = {
         "title": pecha.metadata.title[pecha.metadata.language.value],
         "language": pecha.metadata.language.value,
@@ -46,7 +54,9 @@ def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
         "completestatus": "done",
         "content": get_pecha_segments(pecha),
     }
+    serialized_json["source"]["books"][0] = source_book
     serialized_json["target"]["books"][0] = target_book
+
     return serialized_json
 
 
