@@ -185,12 +185,18 @@ class TestSerializer(TestCase, SharedPechaSetup):
         )
 
         mock_commentary_serialize.assert_called_once()
+
+        formatted_category = FormatPechaCategory().format_commentary_category(
+            self.commentary_pecha,
+            self.pecha_category,
+            self.root_pecha.metadata.title.get("en"),
+        )
         mock_commentary_serialize.assert_called_with(
             self.root_pecha,
             root_alignment_path,
             self.commentary_pecha,
             annotation_path,
-            self.pecha_category,
+            formatted_category,
         )
 
     @mock.patch(
@@ -219,12 +225,18 @@ class TestSerializer(TestCase, SharedPechaSetup):
         )
 
         mock_commentary_serialize.assert_called_once()
+
+        formatted_category = FormatPechaCategory().format_commentary_category(
+            self.commentary_pecha,
+            self.pecha_category,
+            self.root_pecha.metadata.title.get("en"),
+        )
         mock_commentary_serialize.assert_called_with(
             self.root_pecha,
             root_alignment_path,
             self.commentary_pecha,
             annotation_path,
-            self.pecha_category,
+            formatted_category,
             commentary_segmentation_path,
         )
 

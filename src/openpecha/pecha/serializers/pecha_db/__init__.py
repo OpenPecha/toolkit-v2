@@ -108,6 +108,12 @@ def _serialize_prealigned_commentary_pecha(
     root_pecha = pechas[1]
     commentary_pecha = pechas[0]
 
+    # Format Category
+    root_title = root_pecha.metadata.title.get("en")
+    formatted_category = FormatPechaCategory().format_commentary_category(
+        commentary_pecha, pecha_category, root_title
+    )
+
     root_alignment_id = get_aligned_id(
         annotations[commentary_pecha.id], annotation_path
     )
@@ -123,7 +129,7 @@ def _serialize_prealigned_commentary_pecha(
             root_alignment_id,
             commentary_pecha,
             annotation_path,
-            pecha_category,
+            formatted_category,
             commentary_segmentation_id,
         )
     else:
@@ -132,7 +138,7 @@ def _serialize_prealigned_commentary_pecha(
             root_alignment_id,
             commentary_pecha,
             annotation_path,
-            pecha_category,
+            formatted_category,
         )
 
 

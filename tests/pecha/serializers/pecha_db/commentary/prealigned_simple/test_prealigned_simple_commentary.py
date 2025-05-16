@@ -1,10 +1,12 @@
 from pathlib import Path
+from typing import Any, Dict, List
 from unittest import TestCase, mock
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
     PreAlignedCommentarySerializer,
 )
+from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 from openpecha.utils import read_json
 
 null = None
@@ -21,7 +23,7 @@ class TestPreAlignedCommentarySerializer(TestCase):
         )
 
         # Create the patcher and set return_value
-        self.pecha_category = [
+        self.pecha_category: List[Dict[Any, Any]] = [
             {
                 "description": null,
                 "short_description": null,
@@ -31,7 +33,11 @@ class TestPreAlignedCommentarySerializer(TestCase):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།", "lzh": "入中论"},
+                "name": {
+                    "en": "Entering the Middle Way",
+                    "bo": "དབུ་མ་ལ་འཇུག་པ།",
+                    "lzh": "入中论",
+                },
                 "parent": "madhyamaka",
             },
         ]
@@ -48,12 +54,17 @@ class TestPreAlignedCommentarySerializer(TestCase):
         commentary_alignment_id = "BEC3/Alignment-90C0.json"
 
         serializer = PreAlignedCommentarySerializer()
+
+        root_title = self.root_pecha.metadata.title.get("en")
+        formatted_category = FormatPechaCategory().format_commentary_category(
+            self.commentary_pecha, self.pecha_category, root_title
+        )
         serialized_json = serializer.serialize(
             self.root_pecha,
             root_alignment_id,
             self.commentary_pecha,
             commentary_alignment_id,
-            self.pecha_category,
+            formatted_category,
         )
 
         expected_json = Path(__file__).parent / "data/expected_serialized.json"

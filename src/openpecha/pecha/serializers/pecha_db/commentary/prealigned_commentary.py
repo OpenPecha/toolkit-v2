@@ -3,11 +3,7 @@ from typing import Dict, List
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.pecha_db.utils import (
-    FormatPechaCategory,
-    get_metadata_for_pecha_org,
-    get_pecha_title,
-)
+from openpecha.pecha.serializers.pecha_db.utils import get_metadata_for_pecha_org
 from openpecha.utils import chunk_strings
 
 logger = get_logger(__name__)
@@ -20,16 +16,10 @@ class PreAlignedCommentarySerializer:
         root_alignment_id: str,
         commentary_pecha: Pecha,
         commentary_alignment_id: str,
-        pecha_category: List[Dict],
+        pecha_category: Dict,
         commentary_segmentation_id: str | None = None,
     ):
-        # Format Category
-        root_title = get_pecha_title(root_pecha, "en")
-        formatted_category = FormatPechaCategory().format_commentary_category(
-            commentary_pecha, pecha_category, root_title
-        )
-
-        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
+        src_category, tgt_category = pecha_category["en"], pecha_category["bo"]
         logger.info(f"Category is extracted successfully for {commentary_pecha.id}.")
 
         # Get metadata
