@@ -8,6 +8,7 @@ from openpecha.pecha.serializers import (
     PECHA_SERIALIZER_REGISTRY,
     _serialize_commentary_pecha,
     _serialize_commentary_translation_pecha,
+    _serialize_prealigned_commentary_pecha,
     _serialize_root_pecha,
     _serialize_root_translation_pecha,
 )
@@ -146,3 +147,25 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         assert (
             expected_serialized == updated_serialized
         ), f"{PechaType.commentary_translation_pecha} fodian serialization failed.."
+
+    def test_prealigned_commentary_pecha(self):
+        handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.prealigned_commentary_pecha)
+
+        assert (
+            handler == _serialize_prealigned_commentary_pecha
+        ), f"Handler mismatch for {PechaType.commentary_pecha}"
+
+        # BO Case
+        serialized = read_json(
+            "tests/pecha/serializers/pecha_db/commentary/prealigned_simple/data/expected_serialized.json"
+        )
+        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        from openpecha.utils import write_json
+
+        write_json("temp.json", updated_serialized)
+        expected_serialized = read_json(
+            "tests/pecha/serializers/serializer_handler/data/expected_prealigned_commentary.json"
+        )
+        assert (
+            expected_serialized == updated_serialized
+        ), f"{PechaType.commentary_pecha} fodian serialization failed.."
