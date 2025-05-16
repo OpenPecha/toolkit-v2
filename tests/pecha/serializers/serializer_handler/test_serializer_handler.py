@@ -11,7 +11,7 @@ from openpecha.pecha.serializers import (
     _serialize_root_pecha,
     _serialize_root_translation_pecha,
 )
-from openpecha.utils import read_json
+from openpecha.utils import read_json, write_json
 from tests.pecha import SharedPechaSetup
 
 
@@ -128,6 +128,20 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         updated_serialized = handler(serialized, self.lzh_root_pecha)
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/en.json"
+        )
+        assert (
+            expected_serialized == updated_serialized
+        ), f"{PechaType.commentary_translation_pecha} fodian serialization failed.."
+
+        # LITERAL CHINESE Commentary Translation Case
+        serialized = read_json(
+            "tests/pecha/serializers/pecha_db/commentary/simple/data/zh/commentary_serialized.json"
+        )
+        serialized["source"]["books"][0]["language"] = Language.literal_chinese.value
+        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        write_json("temp.json", updated_serialized)
+        expected_serialized = read_json(
+            "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/lzh.json"
         )
         assert (
             expected_serialized == updated_serialized
