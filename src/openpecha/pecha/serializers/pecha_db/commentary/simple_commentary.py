@@ -60,7 +60,10 @@ class SimpleCommentarySerializer:
         translation_ann_path: str | None = None,
     ):
 
-        src_category, tgt_category = pecha_category["en"], pecha_category["bo"]
+        src_category, tgt_category = (
+            pecha_category["source_category"],
+            pecha_category["target_category"],
+        )
 
         # Get the metadata for Commentary and Commentary Translation pecha
         if translation_pecha:

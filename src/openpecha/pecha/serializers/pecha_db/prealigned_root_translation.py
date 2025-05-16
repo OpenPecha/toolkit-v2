@@ -98,7 +98,10 @@ class PreAlignedRootTranslationSerializer:
     ) -> Dict:
         # Format Category
 
-        bo_category, en_category = pecha_category["bo"], pecha_category["en"]
+        bo_category, en_category = (
+            pecha_category["target_category"],
+            pecha_category["source_category"],
+        )
         # Get the metadata for root and translation pecha
         root_metadata = get_metadata_for_pecha_org(root_pecha)
         translation_metadata = get_metadata_for_pecha_org(translation_pecha)

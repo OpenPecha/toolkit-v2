@@ -99,8 +99,8 @@ class RootSerializer:
     ) -> Dict:
 
         root_category, translation_category = (
-            pecha_category["bo"],
-            pecha_category["en"],
+            pecha_category["target_category"],
+            pecha_category["source_category"],
         )
         logger.info("Pecha Category successfully formatted.")
         logger.info(f"Root Category: {root_category}")
