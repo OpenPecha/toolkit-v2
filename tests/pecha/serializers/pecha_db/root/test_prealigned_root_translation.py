@@ -24,15 +24,15 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
 
         self.pecha_category: List[Dict] = [
             {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།"},
+                "description": null,
+                "short_description": null,
+                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།", "lzh": "佛陀教法"},
                 "parent": null,
             },
             {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Vajra Cutter", "bo": "རྡོ་རྗེ་གཅོད་པ།"},
+                "description": null,
+                "short_description": null,
+                "name": {"en": "Vajra Cutter", "bo": "རྡོ་རྗེ་གཅོད་པ།", "lzh": "金刚经"},
                 "parent": "the-buddha's-teachings",
             },
         ]

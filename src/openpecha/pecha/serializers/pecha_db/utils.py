@@ -41,7 +41,7 @@ class FormatPechaCategory:
             "lzhShortDesc": "",
         }
 
-    def get_category(self, pecha_category: List[Dict[str, Dict]], base_language: str):
+    def get_category(self, pecha_category: List[Dict[str, Dict]]):
         """
         Get the category of the Pecha
         """

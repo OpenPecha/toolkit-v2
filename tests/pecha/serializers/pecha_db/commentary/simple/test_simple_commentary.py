@@ -17,15 +17,15 @@ class TestSimpleCommentarySerializer(TestCase):
 
         self.pecha_category: List[Dict[Any, Any]] = [
             {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                "description": null,
+                "short_description": null,
+                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།", "lzh": "中观"},
                 "parent": null,
             },
             {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།"},
+                "description": null,
+                "short_description": null,
+                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།", "lzh": "入中论"},
                 "parent": "madhyamaka",
             },
         ]

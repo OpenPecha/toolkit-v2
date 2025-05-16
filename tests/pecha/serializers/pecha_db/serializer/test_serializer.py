@@ -12,15 +12,15 @@ class TestSerializer(TestCase, SharedPechaSetup):
         self.setup_pechas()
         self.pecha_category: List[Dict] = [
             {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།"},
+                "description": null,
+                "short_description": null,
+                "name": {"en": "Madhyamaka", "bo": "དབུ་མ།", "lzh": "中观"},
                 "parent": null,
             },
             {
-                "description": {"en": "", "bo": ""},
-                "short_description": {"en": "", "bo": ""},
-                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།"},
+                "description": null,
+                "short_description": null,
+                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "lzh": "中观论著"},
                 "parent": "madhyamaka",
             },
         ]
