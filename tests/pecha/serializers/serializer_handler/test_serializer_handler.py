@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any, Dict, List
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
@@ -17,14 +18,19 @@ from tests.pecha import SharedPechaSetup
 
 null = None
 
+
 class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
     def setUp(self):
         self.setup_pechas()
-        self.pecha_category_vajra_cutter = [
+        self.pecha_category_vajra_cutter: List[Dict[Any, Any]] = [
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།", "lzh": "佛陀教法"},
+                "name": {
+                    "en": "The Buddha's Teachings",
+                    "bo": "སངས་རྒྱས་ཀྱི་བཀའ།",
+                    "lzh": "佛陀教法",
+                },
                 "parent": null,
             },
             {
@@ -46,7 +52,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_root_output.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_pecha_serialized.json"
         )
@@ -59,12 +67,13 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_root_translation.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_translation_pecha_with_lzh_source_serialized.json"
         )
         assert expected_serialized == updated_serialized
-
 
     def test_root_translation_pecha(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(PechaType.root_translation_pecha)
@@ -73,7 +82,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_translation_output.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_translation_pecha_serialized.json"
         )
@@ -89,7 +100,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/bo/commentary_serialized.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
 
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/bo.json"
@@ -104,7 +117,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         )
         # Emptying tgt content for Proper Testing
         serialized["target"]["books"][0]["content"] = []
-        updated_serialized = handler(serialized)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
 
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/en.json"
@@ -120,7 +135,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         # Emptying tgt content for Proper Testing
         serialized["target"]["books"][0]["content"] = []
         serialized["source"]["books"][0]["language"] = Language.literal_chinese.value
-        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
 
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_serialized/lzh.json"
@@ -140,7 +157,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/en/commentary_serialized.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/en.json"
         )
@@ -153,7 +172,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/pecha_db/commentary/simple/data/zh/commentary_serialized.json"
         )
         serialized["source"]["books"][0]["language"] = Language.literal_chinese.value
-        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
         write_json("temp.json", updated_serialized)
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_commentary_translation/lzh.json"
@@ -173,7 +194,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/prealigned_simple/data/expected_serialized.json"
         )
-        updated_serialized = handler(serialized, self.lzh_root_pecha)
+        updated_serialized = handler(
+            serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
         from openpecha.utils import write_json
 
         write_json("temp.json", updated_serialized)
@@ -197,7 +220,9 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_prealigned_root_translation_with_display.json"
         )
 
-        updated_serialized = handler(serialized_json, self.lzh_root_pecha, self.pecha_category_vajra_cutter)
+        updated_serialized = handler(
+            serialized_json, self.lzh_root_pecha, self.pecha_category_vajra_cutter
+        )
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_prealigned_root_translation_serialized.json"
         )

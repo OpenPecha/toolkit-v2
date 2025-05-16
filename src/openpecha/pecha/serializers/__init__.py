@@ -8,12 +8,12 @@ from openpecha.pecha.annotations import AnnotationModel
 from openpecha.pecha.metadata import Language
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
 from openpecha.pecha.serializers.pecha_db import Serializer
+from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 from openpecha.pecha.serializers.utils import (
     find_related_pecha_id,
     get_metadatachain_from_metadatatree,
 )
 from openpecha.utils import chunk_strings
-from openpecha.pecha.serializers.pecha_db.utils import FormatPechaCategory
 
 
 class BaseSerializer(ABC):
@@ -55,7 +55,9 @@ def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
     return chunk_strings(segments)
 
 
-def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]):
+def _serialize_root_pecha(
+    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+):
     source_book = {
         "title": pecha.metadata.title[Language.tibetan.value],
         "language": Language.tibetan.value,
@@ -72,9 +74,7 @@ def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha, pecha_category: L
         "completestatus": "done",
         "content": get_pecha_segments(pecha),
     }
-    category = FormatPechaCategory().format_root_category(
-            pecha, pecha_category
-        )
+    category = FormatPechaCategory().format_root_category(pecha, pecha_category)
     serialized_json["source"]["books"][0] = source_book
     serialized_json["target"]["books"][0] = target_book
     serialized_json["source"]["categories"] = category["en"]
@@ -82,7 +82,9 @@ def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha, pecha_category: L
     return serialized_json
 
 
-def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]):
+def _serialize_root_translation_pecha(
+    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+):
     if (
         serialized_json["source"]["books"][0]["language"]
         == Language.literal_chinese.value
@@ -115,7 +117,9 @@ def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha, pecha
     return serialized_json
 
 
-def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
+def _serialize_commentary_pecha(
+    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+) -> Dict:
     serialized_json = modify_root_title_mapping(serialized_json, pecha)
 
     source_book = serialized_json["source"]["books"][0]
@@ -141,7 +145,9 @@ def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
     return serialized_json
 
 
-def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha):
+def _serialize_commentary_translation_pecha(
+    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+):
     """
     1. Modify the Title Mapping
     2. Remove the tibetan content from the `target` field from serialized_json.
@@ -160,7 +166,9 @@ def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha)
     return serialized
 
 
-def _serialize_prealigned_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
+def _serialize_prealigned_commentary_pecha(
+    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+) -> Dict:
     serialized = modify_root_title_mapping(serialized_json, pecha)
 
     target_book = serialized_json["target"]["books"][0]
