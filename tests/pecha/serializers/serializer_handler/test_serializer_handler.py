@@ -60,7 +60,6 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_root_translation.json"
         )
         updated_serialized = handler(serialized, self.lzh_root_pecha, self.pecha_category_vajra_cutter)
-        # write_json("temp.json", updated_serialized)
         expected_serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/expected_root_translation_pecha_with_lzh_source_serialized.json"
         )
