@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from openpecha.utils import chunk_strings
+
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
 from openpecha.pecha.metadata import Language
@@ -12,6 +12,7 @@ from openpecha.pecha.serializers.utils import (
     find_related_pecha_id,
     get_metadatachain_from_metadatatree,
 )
+from openpecha.utils import chunk_strings
 
 
 class BaseSerializer(ABC):
@@ -41,6 +42,7 @@ def reset_target_to_empty_chinese(target_book: Dict):
     target_book["language"] = Language.literal_chinese.value
     target_book["versionSource"] = ""
     target_book["content"] = []
+
 
 def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
     base_name = list(pecha.bases.keys())[0]
@@ -76,7 +78,10 @@ def _serialize_root_pecha(serialized_json: Dict, pecha: Pecha):
 
 
 def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
-    if serialized_json["source"]["books"][0]["language"] == Language.literal_chinese.value:
+    if (
+        serialized_json["source"]["books"][0]["language"]
+        == Language.literal_chinese.value
+    ):
         source_book = {
             "title": pecha.metadata.title[Language.english.value],
             "language": Language.english.value,
@@ -99,7 +104,6 @@ def _serialize_root_translation_pecha(serialized_json: Dict, pecha: Pecha):
     serialized_json["target"]["books"][0] = target_book
     serialized_json["source"]["books"][0] = source_book
     return serialized_json
-
 
 
 def _serialize_commentary_pecha(serialized_json: Dict, pecha: Pecha) -> Dict:
@@ -134,7 +138,16 @@ def _serialize_commentary_translation_pecha(serialized_json: Dict, pecha: Pecha)
     2. Remove the tibetan content from the `target` field from serialized_json.
     """
     serialized = modify_root_title_mapping(serialized_json, pecha)
-    serialized["target"]["books"][0]["content"] = []
+
+    source_book = serialized_json["source"]["books"][0]
+    target_book = serialized_json["target"]["books"][0]
+
+    if source_book["language"] == Language.literal_chinese.value:
+        serialized["source"]["books"][0] = deepcopy(target_book)
+        serialized["target"]["books"][0] = deepcopy(source_book)
+        return serialized
+
+    reset_target_to_empty_chinese(target_book)
     return serialized
 
 
