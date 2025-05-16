@@ -115,7 +115,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             handler == _serialize_commentary_pecha
         ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
-        # BO Commentary Case
+        # bo Commentary Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/bo/commentary_serialized.json"
         )
@@ -136,7 +136,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             expected_serialized == updated_serialized
         ), f"{PechaType.commentary_pecha} fodian serialization failed.."
 
-        # EN Commentary Case
+        # en Commentary Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/en/commentary_serialized.json"
         )
@@ -159,7 +159,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             expected_serialized == updated_serialized
         ), f"{PechaType.commentary_pecha} fodian serialization failed.."
 
-        # LZH Commentary Case
+        # lzh Commentary Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/zh/commentary_serialized.json"
         )
@@ -190,7 +190,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             handler == _serialize_commentary_translation_pecha
         ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
-        # EN Commentary Translation Case
+        # en Commentary Translation Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/en/commentary_serialized.json"
         )
@@ -215,7 +215,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             expected_serialized == updated_serialized
         ), f"{PechaType.commentary_translation_pecha} fodian serialization failed.."
 
-        # LITERAL CHINESE Commentary Translation Case
+        # lzh Commentary Translation Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/zh/commentary_serialized.json"
         )
@@ -247,7 +247,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             handler == _serialize_prealigned_commentary_pecha
         ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
-        # BO Case
+        # bo Case
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/prealigned_simple/data/expected_serialized.json"
         )
@@ -276,7 +276,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             handler == _serialize_root_translation_pecha
         ), f"Handler mismatch for {PechaType.prealigned_root_translation_pecha}"
 
-        # EN Case
+        # en Case
         serialized = read_json(
             "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_prealigned_root_translation_with_display.json"
         )
