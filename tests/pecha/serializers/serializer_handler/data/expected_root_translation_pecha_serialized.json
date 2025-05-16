@@ -24,7 +24,7 @@
     ],
     "books": [
       {
-        "title": "Vajra Cutter Root Book",
+        "title": "Vajra Cutter Root Book[en]",
         "language": "en",
         "versionSource": "",
         "direction": "ltr",
@@ -68,29 +68,29 @@
   "target": {
     "categories": [
       {
-        "name": "སངས་རྒྱས་ཀྱི་བཀའ།",
+        "name": "佛陀教法",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "name": "金刚经",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྩ་བ།",
+        "name": "根本颂",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྡོ་རྗེ་གཅོད་པ་རྩ་བ་དེབ།",
+        "name": "《明解密意》第六品 第一至六十四頌",
         "heDesc": "",
         "heShortDesc": ""
       }
     ],
     "books": [
       {
-        "title": "藏文《入菩萨行论》第六品 智慧波罗蜜多",
+        "title": "《明解密意》第六品 第一至六十四頌",
         "language": "lzh",
         "versionSource": "",
         "direction": "ltr",

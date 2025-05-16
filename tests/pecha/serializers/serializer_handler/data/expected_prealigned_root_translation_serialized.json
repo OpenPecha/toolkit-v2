@@ -24,7 +24,7 @@
     ],
     "books": [
       {
-        "title": "Illuminating the Intent Chapter 6, verses 1 to 64",
+        "title": "Illuminating the Intent Chapter 6, verses 1 to 64[en]",
         "language": "en",
         "versionSource": "http://purl.bdrc.io/resource/WA1NLM688",
         "direction": "ltr",
@@ -49,29 +49,29 @@
   "target": {
     "categories": [
       {
-        "name": "སངས་རྒྱས་ཀྱི་བཀའ།",
+        "name": "佛陀教法",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྡོ་རྗེ་གཅོད་པ།",
+        "name": "金刚经",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "རྩ་བ།",
+        "name": "根本颂",
         "heDesc": "",
         "heShortDesc": ""
       },
       {
-        "name": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
+        "name": "《明解密意》第六品 第一至六十四頌",
         "heDesc": "",
         "heShortDesc": ""
       }
     ],
     "books": [
       {
-        "title": "藏文《入菩萨行论》第六品 智慧波罗蜜多",
+        "title": "《明解密意》第六品 第一至六十四頌",
         "language": "lzh",
         "versionSource": "",
         "direction": "ltr",
