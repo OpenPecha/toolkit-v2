@@ -27,7 +27,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             handler == _serialize_commentary_pecha
         ), f"Handler mismatch for {PechaType.commentary_pecha}"
 
-        # Tibetan Commentary
+        # BO Commentary
         serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/bo/commentary_serialized.json"
         )
