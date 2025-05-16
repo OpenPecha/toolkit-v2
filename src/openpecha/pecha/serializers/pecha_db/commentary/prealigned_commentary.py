@@ -29,7 +29,10 @@ class PreAlignedCommentarySerializer:
             commentary_pecha, pecha_category, root_title
         )
 
-        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
+        src_category, tgt_category = (
+            formatted_category["source"],
+            formatted_category["target"],
+        )
         logger.info(f"Category is extracted successfully for {commentary_pecha.id}.")
 
         # Get metadata

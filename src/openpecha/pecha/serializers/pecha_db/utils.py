@@ -3,6 +3,7 @@ from typing import Dict, List
 from openpecha.config import get_logger
 from openpecha.exceptions import MetaDataMissingError
 from openpecha.pecha import Pecha
+from openpecha.pecha.metadata import Language
 from openpecha.utils import get_text_direction_with_lang
 
 logger = get_logger(__name__)
@@ -122,7 +123,12 @@ class FormatPechaCategory:
             category["lzh"].append(self.lzh_commentary_category)
         return category
 
-    def format_root_category(self, pecha: Pecha, pecha_category: List[Dict]):
+    def format_root_category(
+        self,
+        pecha: Pecha,
+        pecha_category: List[Dict],
+        base_lang: str = Language.tibetan.value,
+    ):
         """
         1.Add Root section ie "རྩ་བ།" or "Root text" to category
         2.Add pecha title to category
@@ -130,26 +136,47 @@ class FormatPechaCategory:
         category = self.get_category(pecha_category)
         logger.info(f"Pecha {pecha.id} category formatted to add pecha Title")
 
-        bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
-        # lzh_title = get_pecha_title(pecha, "lzh")
+        if base_lang == Language.tibetan.value:
+            bo_title = get_pecha_title(pecha, "bo")
+        if base_lang == Language.literal_chinese.value:
+            lzh_title = get_pecha_title(pecha, "lzh")
         logger.info(
             f"Pecha Title extracted. BO title: {bo_title}, EN title: {en_title}"
         )
 
         category = self.assign_category(category, "root")
 
-        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-        # category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
+        if base_lang == Language.tibetan.value:
+            category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        if base_lang == Language.literal_chinese.value:
+            category["lzh"].append(
+                {"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""}
+            )
 
-        return category
+        if base_lang == Language.tibetan.value:
+            return {
+                "source": category["en"],
+                "target": category["bo"],
+            }
+
+        if base_lang == Language.literal_chinese.value:
+            return {
+                "source": category["en"],
+                "target": category["lzh"],
+            }
+
+        raise ValueError(
+            f"Invalid base language: {base_lang} for Format Root Category."
+        )
 
     def format_commentary_category(
         self,
         pecha: Pecha,
         pecha_category: List[Dict],
         root_title: str,
+        base_lang: str = Language.tibetan.value,
     ):
         """
         1.Add Commentary section ie "འགྲེལ་བ།" or "Commentary text" to category
@@ -157,15 +184,21 @@ class FormatPechaCategory:
         """
         category = self.get_category(pecha_category)
 
-        bo_title = get_pecha_title(pecha, "bo")
         en_title = get_pecha_title(pecha, "en")
-        # lzh_title = get_pecha_title(pecha, "lzh")
+        if base_lang == Language.tibetan.value:
+            bo_title = get_pecha_title(pecha, "bo")
+        if base_lang == Language.literal_chinese.value:
+            lzh_title = get_pecha_title(pecha, "lzh")
 
         category = self.assign_category(category, "commentary")
 
-        category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
         category["en"].append({"name": en_title, "enDesc": "", "enShortDesc": ""})
-        # category["lzh"].append({"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""})
+        if base_lang == Language.tibetan.value:
+            category["bo"].append({"name": bo_title, "heDesc": "", "heShortDesc": ""})
+        if base_lang == Language.literal_chinese.value:
+            category["lzh"].append(
+                {"name": lzh_title, "lzhDesc": "", "lzhShortDesc": ""}
+            )
 
         mapping = {
             "base_text_titles": [root_title],
@@ -175,9 +208,23 @@ class FormatPechaCategory:
 
         category["bo"][-1].update(mapping)
         category["en"][-1].update(mapping)
-        # category["lzh"][-1].update(mapping)
+        category["lzh"][-1].update(mapping)
 
-        return category
+        if base_lang == Language.tibetan.value:
+            return {
+                "source": category["en"],
+                "target": category["bo"],
+            }
+
+        if base_lang == Language.literal_chinese.value:
+            return {
+                "source": category["en"],
+                "target": category["lzh"],
+            }
+
+        raise ValueError(
+            f"Invalid base language: {base_lang} for Format Commentary Category."
+        )
 
 
 def get_metadata_for_pecha_org(pecha: Pecha, lang: str | None = None):

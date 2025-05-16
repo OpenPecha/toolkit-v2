@@ -67,7 +67,10 @@ class SimpleCommentarySerializer:
         formatted_category = FormatPechaCategory().format_commentary_category(
             pecha, pecha_category, root_title
         )
-        src_category, tgt_category = formatted_category["en"], formatted_category["bo"]
+        src_category, tgt_category = (
+            formatted_category["source"],
+            formatted_category["target"],
+        )
 
         # Get the metadata for Commentary and Commentary Translation pecha
         if translation_pecha:

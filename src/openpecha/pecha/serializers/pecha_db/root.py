@@ -106,8 +106,8 @@ class RootSerializer:
             pecha, pecha_category
         )
         root_category, translation_category = (
-            formatted_category["bo"],
-            formatted_category["en"],
+            formatted_category["target"],
+            formatted_category["source"],
         )
         logger.info("Pecha Category successfully formatted.")
         logger.info(f"Root Category: {root_category}")
