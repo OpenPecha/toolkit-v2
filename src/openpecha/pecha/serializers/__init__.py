@@ -56,7 +56,10 @@ def get_pecha_segments(pecha: Pecha) -> List[Dict[str, str]]:
 
 
 def _serialize_root_pecha(
-    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+    serialized_json: Dict,
+    pecha: Pecha,
+    pecha_category: List[Dict[str, Dict]],
+    pecha_chain: List[Pecha],
 ):
     source_book = {
         "title": pecha.metadata.title[Language.tibetan.value],
@@ -83,7 +86,10 @@ def _serialize_root_pecha(
 
 
 def _serialize_root_translation_pecha(
-    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+    serialized_json: Dict,
+    pecha: Pecha,
+    pecha_category: List[Dict[str, Dict]],
+    pecha_chain: List[Pecha],
 ):
     if (
         serialized_json["source"]["books"][0]["language"]
@@ -118,7 +124,10 @@ def _serialize_root_translation_pecha(
 
 
 def _serialize_commentary_pecha(
-    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+    serialized_json: Dict,
+    pecha: Pecha,
+    pecha_category: List[Dict[str, Dict]],
+    pecha_chain: List[Pecha],
 ) -> Dict:
     serialized_json = modify_root_title_mapping(serialized_json, pecha)
 
@@ -146,7 +155,10 @@ def _serialize_commentary_pecha(
 
 
 def _serialize_commentary_translation_pecha(
-    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+    serialized_json: Dict,
+    pecha: Pecha,
+    pecha_category: List[Dict[str, Dict]],
+    pecha_chain: List[Pecha],
 ):
     """
     1. Modify the Title Mapping
@@ -167,7 +179,10 @@ def _serialize_commentary_translation_pecha(
 
 
 def _serialize_prealigned_commentary_pecha(
-    serialized_json: Dict, pecha: Pecha, pecha_category: List[Dict[str, Dict]]
+    serialized_json: Dict,
+    pecha: Pecha,
+    pecha_category: List[Dict[str, Dict]],
+    pecha_chain: List[Pecha],
 ) -> Dict:
     serialized = modify_root_title_mapping(serialized_json, pecha)
 
@@ -283,7 +298,9 @@ class SerializerLogicHandler:
                     handler = PECHA_SERIALIZER_REGISTRY.get(pecha_type)
                     if not handler:
                         raise ValueError(f"Unsupported pecha type: {pecha_type}")
-                    return handler(serialized, lzh_root_pecha, pecha_category)
+                    return handler(
+                        serialized, lzh_root_pecha, pecha_category, pecha_chain
+                    )
 
                 if root_pecha_lang == Language.literal_chinese.value:
                     pass
