@@ -25,12 +25,18 @@ class SharedPechaSetup:
         self.commentary_translation_pecha_path = Path(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91"
         )
+        self.prealigned_commentary_translation_pecha_path = Path(
+            "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/I8A645565"
+        )
 
         self.root_pecha = Pecha.from_path(self.root_pecha_path)
         self.root_translation_pecha = Pecha.from_path(self.root_translation_pecha_path)
         self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
         self.commentary_translation_pecha = Pecha.from_path(
             self.commentary_translation_pecha_path
+        )
+        self.prealigned_commentary_translation_pecha = Pecha.from_path(
+            self.prealigned_commentary_translation_pecha_path
         )
 
         self.root_pecha_metadata = DummyMetadataModel(
@@ -221,15 +227,15 @@ class SharedPechaSetup:
             **{
                 "translation_of": "I6944984E",
                 "commentary_of": None,
-                **self.commentary_translation_pecha.metadata.to_dict(),
+                **self.prealigned_commentary_translation_pecha.metadata.to_dict(),
             }
         )
         self.prealigned_commentary_translation_pecha_annotations = [
             AnnotationModel(
-                pecha_id="I94DBDA91",
+                pecha_id="I8A645565",
                 type=AnnotationType.ALIGNMENT,
                 document_id="d4",
-                path="FD22/alignment-599A.json",
+                path="757D/alignment-C2B5.json",
                 title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary translation",
                 aligned_to=PechaAlignment(
                     pecha_id="I6944984E", alignment_id="E949/alignment-2F29.json"
