@@ -268,6 +268,17 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             expected_serialized == updated_serialized
         ), f"{PechaType.commentary_pecha} fodian serialization failed.."
 
+    def test_prealigned_commentary_translation_pecha(self):
+        handler = PECHA_SERIALIZER_REGISTRY.get(
+            PechaType.prealigned_commentary_translation_pecha
+        )
+
+        assert (
+            handler == _serialize_commentary_translation_pecha
+        ), f"Handler mismatch for {PechaType.prealigned_commentary_translation_pecha}"
+
+        pass
+
     def test_prealigned_root_translation_pecha(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(
             PechaType.prealigned_root_translation_pecha
