@@ -88,14 +88,18 @@ class PreAlignedCommentaryTranslationSerializer:
         tgt_content = [
             line.replace("\\n", "<br>").replace("\n", "<br>") for line in tgt_content
         ]
+        src_content = [
+            line.replace("\\n", "<br>").replace("\n", "<br>") for line in src_content
+        ]
 
         # Chapterize content
         chapterized_tgt_content = chunk_strings(tgt_content)
+        chapterized_src_content = chunk_strings(src_content)
 
         serialized_json = {
             "source": {
                 "categories": src_category,
-                "books": [{**src_metadata, "content": src_content}],
+                "books": [{**src_metadata, "content": chapterized_src_content}],
             },
             "target": {
                 "categories": tgt_category,
