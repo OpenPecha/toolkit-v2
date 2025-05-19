@@ -309,12 +309,19 @@ class SerializerLogicHandler:
         logger.info(f"Base Language: {base_language}")
 
         pecha_id = find_related_pecha_id(annotations, annotation_path)
+        logger.info(f"Pecha to serialize: {pecha_id}")
+
         if not pecha_id:
             raise ValueError(
                 f"Annotation path: {annotation_path} is not present in any of Annotations: {annotations}."
             )
         metadata_chain = get_metadatachain_from_metadatatree(metadatatree, pecha_id)
-        pecha_chain = [pechatree[pecha_id] for pecha_id, _ in metadata_chain]  # noqa
+        logger.info(f"Metadata Chain extracted from metadatatree: {metadata_chain}")
+        pecha_chain = [pechatree[pecha_id] for pecha_id, _ in metadata_chain]
+        logger.info(f"Pecha Chain extracted from pechatree: {pecha_chain}")
+
+        # Remove first element of each tuple i.e metadata pecha id from metadata chain
+        metadata_chain = [metadata for _, metadata in metadata_chain]
 
         root_pecha_lang = metadata_chain[-1].language
         if root_pecha_lang not in [
@@ -328,6 +335,8 @@ class SerializerLogicHandler:
         pecha_type = get_pecha_type(
             pecha_chain, metadata_chain, annotations, annotation_path
         )
+        logger.info(f"Pecha Type: {pecha_type}")
+
         match base_language:
             case Language.tibetan.value:
                 # pecha.org website centered around bo Root text.

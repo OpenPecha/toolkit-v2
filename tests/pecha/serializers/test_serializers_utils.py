@@ -88,15 +88,15 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
         metadatachain = get_metadatachain_from_metadatatree(
             self.metadatatree, self.root_pecha.id
         )
-        assert metadatachain == [self.root_pecha_metadata]
+        assert metadatachain == [(self.root_pecha.id, self.root_pecha_metadata)]
 
     def test_root_translation(self):
         metadatachain = get_metadatachain_from_metadatatree(
             self.metadatatree, self.root_translation_pecha.id
         )
         assert metadatachain == [
-            self.root_translation_pecha_metadata,
-            self.root_pecha_metadata,
+            (self.root_translation_pecha.id, self.root_translation_pecha_metadata),
+            (self.root_pecha.id, self.root_pecha_metadata),
         ]
 
     def test_commentary_pecha(self):
@@ -104,8 +104,8 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
             self.metadatatree, self.commentary_pecha.id
         )
         assert metadatachain == [
-            self.commentary_pecha_metadata,
-            self.root_pecha_metadata,
+            (self.commentary_pecha.id, self.commentary_pecha_metadata),
+            (self.root_pecha.id, self.root_pecha_metadata),
         ]
 
     def test_commentary_translation_pecha(self):
@@ -113,7 +113,10 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
             self.metadatatree, self.commentary_translation_pecha.id
         )
         assert metadatachain == [
-            self.commentary_translation_pecha_metadata,
-            self.commentary_pecha_metadata,
-            self.root_pecha_metadata,
+            (
+                self.commentary_translation_pecha.id,
+                self.commentary_translation_pecha_metadata,
+            ),
+            (self.commentary_pecha.id, self.commentary_pecha_metadata),
+            (self.root_pecha.id, self.root_pecha_metadata),
         ]
