@@ -43,6 +43,7 @@ def modify_root_title_mapping(serialized_json: Dict, pecha: Pecha):
 
 
 def assign_lang_code_to_title(serialized_json: Dict):
+    logger.info("Assigning language code to title in serialized JSON.")
     source_title = serialized_json["source"]["books"][0]["title"]
     lang = serialized_json["source"]["books"][0]["language"]
 
@@ -283,11 +284,11 @@ class SerializerLogicHandler:
             i.e if lang = 'lzh', get lzh root translation pecha
         """
         metadata_chain = get_metadatachain_from_metadatatree(metadatatree, pecha_id)
-        root_pecha_id = metadata_chain[-1].id
+        root_pecha_id = metadata_chain[-1][0]
 
-        for metadata in metadatatree:
+        for metadata_pecha_id, metadata in metadatatree:
             if metadata.language == lang and metadata.translation_of == root_pecha_id:
-                return metadata.id
+                return metadata_pecha_id
 
         return None
 
@@ -339,6 +340,7 @@ class SerializerLogicHandler:
 
         match base_language:
             case Language.tibetan.value:
+                logger.info("Serializing for Pecha.org Website...")
                 # pecha.org website centered around bo Root text.
                 if root_pecha_lang == Language.tibetan.value:
                     return Serializer().serialize(
@@ -353,6 +355,7 @@ class SerializerLogicHandler:
 
             case Language.literal_chinese.value:
                 # fodian.org website centered around lzh Root text.
+                logger.info("Serializing for Fodian Website...")
                 if root_pecha_lang == Language.tibetan.value:
                     serialized = Serializer().serialize(
                         pecha_chain,
@@ -364,6 +367,8 @@ class SerializerLogicHandler:
                     lzh_root_pecha_id = self.get_root_translation_pecha_id(
                         metadatatree, pecha_id, Language.literal_chinese.value
                     )
+                    logger.info(f"lzh_root_pecha_id: {lzh_root_pecha_id}")
+
                     if not lzh_root_pecha_id:
                         raise ValueError(
                             f"literal Chinese Pecha no where present in MetadataTree: {metadatatree}."
@@ -373,9 +378,12 @@ class SerializerLogicHandler:
                     handler = PECHA_SERIALIZER_REGISTRY.get(pecha_type)
                     if not handler:
                         raise ValueError(f"Unsupported pecha type: {pecha_type}")
-                    return assign_lang_code_to_title(
+
+                    serialized = assign_lang_code_to_title(
                         handler(serialized, lzh_root_pecha, pecha_category, pecha_chain)
                     )
+                    logger.info(f"Fodian serialization completed. {serialized}")
+                    return serialized
 
                 if root_pecha_lang == Language.literal_chinese.value:
                     pass

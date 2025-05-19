@@ -19,7 +19,7 @@ def find_related_pecha_id(
 
 def get_metadatachain_from_metadatatree(
     metadatatree: List[Tuple[str, Any]], pecha_id: str
-):
+) -> List[Tuple[str, Any]]:
     """
     MetadataTree contains metadata of all pecha related to it.
     Metadatachain is chain from pecha to root pecha.
