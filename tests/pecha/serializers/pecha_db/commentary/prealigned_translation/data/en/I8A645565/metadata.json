@@ -1,0 +1,28 @@
+{
+  "id": "I8A645565",
+  "title": {
+    "en":"PreAligned Commentary Translation Title",
+    "bo":"དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ།"
+  },
+  "author": "Claude",
+  "imported": "2025-05-19T04:59:29.471636",
+  "source": "Claude",
+  "toolkit_version": "2.1.10",
+  "parser": "DocxSimpleCommentaryParser",
+  "initial_creation_type": "google_docx",
+  "language": "en",
+  "source_metadata": {},
+  "bases": {},
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": null,
+  "statistics": null,
+  "quality": null,
+  "last_modified": "2025-05-19T04:59:29.471633"
+}

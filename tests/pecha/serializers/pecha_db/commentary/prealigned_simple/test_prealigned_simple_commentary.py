@@ -1,21 +1,20 @@
 from pathlib import Path
 from unittest import TestCase, mock
 
-from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
     PreAlignedCommentarySerializer,
 )
 from openpecha.utils import read_json
+from tests.pecha import SharedPechaSetup
 
 null = None
 
 
-class TestPreAlignedCommentarySerializer(TestCase):
+class TestPreAlignedCommentarySerializer(TestCase, SharedPechaSetup):
     def setUp(self):
-        self.DATA_DIR = Path("tests/alignment/commentary_transfer/data")
-        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/IA6E66F92")
-        self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "commentary/I77BD6EA9")
+        self.setup_pechas()
 
+        self.DATA_DIR = Path("tests/alignment/commentary_transfer/data")
         self.expected_serialized_commentary = read_json(
             self.DATA_DIR / "expected_serialized_commentary.json"
         )
@@ -31,7 +30,11 @@ class TestPreAlignedCommentarySerializer(TestCase):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།", "lzh": "入中论"},
+                "name": {
+                    "en": "Entering the Middle Way",
+                    "bo": "དབུ་མ་ལ་འཇུག་པ།",
+                    "lzh": "入中论",
+                },
                 "parent": "madhyamaka",
             },
         ]
