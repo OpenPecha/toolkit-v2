@@ -1,8 +1,9 @@
-from typing import Dict, List
+import re
+from typing import Dict, List, Optional, Tuple
 
 from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
 from openpecha.config import get_logger
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, get_anns, load_layer
 from openpecha.pecha.serializers.pecha_db.utils import (
     FormatPechaCategory,
     get_metadata_for_pecha_org,
@@ -14,6 +15,34 @@ logger = get_logger(__name__)
 
 
 class PreAlignedCommentaryTranslationSerializer:
+    def __init__(self):
+        self.map_regex = r"^<(\d+)><(\d+)>"
+
+    def extract_mapping(self, segments: List[str]):
+        """
+        Get Chapter information with segment number.
+        2.Loop throught chapters
+        3.Get chapter number and segment number
+        """
+        map: List[Optional[Tuple[int, int]]] = []
+        for segment in segments:
+            match = re.match(self.map_regex, segment)
+            if match:
+                chapter = int(match.group(1))
+                segment_num = int(match.group(2))
+                map.append((chapter, segment_num))
+            else:
+                map.append(None)
+        return map
+
+    def add_mapping_to_anns(
+        self, anns: List[str], map: List[Optional[Tuple[int, int]]]
+    ):
+        for i, (ann, mapping) in enumerate(zip(anns, map)):
+            if mapping:
+                anns[i] = f"<{mapping[0]}><{mapping[1]}> {ann}"
+        return anns
+
     def serialize(
         self,
         root_pecha: Pecha,
@@ -41,10 +70,17 @@ class PreAlignedCommentaryTranslationSerializer:
         )
 
         # Get content
-        src_content: List[List[str]] = []
         tgt_content = CommentaryAlignmentTransfer().get_serialized_commentary(
             root_pecha, root_alignment_id, commentary_pecha, commentary_alignment_id
         )
+
+        map = self.extract_mapping(tgt_content)
+        translation_anns = get_anns(
+            load_layer(translation_pecha.layer_path / translation_alignment_id)
+        )
+        src_content = [ann["text"] for ann in translation_anns]
+        src_content = self.add_mapping_to_anns(src_content, map)
+
         logger.info(
             f"Alignment transfered content is extracted successfully for {commentary_pecha.id}."
         )

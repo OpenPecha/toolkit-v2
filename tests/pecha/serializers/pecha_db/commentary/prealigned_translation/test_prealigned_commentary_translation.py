@@ -6,6 +6,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary_translation import (
     PreAlignedCommentaryTranslationSerializer,
 )
+from openpecha.utils import read_json
 from tests.pecha import SharedPechaSetup
 
 null = None
@@ -56,7 +57,9 @@ class TestPreAlignedCommentaryTranslationSerializer(TestCase, SharedPechaSetup):
             self.pecha_category,
         )
 
-        from openpecha.utils import write_json
-
-        write_json("temp.json", serialized)
-        pass
+        expected_serialized = read_json(
+            "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/expected_serialized.json"
+        )
+        assert (
+            serialized == expected_serialized
+        ), "PreAlinged Commentary Translation failed for English.."
