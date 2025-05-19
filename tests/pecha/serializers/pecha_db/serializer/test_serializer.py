@@ -20,7 +20,11 @@ class TestSerializer(TestCase, SharedPechaSetup):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "Madhyamaka treatises", "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།", "lzh": "中观论著"},
+                "name": {
+                    "en": "Madhyamaka treatises",
+                    "bo": "དབུ་མའི་གཞུང་སྣ་ཚོགས།",
+                    "lzh": "中观论著",
+                },
                 "parent": "madhyamaka",
             },
         ]
@@ -205,6 +209,13 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.pecha_category,
             commentary_segmentation_path,
         )
+
+    @mock.patch(
+        "openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary_translation.PreAlignedCommentaryTranslationSerializer.serialize"
+    )
+    def test_prealigned_commentary_translation_pecha(self, mock_commentary_serialize):
+        mock_commentary_serialize.return_value = {}
+        pass
 
     @mock.patch(
         "openpecha.pecha.serializers.pecha_db.prealigned_root_translation.PreAlignedRootTranslationSerializer.serialize"

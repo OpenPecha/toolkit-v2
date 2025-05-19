@@ -8,6 +8,9 @@ from openpecha.pecha.pecha_types import PechaType, get_aligned_id, get_pecha_typ
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
     PreAlignedCommentarySerializer,
 )
+from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary_translation import (
+    PreAlignedCommentaryTranslationSerializer,
+)
 from openpecha.pecha.serializers.pecha_db.commentary.simple_commentary import (
     SimpleCommentarySerializer,
 )
@@ -121,6 +124,31 @@ def _serialize_prealigned_commentary_pecha(
         )
 
 
+def _serialize_prealigned_commentary_translation_pecha(
+    pechas, metadatas, annotations, pecha_category, annotation_path
+):
+    root_pecha = pechas[2]
+    commentary_pecha = pechas[1]
+    translation_pecha = pechas[0]
+
+    root_alignment_id = get_aligned_id(
+        annotations[commentary_pecha.id], annotation_path
+    )
+    commentary_alignment_id = get_aligned_id(
+        annotations[translation_pecha.id], annotation_path
+    )
+
+    PreAlignedCommentaryTranslationSerializer().serialize(
+        root_pecha,
+        root_alignment_id,
+        commentary_pecha,
+        commentary_alignment_id,
+        translation_pecha,
+        annotation_path,
+        pecha_category,
+    )
+
+
 def _serialize_prealigned_root_translation_pecha(
     pechas, metadatas, annotations, pecha_category, annotation_path
 ):
@@ -158,6 +186,7 @@ PECHA_SERIALIZER_REGISTRY = {
     PechaType.commentary_pecha: _serialize_commentary_pecha,
     PechaType.commentary_translation_pecha: _serialize_commentary_translation_pecha,
     PechaType.prealigned_commentary_pecha: _serialize_prealigned_commentary_pecha,
+    PechaType.prealigned_commentary_translation_pecha: _serialize_prealigned_commentary_translation_pecha,
     PechaType.prealigned_root_translation_pecha: _serialize_prealigned_root_translation_pecha,
 }
 
