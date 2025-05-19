@@ -6,7 +6,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary_translation import (
     PreAlignedCommentaryTranslationSerializer,
 )
-from openpecha.utils import read_json, write_json
+from openpecha.utils import read_json
 from tests.pecha import SharedPechaSetup
 
 null = None
@@ -56,7 +56,6 @@ class TestPreAlignedCommentaryTranslationSerializer(TestCase, SharedPechaSetup):
             translation_alignment_id,
             self.pecha_category,
         )
-        write_json("en.json", serialized)
 
         expected_serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/expected_serialized.json"
@@ -87,7 +86,6 @@ class TestPreAlignedCommentaryTranslationSerializer(TestCase, SharedPechaSetup):
             translation_alignment_id,
             self.pecha_category,
         )
-        write_json("zh.json", serialized)
 
         expected_serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/lzh/expected_serialized.json"

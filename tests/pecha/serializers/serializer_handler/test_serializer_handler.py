@@ -301,6 +301,30 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
             expected_serialized == updated_serialized
         ), f"{PechaType.prealigned_commentary_translation_pecha} fodian serialization failed.."
 
+        # lzh case
+        serialized = read_json(
+            "tests/pecha/serializers/serializer_handler/data/serialized_json/serialized_lzh_prealigned_commentary_translation.json"
+        )
+        pecha_chain = [
+            self.commentary_translation_pecha,
+            self.commentary_pecha,
+            self.root_pecha,
+        ]
+        updated_serialized = assign_lang_code_to_title(
+            handler(
+                serialized,
+                self.lzh_root_pecha,
+                self.pecha_category_vajra_cutter,
+                pecha_chain,
+            )
+        )
+        expected_serialized = read_json(
+            "tests/pecha/serializers/serializer_handler/data/expected_prealigned_commentary_translation/lzh.json"
+        )
+        assert (
+            expected_serialized == updated_serialized
+        ), f"{PechaType.prealigned_commentary_translation_pecha} fodian serialization failed.."
+
     def test_prealigned_root_translation_pecha(self):
         handler = PECHA_SERIALIZER_REGISTRY.get(
             PechaType.prealigned_root_translation_pecha
