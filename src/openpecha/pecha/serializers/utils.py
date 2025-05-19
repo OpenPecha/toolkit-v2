@@ -31,17 +31,17 @@ def get_metadatachain_from_metadatatree(
         for metadata_pecha_id, metadata in metadatatree:
             if metadata_pecha_id == pecha_id:
                 if metadata.commentary_of:
-                    metadatachain.append(metadata)
+                    metadatachain.append((metadata_pecha_id, metadata))
                     pecha_id = metadata.commentary_of
                     break
 
                 if metadata.translation_of:
-                    metadatachain.append(metadata)
+                    metadatachain.append((metadata_pecha_id, metadata))
                     pecha_id = metadata.translation_of
                     break
 
                 flag = False
-                metadatachain.append(metadata)
+                metadatachain.append((metadata_pecha_id, metadata))
                 break
 
     return metadatachain
