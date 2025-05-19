@@ -47,7 +47,6 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
         # Set up `id` field in metadatas (Not included in Backend Db)
         self.root_pecha_metadata = DummyMetadataModel(
             **{
-                "id": self.root_pecha.id,
                 "translation_of": None,
                 "commentary_of": None,
                 **self.root_pecha.metadata.to_dict(),
@@ -55,7 +54,6 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
         )
         self.root_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "id": self.root_translation_pecha.id,
                 "translation_of": self.root_pecha.id,
                 "commentary_of": None,
                 **self.root_translation_pecha.metadata.to_dict(),
@@ -63,7 +61,6 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
         )
         self.commentary_pecha_metadata = DummyMetadataModel(
             **{
-                "id": self.commentary_pecha.id,
                 "translation_of": None,
                 "commentary_of": self.root_pecha.id,
                 **self.commentary_pecha.metadata.to_dict(),
@@ -71,7 +68,6 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
         )
         self.commentary_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "id": self.commentary_translation_pecha.id,
                 "translation_of": self.commentary_pecha.id,
                 "commentary_of": None,
                 **self.commentary_translation_pecha.metadata.to_dict(),
@@ -79,10 +75,13 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
         )
 
         self.metadatatree = [
-            self.root_pecha_metadata,
-            self.commentary_pecha_metadata,
-            self.commentary_translation_pecha_metadata,
-            self.root_translation_pecha_metadata,
+            (self.root_pecha.id, self.root_pecha_metadata),
+            (self.commentary_pecha.id, self.commentary_pecha_metadata),
+            (
+                self.commentary_translation_pecha.id,
+                self.commentary_translation_pecha_metadata,
+            ),
+            (self.root_translation_pecha.id, self.root_translation_pecha_metadata),
         ]
 
     def test_root_pecha(self):
@@ -93,7 +92,7 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
 
     def test_root_translation(self):
         metadatachain = get_metadatachain_from_metadatatree(
-            self.metadatatree, self.root_translation_pecha_metadata.id  # type: ignore
+            self.metadatatree, self.root_translation_pecha.id
         )
         assert metadatachain == [
             self.root_translation_pecha_metadata,
