@@ -3,6 +3,7 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from openpecha.config import get_logger
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
 from openpecha.pecha.metadata import Language
@@ -14,6 +15,8 @@ from openpecha.pecha.serializers.utils import (
     get_metadatachain_from_metadatatree,
 )
 from openpecha.utils import chunk_strings
+
+logger = get_logger(__name__)
 
 
 class BaseSerializer(ABC):
@@ -297,6 +300,14 @@ class SerializerLogicHandler:
         annotation_path: str,
         base_language: str,
     ):
+        logger.info("Serializer Logic Handler Started...")
+        logger.info(f"Pecha Tree: {pechatree}")
+        logger.info(f"Metadata Tree: {metadatatree}")
+        logger.info(f"Annotations: {annotations}")
+        logger.info(f"Pecha Category: {pecha_category}")
+        logger.info(f"Annotation Path: {annotation_path}")
+        logger.info(f"Base Language: {base_language}")
+
         pecha_id = find_related_pecha_id(annotations, annotation_path)
         if not pecha_id:
             raise ValueError(
