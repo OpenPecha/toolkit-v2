@@ -1,6 +1,9 @@
 {
   "id": "I8A645565",
-  "title": "PreAligned Commentary Translation Title",
+  "title": {
+    "en":"PreAligned Commentary Translation Title",
+    "bo":"དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ།"
+  },
   "author": "Claude",
   "imported": "2025-05-19T04:59:29.471636",
   "source": "Claude",

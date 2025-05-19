@@ -63,7 +63,7 @@ class PreAlignedCommentaryTranslationSerializer:
         logger.info(f"Category is extracted successfully for {commentary_pecha.id}.")
 
         # Get metadata
-        src_metadata = get_metadata_for_pecha_org(commentary_pecha)
+        src_metadata = get_metadata_for_pecha_org(translation_pecha)
         tgt_metadata = get_metadata_for_pecha_org(commentary_pecha, "bo")
         logger.info(
             f"Pecha {commentary_pecha.id} Metadata successfully prepared for pecha.org website."

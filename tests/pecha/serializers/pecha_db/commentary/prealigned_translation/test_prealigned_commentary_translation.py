@@ -6,7 +6,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary_translation import (
     PreAlignedCommentaryTranslationSerializer,
 )
-from openpecha.utils import read_json
+from openpecha.utils import read_json, write_json
 from tests.pecha import SharedPechaSetup
 
 null = None
@@ -56,6 +56,7 @@ class TestPreAlignedCommentaryTranslationSerializer(TestCase, SharedPechaSetup):
             translation_alignment_id,
             self.pecha_category,
         )
+        write_json("en.json", serialized)
 
         expected_serialized = read_json(
             "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/expected_serialized.json"
@@ -63,3 +64,34 @@ class TestPreAlignedCommentaryTranslationSerializer(TestCase, SharedPechaSetup):
         assert (
             serialized == expected_serialized
         ), "PreAlinged Commentary Translation failed for English.."
+
+    def test_lzh_prealigned_commentary_translation_pecha(self):
+        serializer = PreAlignedCommentaryTranslationSerializer()
+
+        translation_pecha = Pecha.from_path(
+            Path(
+                "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/lzh/I300F947F"
+            )
+        )
+
+        root_alignment_id = "B8B3/alignment-F81A.json"
+        commentary_alignment_id = "BEC3/alignment-90C0.json"
+        translation_alignment_id = "1EAC/alignment-6368.json"
+
+        serialized = serializer.serialize(
+            self.root_pecha,
+            root_alignment_id,
+            self.commentary_pecha,
+            commentary_alignment_id,
+            translation_pecha,
+            translation_alignment_id,
+            self.pecha_category,
+        )
+        write_json("zh.json", serialized)
+
+        expected_serialized = read_json(
+            "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/lzh/expected_serialized.json"
+        )
+        assert (
+            serialized == expected_serialized
+        ), "PreAlinged Commentary Translation failed for Literal Chinese.."
