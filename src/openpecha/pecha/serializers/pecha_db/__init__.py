@@ -131,11 +131,12 @@ def _serialize_prealigned_commentary_translation_pecha(
     commentary_pecha = pechas[1]
     translation_pecha = pechas[0]
 
-    root_alignment_id = get_aligned_id(
-        annotations[commentary_pecha.id], annotation_path
-    )
     commentary_alignment_id = get_aligned_id(
         annotations[translation_pecha.id], annotation_path
+    )
+
+    root_alignment_id = get_aligned_id(
+        annotations[commentary_pecha.id], commentary_alignment_id
     )
 
     PreAlignedCommentaryTranslationSerializer().serialize(

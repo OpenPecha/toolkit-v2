@@ -1,12 +1,10 @@
-from typing import Dict, List
+from typing import List
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AnnotationModel
 from openpecha.pecha.pecha_types import PechaType, get_pecha_type
-from tests.pecha import SharedPechaSetup
-
-MetadataType = Dict[str, str | Dict[str, str] | List[str] | None]
+from tests.pecha import DummyMetadataModel, SharedPechaSetup
 
 
 class TestPechaType(TestCase, SharedPechaSetup):
@@ -15,7 +13,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
 
     def test_root_pecha(self):
         pechas: list[Pecha] = [self.root_pecha]
-        metadatas: list[MetadataType] = [self.root_pecha_metadata]
+        metadatas: list[DummyMetadataModel] = [self.root_pecha_metadata]
         annotations: dict[str, List[AnnotationModel]] = {
             self.root_pecha.id: self.root_pecha_annotations
         }
@@ -28,7 +26,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
 
     def test_root_translation_pecha(self):
         pechas: list[Pecha] = [self.root_translation_pecha, self.root_pecha]
-        metadatas: list[MetadataType] = [
+        metadatas: list[DummyMetadataModel] = [
             self.root_translation_pecha_metadata,
             self.root_pecha_metadata,
         ]
@@ -45,7 +43,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
 
     def test_commentary_pecha(self):
         pechas: list[Pecha] = [self.commentary_pecha, self.root_pecha]
-        metadatas: list[MetadataType] = [
+        metadatas: list[DummyMetadataModel] = [
             self.commentary_pecha_metadata,
             self.root_pecha_metadata,
         ]
@@ -66,7 +64,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
             self.commentary_pecha,
             self.root_pecha,
         ]
-        metadatas: list[MetadataType] = [
+        metadatas: list[DummyMetadataModel] = [
             self.commentary_translation_pecha_metadata,
             self.commentary_pecha_metadata,
             self.root_pecha_metadata,
@@ -84,7 +82,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
 
     def test_prealigned_root_translation_pecha(self):
         pechas: list[Pecha] = [self.root_translation_pecha, self.root_pecha]
-        metadatas: list[MetadataType] = [
+        metadatas: list[DummyMetadataModel] = [
             self.prealigned_root_translation_pecha_metadata,
             self.root_pecha_metadata,
         ]
@@ -100,7 +98,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
 
     def test_prealigned_commentary_pecha(self):
         pechas: list[Pecha] = [self.commentary_pecha, self.root_pecha]
-        metadatas: list[MetadataType] = [
+        metadatas: list[DummyMetadataModel] = [
             self.prealigned_commentary_pecha_metadata,
             self.root_pecha_metadata,
         ]
@@ -116,11 +114,11 @@ class TestPechaType(TestCase, SharedPechaSetup):
 
     def test_prealigned_commentary_translation_pecha(self):
         pechas: list[Pecha] = [
-            self.commentary_translation_pecha,
+            self.prealigned_commentary_translation_pecha,
             self.commentary_pecha,
             self.root_pecha,
         ]
-        metadatas: list[MetadataType] = [
+        metadatas: list[DummyMetadataModel] = [
             self.prealigned_commentary_translation_pecha_metadata,
             self.prealigned_commentary_pecha_metadata,
             self.root_pecha_metadata,
@@ -128,9 +126,9 @@ class TestPechaType(TestCase, SharedPechaSetup):
         annotations: dict[str, List[AnnotationModel]] = {
             self.root_pecha.id: self.root_pecha_annotations,
             self.commentary_pecha.id: self.prealigned_commentary_pecha_annotations,
-            self.commentary_translation_pecha.id: self.prealigned_commentary_translation_pecha_annotations,
+            self.prealigned_commentary_translation_pecha.id: self.prealigned_commentary_translation_pecha_annotations,
         }
-        annotation_path = "FD22/alignment-599A.json"
+        annotation_path = "757D/alignment-C2B5.json"
         assert (
             get_pecha_type(pechas, metadatas, annotations, annotation_path)
             == PechaType.prealigned_commentary_translation_pecha
