@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
+from openpecha.pecha.parsers.docx.root import DocxRootParser
 from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
@@ -39,7 +39,7 @@ class TestDocxRootParser(TestCase):
         ), "TestDocxRootParser failed preparing base text properly for bo data"
 
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
-            "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coords"
+            "openpecha.pecha.parsers.docx.root.DocxRootParser.extract_segmentation_coords"
         ) as mock_extract_root_idx, patch(
             "openpecha.pecha.get_base_id"
         ) as mock_get_base_id, patch(
@@ -87,7 +87,7 @@ class TestDocxRootParser(TestCase):
         ), "TestDocxRootParser failed preparing base text properly for en data"
 
         with tempfile.TemporaryDirectory() as tmpdirname, patch(
-            "openpecha.pecha.parsers.docx.root.number_list_root.DocxRootParser.extract_segmentation_coords"
+            "openpecha.pecha.parsers.docx.root.DocxRootParser.extract_segmentation_coords"
         ) as mock_extract_root_idx, patch(
             "openpecha.pecha.get_base_id"
         ) as mock_get_base_id, patch(
