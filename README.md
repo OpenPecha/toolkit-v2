@@ -17,6 +17,17 @@ A Python package designed for working with annotations within the **Openpecha** 
 
 **The Stand-off Text Annotation Model (STAM)** is a data model for stand-off text annotation, where all information related to a text is represented as annotations.
 
+## Installation
+Stable version:
+```python
+pip install openpecha
+```
+
+Daily Development version:
+```
+pip install git+https://github.com/OpenPecha/toolkit-v2.git
+```
+
 ## Quickstart
 To get started with the toolkit, we recommend following this [documentation](docs/getting-started.md).
 
@@ -45,28 +56,3 @@ To get started with the toolkit, we recommend following this [documentation](doc
 - **Layers**: Managing different types of annotations (segmentation, alignment, etc.)
 - **Metadata**: Handling Pecha metadata and copyright information
 
-
-### Pecha Annotation Transfer
-The following code snippet demonstrates how to transfer annotations from one pecha to another pecha.
-If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
-
-
-```py
-
-from pathlib import Path
-from openpecha.pecha import Pecha
-
-source_pecha_path = Path("source pecha path")
-target_pecha_path = Path("target pecha path")
-
-source_base_name = "source base name"
-target_base_name = "target base name"
-
-source_pecha = Pecha.from_path(source_pecha_path)
-target_pecha = Pecha.from_path(target_pecha_path)
-
-target_pecha.merge_pecha(source_pecha, source_base_name, target_base_name)
-
-```
-
-*__Important Note:__ In a pecha, there could be more than one base file. So above code snippet will transfer only the annotations which is related to the given base file name from source pecha to target pecha.*
