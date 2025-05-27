@@ -45,6 +45,10 @@ class BaseAnnotation(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class SegmentationAnnotation(BaseAnnotation):
+    index: int
+
+
 class Page(BaseAnnotation):
     page_info: Optional[str] = Field(default=None, description="page payload")
     imgnum: Optional[int] = Field(
