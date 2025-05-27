@@ -13,9 +13,20 @@
 
 **Toolkit V2** is the second version of the existing toolkit.
 
-A Python package designed for working with annotations within the **PechaData** framework. PechaData is a GitHub repository that houses data in a distinct format called STAM.
+A Python package designed for working with annotations within the **Openpecha** framework. Openpecha houses data in a distinct format called STAM.
 
 **The Stand-off Text Annotation Model (STAM)** is a data model for stand-off text annotation, where all information related to a text is represented as annotations.
+
+## Installation
+Stable version:
+```python
+pip install openpecha
+```
+
+Daily Development version:
+```
+pip install git+https://github.com/OpenPecha/toolkit-v2.git
+```
 
 ## Quickstart
 To get started with the toolkit, we recommend following this [documentation](docs/getting-started.md).
@@ -26,7 +37,7 @@ To get started with the toolkit, we recommend following this [documentation](doc
 
 - [@10zinten](https://github.com/10zinten)
 - [@tsundue](https://github.com/tenzin3)
-
+- [@ta4tsering](https://github.com/ta4tsering)
 
 ## Diving Deeper
 - To learn more about the STAM data model, please refer to their following resources
@@ -35,26 +46,13 @@ To get started with the toolkit, we recommend following this [documentation](doc
   - [stam python documentation](https://stam-python.readthedocs.io/en/latest/)
   - [stam python tutorial](https://github.com/annotation/stam-python/blob/master/tutorial.ipynb)
 
-### Pecha Annotation Transfer
-The following code snippet demonstrates how to transfer annotations from one pecha to another pecha.
-If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
+- To learn more about our Openpecha data framework refer to our own openpecha published paper [Taming the Wild Etext: Managing, Annotating, and Sharing Tibetan Corpora in Open Spaces](https://dl.acm.org/doi/abs/10.1145/3418060).
 
-```py
+## Key Components
 
-from pathlib import Path
-from openpecha.pecha import Pecha
+- **Pecha**: Core class for managing text and annotations
+- **Parsers**: For various input formats (DOCX, OCR, Pedurma, etc.) converting to Pecha object.
+- **Serializers**: For converting Pecha objects to different output formats
+- **Layers**: Managing different types of annotations (segmentation, alignment, etc.)
+- **Metadata**: Handling Pecha metadata and copyright information
 
-source_pecha_path = Path("source pecha path")
-target_pecha_path = Path("target pecha path")
-
-source_base_name = "source base name"
-target_base_name = "target base name"
-
-source_pecha = Pecha.from_path(source_pecha_path)
-target_pecha = Pecha.from_path(target_pecha_path)
-
-target_pecha.merge_pecha(source_pecha, source_base_name, target_base_name)
-
-```
-
-*__Important Note:__ In a pecha, there could be more than one base file. So above code snippet will transfer only the annotations which is related to the given base file name from source pecha to target pecha.*
