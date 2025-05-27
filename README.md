@@ -37,7 +37,7 @@ To get started with the toolkit, we recommend following this [documentation](doc
 
 - [@10zinten](https://github.com/10zinten)
 - [@tsundue](https://github.com/tenzin3)
-
+- [@ta4tsering](https://github.com/ta4tsering)
 
 ## Diving Deeper
 - To learn more about the STAM data model, please refer to their following resources
