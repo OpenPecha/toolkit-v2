@@ -37,6 +37,15 @@ To get started with the toolkit, we recommend following this [documentation](doc
 
 - To learn more about our Openpecha data framework refer to our own openpecha published paper [Taming the Wild Etext: Managing, Annotating, and Sharing Tibetan Corpora in Open Spaces](https://dl.acm.org/doi/abs/10.1145/3418060).
 
+## Key Components
+
+- **Pecha**: Core class for managing text and annotations
+- **Parsers**: For various input formats (DOCX, OCR, Pedurma, etc.) converting to Pecha object.
+- **Serializers**: For converting Pecha objects to different output formats
+- **Layers**: Managing different types of annotations (segmentation, alignment, etc.)
+- **Metadata**: Handling Pecha metadata and copyright information
+
+
 ### Pecha Annotation Transfer
 The following code snippet demonstrates how to transfer annotations from one pecha to another pecha.
 If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
