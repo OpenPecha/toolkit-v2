@@ -56,7 +56,7 @@ class AlignmentAnnotation(BaseAnnotation):
     )
 
     class Config:
-        schema_extra = {"example": {"index": 5, "alignment_index": "1-5,7"}}
+        json_schema_extra = {"example": {"index": 5, "alignment_index": "1-5,7"}}
 
 
 class Page(BaseAnnotation):
