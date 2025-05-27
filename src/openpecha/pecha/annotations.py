@@ -38,14 +38,14 @@ class Span(BaseModel):
         return self
 
 
-class AnnBase(BaseModel):
+class BaseAnnotation(BaseModel):
     span: Span
-    metadata: Optional[Dict] = Field(default=None)
+    metadata: Optional[Dict] = None
 
     model_config = ConfigDict(extra="forbid")
 
 
-class Page(AnnBase):
+class Page(BaseAnnotation):
     page_info: Optional[str] = Field(default=None, description="page payload")
     imgnum: Optional[int] = Field(
         default=None,
@@ -54,13 +54,6 @@ class Page(AnnBase):
     reference: Optional[str] = Field(
         default=None, description="image filename from bdrc"
     )
-
-
-class BaseAnnotation(BaseModel):
-    span: Span
-    metadata: Optional[Dict] = None
-
-    model_config = ConfigDict(extra="forbid")
 
 
 class Pagination(BaseAnnotation):

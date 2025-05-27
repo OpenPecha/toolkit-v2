@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha
-from openpecha.pecha.annotations import AnnBase
+from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.serializers.pecha_tools.translation_editor import (
     TranslationSerializer,
 )
@@ -25,7 +25,7 @@ class EditorType(Enum):
 class TranslationEditor:
     metadata: Dict = {}
     base_text: str = ""
-    annotations: Optional[AnnBase] = None
+    annotations: Optional[BaseAnnotation] = None
 
 
 class Serializer:
