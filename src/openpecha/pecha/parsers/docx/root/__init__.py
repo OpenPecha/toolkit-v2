@@ -8,7 +8,7 @@ from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
-from openpecha.pecha.parsers.docx.utils import extract_text_from_docx
+from openpecha.pecha.parsers.docx.utils import read_docx
 
 logger = get_logger(__name__)
 
@@ -105,7 +105,7 @@ class DocxRootParser(DocxBaseParser):
             - Base text containing all segments
         """
         # Extract and normalize text
-        text = extract_text_from_docx(docx_file)
+        text = read_docx(docx_file)
         logger.info(f"Extracted text: {text}")
         numbered_text = self.extract_numbered_list(text)
         logger.info(f"Extracted numbered list: {numbered_text}")

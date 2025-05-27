@@ -30,7 +30,7 @@ def normalize_text(text: str):
     return text
 
 
-def extract_text_from_docx(docx_file: Path, ignore_footnotes: bool = True) -> str:
+def read_docx(docx_file: Path, ignore_footnotes: bool = True) -> str:
     text = docx2python(docx_file).text
     if not text:
         logger.warning(
