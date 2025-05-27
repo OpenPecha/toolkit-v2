@@ -47,6 +47,8 @@ def read_docx(docx_file: str | Path, ignore_footnotes: bool = True) -> str:
     text = normalize_text(text)
     if ignore_footnotes:
         text = remove_footnote(text)
+
+    logger.info(f"Text extracted from docx file: {text}")
     return text
 
 
@@ -93,5 +95,7 @@ def extract_numbered_list(docx_file: str | Path) -> Dict[str, str]:
             number = match.group(1)
             text = match.group(2)
             res[number] = text
+
+    logger.info(f"Numbered List extracted from the docx file: {res}")
 
     return res
