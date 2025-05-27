@@ -13,7 +13,7 @@
 
 **Toolkit V2** is the second version of the existing toolkit.
 
-A Python package designed for working with annotations within the **PechaData** framework. PechaData is a GitHub repository that houses data in a distinct format called STAM.
+A Python package designed for working with annotations within the **Openpecha** framework. Openpecha houses data in a distinct format called STAM.
 
 **The Stand-off Text Annotation Model (STAM)** is a data model for stand-off text annotation, where all information related to a text is represented as annotations.
 
@@ -35,9 +35,12 @@ To get started with the toolkit, we recommend following this [documentation](doc
   - [stam python documentation](https://stam-python.readthedocs.io/en/latest/)
   - [stam python tutorial](https://github.com/annotation/stam-python/blob/master/tutorial.ipynb)
 
+- To learn more about our Openpecha data framework refer to our own openpecha published paper [Taming the Wild Etext: Managing, Annotating, and Sharing Tibetan Corpora in Open Spaces](https://dl.acm.org/doi/abs/10.1145/3418060).
+
 ### Pecha Annotation Transfer
 The following code snippet demonstrates how to transfer annotations from one pecha to another pecha.
 If the annotations are done in two different base files, the annotations can be transferred from the source pecha to the target pecha.
+
 
 ```py
 
