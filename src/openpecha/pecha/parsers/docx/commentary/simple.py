@@ -8,37 +8,14 @@ from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
-from openpecha.pecha.parsers.docx.utils import read_docx
+from openpecha.pecha.parsers.docx.utils import extract_numbered_list, read_docx
 
 logger = get_logger(__name__)
 
 
 class DocxSimpleCommentaryParser(DocxBaseParser):
     def __init__(self):
-        self.number_list_regex = r"^(\d+)\)\t(.*)"
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
-
-    def extract_numbered_list(self, text: str) -> Dict[str, str]:
-        """
-        Extract number list from the extracted text from docx.
-
-        Example Output:>
-            {
-                '1': 'དབུ་མ་དགོངས་པ་རབ་གསལ་ལེའུ་དྲུག་པ་བདེན་གཉིས་སོ་སོའི་ངོ་བོ་བཤད་པ།། ',
-                '2': '2 གསུམ་པ་ལ་གཉིས། ཀུན་རྫོབ་ཀྱི་བདེན་པ་བཤད་པ་དང་། ',
-                '3': '2,3 དེས་གང་ལ་སྒྲིབ་ན་ཡང་དག་ཀུན་རྫོབ་འདོད་ཅེས་པས་ཡང་དག་པའི་དོན་ལ་སྒྲིབ་པས་ཀུན་རྫོབ་བམ་སྒྲིབ་བྱེད་དུ་འདོད་ཅེས་པ་སྟེ། །',
-                ...
-            }
-        """
-        res: Dict[str, str] = {}
-        for para_text in text.split("\n\n"):
-            match = re.match(self.number_list_regex, para_text)
-            if match:
-                number = match.group(1)
-                text = match.group(2)
-                res[number] = text
-
-        return res
 
     def calculate_segment_coordinates(
         self, segments: Dict[str, str]
@@ -77,7 +54,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
         """
         # Extract and normalize text
         text = read_docx(docx_file)
-        numbered_text = self.extract_numbered_list(text)
+        numbered_text = extract_numbered_list(text)
         return self.calculate_segment_coordinates(numbered_text)
 
     def parse(
