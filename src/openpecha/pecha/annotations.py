@@ -49,6 +49,16 @@ class SegmentationAnnotation(BaseAnnotation):
     index: int
 
 
+class AlignmentAnnotation(BaseAnnotation):
+    index: int
+    alignment_index: str = Field(
+        description="Index of the alignment, which can be of translation or commentary"
+    )
+
+    class Config:
+        schema_extra = {"example": {"index": 5, "alignment_index": "1-5,7"}}
+
+
 class Page(BaseAnnotation):
     page_info: Optional[str] = Field(default=None, description="page payload")
     imgnum: Optional[int] = Field(
