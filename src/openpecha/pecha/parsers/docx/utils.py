@@ -31,7 +31,7 @@ def normalize_text(text: str):
     return text
 
 
-def read_docx(docx_file: Path, ignore_footnotes: bool = True) -> str:
+def read_docx(docx_file: str | Path, ignore_footnotes: bool = True) -> str:
     """
     Read docx file as text.
     """
@@ -70,9 +70,9 @@ def remove_footnote(text: str) -> str:
     return text
 
 
-def extract_numbered_list(text: str) -> Dict[str, str]:
+def extract_numbered_list(docx_file: str | Path) -> Dict[str, str]:
     """
-    Extract number list from the extracted text from docx.
+    Extract number list from the docx file.
 
     Example Output:>
         {
@@ -82,6 +82,8 @@ def extract_numbered_list(text: str) -> Dict[str, str]:
             ...
         }
     """
+    text = read_docx(docx_file)
+
     number_list_regex = r"^(\d+)\)\t(.*)"
 
     res: Dict[str, str] = {}

@@ -8,7 +8,7 @@ from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
-from openpecha.pecha.parsers.docx.utils import extract_numbered_list, read_docx
+from openpecha.pecha.parsers.docx.utils import extract_numbered_list
 
 logger = get_logger(__name__)
 
@@ -53,8 +53,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
             - Base text containing all segments
         """
         # Extract and normalize text
-        text = read_docx(docx_file)
-        numbered_text = extract_numbered_list(text)
+        numbered_text = extract_numbered_list(docx_file)
         return self.calculate_segment_coordinates(numbered_text)
 
     def parse(
