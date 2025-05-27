@@ -27,12 +27,12 @@ class DocxRootParser(DocxBaseParser):
             - List of dicts with start/end positions for each segment
             - Combined base text with all segments
         """
-        positions = []
+        anns = []
         base = ""
         char_count = 0
 
         for root_idx_mapping, segment in segments.items():
-            positions.append(
+            anns.append(
                 {
                     "start": char_count,
                     "end": char_count + len(segment),
@@ -42,7 +42,7 @@ class DocxRootParser(DocxBaseParser):
             base += f"{segment}\n"
             char_count += len(segment) + 1
 
-        return (positions, base)
+        return (anns, base)
 
     def extract_segmentation_anns(
         self, positions: List[Dict[str, int]], ann_type: AnnotationType
