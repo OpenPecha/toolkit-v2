@@ -10,7 +10,7 @@ from openpecha.exceptions import (
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
-from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
+from openpecha.pecha.parsers.docx.root import DocxRootParser
 
 logger = get_logger(__name__)
 

@@ -9,7 +9,7 @@ from openpecha.pecha import Pecha, annotation_path, get_anns
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
-from openpecha.pecha.parsers.docx.root.number_list_root import DocxRootParser
+from openpecha.pecha.parsers.docx.root import DocxRootParser
 from openpecha.pecha.pecha_types import is_root_related_pecha
 
 pecha_id = str
