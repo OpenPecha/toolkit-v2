@@ -44,7 +44,7 @@ class DocxRootParser(DocxBaseParser):
 
         return (anns, base)
 
-    def extract_segmentation_anns(
+    def preprocess_segmentation_anns(
         self, positions: List[Dict[str, int]], ann_type: AnnotationType
     ) -> List[Dict]:
         """Create segment annotations from position information.
@@ -66,7 +66,7 @@ class DocxRootParser(DocxBaseParser):
             for pos in positions
         ]
 
-    def extract_segmentation_coords(
+    def get_segmentation_anns(
         self, docx_file: Path
     ) -> Tuple[List[Dict[str, int]], str]:
         """Extract text from docx and calculate coordinates for segments.
@@ -107,7 +107,7 @@ class DocxRootParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        positions, base = self.extract_segmentation_coords(input)
+        positions, base = self.get_segmentation_anns(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         annotation_path = self.add_segmentation_layer(pecha, positions, annotation_type)
@@ -145,7 +145,7 @@ class DocxRootParser(DocxBaseParser):
 
         basename = list(pecha.bases.keys())[0]
         layer, layer_path = pecha.add_layer(basename, ann_type)
-        anns = self.extract_segmentation_anns(positions, ann_type)
+        anns = self.preprocess_segmentation_anns(positions, ann_type)
         for ann in anns:
             pecha.add_annotation(layer, ann, ann_type)
         layer.save()
