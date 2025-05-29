@@ -44,6 +44,14 @@ class BaseAnnotation(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    def get_dict(self):
+        res = self.model_dump()
+        # Remove span from the dictionary
+        res.pop("span")
+        # Remove None values from the dictionary
+        res = {k: v for k, v in res.items() if v is not None}
+        return res
+
 
 class SegmentationAnnotation(BaseAnnotation):
     index: int

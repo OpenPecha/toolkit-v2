@@ -143,47 +143,6 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
 
         return pecha
 
-    def preprocess_segmentation_anns(
-        self,
-        anns: List[SegmentationAnnotation | AlignmentAnnotation],
-        annotation_type: AnnotationType,
-    ) -> List[Dict]:
-        """
-        Prepare Annotations to add to STAM Layer.
-        """
-        if annotation_type not in [
-            AnnotationType.SEGMENTATION,
-            AnnotationType.ALIGNMENT,
-        ]:
-            raise NotImplementedError(
-                f"Annotation type {annotation_type} is not supported to extract segmentation."
-            )
-
-        if annotation_type == AnnotationType.SEGMENTATION:
-            return [
-                {
-                    annotation_type.value: {
-                        "start": ann.span.start,
-                        "end": ann.span.end,
-                    },
-                    "index": ann.index,
-                }
-                for ann in anns
-            ]
-
-        else:
-            return [
-                {
-                    annotation_type.value: {
-                        "start": ann.span.start,
-                        "end": ann.span.end,
-                    },
-                    "index": ann.index,
-                    "alignment_index": ann.alignment_index,
-                }
-                for ann in anns
-            ]
-
     def add_segmentation_layer(
         self,
         pecha: Pecha,
@@ -193,9 +152,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
 
         basename = list(pecha.bases.keys())[0]
         layer, layer_path = pecha.add_layer(basename, ann_type)
-
-        prepared_anns: List[Dict] = self.preprocess_segmentation_anns(anns, ann_type)
-        for ann in prepared_anns:
+        for ann in anns:
             pecha.add_annotation(layer, ann, ann_type)
         layer.save()
 
