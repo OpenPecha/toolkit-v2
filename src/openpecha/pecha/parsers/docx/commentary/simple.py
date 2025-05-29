@@ -5,6 +5,11 @@ from typing import Any, Dict, List, Tuple
 from openpecha.config import PECHAS_PATH, get_logger
 from openpecha.exceptions import FileNotFoundError, MetaDataValidationError
 from openpecha.pecha import Pecha, annotation_path
+from openpecha.pecha.annotations import (
+    AlignmentAnnotation,
+    SegmentationAnnotation,
+    Span,
+)
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
@@ -18,8 +23,8 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
 
     def calculate_segment_coordinates(
-        self, segments: Dict[str, str]
-    ) -> Tuple[List[Dict], str]:
+        self, segments: Dict[str, str], annotation_type: AnnotationType
+    ) -> Tuple[List[SegmentationAnnotation | AlignmentAnnotation], str]:
         """Calculate start and end positions for each segment and build base text.
 
         Args:
@@ -30,33 +35,57 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
             - List of dicts with start/end positions for each segment
             - Combined base text with all segments
         """
+        if annotation_type not in [
+            AnnotationType.SEGMENTATION,
+            AnnotationType.ALIGNMENT,
+        ]:
+            raise NotImplementedError(
+                f"Annotation type {annotation_type} is not supported to extract segmentation."
+            )
+
         anns = []
         base = ""
         char_count = 0
-        for root_idx_mapping, segment in segments.items():
-            match = re.match(self.root_alignment_index_regex, segment)
-            if match:
-                root_idx_mapping = match.group(1)
-                segment = match.group(2)
-            curr_segment_ann = {
-                "start": char_count,
-                "end": char_count + len(segment),
-                "root_idx_mapping": root_idx_mapping,
-            }
-            anns.append(curr_segment_ann)
-            base += f"{segment}\n"
 
-            char_count += len(segment) + 1
+        if annotation_type == AnnotationType.SEGMENTATION:
+            for index, segment in segments.items():
+                anns.append(
+                    SegmentationAnnotation(
+                        span=Span(start=char_count, end=char_count + len(segment)),
+                        index=index,
+                    )
+                )
+                base += f"{segment}\n"
+                char_count += len(segment) + 1
+
+        else:
+            for index, segment in segments.items():
+                match = re.match(self.root_alignment_index_regex, segment)
+
+                alignment_index = match.group(1) if match else index
+                segment = match.group(2) if match else segment
+
+                anns.append(
+                    AlignmentAnnotation(
+                        span=Span(start=char_count, end=char_count + len(segment)),
+                        index=index,
+                        alignment_index=alignment_index,
+                    )
+                )
+                base += f"{segment}\n"
+
+                char_count += len(segment) + 1
+
         return (anns, base)
 
     def get_segmentation_anns(
-        self, docx_file: Path
-    ) -> Tuple[List[Dict[str, int]], str]:
+        self, docx_file: Path, annotation_type: AnnotationType
+    ) -> Tuple[List[SegmentationAnnotation | AlignmentAnnotation], str]:
         """
         Extract text from docx and calculate coordinates for segments.
         """
         numbered_text = extract_numbered_list(docx_file)
-        return self.calculate_segment_coordinates(numbered_text)
+        return self.calculate_segment_coordinates(numbered_text, annotation_type)
 
     def parse(
         self,
@@ -82,10 +111,10 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        positions, base = self.get_segmentation_anns(input)
+        anns, base = self.get_segmentation_anns(input, annotation_type)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        annotation_path = self.add_segmentation_layer(pecha, positions, annotation_type)
+        annotation_path = self.add_segmentation_layer(pecha, anns, annotation_type)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return (pecha, annotation_path)
@@ -115,31 +144,58 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
         return pecha
 
     def preprocess_segmentation_anns(
-        self, positions: List[Dict], ann_type: AnnotationType
+        self,
+        anns: List[SegmentationAnnotation | AlignmentAnnotation],
+        annotation_type: AnnotationType,
     ) -> List[Dict]:
         """
         Prepare Annotations to add to STAM Layer.
         """
-        return [
-            {
-                ann_type.value: {
-                    "start": pos["start"],
-                    "end": pos["end"],
-                },
-                "root_idx_mapping": pos["root_idx_mapping"],
-            }
-            for pos in positions
-        ]
+        if annotation_type not in [
+            AnnotationType.SEGMENTATION,
+            AnnotationType.ALIGNMENT,
+        ]:
+            raise NotImplementedError(
+                f"Annotation type {annotation_type} is not supported to extract segmentation."
+            )
+
+        if annotation_type == AnnotationType.SEGMENTATION:
+            return [
+                {
+                    annotation_type.value: {
+                        "start": ann.span.start,
+                        "end": ann.span.end,
+                    },
+                    "index": ann.index,
+                }
+                for ann in anns
+            ]
+
+        else:
+            return [
+                {
+                    annotation_type.value: {
+                        "start": ann.span.start,
+                        "end": ann.span.end,
+                    },
+                    "index": ann.index,
+                    "alignment_index": ann.alignment_index,
+                }
+                for ann in anns
+            ]
 
     def add_segmentation_layer(
-        self, pecha: Pecha, positions: List[Dict], ann_type: AnnotationType
+        self,
+        pecha: Pecha,
+        anns: List[SegmentationAnnotation | AlignmentAnnotation],
+        ann_type: AnnotationType,
     ) -> annotation_path:
 
         basename = list(pecha.bases.keys())[0]
         layer, layer_path = pecha.add_layer(basename, ann_type)
 
-        anns = self.preprocess_segmentation_anns(positions, ann_type)
-        for ann in anns:
+        prepared_anns: List[Dict] = self.preprocess_segmentation_anns(anns, ann_type)
+        for ann in prepared_anns:
             pecha.add_annotation(layer, ann, ann_type)
         layer.save()
 

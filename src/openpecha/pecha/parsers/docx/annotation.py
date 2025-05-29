@@ -88,7 +88,7 @@ class DocxAnnotationParser:
             (
                 coords,
                 old_base,
-            ) = commentary_parser.get_segmentation_anns(docx_file)
+            ) = commentary_parser.get_segmentation_anns(docx_file, type)
 
             updated_coords = self.get_updated_coords(coords, old_base, new_base)
             annotation_path = commentary_parser.add_segmentation_layer(
