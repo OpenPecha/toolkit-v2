@@ -20,6 +20,16 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
     def calculate_segment_coordinates(
         self, segments: Dict[str, str]
     ) -> Tuple[List[Dict], str]:
+        """Calculate start and end positions for each segment and build base text.
+
+        Args:
+            segments: Dictionary mapping with index and text
+
+        Returns:
+            Tuple containing:
+            - List of dicts with start/end positions for each segment
+            - Combined base text with all segments
+        """
         anns = []
         base = ""
         char_count = 0
@@ -42,17 +52,9 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
     def get_segmentation_anns(
         self, docx_file: Path
     ) -> Tuple[List[Dict[str, int]], str]:
-        """Extract text from docx and calculate coordinates for segments.
-
-        Args:
-            docx_file: Path to the docx file
-
-        Returns:
-            Tuple containing:
-            - List of dicts with segment positions and root index mappings
-            - Base text containing all segments
         """
-        # Extract and normalize text
+        Extract text from docx and calculate coordinates for segments.
+        """
         numbered_text = extract_numbered_list(docx_file)
         return self.calculate_segment_coordinates(numbered_text)
 
@@ -64,12 +66,12 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
-        """Parse a docx file and create a pecha.
-
-        The process is split into three main steps:
-        1. Extract text and calculate coordinates
-        2. Extract segmentation annotations
-        3. Initialize pecha with annotations and metadata
+        """
+        Parse a docx file and create a pecha.
+        Steps:
+            1. Extract text and calculate coordinates
+            2. Extract segmentation annotations
+            3. Initialize pecha with annotations and metadata
         """
         input = Path(input)
         if not input.exists():
@@ -115,6 +117,9 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
     def preprocess_segmentation_anns(
         self, positions: List[Dict], ann_type: AnnotationType
     ) -> List[Dict]:
+        """
+        Prepare Annotations to add to STAM Layer.
+        """
         return [
             {
                 ann_type.value: {
