@@ -20,7 +20,7 @@ class DocxRootParser(DocxBaseParser):
         """Calculate start and end positions for each segment and build base text.
 
         Args:
-            segments: Dictionary mapping root indices to segment text
+            segments: Dictionary mapping with index and text
 
         Returns:
             Tuple containing:
@@ -47,13 +47,8 @@ class DocxRootParser(DocxBaseParser):
     def preprocess_segmentation_anns(
         self, positions: List[Dict[str, int]], ann_type: AnnotationType
     ) -> List[Dict]:
-        """Create segment annotations from position information.
-
-        Args:
-            positions: List of dicts containing start/end positions and root index mappings
-
-        Returns:
-            List of annotation dictionaries
+        """
+        Prepare Annotations to add to STAM Layer.
         """
         return [
             {
@@ -69,17 +64,9 @@ class DocxRootParser(DocxBaseParser):
     def get_segmentation_anns(
         self, docx_file: Path
     ) -> Tuple[List[Dict[str, int]], str]:
-        """Extract text from docx and calculate coordinates for segments.
-
-        Args:
-            docx_file: Path to the docx file
-
-        Returns:
-            Tuple containing:
-            - List of dicts with segment positions and root index mappings
-            - Base text containing all segments
         """
-        # Extract and normalize text
+        Extract text from docx and calculate coordinates for segments.
+        """
         numbered_text = extract_numbered_list(docx_file)
         return self.calculate_segment_coordinates(numbered_text)
 
@@ -91,12 +78,12 @@ class DocxRootParser(DocxBaseParser):
         output_path: Path = PECHAS_PATH,
         pecha_id: str | None = None,
     ) -> Tuple[Pecha, annotation_path]:
-        """Parse a docx file and create a pecha.
-
-        The process is split into three main steps:
-        1. Extract text and calculate coordinates
-        2. Extract segmentation annotations
-        3. Initialize pecha with annotations and metadata
+        """
+        Parse a docx file and create a pecha.
+        Steps:
+            1. Extract text and calculate coordinates
+            2. Extract segmentation annotations
+            3. Initialize pecha with annotations and metadata
         """
         input = Path(input)
         if not input.exists():
