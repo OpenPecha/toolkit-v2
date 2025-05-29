@@ -55,8 +55,9 @@ class AlignmentAnnotation(BaseAnnotation):
         description="Index of the alignment, which can be of translation or commentary"
     )
 
-    class Config:
-        json_schema_extra = {"example": {"index": 5, "alignment_index": "1-5,7"}}
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"index": 5, "alignment_index": "1-5,7"}}
+    )
 
 
 class Page(BaseAnnotation):
