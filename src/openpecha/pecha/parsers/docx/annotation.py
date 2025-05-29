@@ -1,11 +1,12 @@
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, List, Tuple
 
 from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path, get_anns
+from openpecha.pecha.annotations import AlignmentAnnotation, SegmentationAnnotation
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -21,25 +22,24 @@ class DocxAnnotationParser:
     def __init__(self):
         pass
 
-    def get_updated_coords(
-        self, coords: List[Dict[str, int]], old_base: str, new_base: str
+    def update_coords(
+        self,
+        anns: List[SegmentationAnnotation | AlignmentAnnotation],
+        old_base: str,
+        new_base: str,
     ):
+        """
+        Update the start/end coordinates of the annotations from old base to new base
+        """
         diff_update = DiffMatchPatch(old_base, new_base)
+        for ann in anns:
+            start = ann.span.start
+            end = ann.span.end
 
-        updated_coords = []
-        for coord in coords:
-            start = int(coord["start"])
-            end = int(coord["end"])
+            ann.span.start = diff_update.get_updated_coord(start)
+            ann.span.end = diff_update.get_updated_coord(end)
 
-            updated_coords.append(
-                {
-                    "start": diff_update.get_updated_coord(start),
-                    "end": diff_update.get_updated_coord(end),
-                    "root_idx_mapping": coord.get("root_idx_mapping", ""),
-                }
-            )
-
-        return updated_coords
+        return anns
 
     def add_annotation(
         self,
@@ -67,12 +67,12 @@ class DocxAnnotationParser:
 
         if is_root_related_pecha(metadatas):
             parser = DocxRootParser()
-            coords, old_base = parser.get_segmentation_anns(docx_file)
+            anns, old_base = parser.get_segmentation_anns(docx_file)
 
-            updated_coords = self.get_updated_coords(coords, old_base, new_base)
-            logger.info(f"Updated Coordinate: {updated_coords}")
+            updated_anns = self.update_coords(anns, old_base, new_base)
+            logger.info(f"Updated Coordinate: {updated_anns}")
 
-            annotation_path = parser.add_segmentation_layer(pecha, updated_coords, type)
+            annotation_path = parser.add_segmentation_layer(pecha, updated_anns, type)
             anns = get_anns(
                 AnnotationStore(file=str(pecha.layer_path / annotation_path))
             )
@@ -86,11 +86,11 @@ class DocxAnnotationParser:
         else:
             commentary_parser = DocxSimpleCommentaryParser()
             (
-                coords,
+                anns,
                 old_base,
             ) = commentary_parser.get_segmentation_anns(docx_file, type)
 
-            updated_coords = self.get_updated_coords(coords, old_base, new_base)
+            updated_coords = self.update_coords(anns, old_base, new_base)
             annotation_path = commentary_parser.add_segmentation_layer(
                 pecha, updated_coords, type
             )
