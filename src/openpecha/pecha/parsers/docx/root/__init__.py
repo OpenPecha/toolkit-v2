@@ -5,6 +5,7 @@ from typing import Dict, List, Tuple
 from openpecha.config import PECHAS_PATH, get_logger
 from openpecha.exceptions import FileNotFoundError, MetaDataValidationError
 from openpecha.pecha import Pecha, annotation_path
+from openpecha.pecha.annotations import SegmentationAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
@@ -16,7 +17,7 @@ logger = get_logger(__name__)
 class DocxRootParser(DocxBaseParser):
     def calculate_segment_coordinates(
         self, segments: Dict[str, str]
-    ) -> Tuple[List[Dict], str]:
+    ) -> Tuple[List[SegmentationAnnotation], str]:
         """Calculate start and end positions for each segment and build base text.
 
         Args:
@@ -24,20 +25,19 @@ class DocxRootParser(DocxBaseParser):
 
         Returns:
             Tuple containing:
-            - List of dicts with start/end positions for each segment
+            - List of an Annotation model contain start/end positions for each segment and index payload
             - Combined base text with all segments
         """
         anns = []
         base = ""
         char_count = 0
 
-        for root_idx_mapping, segment in segments.items():
+        for index, segment in segments.items():
             anns.append(
-                {
-                    "start": char_count,
-                    "end": char_count + len(segment),
-                    "root_idx_mapping": root_idx_mapping,
-                }
+                SegmentationAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
+                )
             )
             base += f"{segment}\n"
             char_count += len(segment) + 1
@@ -45,7 +45,7 @@ class DocxRootParser(DocxBaseParser):
         return (anns, base)
 
     def preprocess_segmentation_anns(
-        self, positions: List[Dict[str, int]], ann_type: AnnotationType
+        self, anns: List[SegmentationAnnotation], ann_type: AnnotationType
     ) -> List[Dict]:
         """
         Prepare Annotations to add to STAM Layer.
@@ -53,17 +53,17 @@ class DocxRootParser(DocxBaseParser):
         return [
             {
                 ann_type.value: {
-                    "start": pos["start"],
-                    "end": pos["end"],
+                    "start": ann.span.start,
+                    "end": ann.span.end,
                 },
-                "root_idx_mapping": pos["root_idx_mapping"],
+                "index": ann.index,
             }
-            for pos in positions
+            for ann in anns
         ]
 
     def get_segmentation_anns(
         self, docx_file: Path
-    ) -> Tuple[List[Dict[str, int]], str]:
+    ) -> Tuple[List[SegmentationAnnotation], str]:
         """
         Extract text from docx and calculate coordinates for segments.
         """
@@ -94,10 +94,10 @@ class DocxRootParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        positions, base = self.get_segmentation_anns(input)
+        anns, base = self.get_segmentation_anns(input)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
-        annotation_path = self.add_segmentation_layer(pecha, positions, annotation_type)
+        annotation_path = self.add_segmentation_layer(pecha, anns, annotation_type)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return (pecha, annotation_path)
@@ -127,13 +127,13 @@ class DocxRootParser(DocxBaseParser):
         return pecha
 
     def add_segmentation_layer(
-        self, pecha: Pecha, positions: List[Dict], ann_type: AnnotationType
+        self, pecha: Pecha, anns: List[SegmentationAnnotation], ann_type: AnnotationType
     ) -> annotation_path:
 
         basename = list(pecha.bases.keys())[0]
         layer, layer_path = pecha.add_layer(basename, ann_type)
-        anns = self.preprocess_segmentation_anns(positions, ann_type)
-        for ann in anns:
+        prepared_anns: List[Dict] = self.preprocess_segmentation_anns(anns, ann_type)
+        for ann in prepared_anns:
             pecha.add_annotation(layer, ann, ann_type)
         layer.save()
 
