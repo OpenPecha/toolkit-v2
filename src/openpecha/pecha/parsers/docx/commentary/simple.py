@@ -7,6 +7,7 @@ from openpecha.exceptions import FileNotFoundError
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.annotations import (
     AlignmentAnnotation,
+    BaseAnnotation,
     SegmentationAnnotation,
     Span,
 )
@@ -21,73 +22,65 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
     def __init__(self):
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
 
-    def validate_annotation_type(self, annotation_type: AnnotationType):
-        if annotation_type not in [
-            AnnotationType.SEGMENTATION,
-            AnnotationType.ALIGNMENT,
-        ]:
-            raise NotImplementedError(
-                f"Annotation type {annotation_type} is not supported to extract segmentation."
-            )
-
-    def calculate_segment_coordinates(
-        self, segments: Dict[str, str], annotation_type: AnnotationType
-    ) -> Tuple[List[SegmentationAnnotation | AlignmentAnnotation], str]:
-        """Calculate start and end positions for each segment and build base text.
-
-        Args:
-            segments: Dictionary mapping with index and text
-
-        Returns:
-            Tuple containing:
-            - List of dicts with start/end positions for each segment
-            - Combined base text with all segments
-        """
-        self.validate_annotation_type(annotation_type)
-
+    def extract_segmentation_anns(self, numbered_text: Dict[str, str]):
         anns = []
         base = ""
         char_count = 0
 
-        if annotation_type == AnnotationType.SEGMENTATION:
-            for index, segment in segments.items():
-                anns.append(
-                    SegmentationAnnotation(
-                        span=Span(start=char_count, end=char_count + len(segment)),
-                        index=index,
-                    )
+        for index, segment in numbered_text.items():
+            anns.append(
+                SegmentationAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
                 )
-                base += f"{segment}\n"
-                char_count += len(segment) + 1
+            )
+            base += f"{segment}\n"
+            char_count += len(segment) + 1
 
-        else:
-            for index, segment in segments.items():
-                match = re.match(self.root_alignment_index_regex, segment)
+        return (anns, base)
 
-                alignment_index = match.group(1) if match else index
-                segment = match.group(2) if match else segment
+    def extract_alignment_anns(self, numbered_text: Dict[str, str]):
+        anns = []
+        base = ""
+        char_count = 0
 
-                anns.append(
-                    AlignmentAnnotation(
-                        span=Span(start=char_count, end=char_count + len(segment)),
-                        index=index,
-                        alignment_index=alignment_index,
-                    )
+        for index, segment in numbered_text.items():
+            match = re.match(self.root_alignment_index_regex, segment)
+
+            alignment_index = match.group(1) if match else index
+            segment = match.group(2) if match else segment
+
+            anns.append(
+                AlignmentAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
+                    alignment_index=alignment_index,
                 )
-                base += f"{segment}\n"
+            )
+            base += f"{segment}\n"
 
-                char_count += len(segment) + 1
+            char_count += len(segment) + 1
 
         return (anns, base)
 
     def get_segmentation_anns(
         self, docx_file: Path, annotation_type: AnnotationType
-    ) -> Tuple[List[SegmentationAnnotation | AlignmentAnnotation], str]:
+    ) -> Tuple[List[BaseAnnotation], str]:
         """
         Extract text from docx and calculate coordinates for segments.
         """
         numbered_text = extract_numbered_list(docx_file)
-        return self.calculate_segment_coordinates(numbered_text, annotation_type)
+
+        if annotation_type == AnnotationType.SEGMENTATION:
+            return self.extract_segmentation_anns(numbered_text)
+
+        elif annotation_type == AnnotationType.ALIGNMENT:
+            return self.extract_alignment_anns(numbered_text)
+
+        else:
+            raise NotImplementedError(
+                f"Annotation type {annotation_type} is not supported to extract segmentation."
+            )
 
     def parse(
         self,
