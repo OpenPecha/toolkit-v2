@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
+from pydantic import BaseModel, ConfigDict, field_serializer, model_validator
 
 from openpecha.ids import get_diplomatic_id, get_initial_pecha_id, get_open_pecha_id
 
@@ -277,46 +277,3 @@ class DiplomaticPechaMetadata(PechaMetaData):
         if "id" not in values or values["id"] is None:
             values["id"] = get_diplomatic_id()
         return values
-
-
-class KungsangMonlamMetaData(BaseModel):
-    author: Optional[Dict[str, str]] = Field(default_factory=dict)
-    composition_date: Optional[Dict[str, str]] = Field(default_factory=dict)
-    source: Optional[Dict[str, str]] = Field(default_factory=dict)
-    presentation: Optional[Dict[str, str]] = Field(default_factory=dict)
-    usage_title: Optional[Dict[str, str]] = Field(default_factory=dict)
-    title_short: Optional[Dict[str, str]] = Field(default_factory=dict)
-    title_long_clean: Optional[Dict[str, str]] = Field(default_factory=dict)
-    title_alt_1: Optional[Dict[str, str]] = Field(default_factory=dict)
-    title_alt_2: Optional[Dict[str, str]] = Field(default_factory=dict)
-    is_commentary_of: Optional[Dict[str, str]] = Field(default_factory=dict)
-    translation_of: Optional[Dict[str, str]] = Field(default_factory=dict)
-    lang: Optional[str] = None
-
-    model_config = ConfigDict(extra="allow")
-
-    def to_pecha_metadata(self, parser: str) -> PechaMetaData:
-        """
-        Extract relevant fields from KunsangMonlamMetaData and map them to PechaMetaData fields
-        """
-        title = self.title_short if self.title_short else {}
-        author = self.author if self.author else []
-        source = self.source if self.source else ""
-        language = self.lang if self.lang else ""
-
-        extra_metadata = {
-            k: v
-            for k, v in self.model_dump().items()
-            if k not in ["author", "source", "source", "lang"]
-        }
-
-        return PechaMetaData(
-            title=title,
-            author=author,
-            source=source,
-            parser=parser,
-            initial_creation_type=InitialCreationType.input,
-            language=language,
-            source_metadata={},
-            **extra_metadata,
-        )

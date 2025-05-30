@@ -7,7 +7,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import SegmentationAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.root import DocxRootParser
-from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
+from openpecha.utils import read_json
 
 
 class TestDocxRootParser(TestCase):
@@ -17,7 +17,7 @@ class TestDocxRootParser(TestCase):
 
     def test_bo_google_doc_translation_parser(self):
         bo_docx_file = self.DATA_DIR / "bo/entering_middle_way.docx"
-        bo_metadata = self.DATA_DIR / "bo/Tibetan Root text Translation Metadata.xlsx"
+        metadata = read_json(self.DATA_DIR / "bo/metadata.json")
 
         expected_anns = [
             SegmentationAnnotation(
@@ -37,7 +37,7 @@ class TestDocxRootParser(TestCase):
             ),
         ]
         expected_base = "དབུ་མ་ལུ་འཇུག་པ་ལས། སེམས་བསྐྱེད་པ་དྲུག་པ།\nམངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ། །རྫོགས་པའི་སངས་རྒྱས་ཆོས་ལ་མངོན་ཕྱོགས་ཤིང༌། །འདི་བརྟེན་འབྱུང་བའི་དེ་ཉིད་མཐོང་བ་དེས། །ཤེས་རབ་གནས་པས་འགོག་པ་ཐོབ་པར་འགྱུར། །\nཇི་ལྟར་ལོང་བའི་ཚོགས་ཀུན་བདེ་བླག་ཏུ། །མིག་ལྡན་སྐྱེས་བུ་གཅིག་གིས་འདོད་པ་ཡི། །ཡུལ་དུ་འཁྲིད་པ་དེ་བཞིན་འདིར་ཡང་བློས། །མིག་ཉམས་ཡོན་ཏན་བླངས་ཏེ་རྒྱལ་ཉིད་འགྲོ། །\nཇི་ལྟར་དེ་ཡིས་ཆེས་ཟབ་ཆོས་རྟོགས་པ། །ལུང་དང་གཞན་ཡང་རིགས་པས་ཡིན་པས་ན། །དེ་ལྟར་འཕགས་པ་ཀླུ་སྒྲུབ་གཞུང་ལུགས་ལས། །ཇི་ལྟར་གནས་པའི་ལུགས་བཞིན་བརྗོད་པར་བྱ། །\nསོ་སོ་སྐྱེ་བོའི་དུས་ནའང་སྟོང་པ་ཉིད་ཐོས་ནས། །ནང་དུ་རབ་ཏུ་དགའ་བ་ཡང་དང་ཡང་དུ་འབྱུང༌། །རབ་ཏུ་དགའ་བ་ལས་བྱུང་མཆི་མས་མིག་བརླན་ཞིང༌། །ལུས་ཀྱི་བ་སྤུ་ལྡང་པར་འགྱུར་པ་གང་ཡིན་པ། །\n"
-        metadata = extract_metadata_from_xlsx(bo_metadata)
+
         anns, base = self.parser.get_segmentation_anns(bo_docx_file)
 
         assert (
@@ -70,9 +70,7 @@ class TestDocxRootParser(TestCase):
 
     def test_en_google_doc_translation_parser(self):
         en_docx_file = self.DATA_DIR / "en" / "entering the middle way english.docx"
-        en_metadata = (
-            self.DATA_DIR / "en" / "English Root text Translation Metadata.xlsx"
-        )
+        metadata = read_json(self.DATA_DIR / "en" / "metadata.json")
 
         expected_anns = [
             SegmentationAnnotation(
@@ -93,7 +91,6 @@ class TestDocxRootParser(TestCase):
         ]
         expected_base = '"From the Madhyamakavatara, Sixth Mind Generation"\n"When the mind rests in meditative equipoise, directly oriented Towards the qualities of the fully enlightened Buddha, And through this, sees the reality of dependent origination, Through abiding in wisdom, one attains cessation."\n"Just as a single person with eyes Can easily lead an entire group of blind people To their desired destination, likewise here too, intelligence Takes hold of the qualities lacking sight and proceeds to enlightenment."\n"Just as one understands these profound teachings Through scripture and through reasoning as well, Similarly, following the tradition of Noble Nagarjuna\'s writings, I shall explain things just as they are."\n"Even while still an ordinary being, upon hearing about emptiness, Great joy arises again and again within. From this supreme joy, tears moisten one\'s eyes, And the hairs of one\'s body stand on end."\n'
 
-        metadata = extract_metadata_from_xlsx(en_metadata)
         anns, base = self.parser.get_segmentation_anns(en_docx_file)
 
         assert (
