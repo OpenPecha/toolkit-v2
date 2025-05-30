@@ -7,16 +7,14 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import AlignmentAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
-from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
+from openpecha.utils import read_json
 
 
 class TestDocxSimpleCommentaryParser(TestCase):
     def setUp(self):
         self.data_dir = Path(__file__).parent / "data"
         self.input = self.data_dir / "དབུ་མ་_bo_commentary.docx"
-        self.metadata = extract_metadata_from_xlsx(
-            self.data_dir / "དབུ་མ་_bo_commentary_metadata.xlsx"
-        )
+        self.metadata = read_json(self.data_dir / "metadata.json")
         self.expected_anns = [
             AlignmentAnnotation(
                 span=Span(start=0, end=65, errors=None),
