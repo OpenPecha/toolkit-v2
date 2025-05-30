@@ -38,14 +38,45 @@ class Span(BaseModel):
         return self
 
 
-class AnnBase(BaseModel):
+class BaseAnnotation(BaseModel):
     span: Span
-    metadata: Optional[Dict] = Field(default=None)
+    metadata: Optional[Dict] = None
 
     model_config = ConfigDict(extra="forbid")
 
+    def get_dict(self):
+        res = self.model_dump()
+        # Remove span from the dictionary
+        res.pop("span")
+        # Remove None values from the dictionary
+        res = {k: v for k, v in res.items() if v is not None}
+        return res
 
-class Page(AnnBase):
+
+class SegmentationAnnotation(BaseAnnotation):
+    index: int
+
+
+class AlignmentAnnotation(BaseAnnotation):
+    index: int
+    alignment_index: str = Field(
+        description="Index of the alignment, which can be of translation or commentary"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"index": 5, "alignment_index": "1-5,7"}}
+    )
+
+
+class PedurmaAnnotation(BaseAnnotation):
+    note: str
+
+
+class SapcheAnnotation(BaseAnnotation):
+    sapche_number: str
+
+
+class Page(BaseAnnotation):
     page_info: Optional[str] = Field(default=None, description="page payload")
     imgnum: Optional[int] = Field(
         default=None,
@@ -54,13 +85,6 @@ class Page(AnnBase):
     reference: Optional[str] = Field(
         default=None, description="image filename from bdrc"
     )
-
-
-class BaseAnnotation(BaseModel):
-    span: Span
-    metadata: Optional[Dict] = None
-
-    model_config = ConfigDict(extra="forbid")
 
 
 class Pagination(BaseAnnotation):

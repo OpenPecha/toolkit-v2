@@ -851,39 +851,19 @@ class OCRParser(OCRBaseParser):
 
             # Add layers
             for layer_type, annotations in layers.items():
-                layer_enum = layer_type
-                layer, layer_path = pecha.add_layer(base_id, layer_enum)
+                layer, _ = pecha.add_layer(base_id, layer_type)
+
+                if layer_type not in [
+                    AnnotationType.PAGINATION,
+                    AnnotationType.LANGUAGE,
+                    AnnotationType.OCR_CONFIDENCE,
+                ]:
+                    raise NotImplementedError(
+                        f"Layer type {layer_type} not implemented yet in OCRParser."
+                    )
 
                 for ann_id, ann in annotations.annotations.items():
-                    try:
-                        ann_dict = {
-                            layer_enum.value: {  # Using correct key instead of "span"
-                                "start": ann.span.start,
-                                "end": ann.span.end,
-                            }
-                        }
-                        if layer_type == AnnotationType.PAGINATION:
-                            ann_dict.update(
-                                {"imgnum": ann.imgnum, "reference": ann.reference}
-                            )
-                        elif layer_type == AnnotationType.LANGUAGE:
-                            ann_dict.update({"language": ann.language})
-                        elif layer_type == AnnotationType.OCR_CONFIDENCE:
-                            ann_dict.update({"confidence": ann.confidence})
-                            if ann.nb_below_threshold is not None:
-                                ann_dict["nb_below_threshold"] = ann.nb_below_threshold
-                        else:
-                            continue  # Skip unknown layer types
-
-                        # Validate annotation before adding
-                        pecha.check_annotation(ann_dict, layer_enum)
-
-                        # Add annotation
-                        pecha.add_annotation(layer, ann_dict, layer_enum)
-
-                    except ValueError as e:
-                        logger.error(f"Skipping invalid annotation {ann_id}: {e}")
-
+                    pecha.add_annotation(layer, ann, layer_type)
                 layer.save()
 
             self.set_base_meta(image_group_id, base_id, word_confidence_list)

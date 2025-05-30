@@ -19,6 +19,7 @@ from openpecha.ids import (
     get_layer_id,
     get_uuid,
 )
+from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import (
     AnnotationType,
@@ -163,55 +164,30 @@ class Pecha:
 
         return ann_store, ann_store_path
 
-    def check_annotation(self, annotation: Dict, layer_type: AnnotationType):
-        """
-        Inputs:annotation: annotation data
-        Process: - check if the annotation data is valid
-                - raise error if the annotation data is invalid
-        """
-
-        # Check if an annotation with AnnotationType is present in the annotation data
-        if layer_type.value not in annotation.keys():
-            raise ValueError(f"Annotation data should contain {layer_type.value} key.")
-
-        # Check if the annotation with AnnotationType has Span value as tuple
-        if not isinstance(annotation[layer_type.value], Dict):
-            raise ValueError(
-                f"The {layer_type.value} annotation should have a Span of 'start' and 'end'."
-            )
-
-        # Check if the annotataion data has a valid value
-        for ann_name, ann_value in annotation.items():
-            if not isinstance(ann_name, str):
-                raise ValueError("The annotation metadata key should be a string.")
-
-            if not isinstance(ann_value, (str, int, List, Dict, float)):
-                raise ValueError(
-                    "The annotation value should be either a string, int or a Span Dictionary."
-                )
-
     def add_annotation(
-        self, ann_store: AnnotationStore, annotation: Dict, layer_type: AnnotationType
+        self,
+        ann_store: AnnotationStore,
+        annotation: BaseAnnotation,
+        layer_type: AnnotationType,
     ):
         """
         Inputs: layer: annotation store, data: annotation data
         Process: add the annotation to the annotation store
         Output:annotation
         """
-        self.check_annotation(annotation, layer_type)
 
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
 
         # Get annotation metadata / payloads
-        ann_data = {k: v for k, v in annotation.items() if not isinstance(v, Dict)}
+        ann_data = annotation.get_dict()
         # Add main annotation such as Chapter, Sabche, Segment into the annotation data
         ann_data[get_annotation_group_type(layer_type).value] = layer_type.value
 
         # Get the start and end of the annotation
         start, end = (
-            annotation[layer_type.value]["start"],
-            annotation[layer_type.value]["end"],
+            annotation.span.start,
+            annotation.span.end,
         )
         text_selector = Selector.textselector(ann_resource, Offset.simple(start, end))
 

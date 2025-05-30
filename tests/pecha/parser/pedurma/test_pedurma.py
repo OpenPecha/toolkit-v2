@@ -1,7 +1,6 @@
 import tempfile
 from pathlib import Path
 
-from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.pedurma import PedurmaParser
 from openpecha.utils import read_json
 
@@ -26,10 +25,7 @@ def test_pedurma():
         # Checking extracted pedurma annotations
         expected_span_texts = ["༄༅། །", "འཕགས་པ་འཇམ་", "འདུད།", "རྣམ་"]
         for ann, expected_span in zip(parser.pedurma_anns, expected_span_texts):
-            start, end = (
-                ann[AnnotationType.DURCHEN.value]["start"],
-                ann[AnnotationType.DURCHEN.value]["end"],
-            )
+            start, end = ann.span.start, ann.span.end
             assert parser.base_text[start:end] == expected_span
 
         expected_ann_notes = [
@@ -40,7 +36,7 @@ def test_pedurma():
         ]
 
         for ann, expected_note in zip(parser.pedurma_anns, expected_ann_notes):
-            assert ann["note"] == expected_note
+            assert ann.note == expected_note
 
         # Checking extracted meaning segment annotations
         expected_meaning_segments = [
@@ -55,8 +51,5 @@ def test_pedurma():
         for ann, expected_segment in zip(
             parser.meaning_segment_anns, expected_meaning_segments
         ):
-            start, end = (
-                ann[AnnotationType.SEGMENTATION.value]["start"],
-                ann[AnnotationType.SEGMENTATION.value]["end"],
-            )
+            start, end = ann.span.start, ann.span.end
             assert parser.base_text[start:end] == expected_segment

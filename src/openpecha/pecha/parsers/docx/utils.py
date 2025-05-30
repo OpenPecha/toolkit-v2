@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Dict
 
 from docx2python import docx2python
 
@@ -30,7 +31,10 @@ def normalize_text(text: str):
     return text
 
 
-def extract_text_from_docx(docx_file: Path, ignore_footnotes: bool = True) -> str:
+def read_docx(docx_file: str | Path, ignore_footnotes: bool = True) -> str:
+    """
+    Read docx file as text.
+    """
     text = docx2python(docx_file).text
     if not text:
         logger.warning(
@@ -43,6 +47,8 @@ def extract_text_from_docx(docx_file: Path, ignore_footnotes: bool = True) -> st
     text = normalize_text(text)
     if ignore_footnotes:
         text = remove_footnote(text)
+
+    logger.info(f"Text extracted from docx file: {text}")
     return text
 
 
@@ -64,3 +70,32 @@ def remove_footnote(text: str) -> str:
             res.append(part)
     text = "\n\n".join(res)
     return text
+
+
+def extract_numbered_list(docx_file: str | Path) -> Dict[str, str]:
+    """
+    Extract number list from the docx file.
+
+    Example Output:>
+        {
+            '1': 'དབུ་མ་དགོངས་པ་རབ་གསལ་ལེའུ་དྲུག་པ་བདེན་གཉིས་སོ་སོའི་ངོ་བོ་བཤད་པ།། ',
+            '2': 'གསུམ་པ་ལ་གཉིས། ཀུན་རྫོབ་ཀྱི་བདེན་པ་བཤད་པ་དང་། ',
+            '3': 'དེས་གང་ལ་སྒྲིབ་ན་ཡང་དག་ཀུན་རྫོབ་འདོད་ཅེས་པས་ཡང་དག་པའི་དོན་ལ་སྒྲིབ་པས་ཀུན་རྫོབ་བམ་སྒྲིབ་བྱེད་དུ་འདོད་ཅེས་པ་སྟེ། །',
+            ...
+        }
+    """
+    text = read_docx(docx_file)
+
+    number_list_regex = r"^(\d+)\)\t(.*)"
+
+    res: Dict[str, str] = {}
+    for para_text in text.split("\n\n"):
+        match = re.match(number_list_regex, para_text)
+        if match:
+            number = match.group(1)
+            text = match.group(2)
+            res[number] = text
+
+    logger.info(f"Numbered List extracted from the docx file: {res}")
+
+    return res

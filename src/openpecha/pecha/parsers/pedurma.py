@@ -6,6 +6,7 @@ from botok.tokenizers.chunktokenizer import ChunkTokenizer
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
+from openpecha.pecha.annotations import PedurmaAnnotation, SegmentationAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import BaseParser
 from openpecha.utils import read_json
@@ -56,13 +57,10 @@ class PedurmaParser(BaseParser):
         # Segment Annotation
         char_walker = 0
         self.meaning_segment_anns = []
-        for line in self.base_text.splitlines():
-            segment_ann = {
-                AnnotationType.SEGMENTATION.value: {
-                    "start": char_walker,
-                    "end": char_walker + len(line),
-                }
-            }
+        for index, line in enumerate(self.base_text.splitlines()):
+            segment_ann = SegmentationAnnotation(
+                span=Span(start=char_walker, end=char_walker + len(line)), index=index
+            )
             self.meaning_segment_anns.append(segment_ann)
             char_walker += len(line)
             char_walker += 1  # Add because of new line
@@ -113,16 +111,14 @@ def modify_metadata(metadata: Dict) -> Dict:
     return modified_metadata
 
 
-def get_annotation(prev_chunk: str, note_chunk: str, char_walker: int):
+def get_annotation(
+    prev_chunk: str, note_chunk: str, char_walker: int
+) -> PedurmaAnnotation:
     span_text = get_span_text(prev_chunk, note_chunk)
     start = char_walker - len(span_text)
     end = char_walker
 
-    ann = {
-        AnnotationType.DURCHEN.value: {"start": start, "end": end},
-        "note": note_chunk,
-    }
-    return ann
+    return PedurmaAnnotation(span=Span(start=start, end=end), note=note_chunk)
 
 
 def get_span_text(prev_chunk: str, note_chunk: str):
