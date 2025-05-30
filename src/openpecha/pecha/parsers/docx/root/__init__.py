@@ -15,7 +15,7 @@ logger = get_logger(__name__)
 
 
 class DocxRootParser(DocxBaseParser):
-    def get_segmentation_anns(
+    def extract_segmentation_anns(
         self, docx_file: Path, annotation_type: AnnotationType
     ) -> Tuple[List[SegmentationAnnotation], str]:
         """
@@ -69,7 +69,7 @@ class DocxRootParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        anns, base = self.get_segmentation_anns(input, annotation_type)
+        anns, base = self.extract_segmentation_anns(input, annotation_type)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         annotation_path = self.add_segmentation_layer(pecha, anns, annotation_type)

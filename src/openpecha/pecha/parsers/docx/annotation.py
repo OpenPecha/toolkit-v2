@@ -67,7 +67,7 @@ class DocxAnnotationParser:
 
         if is_root_related_pecha(metadatas):
             parser = DocxRootParser()
-            anns, old_base = parser.get_segmentation_anns(
+            anns, old_base = parser.extract_segmentation_anns(
                 docx_file, AnnotationType.SEGMENTATION
             )
 
