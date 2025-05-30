@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from openpecha.config import PECHAS_PATH, get_logger
-from openpecha.exceptions import FileNotFoundError, MetaDataValidationError
+from openpecha.exceptions import FileNotFoundError
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.annotations import (
     AlignmentAnnotation,
@@ -11,7 +11,6 @@ from openpecha.pecha.annotations import (
     Span,
 )
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list
 
@@ -118,42 +117,3 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return (pecha, annotation_path)
-
-    def create_pecha(
-        self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
-    ) -> Pecha:
-        pecha = Pecha.create(output_path, pecha_id)
-        pecha.set_base(base)
-
-        try:
-            pecha_metadata = PechaMetaData(
-                id=pecha.id,
-                parser=self.name,
-                **metadata,
-                bases={},
-                initial_creation_type=InitialCreationType.google_docx,
-            )
-        except Exception as e:
-            logger.error(f"The metadata given was not valid. {str(e)}")
-            raise MetaDataValidationError(
-                f"[Error] The metadata given was not valid. {str(e)}"
-            )
-        else:
-            pecha.set_metadata(pecha_metadata.to_dict())
-
-        return pecha
-
-    def add_segmentation_layer(
-        self,
-        pecha: Pecha,
-        anns: List[SegmentationAnnotation | AlignmentAnnotation],
-        ann_type: AnnotationType,
-    ) -> annotation_path:
-
-        basename = list(pecha.bases.keys())[0]
-        layer, layer_path = pecha.add_layer(basename, ann_type)
-        for ann in anns:
-            pecha.add_annotation(layer, ann, ann_type)
-        layer.save()
-
-        return str(layer_path.relative_to(pecha.layer_path))
