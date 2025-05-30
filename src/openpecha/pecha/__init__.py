@@ -112,15 +112,9 @@ class Pecha:
         return layers
 
     def get_base(self, base_name) -> str:
-        """
-        This function returns the base layer of the pecha.
-        """
         return (self.base_path / f"{base_name}.txt").read_text()
 
     def set_base(self, content: str, base_name=None):
-        """
-        This function sets the base layer of the pecha to a new text.
-        """
         base_name = base_name if base_name else get_base_id()
         (self.base_path / f"{base_name}.txt").write_text(content)
 
@@ -169,22 +163,18 @@ class Pecha:
         ann_store: AnnotationStore,
         annotation: BaseAnnotation,
         layer_type: AnnotationType,
-    ):
+    ) -> BaseAnnotation:
         """
-        Inputs: layer: annotation store, data: annotation data
-        Process: add the annotation to the annotation store
-        Output:annotation
+        Adds an annotation to an Existing Annotation Layer(Annotation Store)
         """
 
         ann_resource = next(ann_store.resources())
         ann_dataset = next(ann_store.datasets())
 
-        # Get annotation metadata / payloads
-        ann_data = annotation.get_dict()
-        # Add main annotation such as Chapter, Sabche, Segment into the annotation data
+        ann_data: Dict = annotation.get_dict()
+        # Add Annotation Group Type
         ann_data[get_annotation_group_type(layer_type).value] = layer_type.value
 
-        # Get the start and end of the annotation
         start, end = (
             annotation.span.start,
             annotation.span.end,
@@ -244,15 +234,8 @@ class Pecha:
         self, base_name, from_cache=False
     ) -> Generator[Tuple[str, AnnotationStore], None, None]:
         """
-        This function returns the layers of the pecha.
-
-        Args:
-            base_name (str): The base name to identify specific layers.
-
-        Returns:
-            Generator[AnnotationStore, None, None]: Yields instances of `AnnotationStore` as they are read from directory files.
+        Return all layers from the Pecha associated with the given base.
         """
-
         for layer_fn in (self.layer_path / base_name).iterdir():
             rel_layer_fn = layer_fn.relative_to(self.pecha_path.parent)
             if from_cache:
