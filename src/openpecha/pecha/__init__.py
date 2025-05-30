@@ -21,11 +21,7 @@ from openpecha.ids import (
 )
 from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.blupdate import get_updated_layer_anns
-from openpecha.pecha.layer import (
-    AnnotationType,
-    get_annotation_collection_type,
-    get_annotation_group_type,
-)
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import PechaMetaData
 from openpecha.storages import GithubStorage, commit_and_push
 
@@ -152,7 +148,7 @@ class Pecha:
             id=base_name,
             filename=f"../../base/{base_name}.txt",
         )
-        dataset_id = get_annotation_collection_type(layer_type).value
+        dataset_id = layer_type.annotation_collection_type._value_
         ann_store.add_dataset(id=dataset_id)
         self.layers[base_name][layer_type].append(ann_store)
 
@@ -173,7 +169,8 @@ class Pecha:
 
         ann_data: Dict = annotation.get_dict()
         # Add Annotation Group Type
-        ann_data[get_annotation_group_type(layer_type).value] = layer_type.value
+        ann_group_type = layer_type.annotation_group_type
+        ann_data[ann_group_type.value] = layer_type.value
 
         start, end = (
             annotation.span.start,

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class AnnotationCollectionType(Enum):
+class AnnotationCollectionType(str, Enum):
     """In STAM, this is used for setting DataSet id"""
 
     STRUCTURE_ANNOTATION = "structure_annotation"
@@ -9,6 +9,14 @@ class AnnotationCollectionType(Enum):
     OCR_ANNOTATION = "ocr_annotation"
     LANGUAGE_ANNOTATION = "language_annotation"
     SEGMENTATION_ANNOTATION = "segmentation_annotation"
+
+
+class AnnotationGroupType(str, Enum):
+    STRUCTURE_TYPE = "structure_type"
+    SPELLING_VARIATION = "spelling_variation"
+    OCR_CONFIDENCE_TYPE = "ocr_confidence_type"
+    LANGUAGE_TYPE = "language_type"
+    SEGMENTATION_TYPE = "segmentation_type"
 
 
 class AnnotationType(str, Enum):
@@ -25,13 +33,13 @@ class AnnotationType(str, Enum):
     CITATION = "citation"
     BOOK_TITLE = "book_title"
 
+    @property
+    def annotation_collection_type(self):
+        return get_annotation_collection_type(self)
 
-class AnnotationGroupType(Enum):
-    STRUCTURE_TYPE = "structure_type"
-    SPELLING_VARIATION = "spelling_variation"
-    OCR_CONFIDENCE_TYPE = "ocr_confidence_type"
-    LANGUAGE_TYPE = "language_type"
-    SEGMENTATION_TYPE = "segmentation_type"
+    @property
+    def annotation_group_type(self):
+        return get_annotation_group_type(self)
 
 
 def get_annotation_group_type(layer_type: AnnotationType) -> AnnotationGroupType:
