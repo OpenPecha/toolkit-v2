@@ -15,43 +15,35 @@ logger = get_logger(__name__)
 
 
 class DocxRootParser(DocxBaseParser):
-    def calculate_segment_coordinates(
-        self, segments: Dict[str, str]
-    ) -> Tuple[List[SegmentationAnnotation], str]:
-        """Calculate start and end positions for each segment and build base text.
-
-        Args:
-            segments: Dictionary mapping with index and text
-
-        Returns:
-            Tuple containing:
-            - List of SegmentationAnnotation containing position and payloads for each segment.
-            - Combined base text with all segments.
-        """
-        anns = []
-        base = ""
-        char_count = 0
-
-        for index, segment in segments.items():
-            anns.append(
-                SegmentationAnnotation(
-                    span=Span(start=char_count, end=char_count + len(segment)),
-                    index=index,
-                )
-            )
-            base += f"{segment}\n"
-            char_count += len(segment) + 1
-
-        return (anns, base)
-
     def get_segmentation_anns(
-        self, docx_file: Path
+        self, docx_file: Path, annotation_type: AnnotationType
     ) -> Tuple[List[SegmentationAnnotation], str]:
         """
         Extract text from docx and calculate coordinates for segments.
         """
         numbered_text = extract_numbered_list(docx_file)
-        return self.calculate_segment_coordinates(numbered_text)
+
+        if annotation_type == AnnotationType.SEGMENTATION:
+            anns = []
+            base = ""
+            char_count = 0
+
+            for index, segment in numbered_text.items():
+                anns.append(
+                    SegmentationAnnotation(
+                        span=Span(start=char_count, end=char_count + len(segment)),
+                        index=index,
+                    )
+                )
+                base += f"{segment}\n"
+                char_count += len(segment) + 1
+
+            return (anns, base)
+
+        else:
+            raise NotImplementedError(
+                f"Annotation type {annotation_type} is not supported to extract segmentation."
+            )
 
     def parse(
         self,
@@ -77,7 +69,7 @@ class DocxRootParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        anns, base = self.get_segmentation_anns(input)
+        anns, base = self.get_segmentation_anns(input, annotation_type)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         annotation_path = self.add_segmentation_layer(pecha, anns, annotation_type)
