@@ -3,15 +3,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from openpecha.config import PECHAS_PATH, get_logger
-from openpecha.exceptions import FileNotFoundError, MetaDataValidationError
+from openpecha.exceptions import FileNotFoundError
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.annotations import (
     AlignmentAnnotation,
+    BaseAnnotation,
     SegmentationAnnotation,
     Span,
 )
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list
 
@@ -22,70 +22,65 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
     def __init__(self):
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
 
-    def calculate_segment_coordinates(
-        self, segments: Dict[str, str], annotation_type: AnnotationType
-    ) -> Tuple[List[SegmentationAnnotation | AlignmentAnnotation], str]:
-        """Calculate start and end positions for each segment and build base text.
-
-        Args:
-            segments: Dictionary mapping with index and text
-
-        Returns:
-            Tuple containing:
-            - List of dicts with start/end positions for each segment
-            - Combined base text with all segments
-        """
-        if annotation_type not in [
-            AnnotationType.SEGMENTATION,
-            AnnotationType.ALIGNMENT,
-        ]:
-            raise NotImplementedError(
-                f"Annotation type {annotation_type} is not supported to extract segmentation."
-            )
-
+    def extract_segmentation_anns(self, numbered_text: Dict[str, str]):
         anns = []
         base = ""
         char_count = 0
 
-        if annotation_type == AnnotationType.SEGMENTATION:
-            for index, segment in segments.items():
-                anns.append(
-                    SegmentationAnnotation(
-                        span=Span(start=char_count, end=char_count + len(segment)),
-                        index=index,
-                    )
+        for index, segment in numbered_text.items():
+            anns.append(
+                SegmentationAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
                 )
-                base += f"{segment}\n"
-                char_count += len(segment) + 1
-
-        else:
-            for index, segment in segments.items():
-                match = re.match(self.root_alignment_index_regex, segment)
-
-                alignment_index = match.group(1) if match else index
-                segment = match.group(2) if match else segment
-
-                anns.append(
-                    AlignmentAnnotation(
-                        span=Span(start=char_count, end=char_count + len(segment)),
-                        index=index,
-                        alignment_index=alignment_index,
-                    )
-                )
-                base += f"{segment}\n"
-
-                char_count += len(segment) + 1
+            )
+            base += f"{segment}\n"
+            char_count += len(segment) + 1
 
         return (anns, base)
 
-    def get_segmentation_anns(
+    def extract_alignment_anns(self, numbered_text: Dict[str, str]):
+        anns = []
+        base = ""
+        char_count = 0
+
+        for index, segment in numbered_text.items():
+            match = re.match(self.root_alignment_index_regex, segment)
+
+            alignment_index = match.group(1) if match else index
+            segment = match.group(2) if match else segment
+
+            anns.append(
+                AlignmentAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
+                    alignment_index=alignment_index,
+                )
+            )
+            base += f"{segment}\n"
+
+            char_count += len(segment) + 1
+
+        return (anns, base)
+
+    def extract_anns(
         self, docx_file: Path, annotation_type: AnnotationType
-    ) -> Tuple[List[SegmentationAnnotation | AlignmentAnnotation], str]:
+    ) -> Tuple[List[BaseAnnotation], str]:
         """
         Extract text from docx and calculate coordinates for segments.
         """
         numbered_text = extract_numbered_list(docx_file)
-        return self.calculate_segment_coordinates(numbered_text, annotation_type)
+
+        if annotation_type == AnnotationType.SEGMENTATION:
+            return self.extract_segmentation_anns(numbered_text)
+
+        elif annotation_type == AnnotationType.ALIGNMENT:
+            return self.extract_alignment_anns(numbered_text)
+
+        else:
+            raise NotImplementedError(
+                f"Annotation type {annotation_type} is not supported to extract segmentation."
+            )
 
     def parse(
         self,
@@ -111,49 +106,10 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        anns, base = self.get_segmentation_anns(input, annotation_type)
+        anns, base = self.extract_anns(input, annotation_type)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         annotation_path = self.add_segmentation_layer(pecha, anns, annotation_type)
 
         logger.info(f"Pecha {pecha.id} is created successfully.")
         return (pecha, annotation_path)
-
-    def create_pecha(
-        self, base: str, output_path: Path, metadata: Dict, pecha_id: str | None
-    ) -> Pecha:
-        pecha = Pecha.create(output_path, pecha_id)
-        pecha.set_base(base)
-
-        try:
-            pecha_metadata = PechaMetaData(
-                id=pecha.id,
-                parser=self.name,
-                **metadata,
-                bases={},
-                initial_creation_type=InitialCreationType.google_docx,
-            )
-        except Exception as e:
-            logger.error(f"The metadata given was not valid. {str(e)}")
-            raise MetaDataValidationError(
-                f"[Error] The metadata given was not valid. {str(e)}"
-            )
-        else:
-            pecha.set_metadata(pecha_metadata.to_dict())
-
-        return pecha
-
-    def add_segmentation_layer(
-        self,
-        pecha: Pecha,
-        anns: List[SegmentationAnnotation | AlignmentAnnotation],
-        ann_type: AnnotationType,
-    ) -> annotation_path:
-
-        basename = list(pecha.bases.keys())[0]
-        layer, layer_path = pecha.add_layer(basename, ann_type)
-        for ann in anns:
-            pecha.add_annotation(layer, ann, ann_type)
-        layer.save()
-
-        return str(layer_path.relative_to(pecha.layer_path))
