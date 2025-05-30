@@ -2,69 +2,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 from openpecha.config import get_logger
-from openpecha.exceptions import (
-    MetaDataMissingError,
-    MetaDataValidationError,
-    ParseNotReadyForThisAnnotation,
-)
+from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root import DocxRootParser
 
 logger = get_logger(__name__)
-
-
-class PechaOrgPechaMetaDataValidator:
-    def validate_metadata(self, metadata: Dict):
-        self.validate_metadata_dtype(metadata)
-        self.validate_en_title(metadata)
-        self.validate_bo_title(metadata)
-        self.validate_lang_title(metadata)
-
-    def ensure_no_forbidden_symbols(self, title: str):
-        symbols = ["-", ":", "_", ".", "/"]
-        for symbol in symbols:
-            if symbol in title:
-                logger.error(f"Title can't have symbol {symbol}")
-                raise MetaDataValidationError(f"Title can't have symbol {symbol}")
-
-    def validate_metadata_dtype(self, metadata: Dict):
-        if not isinstance(metadata, dict):
-            logger.error("Input metadata should be a dictionary")
-            raise TypeError("Input metadata should be a dictionary")
-
-    def validate_en_title(self, metadata: Dict):
-        en_title = metadata.get("title", {}).get("en", None)
-
-        if not en_title:
-            logger.error("English title is missing in metadata")
-            raise MetaDataMissingError("English title is missing in metadata")
-
-        self.ensure_no_forbidden_symbols(en_title)
-
-    def validate_bo_title(self, metadata: Dict):
-        bo_title = metadata.get("title", {}).get("bo", None)
-
-        if not bo_title:
-            logger.error("Tibetan title is missing in metadata")
-            raise MetaDataMissingError("Tibetan title is missing in metadata")
-
-        self.ensure_no_forbidden_symbols(bo_title)
-
-    def validate_lang_title(self, metadata: Dict):
-        lang = metadata.get("lang", None)
-
-        if not lang:
-            logger.error("Language is missing in metadata")
-            raise MetaDataMissingError("Language is missing in metadata")
-
-        lang_title = metadata.get("title", {}).get(lang, None)
-        if not lang_title:
-            logger.error(f"{lang} title is missing in metadata")
-            raise MetaDataMissingError(f"{lang} title is missing in metadata")
-
-        self.ensure_no_forbidden_symbols(lang_title)
 
 
 class DocxParser:
