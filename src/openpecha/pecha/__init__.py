@@ -19,7 +19,7 @@ from openpecha.ids import (
     get_layer_id,
     get_uuid,
 )
-from openpecha.pecha.annotations import AlignmentAnnotation, SegmentationAnnotation
+from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import (
     AnnotationType,
@@ -167,7 +167,7 @@ class Pecha:
     def add_annotation(
         self,
         ann_store: AnnotationStore,
-        annotation: SegmentationAnnotation | AlignmentAnnotation,
+        annotation: BaseAnnotation,
         layer_type: AnnotationType,
     ):
         """

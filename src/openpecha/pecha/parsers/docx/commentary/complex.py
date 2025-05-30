@@ -7,6 +7,7 @@ from docx.shared import RGBColor
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
+from openpecha.pecha.annotations import AlignmentAnnotation, SapcheAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType
 from openpecha.pecha.parsers import BaseParser
@@ -16,8 +17,8 @@ class DocxComplexCommentaryParser(BaseParser):
     def __init__(self, root_path: Optional[str] = None):
         self.root_path = root_path
         self.commentary_segment_splitter = "\n\n"
-        self.meaning_segment_anns: List[Dict[str, Any]] = []
-        self.sapche_anns: List[Dict[str, Any]] = []
+        self.meaning_segment_anns: List[AlignmentAnnotation] = []
+        self.sapche_anns: List[SapcheAnnotation] = []
         self.temp_state = {
             "meaning_segment": {"anns": [], "char_diff": 0},
             "sapche": {"anns": [], "char_diff": 0},
@@ -146,29 +147,28 @@ class DocxComplexCommentaryParser(BaseParser):
 
         return doc
 
-    def add_commentary_meaning_ann(self, doc: Dict[str, Any], char_count: int):
+    def add_commentary_meaning_ann(
+        self, doc: Dict[str, Any], index: int, char_count: int
+    ):
         segment = doc["text"]
         match = re.match(r"^([\d\-,]+) ", segment)
         updated_segment = segment
         if match:
-            root_idx_mapping = match.group(1)
-            segment = segment.replace(root_idx_mapping, "")
-            doc = self.update_doc(doc, len(root_idx_mapping) + 1)
+            alignment_index = match.group(1)
+            segment = segment.replace(alignment_index, "")
+            doc = self.update_doc(doc, len(alignment_index) + 1)
             updated_segment = segment.strip()
-            curr_segment_ann = {
-                AnnotationType.ALIGNMENT.value: {
-                    "start": char_count,
-                    "end": char_count + len(updated_segment),
-                },
-                "root_idx_mapping": root_idx_mapping,
-            }
+            curr_segment_ann = AlignmentAnnotation(
+                span=Span(start=char_count, end=char_count + len(updated_segment)),
+                index=index,
+                alignment_index=alignment_index,
+            )
         else:
-            curr_segment_ann = {
-                AnnotationType.ALIGNMENT.value: {
-                    "start": char_count,
-                    "end": char_count + len(segment),
-                }
-            }
+            curr_segment_ann = AlignmentAnnotation(
+                span=Span(start=char_count, end=char_count + len(segment)),
+                index=index,
+                alignment_index="",
+            )
 
         self.temp_state["meaning_segment"]["anns"].append(curr_segment_ann)  # type: ignore
         return doc
@@ -183,7 +183,7 @@ class DocxComplexCommentaryParser(BaseParser):
             str: The updated segment text after processing annotations.
         """
         inner_char_count = 0
-        sapche_anns: List[Dict[str, Any]] = []
+        sapche_anns: List[SapcheAnnotation] = []
         for doc_style in doc["styles"]:
             for idx in range(len(doc_style["texts"])):
                 if doc_style["styles"][idx].color.rgb == RGBColor(0xFF, 0x00, 0x00):
@@ -199,13 +199,10 @@ class DocxComplexCommentaryParser(BaseParser):
                         start = char_count + inner_char_count
                         end = start + len(doc_style["texts"][idx])
                         sapche_anns.append(
-                            {
-                                AnnotationType.SAPCHE.value: {
-                                    "start": start,
-                                    "end": end,
-                                },
-                                "sapche_number": sapche_number,
-                            }
+                            SapcheAnnotation(
+                                span=Span(start=start, end=end),
+                                sapche_number=sapche_number,
+                            )
                         )
                     # If the sapche number is not needed, use the following code in future
                     # else:
@@ -231,8 +228,8 @@ class DocxComplexCommentaryParser(BaseParser):
 
     @staticmethod
     def merge_anns(
-        anns: List[Dict[str, Any]], ann_layer: AnnotationType
-    ) -> List[Dict[str, Any]]:
+        anns: List[SapcheAnnotation], ann_layer: AnnotationType
+    ) -> List[SapcheAnnotation]:
         """
         Merge overlapping or consecutive sapche annotations.
         Args:
@@ -241,17 +238,17 @@ class DocxComplexCommentaryParser(BaseParser):
         Returns:
             List[Dict[str, Any]]: Merged annotations.
         """
-        formatted_anns: List[Dict[str, Any]] = []
-        last_ann: Optional[Dict[str, Any]] = None
+        formatted_anns: List[SapcheAnnotation] = []
+        last_ann: Optional[SapcheAnnotation] = None
         for ann in anns:
             if last_ann is None:
                 last_ann = ann
                 continue
-            if ann[ann_layer.value]["start"] != last_ann[ann_layer.value]["end"]:
+            if ann.span.start != last_ann.span.end:
                 formatted_anns.append(last_ann)
                 last_ann = ann
             else:
-                last_ann[ann_layer.value]["end"] = ann[ann_layer.value]["end"]
+                last_ann[ann_layer.value].span.end = ann.span.end
 
         if last_ann:
             formatted_anns.append(last_ann)
@@ -263,9 +260,7 @@ class DocxComplexCommentaryParser(BaseParser):
         """
         if self.temp_state["meaning_segment"]["anns"]:
             meaning_segment_ann = self.temp_state["meaning_segment"]["anns"][0]  # type: ignore
-            meaning_segment_ann[AnnotationType.ALIGNMENT.value][
-                "end"
-            ] -= self.temp_state["sapche"]["char_diff"]
+            meaning_segment_ann.span.end -= self.temp_state["sapche"]["char_diff"]
             self.meaning_segment_anns.append(meaning_segment_ann)
 
         self.sapche_anns.extend(self.temp_state["sapche"]["anns"])  # type: ignore
@@ -285,12 +280,12 @@ class DocxComplexCommentaryParser(BaseParser):
 
         char_count = 0
         base_texts = []
-        for doc in formatted_docs:
+        for index, doc in enumerate(formatted_docs):
             segment = doc["text"]
             if not segment:
                 continue
 
-            doc = self.add_commentary_meaning_ann(doc, char_count)
+            doc = self.add_commentary_meaning_ann(doc, index, char_count)
             updated_segment = self.add_sapche_ann(doc, char_count)
 
             self.update_ann_spans()

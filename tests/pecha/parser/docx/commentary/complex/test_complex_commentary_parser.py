@@ -59,7 +59,11 @@ class TestDocxComplexCommentaryParser(TestCase):
 
     def test_parser_on_zh_commentary(self):
         input = self.DATA_DIR / "zh/Chinese aligned Commentary Text 1.docx"
-        metadata = self.DATA_DIR / "zh/Chinese Commentary text Metadata 1.xlsx"
+
+        metadata_file_path = (
+            self.DATA_DIR / "zh/Chinese Commentary text Metadata 1.xlsx"
+        )
+        metadata = extract_metadata_from_xlsx(metadata_file_path)
 
         parser = DocxComplexCommentaryParser(
             root_path="opf_id/layers/basename/layer_file.json"

@@ -72,6 +72,10 @@ class PedurmaAnnotation(BaseAnnotation):
     note: str
 
 
+class SapcheAnnotation(BaseAnnotation):
+    sapche_number: str
+
+
 class Page(BaseAnnotation):
     page_info: Optional[str] = Field(default=None, description="page payload")
     imgnum: Optional[int] = Field(
