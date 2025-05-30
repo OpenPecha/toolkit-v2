@@ -10,7 +10,6 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType
 from openpecha.pecha.parsers import BaseParser
-from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
 class DocxComplexCommentaryParser(BaseParser):
@@ -48,7 +47,7 @@ class DocxComplexCommentaryParser(BaseParser):
     def parse(
         self,
         input: Path,
-        metadata: Dict[str, Any] | Path,
+        metadata: Dict,
         output_path: Path = PECHAS_PATH,
     ) -> Pecha:
 
@@ -56,10 +55,6 @@ class DocxComplexCommentaryParser(BaseParser):
         self.meaning_segment_anns = []
         self.base = ""
 
-        if isinstance(metadata, Path):
-            metadata = extract_metadata_from_xlsx(metadata)
-
-        assert isinstance(metadata, dict)
         metadata["root_path"] = self.root_path
         self.metadata = metadata
         self.parse_commentary(input)

@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest import TestCase
 
 from openpecha.pecha.parsers.docx.commentary.complex import DocxComplexCommentaryParser
+from openpecha.pecha.parsers.parser_utils import extract_metadata_from_xlsx
 
 
 class TestDocxComplexCommentaryParser(TestCase):
@@ -11,7 +12,11 @@ class TestDocxComplexCommentaryParser(TestCase):
 
     def test_parser_on_bo_commentary(self):
         input = self.DATA_DIR / "bo/Tibetan Commentary text test 2.docx"
-        metadata = self.DATA_DIR / "bo/Tibetan Commentary text Metadata 2.xlsx"
+
+        metadata_file_path = (
+            self.DATA_DIR / "bo/Tibetan Commentary text Metadata 2.xlsx"
+        )
+        metadata = extract_metadata_from_xlsx(metadata_file_path)
 
         parser = DocxComplexCommentaryParser(
             root_path="opf_id/layers/basename/layer_file.json"
@@ -32,7 +37,11 @@ class TestDocxComplexCommentaryParser(TestCase):
 
     def test_parser_on_en_commentary(self):
         input = self.DATA_DIR / "en/English aligned Commentary Text 2.docx"
-        metadata = self.DATA_DIR / "en/English Commentary text Metadata 2.xlsx"
+
+        metadata_file_path = (
+            self.DATA_DIR / "en/English Commentary text Metadata 2.xlsx"
+        )
+        metadata = extract_metadata_from_xlsx(metadata_file_path)
 
         parser = DocxComplexCommentaryParser(
             root_path="opf_id/layers/basename/layer_file.json"
