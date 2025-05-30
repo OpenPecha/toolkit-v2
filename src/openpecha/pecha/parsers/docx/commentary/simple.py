@@ -21,6 +21,15 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
     def __init__(self):
         self.root_alignment_index_regex = r"^([\d\-,]+)\s(.*)"
 
+    def validate_annotation_type(self, annotation_type: AnnotationType):
+        if annotation_type not in [
+            AnnotationType.SEGMENTATION,
+            AnnotationType.ALIGNMENT,
+        ]:
+            raise NotImplementedError(
+                f"Annotation type {annotation_type} is not supported to extract segmentation."
+            )
+
     def calculate_segment_coordinates(
         self, segments: Dict[str, str], annotation_type: AnnotationType
     ) -> Tuple[List[SegmentationAnnotation | AlignmentAnnotation], str]:
@@ -34,13 +43,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
             - List of dicts with start/end positions for each segment
             - Combined base text with all segments
         """
-        if annotation_type not in [
-            AnnotationType.SEGMENTATION,
-            AnnotationType.ALIGNMENT,
-        ]:
-            raise NotImplementedError(
-                f"Annotation type {annotation_type} is not supported to extract segmentation."
-            )
+        self.validate_annotation_type(annotation_type)
 
         anns = []
         base = ""

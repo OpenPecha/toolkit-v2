@@ -25,8 +25,8 @@ class DocxRootParser(DocxBaseParser):
 
         Returns:
             Tuple containing:
-            - List of an Annotation model contain start/end positions for each segment and index payload
-            - Combined base text with all segments
+            - List of SegmentationAnnotation containing position and payloads for each segment.
+            - Combined base text with all segments.
         """
         anns = []
         base = ""
