@@ -63,7 +63,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
 
         return (anns, base)
 
-    def get_segmentation_anns(
+    def extract_anns(
         self, docx_file: Path, annotation_type: AnnotationType
     ) -> Tuple[List[BaseAnnotation], str]:
         """
@@ -106,7 +106,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        anns, base = self.get_segmentation_anns(input, annotation_type)
+        anns, base = self.extract_anns(input, annotation_type)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         annotation_path = self.add_segmentation_layer(pecha, anns, annotation_type)
