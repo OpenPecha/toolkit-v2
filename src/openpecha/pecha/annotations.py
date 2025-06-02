@@ -68,6 +68,10 @@ class AlignmentAnnotation(BaseAnnotation):
     )
 
 
+class FootnoteAnnotation(BaseAnnotation):
+    note: str
+
+
 class PedurmaAnnotation(BaseAnnotation):
     note: str
 
