@@ -58,7 +58,7 @@ class TranslationSerializer:
         if layer_name is None:
             layer_name = get_layer_name(metadatas)
 
-        layer_path = pecha.get_segmentation_layer_path()
+        layer_path = pecha.get_first_layer_path()
         base_text = get_base_text(pecha, layer_path)
         annotations = self.get_annotations_from_layer(pecha, layer_path)
 

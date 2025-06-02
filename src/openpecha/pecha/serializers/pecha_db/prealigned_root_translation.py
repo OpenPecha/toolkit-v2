@@ -24,7 +24,10 @@ class PreAlignedRootTranslationSerializer:
         2.Replace newline with <br>
         """
         return [
-            "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
+            ""
+            if str(ann) == "\n"
+            else str(ann).replace("\n", "<br>").replace("\u200b", "")
+            for ann in layer
         ]
 
     def get_root_content(self, pecha: Pecha, layer_path: str):
