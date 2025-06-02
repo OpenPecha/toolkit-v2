@@ -19,3 +19,8 @@ class TestFootnoteParser(TestCase):
         anns = parser.extract_footnote(text)
 
         pass  # TODO: add test case for one page footnote
+
+
+test = TestFootnoteParser()
+test.setUp()
+test.test_parse_one_page_footnote()
