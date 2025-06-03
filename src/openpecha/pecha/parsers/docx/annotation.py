@@ -6,7 +6,7 @@ from stam import AnnotationStore
 from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path, get_anns
-from openpecha.pecha.annotations import AlignmentAnnotation, SegmentationAnnotation
+from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
@@ -24,7 +24,7 @@ class DocxAnnotationParser:
 
     def update_coords(
         self,
-        anns: List[SegmentationAnnotation | AlignmentAnnotation],
+        anns: List[BaseAnnotation],
         old_base: str,
         new_base: str,
     ):
