@@ -1,9 +1,8 @@
 import re
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, Tuple
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.annotations import FootnoteAnnotation
 from openpecha.pecha.parsers.docx.utils import read_docx
 
 
@@ -12,30 +11,31 @@ class DocxFootnoteParser:
         self.footnote_number = r"----footnote(\d+)----"
         self.footnote_content = r"footnote(\d+)\)[\t\s]+(.+)"
 
-    def get_footnote_contents(self, text: str) -> Dict[int, str]:
+    def get_footnote_contents(self, text: str) -> Tuple[str, Dict[int, str]]:
         """
         Extract and remove footnote contents from text.
         """
         matches = re.findall(self.footnote_content, text)
+        footnote_contents: Dict[int, str] = {}
 
         for match in matches:
             footnote_number = int(match[0])
             footnote_content = match[1]
             text = re.sub(self.footnote_content, "", text)
             footnote_contents[footnote_number] = footnote_content
-        return footnote_contents
+        return (text, footnote_contents)
 
-    def extract_footnote(self, text: str) -> List[FootnoteAnnotation]:
+    def get_footnote_spans(self, text: str, footnote_contents: Dict[int, str]):
         matches = re.findall(self.footnote_number, text)
+        footnote_spans: Dict[int, Tuple[int, int]] = {}
+
         for match in matches:
-            # get footnote number
             footnote_number = match.group(1)
-            # remove footnote annotation
-            text = re.sub(self.footnote_pattern, "", text)
-            # Store footnote number
-        pass
+            text = re.sub(self.footnote_number, "", text)
+            if footnote_number in footnote_contents:
+                footnote_spans[footnote_number] = (match.start(), match.end())
+        return footnote_spans
 
     def parse(self, pecha: Pecha, input: str | Path):
         text = read_docx(input)
-        anns = self.extract_footnote(text)
-        pass
+        text, footnote_contents = self.get_footnote_contents(text)  # noqa
