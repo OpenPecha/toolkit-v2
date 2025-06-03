@@ -34,20 +34,31 @@ class DocxFootnoteParser:
         matches = re.finditer(self.footnote_number, text)
         footnote_spans: Dict[int, Tuple[int, int]] = {}
 
-        diff = 0
+        offset = 0
 
         for match in matches:
             footnote_number = int(match.group(1))
             if footnote_number in footnote_contents:
-                footnote_spans[footnote_number] = (
-                    match.start() - diff,
-                    match.start() - diff,
-                )
+                start_pos = match.start() - offset
+                footnote_spans[footnote_number] = (start_pos, start_pos)
 
-            diff += match.end() - match.start()
+            offset += match.end() - match.start()
 
         text = re.sub(self.footnote_number, "", text)
         return (text, footnote_spans)
+
+    def create_footnote_annotations(
+        self,
+        footnote_spans: Dict[int, Tuple[int, int]],
+        footnote_contents: Dict[int, str],
+    ) -> List[FootnoteAnnotation]:
+        return [
+            FootnoteAnnotation(
+                span=Span(start=span[0], end=span[1]),
+                note=footnote_contents[footnote_number],
+            )
+            for footnote_number, span in footnote_spans.items()
+        ]
 
     def add_footnote_layer(
         self, pecha: Pecha, anns: List[BaseAnnotation], ann_type: AnnotationType
@@ -66,14 +77,9 @@ class DocxFootnoteParser:
         text, footnote_contents = self.get_footnote_contents(text)
         text, footnote_spans = self.get_footnote_spans(text, footnote_contents)
 
-        anns = []
-        for footnote_number, span in footnote_spans.items():
-            anns.append(
-                FootnoteAnnotation(
-                    span=Span(start=span[0], end=span[1]),
-                    note=footnote_contents[footnote_number],
-                )
-            )
+        anns: List[FootnoteAnnotation] = self.create_footnote_annotations(
+            footnote_spans, footnote_contents
+        )
 
         annotation_path: str = self.add_footnote_layer(
             pecha, anns, AnnotationType.FOOTNOTE
