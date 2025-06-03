@@ -21,20 +21,23 @@ class DocxFootnoteParser:
         for match in matches:
             footnote_number = int(match[0])
             footnote_content = match[1]
-            text = re.sub(self.footnote_content, "", text)
             footnote_contents[footnote_number] = footnote_content
+
+        text = re.sub(self.footnote_content, "", text)
         return (text, footnote_contents)
 
-    def get_footnote_spans(self, text: str, footnote_contents: Dict[int, str]):
+    def get_footnote_spans(
+        self, text: str, footnote_contents: Dict[int, str]
+    ) -> Tuple[str, Dict[int, Tuple[int, int]]]:
         matches = re.findall(self.footnote_number, text)
         footnote_spans: Dict[int, Tuple[int, int]] = {}
 
         for match in matches:
-            footnote_number = match.group(1)
+            footnote_number = int(match[0])
             text = re.sub(self.footnote_number, "", text)
             if footnote_number in footnote_contents:
                 footnote_spans[footnote_number] = (match.start(), match.end())
-        return footnote_spans
+        return (text, footnote_spans)
 
     def parse(self, pecha: Pecha, input: str | Path):
         text = read_docx(input)
