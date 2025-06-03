@@ -5,6 +5,9 @@ ann_transfer/
 zebra/
 en_transfer/
 sherab_nyingpo/
+
+main.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

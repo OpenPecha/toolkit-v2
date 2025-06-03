@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict, List
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
@@ -11,11 +12,15 @@ null = None
 
 class TestRootSerializer(TestCase):
     def setUp(self):
-        self.pecha_category = [
+        self.pecha_category: List[Dict] = [
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།", "lzh": "佛陀教法"},
+                "name": {
+                    "en": "The Buddha's Teachings",
+                    "bo": "སངས་རྒྱས་ཀྱི་བཀའ།",
+                    "lzh": "佛陀教法",
+                },
                 "parent": null,
             },
             {
@@ -27,9 +32,9 @@ class TestRootSerializer(TestCase):
         ]
 
     def test_root_pecha(self):
-        root_opf = DATA_DIR / "bo/IE60BBDE8"
+        root_opf = DATA_DIR / "bo/IBA6E9270"
         root_pecha = Pecha.from_path(root_opf)
-        ann_id = "3635/segmentation-039B.json"
+        ann_id = "EE99/segmentation-2A8C.json"
 
         serializer = RootSerializer()
         json_output = serializer.serialize(
@@ -39,14 +44,14 @@ class TestRootSerializer(TestCase):
         assert json_output == read_json(expected_json_path)
 
     def test_root_translation_pecha(self):
-        root_opf = DATA_DIR / "bo/IE60BBDE8"
-        translation_opf = DATA_DIR / "en/I62E00D78"
+        root_opf = DATA_DIR / "bo/IBA6E9270"
+        translation_opf = DATA_DIR / "en/I5003D420"
 
         root_pecha = Pecha.from_path(root_opf)
         translation_pecha = Pecha.from_path(translation_opf)
 
-        ann_id = "3635/segmentation-039B.json"
-        translation_ann_id = "D93E/alignment-0216.json"
+        ann_id = "EE99/segmentation-2A8C.json"
+        translation_ann_id = "9813/alignment-AE0B.json"
 
         serializer = RootSerializer()
         json_output = serializer.serialize(

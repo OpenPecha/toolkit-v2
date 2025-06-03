@@ -4,7 +4,7 @@ from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.exceptions import FileNotFoundError, StamAnnotationStoreLoadError
-from openpecha.pecha import Pecha
+from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.metadata import Language
 from openpecha.pecha.serializers.pecha_db.utils import (
     FormatPechaCategory,
@@ -16,17 +16,6 @@ logger = get_logger(__name__)
 
 
 class RootSerializer:
-    @staticmethod
-    def get_texts_from_layer(layer: AnnotationStore):
-        """
-        Extract texts from layer
-        1.If text is a newline, replace it with empty string
-        2.Replace newline with <br>
-        """
-        return [
-            "" if str(ann) == "\n" else str(ann).replace("\n", "<br>") for ann in layer
-        ]
-
     def get_root_content(self, pecha: Pecha, layer_path: str):
         ann_store_path = pecha.pecha_path.parent.joinpath(layer_path)
         if not ann_store_path.exists():
@@ -45,8 +34,9 @@ class RootSerializer:
                 f"[Error] Error loading annotation store from layer path: {layer_path}. {str(e)}"
             )
         else:
-            segments = self.get_texts_from_layer(segment_layer)
-            return segments
+            anns = get_anns(segment_layer)
+
+            return [ann["text"] for ann in anns]
 
     def get_translation_content(self, pecha: Pecha, layer_path: str):
         """
@@ -73,14 +63,9 @@ class RootSerializer:
             )
         else:
             segments: Dict[int, List[str]] = {}
-            for ann in translation_segment_layer:
-                ann_data = {}
-                for data in ann:
-                    ann_data[str(data.key().id())] = data.value().get()
-
-                if "root_idx_mapping" in ann_data:
-                    root_map = int(ann_data["root_idx_mapping"])
-                    segments[root_map] = [str(ann)]
+            anns = get_anns(translation_segment_layer)
+            for ann in anns:
+                segments[int(ann["alignment_index"])] = [ann["text"]]
 
             max_root_idx = max(segments.keys())
             translation_segments = []
