@@ -6,11 +6,11 @@ from stam import AnnotationStore
 from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path, get_anns
-from openpecha.pecha.annotations import AlignmentAnnotation, SegmentationAnnotation
-from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
+from openpecha.pecha.parsers.docx.footnote import DocxFootnoteParser
 from openpecha.pecha.parsers.docx.root import DocxRootParser
+from openpecha.pecha.parsers.docx.utils import update_coords
 from openpecha.pecha.pecha_types import is_root_related_pecha
 
 pecha_id = str
@@ -21,25 +21,6 @@ logger = get_logger(__name__)
 class DocxAnnotationParser:
     def __init__(self):
         pass
-
-    def update_coords(
-        self,
-        anns: List[SegmentationAnnotation | AlignmentAnnotation],
-        old_base: str,
-        new_base: str,
-    ):
-        """
-        Update the start/end coordinates of the annotations from old base to new base
-        """
-        diff_update = DiffMatchPatch(old_base, new_base)
-        for ann in anns:
-            start = ann.span.start
-            end = ann.span.end
-
-            ann.span.start = diff_update.get_updated_coord(start)
-            ann.span.end = diff_update.get_updated_coord(end)
-
-        return anns
 
     def add_annotation(
         self,
@@ -56,22 +37,30 @@ class DocxAnnotationParser:
             except ValueError:
                 raise ParseNotReadyForThisAnnotation(f"Invalid annotation type: {type}")
 
-        if type not in [AnnotationType.ALIGNMENT, AnnotationType.SEGMENTATION]:
+        if type not in [
+            AnnotationType.ALIGNMENT,
+            AnnotationType.SEGMENTATION,
+            AnnotationType.FOOTNOTE,
+        ]:
             raise ParseNotReadyForThisAnnotation(
                 f"Parser is not ready for the annotation type: {type}"
             )
 
-        # New Segmentation Layer should be updated to this existing base
         new_basename = list(pecha.bases.keys())[0]
         new_base = pecha.get_base(new_basename)
 
-        if is_root_related_pecha(metadatas):
+        if type == AnnotationType.FOOTNOTE:
+            footnote_parser = DocxFootnoteParser()
+            annotation_path = footnote_parser.parse(pecha, docx_file)
+            return (pecha, annotation_path)
+
+        elif is_root_related_pecha(metadatas):
             parser = DocxRootParser()
             anns, old_base = parser.extract_segmentation_anns(
                 docx_file, AnnotationType.SEGMENTATION
             )
 
-            updated_anns = self.update_coords(anns, old_base, new_base)
+            updated_anns = update_coords(anns, old_base, new_base)
             logger.info(f"Updated Coordinate: {updated_anns}")
 
             annotation_path = parser.add_segmentation_layer(pecha, updated_anns, type)
@@ -92,7 +81,7 @@ class DocxAnnotationParser:
                 old_base,
             ) = commentary_parser.extract_anns(docx_file, type)
 
-            updated_coords = self.update_coords(anns, old_base, new_base)
+            updated_coords = update_coords(anns, old_base, new_base)
             annotation_path = commentary_parser.add_segmentation_layer(
                 pecha, updated_coords, type
             )

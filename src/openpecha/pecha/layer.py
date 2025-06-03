@@ -23,6 +23,8 @@ class AnnotationType(str, Enum):
     SEGMENTATION = "segmentation"
     ALIGNMENT = "alignment"
 
+    FOOTNOTE = "footnote"
+
     CHAPTER = "chapter"
     PAGINATION = "pagination"
     DURCHEN = "durchen"
@@ -52,6 +54,7 @@ def get_annotation_group_type(layer_type: AnnotationType) -> AnnotationGroupType
         AnnotationType.CHAPTER,
         AnnotationType.SAPCHE,
         AnnotationType.PAGINATION,
+        AnnotationType.FOOTNOTE,
     ]:
         return AnnotationGroupType.STRUCTURE_TYPE
 
@@ -79,6 +82,7 @@ def get_annotation_collection_type(
         AnnotationType.CHAPTER,
         AnnotationType.SAPCHE,
         AnnotationType.PAGINATION,
+        AnnotationType.FOOTNOTE,
     ]:
         return AnnotationCollectionType.STRUCTURE_ANNOTATION
 

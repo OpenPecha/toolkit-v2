@@ -1,0 +1,25 @@
+{
+  "id": "I926CCA43",
+  "title": "བོད་སྐད་རིགས་པའི་རྒྱ་གར་རིགས་པ།",
+  "author": "Claude",
+  "imported": "2025-06-03T05:44:27.010514",
+  "source": "https://www.google.com",
+  "toolkit_version": "2.1.13",
+  "parser": "DocxRootParser",
+  "initial_creation_type": "google_docx",
+  "language": "bo",
+  "source_metadata": {},
+  "bases": {},
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": null,
+  "statistics": null,
+  "quality": null,
+  "last_modified": "2025-06-03T05:44:27.010508"
+}
