@@ -53,7 +53,7 @@ class RootSerializer:
             )
 
         try:
-            translation_segment_layer = AnnotationStore(file=ann_store_path.as_posix())
+            layer = AnnotationStore(file=ann_store_path.as_posix())
         except Exception as e:
             logger.error(
                 f"Unable to load annotation store from layer path: {ann_store_path}. {str(e)}"
@@ -63,19 +63,19 @@ class RootSerializer:
             )
         else:
             segments: Dict[int, List[str]] = {}
-            anns = get_anns(translation_segment_layer)
+            anns = get_anns(layer)
             for ann in anns:
                 segments[int(ann["alignment_index"])] = [ann["text"]]
 
-            max_root_idx = max(segments.keys())
-            translation_segments = []
-            for root_idx in range(1, max_root_idx + 1):
-                if root_idx in segments:
-                    translation_segments.append("".join(segments[root_idx]))
+            max_idx = max(segments.keys())
+            content = []
+            for idx in range(1, max_idx + 1):
+                if idx in segments:
+                    content.append("".join(segments[idx]))
                 else:
-                    translation_segments.append("")
+                    content.append("")
 
-            return translation_segments
+            return content
 
     def serialize(
         self,
