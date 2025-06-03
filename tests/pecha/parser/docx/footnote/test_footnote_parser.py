@@ -1,6 +1,7 @@
 from pathlib import Path
 from unittest import TestCase
 
+from openpecha.pecha.annotations import FootnoteAnnotation, Span
 from openpecha.pecha.parsers.docx.footnote import DocxFootnoteParser
 from openpecha.pecha.parsers.docx.utils import read_docx
 
@@ -44,4 +45,19 @@ class TestFootnoteParser(TestCase):
             text_without_footnote_spans, expected_text_without_footnote_spans
         )
 
-        # Test Create Pecha
+        # Test Create Footnote Annotations
+        annotations = parser.create_footnote_annotations(
+            expected_footnote_spans, expected_footnote_contents
+        )
+        expected_annotations = [
+            FootnoteAnnotation(
+                span=Span(start=24, end=24), note=expected_footnote_contents[0]
+            ),
+            FootnoteAnnotation(
+                span=Span(start=39, end=39), note=expected_footnote_contents[1]
+            ),
+            FootnoteAnnotation(
+                span=Span(start=76, end=76), note=expected_footnote_contents[2]
+            ),
+        ]
+        self.assertEqual(annotations, expected_annotations)
