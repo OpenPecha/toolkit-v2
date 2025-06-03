@@ -5,7 +5,7 @@ from typing import Dict, List, Tuple
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import BaseAnnotation, FootnoteAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.parsers.docx.utils import read_docx
+from openpecha.pecha.parsers.docx.utils import read_docx, update_coords
 
 
 class DocxFootnoteParser:
@@ -80,6 +80,9 @@ class DocxFootnoteParser:
         anns: List[FootnoteAnnotation] = self.create_footnote_annotations(
             footnote_spans, footnote_contents
         )
+
+        new_base = pecha.get_base(list(pecha.bases.keys())[0])
+        anns = update_coords(anns, text, new_base)
 
         annotation_path: str = self.add_footnote_layer(
             pecha, anns, AnnotationType.FOOTNOTE
