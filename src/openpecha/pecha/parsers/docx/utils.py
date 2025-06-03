@@ -1,11 +1,13 @@
 import re
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from docx2python import docx2python
 
 from openpecha.config import get_logger
 from openpecha.exceptions import EmptyFileError
+from openpecha.pecha.annotations import BaseAnnotation
+from openpecha.pecha.blupdate import DiffMatchPatch
 
 logger = get_logger(__name__)
 
@@ -99,3 +101,22 @@ def extract_numbered_list(docx_file: str | Path) -> Dict[str, str]:
     logger.info(f"Numbered List extracted from the docx file: {res}")
 
     return res
+
+
+def update_coords(
+    anns: List[BaseAnnotation],
+    old_base: str,
+    new_base: str,
+):
+    """
+    Update the start/end coordinates of the annotations from old base to new base
+    """
+    diff_update = DiffMatchPatch(old_base, new_base)
+    for ann in anns:
+        start = ann.span.start
+        end = ann.span.end
+
+        ann.span.start = diff_update.get_updated_coord(start)
+        ann.span.end = diff_update.get_updated_coord(end)
+
+    return anns

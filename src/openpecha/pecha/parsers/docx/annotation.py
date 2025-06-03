@@ -6,11 +6,10 @@ from stam import AnnotationStore
 from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path, get_anns
-from openpecha.pecha.annotations import BaseAnnotation
-from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.root import DocxRootParser
+from openpecha.pecha.parsers.docx.utils import update_coords
 from openpecha.pecha.pecha_types import is_root_related_pecha
 
 pecha_id = str
@@ -21,25 +20,6 @@ logger = get_logger(__name__)
 class DocxAnnotationParser:
     def __init__(self):
         pass
-
-    def update_coords(
-        self,
-        anns: List[BaseAnnotation],
-        old_base: str,
-        new_base: str,
-    ):
-        """
-        Update the start/end coordinates of the annotations from old base to new base
-        """
-        diff_update = DiffMatchPatch(old_base, new_base)
-        for ann in anns:
-            start = ann.span.start
-            end = ann.span.end
-
-            ann.span.start = diff_update.get_updated_coord(start)
-            ann.span.end = diff_update.get_updated_coord(end)
-
-        return anns
 
     def add_annotation(
         self,
@@ -71,7 +51,7 @@ class DocxAnnotationParser:
                 docx_file, AnnotationType.SEGMENTATION
             )
 
-            updated_anns = self.update_coords(anns, old_base, new_base)
+            updated_anns = update_coords(anns, old_base, new_base)
             logger.info(f"Updated Coordinate: {updated_anns}")
 
             annotation_path = parser.add_segmentation_layer(pecha, updated_anns, type)
@@ -92,7 +72,7 @@ class DocxAnnotationParser:
                 old_base,
             ) = commentary_parser.extract_anns(docx_file, type)
 
-            updated_coords = self.update_coords(anns, old_base, new_base)
+            updated_coords = update_coords(anns, old_base, new_base)
             annotation_path = commentary_parser.add_segmentation_layer(
                 pecha, updated_coords, type
             )
