@@ -8,6 +8,7 @@ from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path, get_anns
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
+from openpecha.pecha.parsers.docx.footnote import DocxFootnoteParser
 from openpecha.pecha.parsers.docx.root import DocxRootParser
 from openpecha.pecha.parsers.docx.utils import update_coords
 from openpecha.pecha.pecha_types import is_root_related_pecha
@@ -36,16 +37,24 @@ class DocxAnnotationParser:
             except ValueError:
                 raise ParseNotReadyForThisAnnotation(f"Invalid annotation type: {type}")
 
-        if type not in [AnnotationType.ALIGNMENT, AnnotationType.SEGMENTATION]:
+        if type not in [
+            AnnotationType.ALIGNMENT,
+            AnnotationType.SEGMENTATION,
+            AnnotationType.FOOTNOTE,
+        ]:
             raise ParseNotReadyForThisAnnotation(
                 f"Parser is not ready for the annotation type: {type}"
             )
 
-        # New Segmentation Layer should be updated to this existing base
         new_basename = list(pecha.bases.keys())[0]
         new_base = pecha.get_base(new_basename)
 
-        if is_root_related_pecha(metadatas):
+        if type == AnnotationType.FOOTNOTE:
+            footnote_parser = DocxFootnoteParser()
+            annotation_path = footnote_parser.parse(pecha, docx_file)
+            return (pecha, annotation_path)
+
+        elif is_root_related_pecha(metadatas):
             parser = DocxRootParser()
             anns, old_base = parser.extract_segmentation_anns(
                 docx_file, AnnotationType.SEGMENTATION
