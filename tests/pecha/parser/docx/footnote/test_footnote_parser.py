@@ -43,3 +43,5 @@ class TestFootnoteParser(TestCase):
         self.assertEqual(
             text_without_footnote_spans, expected_text_without_footnote_spans
         )
+
+        # Test Create Pecha
