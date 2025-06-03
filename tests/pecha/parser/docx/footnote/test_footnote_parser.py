@@ -126,13 +126,13 @@ class TestFootnoteParser(TestCase):
                 "note": "《瑜伽師地論》中《本地分》菩薩地之菩薩戒品。",
                 "structure_type": "footnote",
                 "text": "",
-                "Span": {"start": 13, "end": 13},
+                "Span": {"start": 24, "end": 24},
             },
             {
                 "note": "《菩薩地戒品》說:「云何菩薩自性戒?謂若略說具四功德，當知是名菩薩自性戒。何等為四?一、從他正受。二、善淨意樂。三、犯已還淨。四、深敬專念無有違犯。」",
                 "structure_type": "footnote",
                 "text": "",
-                "Span": {"start": 26, "end": 26},
+                "Span": {"start": 53, "end": 53},
             },
         ]
         self.assertEqual(anns, expected_anns)
