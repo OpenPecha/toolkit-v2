@@ -34,5 +34,12 @@ class TestFootnoteParser(TestCase):
         )
 
         # Test GET FOOTNOTE SPANS
-        # text_without_footnote_spans, footnote_spans = parser.get_footnote_spans(expected_text_without_footnote_content, footnote_contents)
-        # pass
+        text_without_footnote_spans, footnote_spans = parser.get_footnote_spans(
+            expected_text_without_footnote_content, footnote_contents
+        )
+        expected_footnote_spans = {0: (24, 24), 1: (39, 39), 2: (76, 76)}
+        expected_text_without_footnote_spans = "1)\t \n\n2)\t 菩薩戒品釋\n\n3)\t 功德光論師造\n\n4)\t 解說菩薩戒品。\n\n5)\t 頂禮一切佛菩薩！\n\n6)\t 問：「云何所說『具四功德自性尸羅，應知即是妙善（淨戒）』？」\n\n7)\t 依彼而言，說「能利自（他）」等文。\n\n8)\t 其中「利益」謂善行。\n\n9)\t 「安樂」謂無惱害。\n\n10)\t 「哀憫」，謂如以諸善及無惱害行哀憫對方。\n\n11)\t 「義利」謂希求義利及具有義利，凡所有欲求及無罪。\n\n12)\t 「利益安樂故」謂住於善及無惱害行。\n\n13)\t 「人」謂刹帝利等，彼等中多數，由於佛陀出世、善說正法、善建立僧伽，當成極多利益、安樂。\n\n14)\t 彼等亦由利益、安樂自己後，而哀憫世間，\n\n15)\t 彼等於他人作如是念：「（他們）具足利益安樂，復何妙哉！」\n\n16)\t 他人亦作是念：「我等亦得如是，亦何其妙哉！」\n\n17)\t 是故，說「令得義利、利益、安樂故。」\n\n18)\t 「諸人天等」謂不能通達及成辦彼等之義利故。\n\n\n\n\n\n"
+        self.assertEqual(footnote_spans, expected_footnote_spans)
+        self.assertEqual(
+            text_without_footnote_spans, expected_text_without_footnote_spans
+        )

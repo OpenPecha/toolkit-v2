@@ -29,14 +29,22 @@ class DocxFootnoteParser:
     def get_footnote_spans(
         self, text: str, footnote_contents: Dict[int, str]
     ) -> Tuple[str, Dict[int, Tuple[int, int]]]:
-        matches = re.findall(self.footnote_number, text)
+        matches = re.finditer(self.footnote_number, text)
         footnote_spans: Dict[int, Tuple[int, int]] = {}
 
+        diff = 0
+
         for match in matches:
-            footnote_number = int(match[0])
-            text = re.sub(self.footnote_number, "", text)
+            footnote_number = int(match.group(1))
             if footnote_number in footnote_contents:
-                footnote_spans[footnote_number] = (match.start(), match.end())
+                footnote_spans[footnote_number] = (
+                    match.start() - diff,
+                    match.start() - diff,
+                )
+
+            diff += match.end() - match.start()
+
+        text = re.sub(self.footnote_number, "", text)
         return (text, footnote_spans)
 
     def parse(self, pecha: Pecha, input: str | Path):
