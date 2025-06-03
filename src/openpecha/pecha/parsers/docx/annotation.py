@@ -56,9 +56,7 @@ class DocxAnnotationParser:
 
         elif is_root_related_pecha(metadatas):
             parser = DocxRootParser()
-            anns, old_base = parser.extract_segmentation_anns(
-                docx_file, AnnotationType.SEGMENTATION
-            )
+            anns, old_base = parser.extract_anns(docx_file, AnnotationType.SEGMENTATION)
 
             updated_anns = update_coords(anns, old_base, new_base)
             logger.info(f"Updated Coordinate: {updated_anns}")

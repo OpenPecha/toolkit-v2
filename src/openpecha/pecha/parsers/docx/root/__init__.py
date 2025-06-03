@@ -5,7 +5,12 @@ from typing import Dict, List, Tuple
 from openpecha.config import PECHAS_PATH, get_logger
 from openpecha.exceptions import FileNotFoundError, MetaDataValidationError
 from openpecha.pecha import Pecha, annotation_path
-from openpecha.pecha.annotations import SegmentationAnnotation, Span
+from openpecha.pecha.annotations import (
+    AlignmentAnnotation,
+    BaseAnnotation,
+    SegmentationAnnotation,
+    Span,
+)
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType, PechaMetaData
 from openpecha.pecha.parsers import DocxBaseParser
@@ -16,29 +21,61 @@ logger = get_logger(__name__)
 
 class DocxRootParser(DocxBaseParser):
     def extract_segmentation_anns(
-        self, docx_file: Path, annotation_type: AnnotationType
+        self, numbered_text: Dict[str, str]
     ) -> Tuple[List[SegmentationAnnotation], str]:
+        """
+        Extract text from docx and calculate coordinates for segments.
+        """
+        anns = []
+        base = ""
+        char_count = 0
+
+        for index, segment in numbered_text.items():
+            anns.append(
+                SegmentationAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
+                )
+            )
+            base += f"{segment}\n"
+            char_count += len(segment) + 1
+
+        return (anns, base)
+
+    def extract_alignment_anns(self, numbered_text: Dict[str, str]):
+        """
+        Extract text from docx and calculate coordinates for segments.
+        """
+        anns = []
+        base = ""
+        char_count = 0
+
+        for index, segment in numbered_text.items():
+            anns.append(
+                AlignmentAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
+                    alignment_index=index,
+                )
+            )
+            base += f"{segment}\n"
+            char_count += len(segment) + 1
+
+        return (anns, base)
+
+    def extract_anns(
+        self, docx_file: Path, annotation_type: AnnotationType
+    ) -> Tuple[List[BaseAnnotation], str]:
         """
         Extract text from docx and calculate coordinates for segments.
         """
         numbered_text = extract_numbered_list(docx_file)
 
         if annotation_type == AnnotationType.SEGMENTATION:
-            anns = []
-            base = ""
-            char_count = 0
+            return self.extract_segmentation_anns(numbered_text)
 
-            for index, segment in numbered_text.items():
-                anns.append(
-                    SegmentationAnnotation(
-                        span=Span(start=char_count, end=char_count + len(segment)),
-                        index=index,
-                    )
-                )
-                base += f"{segment}\n"
-                char_count += len(segment) + 1
-
-            return (anns, base)
+        elif annotation_type == AnnotationType.ALIGNMENT:
+            return self.extract_alignment_anns(numbered_text)
 
         else:
             raise NotImplementedError(
@@ -69,7 +106,8 @@ class DocxRootParser(DocxBaseParser):
 
         output_path.mkdir(parents=True, exist_ok=True)
 
-        anns, base = self.extract_segmentation_anns(input, annotation_type)
+        # anns, base = self.extract_segmentation_anns(input, annotation_type)
+        anns, base = self.extract_anns(input, annotation_type)
 
         pecha = self.create_pecha(base, output_path, metadata, pecha_id)
         annotation_path = self.add_segmentation_layer(pecha, anns, annotation_type)
