@@ -34,7 +34,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
             self.root_pecha.id: self.root_pecha_annotations,
             self.root_translation_pecha.id: self.root_translation_pecha_annotations,
         }
-        annotation_path = "D93E/alignment-0216.json"
+        annotation_path = "9813/alignment-AE0B.json"
 
         assert (
             get_pecha_type(pechas, metadatas, annotations, annotation_path)

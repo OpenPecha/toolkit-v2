@@ -61,7 +61,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha.id: self.root_pecha_annotations,
             self.root_translation_pecha.id: self.root_translation_pecha_annotations,
         }
-        annotation_path = "D93E/alignment-0216.json"
+        annotation_path = "9813/alignment-AE0B.json"
         root_ann_path = "B8B3/segmentation-74F4.json"
 
         serializer = Serializer()
