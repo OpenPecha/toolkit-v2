@@ -25,14 +25,18 @@ class TestSimpleCommentarySerializer(TestCase):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "Entering the Middle Way", "bo": "དབུ་མ་ལ་འཇུག་པ།", "lzh": "入中论"},
+                "name": {
+                    "en": "Entering the Middle Way",
+                    "bo": "དབུ་མ་ལ་འཇུག་པ།",
+                    "lzh": "入中论",
+                },
                 "parent": "madhyamaka",
             },
         ]
 
     def test_bo_commentary_serializer(self):
-        pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
-        annotation_path = "E949/alignment-2F29.json"
+        pecha = Pecha.from_path(DATA_DIR / "bo/IDD1DF976")
+        annotation_path = "1DFE/alignment-ADAA.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
@@ -45,11 +49,11 @@ class TestSimpleCommentarySerializer(TestCase):
         assert serialized_json == expected_serialized_json
 
     def test_en_commentary_serializer(self):
-        pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
-        translation_pecha = Pecha.from_path(DATA_DIR / "en/I94DBDA91")
+        pecha = Pecha.from_path(DATA_DIR / "bo/IDD1DF976")
+        translation_pecha = Pecha.from_path(DATA_DIR / "en/ICFCF1CDC")
 
-        annotation_path = "E949/alignment-2F29.json"
-        translation_ann_path = "FD22/alignment-599A.json"
+        annotation_path = "1DFE/alignment-ADAA.json"
+        translation_ann_path = "EB60/alignment-6786.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
@@ -65,11 +69,11 @@ class TestSimpleCommentarySerializer(TestCase):
         assert serialized_json == expected_serialized_json
 
     def test_zh_commentary_serializer(self):
-        pecha = Pecha.from_path(DATA_DIR / "bo/I6944984E")
-        translation_pecha = Pecha.from_path(DATA_DIR / "zh/I9A60B88D")
+        pecha = Pecha.from_path(DATA_DIR / "bo/IDD1DF976")
+        translation_pecha = Pecha.from_path(DATA_DIR / "zh/IC5697AEF")
 
-        annotation_path = "E949/alignment-2F29.json"
-        translation_ann_path = "B97E/alignment-22A8.json"
+        annotation_path = "1DFE/alignment-ADAA.json"
+        translation_ann_path = "2AC8/alignment-F721.json"
 
         serializer = SimpleCommentarySerializer()
         serialized_json = serializer.serialize(
