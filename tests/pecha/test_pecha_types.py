@@ -74,7 +74,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
             self.commentary_pecha.id: self.commentary_pecha_annotations,
             self.commentary_translation_pecha.id: self.commentary_translation_pecha_annotations,
         }
-        annotation_path = "FD22/alignment-599A.json"
+        annotation_path = "EB60/alignment-6786.json"
         assert (
             get_pecha_type(pechas, metadatas, annotations, annotation_path)
             == PechaType.commentary_translation_pecha
