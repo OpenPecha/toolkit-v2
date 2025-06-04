@@ -124,7 +124,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.commentary_pecha.id: self.commentary_pecha_annotations,
             self.commentary_translation_pecha.id: self.commentary_translation_pecha_annotations,
         }
-        translation_ann_path = "FD22/alignment-599A.json"
+        translation_ann_path = "EB60/alignment-6786.json"
         annotation_path = "BEC3/alignment-90C0.json"
 
         serializer = Serializer()

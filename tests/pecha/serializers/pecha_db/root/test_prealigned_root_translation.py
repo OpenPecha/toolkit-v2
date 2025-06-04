@@ -16,9 +16,6 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         self.DATA_DIR = Path("tests/alignment/translation_transfer/data")
         self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/I15C4AA72")
         self.translation_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/pecha_db/root/data/translation/I4FA57826")
-        )
-        self.translation_pecha_with_display = Pecha.from_path(
             self.DATA_DIR / "translation/I4FA57826"
         )
 
@@ -26,7 +23,11 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
             {
                 "description": null,
                 "short_description": null,
-                "name": {"en": "The Buddha's Teachings", "bo": "སངས་རྒྱས་ཀྱི་བཀའ།", "lzh": "佛陀教法"},
+                "name": {
+                    "en": "The Buddha's Teachings",
+                    "bo": "སངས་རྒྱས་ཀྱི་བཀའ།",
+                    "lzh": "佛陀教法",
+                },
                 "parent": null,
             },
             {
@@ -63,7 +64,7 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         serialized_json = serializer.serialize(
             self.root_pecha,
             root_alignment_id,
-            self.translation_pecha_with_display,
+            self.translation_pecha,
             translation_alignment_id,
             self.pecha_category,
             translation_display_id,

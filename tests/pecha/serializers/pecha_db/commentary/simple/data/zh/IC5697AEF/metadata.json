@@ -1,18 +1,19 @@
 {
-  "id": "I94DBDA91",
+  "id": "IC5697AEF",
   "title": {
     "bo": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡ ནས་ ༦༤",
-    "en": "Illuminating the Intent Chapter 6, verses 1 to 64"
+    "en": "Illuminating the Intent Chapter 6, verses 1 to 64",
+    "zh": "《解深密经》第六品，第一至六十四偈"
   },
   "author": {
     "en": "DPO and Claude-3-5-sonnet-20241022"
   },
-  "imported": "2025-02-14T06:58:57.516526",
+  "imported": "2025-06-04T09:52:34.034969",
   "source": "https://library.bdrc.io/",
-  "toolkit_version": "0.0.1",
+  "toolkit_version": "2.1.13",
   "parser": "DocxSimpleCommentaryParser",
   "initial_creation_type": "google_docx",
-  "language": "en",
+  "language": "zh",
   "source_metadata": {
     "translation_of": "I6944984E"
   },
@@ -22,5 +23,11 @@
     "notice": "",
     "info_url": null
   },
-  "licence": "Unknown"
+  "licence": "Unknown",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": null,
+  "statistics": null,
+  "quality": null,
+  "last_modified": "2025-06-04T09:52:34.034966"
 }

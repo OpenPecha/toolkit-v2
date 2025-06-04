@@ -23,7 +23,7 @@ class SharedPechaSetup:
             "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
         )
         self.commentary_translation_pecha_path = Path(
-            "tests/pecha/serializers/pecha_db/commentary/simple/data/en/I94DBDA91"
+            "tests/pecha/serializers/pecha_db/commentary/simple/data/en/ICFCF1CDC"
         )
         self.prealigned_commentary_translation_pecha_path = Path(
             "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/I8A645565"
@@ -114,10 +114,10 @@ class SharedPechaSetup:
         )
         self.commentary_translation_pecha_annotations = [
             AnnotationModel(
-                pecha_id="I94DBDA91",
+                pecha_id="ICFCF1CDC",
                 type=AnnotationType.ALIGNMENT,
                 document_id="d4",
-                path="FD22/alignment-599A.json",
+                path="EB60/alignment-6786.json",
                 title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤  commentary",
                 aligned_to=PechaAlignment(
                     pecha_id="I6944984E", alignment_id="BEC3/alignment-90C0.json"

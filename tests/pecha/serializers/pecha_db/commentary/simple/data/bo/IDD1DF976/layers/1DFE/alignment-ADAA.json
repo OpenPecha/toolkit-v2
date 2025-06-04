@@ -1,11 +1,11 @@
 {
   "@type": "AnnotationStore",
-  "@id": "I94DBDA91",
+  "@id": "IDD1DF976",
   "resources": [
     {
       "@type": "TextResource",
-      "@id": "FD22",
-      "@include": "../../base/FD22.txt"
+      "@id": "1DFE",
+      "@include": "../../base/1DFE.txt"
     }
   ],
   "annotationsets": [
@@ -15,7 +15,11 @@
       "keys": [
         {
           "@type": "DataKey",
-          "@id": "root_idx_mapping"
+          "@id": "index"
+        },
+        {
+          "@type": "DataKey",
+          "@id": "alignment_index"
         },
         {
           "@type": "DataKey",
@@ -25,8 +29,17 @@
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "E2A2AC5A",
-          "key": "root_idx_mapping",
+          "@id": "BB9134F5FF",
+          "key": "index",
+          "value": {
+            "@type": "Int",
+            "value": 1
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "E02088441E",
+          "key": "alignment_index",
           "value": {
             "@type": "String",
             "value": "1"
@@ -34,7 +47,7 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "B2453F14",
+          "@id": "56480C82D6",
           "key": "segmentation_type",
           "value": {
             "@type": "String",
@@ -43,8 +56,17 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "5F3F47EE",
-          "key": "root_idx_mapping",
+          "@id": "847EB025C3",
+          "key": "index",
+          "value": {
+            "@type": "Int",
+            "value": 2
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "472A68B746",
+          "key": "alignment_index",
           "value": {
             "@type": "String",
             "value": "2"
@@ -52,8 +74,17 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "22814C43",
-          "key": "root_idx_mapping",
+          "@id": "47E68D5E04",
+          "key": "index",
+          "value": {
+            "@type": "Int",
+            "value": 3
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "F5D445355B",
+          "key": "alignment_index",
           "value": {
             "@type": "String",
             "value": "3"
@@ -61,8 +92,17 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "B4E45E64",
-          "key": "root_idx_mapping",
+          "@id": "75B0088109",
+          "key": "index",
+          "value": {
+            "@type": "Int",
+            "value": 4
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "94A565165E",
+          "key": "alignment_index",
           "value": {
             "@type": "String",
             "value": "4"
@@ -70,8 +110,17 @@
         },
         {
           "@type": "AnnotationData",
-          "@id": "AC2FF79B",
-          "key": "root_idx_mapping",
+          "@id": "50C4EDBCB2",
+          "key": "index",
+          "value": {
+            "@type": "Int",
+            "value": 5
+          }
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "92C466696E",
+          "key": "alignment_index",
           "value": {
             "@type": "String",
             "value": "5"
@@ -83,10 +132,10 @@
   "annotations": [
     {
       "@type": "Annotation",
-      "@id": "!A0",
+      "@id": "87DA8D888F",
       "target": {
         "@type": "TextSelector",
-        "resource": "FD22",
+        "resource": "1DFE",
         "offset": {
           "@type": "Offset",
           "begin": {
@@ -95,143 +144,168 @@
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 111
+            "value": 48
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "E2A2AC5A",
+          "@id": "BB9134F5FF",
           "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
-          "@id": "B2453F14",
+          "@id": "E02088441E",
+          "set": "segmentation_annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "56480C82D6",
           "set": "segmentation_annotation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "!A1",
+      "@id": "747EFAF1CC",
       "target": {
         "@type": "TextSelector",
-        "resource": "FD22",
+        "resource": "1DFE",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 111
+            "value": 49
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 339
+            "value": 207
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "5F3F47EE",
+          "@id": "847EB025C3",
           "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
-          "@id": "B2453F14",
+          "@id": "472A68B746",
+          "set": "segmentation_annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "56480C82D6",
           "set": "segmentation_annotation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "!A2",
+      "@id": "C7057A0654",
       "target": {
         "@type": "TextSelector",
-        "resource": "FD22",
+        "resource": "1DFE",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 339
+            "value": 208
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 560
+            "value": 360
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "22814C43",
+          "@id": "47E68D5E04",
           "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
-          "@id": "B2453F14",
+          "@id": "F5D445355B",
+          "set": "segmentation_annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "56480C82D6",
           "set": "segmentation_annotation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "!A3",
+      "@id": "0C189B9E31",
       "target": {
         "@type": "TextSelector",
-        "resource": "FD22",
+        "resource": "1DFE",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 560
+            "value": 361
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 751
+            "value": 507
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "B4E45E64",
+          "@id": "75B0088109",
           "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
-          "@id": "B2453F14",
+          "@id": "94A565165E",
+          "set": "segmentation_annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "56480C82D6",
           "set": "segmentation_annotation"
         }
       ]
     },
     {
       "@type": "Annotation",
-      "@id": "!A4",
+      "@id": "DC263213A1",
       "target": {
         "@type": "TextSelector",
-        "resource": "FD22",
+        "resource": "1DFE",
         "offset": {
           "@type": "Offset",
           "begin": {
             "@type": "BeginAlignedCursor",
-            "value": 751
+            "value": 508
           },
           "end": {
             "@type": "BeginAlignedCursor",
-            "value": 953
+            "value": 674
           }
         }
       },
       "data": [
         {
           "@type": "AnnotationData",
-          "@id": "AC2FF79B",
+          "@id": "50C4EDBCB2",
           "set": "segmentation_annotation"
         },
         {
           "@type": "AnnotationData",
-          "@id": "B2453F14",
+          "@id": "92C466696E",
+          "set": "segmentation_annotation"
+        },
+        {
+          "@type": "AnnotationData",
+          "@id": "56480C82D6",
           "set": "segmentation_annotation"
         }
       ]
