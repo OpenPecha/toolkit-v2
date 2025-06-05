@@ -10,12 +10,12 @@ DATA_DIR = Path(__file__).parent / "data"
 
 class TestTranslationAlignmentTransfer(TestCase):
     def setUp(self):
-        self.root_pecha = Pecha.from_path(DATA_DIR / "root/I15C4AA72")
-        self.translation_pecha = Pecha.from_path(DATA_DIR / "translation/I4FA57826")
+        self.root_pecha = Pecha.from_path(DATA_DIR / "root/I2B2E5268")
+        self.translation_pecha = Pecha.from_path(DATA_DIR / "translation/I5B9200FF")
 
     def test_get_root_pechas_mapping(self):
 
-        root_alignment_id = "A340/alignment-CCF1.json"
+        root_alignment_id = "44AC/alignment-148C.json"
         translation_transfer = TranslationAlignmentTransfer()
         mapping = translation_transfer.get_root_pechas_mapping(
             self.root_pecha, root_alignment_id
@@ -28,9 +28,10 @@ class TestTranslationAlignmentTransfer(TestCase):
             5: [5],
             6: [5],
             7: [6],
-            8: [7, 8],
-            9: [9],
-            10: [10],
+            8: [7],
+            9: [8],
+            10: [9],
+            11: [10],
         }
         assert mapping == expected_mapping
 
