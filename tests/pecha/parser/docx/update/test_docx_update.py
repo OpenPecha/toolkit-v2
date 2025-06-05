@@ -24,7 +24,7 @@ class TestDocxAnnotationUpdate(TestCase, SharedPechaSetup):
 
     def test_root_pecha(self):
         updater = DocxAnnotationUpdate()
-        annotation_path = "B8B3/segmentation-74F4.json"
+        annotation_path = "B5FE/segmentation-4FD1.json"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/root_display_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation 1.docx"
         )
