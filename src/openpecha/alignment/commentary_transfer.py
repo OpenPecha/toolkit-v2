@@ -67,14 +67,14 @@ class CommentaryAlignmentTransfer:
 
         def extract_idx(ann: dict) -> int:
             """Helper to extract a single int index from root_idx_mapping."""
-            if "-" in ann["root_idx_mapping"] or "," in ann["root_idx_mapping"]:
+            if "-" in ann["alignment_index"] or "," in ann["alignment_index"]:
                 idx = self.get_first_valid_root_idx(ann)
                 if idx is None:
                     raise ValueError(
-                        f"Invalid root_idx_mapping: {ann['root_idx_mapping']}"
+                        f"Invalid root_idx_mapping: {ann['alignment_index']}"
                     )
                 return idx
-            return int(ann["root_idx_mapping"])
+            return int(ann["alignment_index"])
 
         def is_match(src_start, src_end, tgt_start, tgt_end):
             """Helper to check if spans overlap or are contained (not edge overlap)."""
@@ -88,17 +88,26 @@ class CommentaryAlignmentTransfer:
         mapping: Dict[int, List[int]] = {}
         src_anns = get_anns(src_layer, include_span=True)
         tgt_anns = get_anns(tgt_layer, include_span=True)
+
         for src_ann in src_anns:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
             try:
-                src_idx = extract_idx(src_ann)
+                src_idx = (
+                    extract_idx(src_ann)
+                    if src_ann["segmentation_type"] == "alignment"
+                    else int(src_ann["index"])
+                )
             except ValueError:
                 continue
             mapping[src_idx] = []
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
                 try:
-                    tgt_idx = extract_idx(tgt_ann)
+                    tgt_idx = (
+                        extract_idx(tgt_ann)
+                        if tgt_ann["segmentation_type"] == "alignment"
+                        else int(tgt_ann["index"])
+                    )
                 except ValueError:
                     continue
                 if is_match(src_start, src_end, tgt_start, tgt_end):

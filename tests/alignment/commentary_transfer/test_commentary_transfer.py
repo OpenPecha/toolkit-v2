@@ -9,11 +9,11 @@ from openpecha.utils import read_json
 class TestCommentaryAlignmentTransfer(TestCase):
     def setUp(self):
         self.DATA_DIR = Path(__file__).parent / "data"
-        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/IA6E66F92")
+        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/I6556B464")
         self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "commentary/I77BD6EA9")
 
     def test_get_root_pechas_mapping(self):
-        root_alignment_id = "B8B3/alignment-F81A.json"
+        root_alignment_id = "B5FE/alignment-6707.json"
         serializer = CommentaryAlignmentTransfer()
         mapping = serializer.get_root_pechas_mapping(self.root_pecha, root_alignment_id)
         expected_mapping = {
