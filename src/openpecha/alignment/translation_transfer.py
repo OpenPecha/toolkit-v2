@@ -34,11 +34,19 @@ class TranslationAlignmentTransfer:
 
         for src_ann in src_anns:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
-            src_idx = int(src_ann["root_idx_mapping"])
+            src_idx = (
+                int(src_ann["alignment_index"])
+                if src_ann["segmentation_type"] == "alignment"
+                else int(src_ann["index"])
+            )
             map[src_idx] = []
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
-                tgt_idx = int(tgt_ann["root_idx_mapping"])
+                tgt_idx = (
+                    int(tgt_ann["alignment_index"])
+                    if tgt_ann["segmentation_type"] == "alignment"
+                    else int(tgt_ann["index"])
+                )
 
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end
@@ -106,7 +114,7 @@ class TranslationAlignmentTransfer:
         # Root segmentation idx and Root Translation Alignment Text mapping
         map: Dict[int, List[str]] = {}
         for ann in anns:
-            aligned_idx = int(ann["root_idx_mapping"])
+            aligned_idx = int(ann["alignment_index"])
             text = ann["text"]
             if not root_map.get(aligned_idx):
                 continue
@@ -138,7 +146,7 @@ class TranslationAlignmentTransfer:
         map: Dict[int, List[str]] = {}
         for ann in anns:
             text = ann["text"]
-            idx = int(ann["root_idx_mapping"])
+            idx = int(ann["index"])
 
             aligned_idx = translation_map[idx][0]
             root_segmentation_idx = root_map[aligned_idx][0]

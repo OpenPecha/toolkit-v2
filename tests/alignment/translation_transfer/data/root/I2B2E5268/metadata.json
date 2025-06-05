@@ -1,5 +1,5 @@
 {
-  "id": "I4FA57826",
+  "id": "I2B2E5268",
   "title": {
     "BO": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
     "EN": "Illuminating the Intent Chapter 6, verses 1 to 64"
@@ -8,16 +8,15 @@
     "BO": "ཙོང་ཁ་པ་བློ་བཟང་གྲགས་པ།",
     "EN": "Tsongkhapa Lobzang Drakpa"
   },
-  "imported": "2025-02-03T06:50:58.218004",
+  "imported": "2025-06-04T11:11:17.380001",
   "source": "http://purl.bdrc.io/resource/WA1NLM688",
-  "toolkit_version": "0.0.1",
-  "parser": "DocxManualNumRootParser",
+  "toolkit_version": "2.1.13",
+  "parser": "DocxRootParser",
   "initial_creation_type": "google_docx",
-  "language": "en",
+  "language": "bo",
   "source_metadata": {
     "title_short": {
-      "BO": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
-      "EN": "Illuminating the Intent Chapter 6, verses 1 to 64"
+      "BO": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤"
     },
     "title_long_clean": {
       "BO": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤"
@@ -26,19 +25,17 @@
       "BO": "དབུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤"
     }
   },
-  "bases": {
-      "AC0A": {
-        "source_metadata": {
-          "total_segments": 10
-        },
-        "base_file": "AC0A.txt"
-      }
-    }
-  ,
+  "bases": {},
   "copyright": {
     "status": "Unknown",
     "notice": "",
     "info_url": null
   },
-  "licence": "Unknown"
+  "licence": "Unknown",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": null,
+  "statistics": null,
+  "quality": null,
+  "last_modified": "2025-06-04T11:11:17.379998"
 }

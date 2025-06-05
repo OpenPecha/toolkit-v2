@@ -14,9 +14,9 @@ null = None
 class TestPreAlignedRootTranslationSerializer(TestCase):
     def setUp(self):
         self.DATA_DIR = Path("tests/alignment/translation_transfer/data")
-        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/I15C4AA72")
+        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/I2B2E5268")
         self.translation_pecha = Pecha.from_path(
-            self.DATA_DIR / "translation/I4FA57826"
+            self.DATA_DIR / "translation/I9248F287"
         )
 
         self.pecha_category: List[Dict] = [
@@ -39,8 +39,8 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         ]
 
     def test_prealigned_root_translation_pecha(self):
-        root_alignment_id = "A340/alignment-CCF1.json"
-        translation_alignment_id = "AC0A/alignment-9048.json"
+        root_alignment_id = "44AC/alignment-148C.json"
+        translation_alignment_id = "BE59/alignment-044E.json"
 
         serializer = PreAlignedRootTranslationSerializer()
         serialized_json = serializer.serialize(
@@ -56,9 +56,9 @@ class TestPreAlignedRootTranslationSerializer(TestCase):
         assert read_json(expected_json) == serialized_json
 
     def test_prealigned_root_translation_pecha_with_display(self):
-        root_alignment_id = "A340/alignment-CCF1.json"
-        translation_alignment_id = "AC0A/alignment-9048.json"
-        translation_display_id = "AC0A/segmentation-E0A6.json"
+        root_alignment_id = "44AC/alignment-148C.json"
+        translation_alignment_id = "BE59/alignment-044E.json"
+        translation_display_id = "BE59/segmentation-60A8.json"
 
         serializer = PreAlignedRootTranslationSerializer()
         serialized_json = serializer.serialize(
