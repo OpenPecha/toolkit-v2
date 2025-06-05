@@ -76,9 +76,9 @@ class TestTranslationAlignmentTransfer(TestCase):
         assert serialized_json == expected_serialized_json
 
     def test_get_serialized_translation_segmentation(self):
-        root_alignment_id = "A340/alignment-CCF1.json"
-        translation_alignment_id = "AC0A/alignment-9048.json"
-        translation_segmentation_id = "AC0A/segmentation-E0A6.json"
+        root_alignment_id = "44AC/alignment-148C.json"
+        translation_alignment_id = "BE59/alignment-044E.json"
+        translation_segmentation_id = "BE59/segmentation-60A8.json"
 
         translation_transfer = TranslationAlignmentTransfer()
         serialized_json = translation_transfer.get_serialized_translation_segmentation(

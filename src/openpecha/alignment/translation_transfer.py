@@ -146,7 +146,7 @@ class TranslationAlignmentTransfer:
         map: Dict[int, List[str]] = {}
         for ann in anns:
             text = ann["text"]
-            idx = int(ann["root_idx_mapping"])
+            idx = int(ann["index"])
 
             aligned_idx = translation_map[idx][0]
             root_segmentation_idx = root_map[aligned_idx][0]
