@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict, List
 from unittest import TestCase, mock
 
 from openpecha.pecha.serializers.pecha_db.commentary.prealigned_commentary import (
@@ -20,7 +21,7 @@ class TestPreAlignedCommentarySerializer(TestCase, SharedPechaSetup):
         )
 
         # Create the patcher and set return_value
-        self.pecha_category = [
+        self.pecha_category: List[Dict] = [
             {
                 "description": null,
                 "short_description": null,
@@ -47,8 +48,8 @@ class TestPreAlignedCommentarySerializer(TestCase, SharedPechaSetup):
             self.expected_serialized_commentary
         )
 
-        root_alignment_id = "B8B3/Alignment-F81A.json"
-        commentary_alignment_id = "BEC3/Alignment-90C0.json"
+        root_alignment_id = "B5FE/alignment-6707.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
 
         serializer = PreAlignedCommentarySerializer()
         serialized_json = serializer.serialize(
