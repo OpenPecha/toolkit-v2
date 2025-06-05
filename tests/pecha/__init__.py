@@ -14,13 +14,13 @@ class DummyMetadataModel:
 class SharedPechaSetup:
     def setup_pechas(self):
         self.root_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/root/IA6E66F92"
+            "tests/alignment/commentary_transfer/data/root/I6556B464"
         )
         self.root_translation_pecha_path = Path(
             "tests/pecha/serializers/pecha_db/root/data/en/I5003D420"
         )
         self.commentary_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/commentary/I77BD6EA9"
+            "tests/alignment/commentary_transfer/data/commentary/I015AFFA7"
         )
         self.commentary_translation_pecha_path = Path(
             "tests/pecha/serializers/pecha_db/commentary/simple/data/en/ICFCF1CDC"
@@ -48,18 +48,18 @@ class SharedPechaSetup:
         )
         self.root_pecha_annotations = [
             AnnotationModel(
-                pecha_id="IA6E66F92",
+                pecha_id="I6556B464",
                 type=AnnotationType.SEGMENTATION,
                 document_id="d2",
-                path="B8B3/segmentation-74F4.json",
+                path="B5FE/segmentation-4FD1.json",
                 title="དབུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ segmentation",
                 aligned_to=None,
             ),
             AnnotationModel(
-                pecha_id="IA6E66F92",
+                pecha_id="I6556B464",
                 type=AnnotationType.ALIGNMENT,
                 document_id="d2",
-                path="B8B3/alignment-74F4.json",
+                path="B5FE/alignment-6707.json",
                 title="དབུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ alignment",
                 aligned_to=None,
             ),
@@ -94,10 +94,10 @@ class SharedPechaSetup:
         )
         self.commentary_pecha_annotations = [
             AnnotationModel(
-                pecha_id="I6944984E",
+                pecha_id="I015AFFA7",
                 type=AnnotationType.ALIGNMENT,
                 document_id="d4",
-                path="BEC3/alignment-90C0.json",
+                path="B014/alignment-2127.json",
                 title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ commentary",
                 aligned_to=PechaAlignment(
                     pecha_id="IE60BBDE8", alignment_id="B8B3/segmentation-74F4.json"
@@ -120,7 +120,7 @@ class SharedPechaSetup:
                 path="EB60/alignment-6786.json",
                 title="དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤  commentary",
                 aligned_to=PechaAlignment(
-                    pecha_id="I6944984E", alignment_id="BEC3/alignment-90C0.json"
+                    pecha_id="I015AFFA7", alignment_id="B014/alignment-2127.json"
                 ),
             )
         ]
