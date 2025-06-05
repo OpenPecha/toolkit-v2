@@ -89,7 +89,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha.id: self.root_pecha_annotations,
             self.commentary_pecha.id: self.commentary_pecha_annotations,
         }
-        annotation_path = "BEC3/alignment-90C0.json"
+        annotation_path = "B014/alignment-2127.json"
 
         serializer = Serializer()
         serializer.serialize(
@@ -125,7 +125,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.commentary_translation_pecha.id: self.commentary_translation_pecha_annotations,
         }
         translation_ann_path = "EB60/alignment-6786.json"
-        annotation_path = "BEC3/alignment-90C0.json"
+        annotation_path = "B014/alignment-2127.json"
 
         serializer = Serializer()
         serializer.serialize(
