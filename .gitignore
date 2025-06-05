@@ -7,6 +7,7 @@ en_transfer/
 sherab_nyingpo/
 add.py
 main.py
+temp.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
