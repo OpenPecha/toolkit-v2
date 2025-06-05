@@ -53,7 +53,7 @@ class TestDocxAnnotationUpdate(TestCase, SharedPechaSetup):
 
     def test_commentary_pecha(self):
         updater = DocxAnnotationUpdate()
-        annotation_path = "BEC3/alignment-90C0.json"
+        annotation_path = "B014/alignment-2127.json"
         docx_file = Path(
             "tests/pecha/parser/docx/annotation/data/commentary_pecha/དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ _commentary segmentation 1.docx"
         )
