@@ -34,11 +34,19 @@ class TranslationAlignmentTransfer:
 
         for src_ann in src_anns:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
-            src_idx = int(src_ann["alignment_index"])
+            src_idx = (
+                int(src_ann["alignment_index"])
+                if src_ann["segmentation_type"] == "alignment"
+                else int(src_ann["index"])
+            )
             map[src_idx] = []
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
-                tgt_idx = int(tgt_ann["index"])
+                tgt_idx = (
+                    int(tgt_ann["alignment_index"])
+                    if tgt_ann["segmentation_type"] == "alignment"
+                    else int(tgt_ann["index"])
+                )
 
                 is_overlap = (
                     src_start <= tgt_start < src_end or src_start < tgt_end <= src_end

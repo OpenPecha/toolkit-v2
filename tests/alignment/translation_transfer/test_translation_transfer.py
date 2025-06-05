@@ -36,8 +36,8 @@ class TestTranslationAlignmentTransfer(TestCase):
         assert mapping == expected_mapping
 
     def test_get_translation_pechas_mapping(self):
-        translation_alignment_id = "AC0A/alignment-9048.json"
-        translation_segmentation_id = "AC0A/segmentation-E0A6.json"
+        translation_alignment_id = "9048/alignment-4D77.json"
+        translation_segmentation_id = "9048/segmentation-9EFE.json"
 
         translation_transfer = TranslationAlignmentTransfer()
         mapping = translation_transfer.get_translation_pechas_mapping(
@@ -46,14 +46,16 @@ class TestTranslationAlignmentTransfer(TestCase):
             translation_segmentation_id,
         )
         expected_mapping = {
-            1: [1, 2],
-            2: [3],
-            3: [4, 5],
-            4: [6],
-            5: [7],
-            6: [8],
-            7: [9],
-            8: [10],
+            1: [1],
+            2: [2],
+            3: [3],
+            4: [4],
+            5: [5],
+            6: [6],
+            7: [7],
+            8: [8],
+            9: [9],
+            10: [10],
         }
         assert mapping == expected_mapping
 
