@@ -36,7 +36,7 @@ def parse_root_mapping(mapping: str) -> List[int]:
 class CommentaryAlignmentTransfer:
     @staticmethod
     def get_first_valid_root_idx(ann) -> int | None:
-        indices = parse_root_mapping(ann["root_idx_mapping"])
+        indices = parse_root_mapping(ann["alignment_index"])
         return indices[0] if indices else None
 
     @staticmethod
@@ -55,7 +55,7 @@ class CommentaryAlignmentTransfer:
         """
         Return a dict mapping root_idx_mapping to the annotation dict.
         """
-        return {int(ann["root_idx_mapping"]): ann for ann in anns}
+        return {int(ann["index"]): ann for ann in anns}
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
@@ -71,7 +71,7 @@ class CommentaryAlignmentTransfer:
                 idx = self.get_first_valid_root_idx(ann)
                 if idx is None:
                     raise ValueError(
-                        f"Invalid root_idx_mapping: {ann['alignment_index']}"
+                        f"Invalid alignment_index: {ann['alignment_index']}"
                     )
                 return idx
             return int(ann["alignment_index"])

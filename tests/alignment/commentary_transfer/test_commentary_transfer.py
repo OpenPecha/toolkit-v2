@@ -55,8 +55,8 @@ class TestCommentaryAlignmentTransfer(TestCase):
         assert mapping == expected_mapping
 
     def test_get_serialized_commentary(self):
-        root_alignment_id = "B8B3/alignment-F81A.json"
-        commentary_alignment_id = "BEC3/alignment-90C0.json"
+        root_alignment_id = "B5FE/alignment-6707.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
 
         serializer = CommentaryAlignmentTransfer()
         serialized_json = serializer.get_serialized_commentary(
