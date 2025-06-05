@@ -1,17 +1,16 @@
 {
-  "id": "I300F947F",
+  "id": "IF5944957",
   "title": {
-    "en":"PreAligned Commentary Translation Title",
-    "bo":"དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ།",
-    "lzh": "《解深密经》第六品，第一至六十四偈"
+    "en": "PreAligned Commentary Translation Title",
+    "bo": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ།"
   },
   "author": "Claude",
-  "imported": "2025-05-19T05:00:22.489176",
+  "imported": "2025-06-05T06:27:00.432753",
   "source": "Claude",
-  "toolkit_version": "2.1.10",
+  "toolkit_version": "2.1.13",
   "parser": "DocxSimpleCommentaryParser",
   "initial_creation_type": "google_docx",
-  "language": "lzh",
+  "language": "en",
   "source_metadata": {},
   "bases": {},
   "copyright": {
@@ -25,5 +24,5 @@
   "ocr_import_info": null,
   "statistics": null,
   "quality": null,
-  "last_modified": "2025-05-19T05:00:22.489173"
+  "last_modified": "2025-06-05T06:27:00.432751"
 }
