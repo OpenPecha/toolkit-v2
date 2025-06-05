@@ -63,7 +63,7 @@ class TestTranslationAlignmentTransfer(TestCase):
 
     def test_get_serialized_translation_alignment(self):
         root_alignment_id = "44AC/alignment-148C.json"
-        translation_alignment_id = "9048/alignment-4D77.json"
+        translation_alignment_id = "BE59/alignment-044E.json"
 
         translation_transfer = TranslationAlignmentTransfer()
         serialized_json = translation_transfer.get_serialized_translation_alignment(
