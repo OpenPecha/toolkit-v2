@@ -70,9 +70,9 @@ class TestCommentaryAlignmentTransfer(TestCase):
         assert serialized_json == expected_json
 
     def test_get_serialized_commentary_segmentation(self):
-        root_alignment_id = "B8B3/alignment-F81A.json"
-        commentary_alignment_id = "BEC3/alignment-90C0.json"
-        commentary_segmentation_id = "BEC3/segmentation-0C09.json"
+        root_alignment_id = "B5FE/alignment-6707.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
+        commentary_segmentation_id = "B014/segmentation-33FC.json"
 
         serializer = CommentaryAlignmentTransfer()
         serialized_json = serializer.get_serialized_commentary_segmentation(

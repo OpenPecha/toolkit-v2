@@ -201,11 +201,11 @@ class CommentaryAlignmentTransfer:
                 if is_empty(text):
                     continue
 
-                if not commentary_map[int(ann["root_idx_mapping"])]:
+                if not commentary_map[int(ann["index"])]:
                     res.append(text)
                     continue
 
-                aligned_idx = commentary_map[int(ann["root_idx_mapping"])][0]
+                aligned_idx = commentary_map[int(ann["index"])][0]
                 if not self.is_valid_ann(root_anns, aligned_idx):
                     res.append(text)
                     continue
