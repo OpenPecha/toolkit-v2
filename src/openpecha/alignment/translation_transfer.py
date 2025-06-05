@@ -114,7 +114,7 @@ class TranslationAlignmentTransfer:
         # Root segmentation idx and Root Translation Alignment Text mapping
         map: Dict[int, List[str]] = {}
         for ann in anns:
-            aligned_idx = int(ann["root_idx_mapping"])
+            aligned_idx = int(ann["alignment_index"])
             text = ann["text"]
             if not root_map.get(aligned_idx):
                 continue

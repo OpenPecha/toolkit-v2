@@ -1,5 +1,5 @@
 {
-  "id": "I5B9200FF",
+  "id": "I9248F287",
   "title": {
     "BO": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
     "EN": "Illuminating the Intent Chapter 6, verses 1 to 64"
@@ -8,7 +8,7 @@
     "BO": "ཙོང་ཁ་པ་བློ་བཟང་གྲགས་པ།",
     "EN": "Tsongkhapa Lobzang Drakpa"
   },
-  "imported": "2025-06-04T11:28:12.053817",
+  "imported": "2025-06-05T04:11:03.779463",
   "source": "http://purl.bdrc.io/resource/WA1NLM688",
   "toolkit_version": "2.1.13",
   "parser": "DocxRootParser",
@@ -38,5 +38,5 @@
   "ocr_import_info": null,
   "statistics": null,
   "quality": null,
-  "last_modified": "2025-06-04T11:28:12.053814"
+  "last_modified": "2025-06-05T04:11:03.779460"
 }
