@@ -43,7 +43,7 @@ class TestFodianSerializerHandler(TestCase, SharedPechaSetup):
         ]
 
         self.lzh_root_pecha = Pecha.from_path(
-            Path("tests/pecha/serializers/serializer_handler/data/lzh_root/ID0CDF467")
+            Path("tests/pecha/serializers/serializer_handler/data/lzh_root/IC0482640")
         )
 
     def test_root_pecha(self):
