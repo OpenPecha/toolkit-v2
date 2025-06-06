@@ -233,7 +233,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.prealigned_commentary_translation_pecha.id: self.prealigned_commentary_translation_pecha_annotations,
         }
 
-        annotation_path = "757D/alignment-C2B5.json"
+        annotation_path = "0DCE/alignment-8B56.json"
         root_alignment_path = "B8B3/alignment-F81A.json"
         commentary_alignment_id = "E949/alignment-2F29.json"
 
