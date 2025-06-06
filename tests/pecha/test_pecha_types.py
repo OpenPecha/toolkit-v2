@@ -51,7 +51,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
             self.root_pecha.id: self.root_pecha_annotations,
             self.commentary_pecha.id: self.commentary_pecha_annotations,
         }
-        annotation_path = "BEC3/alignment-90C0.json"
+        annotation_path = "B014/alignment-2127.json"
 
         assert (
             get_pecha_type(pechas, metadatas, annotations, annotation_path)
@@ -128,7 +128,7 @@ class TestPechaType(TestCase, SharedPechaSetup):
             self.commentary_pecha.id: self.prealigned_commentary_pecha_annotations,
             self.prealigned_commentary_translation_pecha.id: self.prealigned_commentary_translation_pecha_annotations,
         }
-        annotation_path = "757D/alignment-C2B5.json"
+        annotation_path = "0DCE/alignment-8B56.json"
         assert (
             get_pecha_type(pechas, metadatas, annotations, annotation_path)
             == PechaType.prealigned_commentary_translation_pecha

@@ -1,0 +1,31 @@
+{
+  "id": "IC0482640",
+  "title": {
+    "lzh": "《明解密意》第六品 第一至六十四頌",
+    "bo": "དགོངས་པ་རབ་གསལ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤",
+    "en": "Illuminating the Intent Chapter 6, verses 1 to 64"
+  },
+  "author": "Claude",
+  "imported": "2025-06-06T04:45:03.126560",
+  "source": null,
+  "toolkit_version": "2.1.13",
+  "parser": "DocxRootParser",
+  "initial_creation_type": "google_docx",
+  "language": "lzh",
+  "source_metadata": {
+    "translation_of": "IA6E66F92"
+  },
+  "bases": {},
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": null,
+  "statistics": null,
+  "quality": null,
+  "last_modified": "2025-06-06T04:45:03.126556"
+}

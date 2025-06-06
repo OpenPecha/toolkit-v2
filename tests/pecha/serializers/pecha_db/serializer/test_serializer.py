@@ -89,7 +89,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.root_pecha.id: self.root_pecha_annotations,
             self.commentary_pecha.id: self.commentary_pecha_annotations,
         }
-        annotation_path = "BEC3/alignment-90C0.json"
+        annotation_path = "B014/alignment-2127.json"
 
         serializer = Serializer()
         serializer.serialize(
@@ -125,7 +125,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.commentary_translation_pecha.id: self.commentary_translation_pecha_annotations,
         }
         translation_ann_path = "EB60/alignment-6786.json"
-        annotation_path = "BEC3/alignment-90C0.json"
+        annotation_path = "B014/alignment-2127.json"
 
         serializer = Serializer()
         serializer.serialize(
@@ -233,7 +233,7 @@ class TestSerializer(TestCase, SharedPechaSetup):
             self.prealigned_commentary_translation_pecha.id: self.prealigned_commentary_translation_pecha_annotations,
         }
 
-        annotation_path = "757D/alignment-C2B5.json"
+        annotation_path = "0DCE/alignment-8B56.json"
         root_alignment_path = "B8B3/alignment-F81A.json"
         commentary_alignment_id = "E949/alignment-2F29.json"
 

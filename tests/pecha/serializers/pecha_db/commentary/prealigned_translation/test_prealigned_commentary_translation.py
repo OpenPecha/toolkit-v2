@@ -39,13 +39,13 @@ class TestPreAlignedCommentaryTranslationSerializer(TestCase, SharedPechaSetup):
 
         translation_pecha = Pecha.from_path(
             Path(
-                "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/I8A645565"
+                "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/IF5944957"
             )
         )
 
-        root_alignment_id = "B8B3/alignment-F81A.json"
-        commentary_alignment_id = "BEC3/alignment-90C0.json"
-        translation_alignment_id = "757D/alignment-C2B5.json"
+        root_alignment_id = "B5FE/segmentation-4FD1.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
+        translation_alignment_id = "0DCE/alignment-8B56.json"
 
         serialized = serializer.serialize(
             self.root_pecha,
@@ -69,13 +69,13 @@ class TestPreAlignedCommentaryTranslationSerializer(TestCase, SharedPechaSetup):
 
         translation_pecha = Pecha.from_path(
             Path(
-                "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/lzh/I300F947F"
+                "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/lzh/IAE3E5BE4"
             )
         )
 
-        root_alignment_id = "B8B3/alignment-F81A.json"
-        commentary_alignment_id = "BEC3/alignment-90C0.json"
-        translation_alignment_id = "1EAC/alignment-6368.json"
+        root_alignment_id = "B5FE/segmentation-4FD1.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
+        translation_alignment_id = "7A44/alignment-E02B.json"
 
         serialized = serializer.serialize(
             self.root_pecha,

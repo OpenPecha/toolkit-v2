@@ -9,11 +9,11 @@ from openpecha.utils import read_json
 class TestCommentaryAlignmentTransfer(TestCase):
     def setUp(self):
         self.DATA_DIR = Path(__file__).parent / "data"
-        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/IA6E66F92")
-        self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "commentary/I77BD6EA9")
+        self.root_pecha = Pecha.from_path(self.DATA_DIR / "root/I6556B464")
+        self.commentary_pecha = Pecha.from_path(self.DATA_DIR / "commentary/I015AFFA7")
 
     def test_get_root_pechas_mapping(self):
-        root_alignment_id = "B8B3/alignment-F81A.json"
+        root_alignment_id = "B5FE/alignment-6707.json"
         serializer = CommentaryAlignmentTransfer()
         mapping = serializer.get_root_pechas_mapping(self.root_pecha, root_alignment_id)
         expected_mapping = {
@@ -31,17 +31,17 @@ class TestCommentaryAlignmentTransfer(TestCase):
         assert mapping == expected_mapping
 
     def test_get_commentary_pechas_mapping(self):
-        commentary_alignment_id = "BEC3/alignment-90C0.json"
-        commentary_segmentation_id = "BEC3/segmentation-0C09.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
+        commentary_segmentation_id = "B014/segmentation-33FC.json"
 
         serializer = CommentaryAlignmentTransfer()
         mapping = serializer.get_commentary_pechas_mapping(
             self.commentary_pecha, commentary_alignment_id, commentary_segmentation_id
         )
         expected_mapping = {
-            1: [2],
+            1: [1],
             2: [2],
-            3: [2],
+            3: [3],
             4: [4],
             5: [5],
             6: [5],
@@ -55,8 +55,8 @@ class TestCommentaryAlignmentTransfer(TestCase):
         assert mapping == expected_mapping
 
     def test_get_serialized_commentary(self):
-        root_alignment_id = "B8B3/alignment-F81A.json"
-        commentary_alignment_id = "BEC3/alignment-90C0.json"
+        root_alignment_id = "B5FE/alignment-6707.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
 
         serializer = CommentaryAlignmentTransfer()
         serialized_json = serializer.get_serialized_commentary(
@@ -70,9 +70,9 @@ class TestCommentaryAlignmentTransfer(TestCase):
         assert serialized_json == expected_json
 
     def test_get_serialized_commentary_segmentation(self):
-        root_alignment_id = "B8B3/alignment-F81A.json"
-        commentary_alignment_id = "BEC3/alignment-90C0.json"
-        commentary_segmentation_id = "BEC3/segmentation-0C09.json"
+        root_alignment_id = "B5FE/alignment-6707.json"
+        commentary_alignment_id = "B014/alignment-2127.json"
+        commentary_segmentation_id = "B014/segmentation-33FC.json"
 
         serializer = CommentaryAlignmentTransfer()
         serialized_json = serializer.get_serialized_commentary_segmentation(
