@@ -30,7 +30,7 @@ pecha, annotation_path = parser.parse(
 ```
 
 ### II. Load Pecha
-You can load an existing Pecha either from a local path or by its ID (if stored remotely):
+You can load an existing Pecha either from a local path after downloading from the openpecha backend:
 
 ```python
 from openpecha.pecha import Pecha
@@ -39,8 +39,6 @@ from pathlib import Path
 # Load from local path
 pecha = Pecha.from_path(Path("/path/to/pecha"))
 
-# Load from remote (GitHub) by ID
-pecha = Pecha.from_id("I12345678")
 ```
 
 ### III. Pecha Attributes
