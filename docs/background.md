@@ -1,22 +1,18 @@
 
 # Background 
 
-This toolkit is dedicated to storing and managing Tibetan Buddhist texts, their
-translations, and essential annotations. The platform ensures efficient data retrieval, catering to
-both educational purposes and AI model training. By preserving and organizing these sacred texts,
-we aim to facilitate deeper learning and research, promoting a broader understanding of Tibetan
-Buddhist teachings.
-
-
-
-### Annotations 
-In our context, annotations are metadata that provide additional information about the text. Annotations can be of various types, such as: Segment Annotations, Page Annotations, Line Annotations, and more. Annotations are stored in a separate file from the text, allowing for easy access and modification.
-
-### Pecha
-A Pecha is a traditional Tibetan book format that consists of loose-leaf pages stacked between two wooden boards and wrapped in cloth. The Pecha format is used to store and read Tibetan Buddhist texts. In our context, a Pecha is a collection of texts and their annotations.
-
-### Alignment 
-Alignment is the process of matching the text of a translation with the original text. This process is essential for creating parallel texts, which are used for translation and language learning. The matching can be done for translation, commnetary, or any other type of text mapping.
+This toolkit is designed for storing and managing Tibetan Buddhist texts and essential annotations. It ensures efficient data retrieval to support both educational use and AI model training. By preserving and organizing these sacred texts, our goal is to promote deeper learning and research, thereby fostering a broader understanding of Tibetan Buddhist teachings.
 
 ### STAM 
-STAM stands for Stand-off Text Annotation Model. It is a data model for stand-off text annotation, where all information related to a text is represented as annotations. STAM is used to store annotations in a structured format, making it easy to manage and access the annotations.We have decided to use STAM as the data model for our annotations as it align with our goal and satisfy our needs.
+STAM stands for Stand-off Text Annotation Model. It is a data model in which all information related to a text is represented as separate annotations. STAM allows annotations to be stored in a structured and flexible format, making them easy to manage, access, and update. We have chosen STAM as the annotation model for this toolkit because it aligns with our goals and meets our requirements.
+
+### Pecha
+Traditionally, Pecha refers to a Tibetan book format consisting of loose-leaf pages stacked between two wooden boards and wrapped in cloth. In this toolkit, however, we define Pecha as a data model used to store and manage Tibetan Buddhist texts and their annotations. In our context, a Pecha represents a collection of texts along with their corresponding annotations.
+
+### Annotations 
+Annotations provide additional information about the text. They are stored separately from the main text to allow for easier access, management, and modification. Various types of annotations are supported, including: Segmentation, Alignment, Pagination, Footnotes and more.These annotations enrich the text and enable advanced use cases like linguistic analysis, translation, and research.
+
+
+### Alignment 
+Alignment refers to mapping relationships between two or more texts. This process is crucial for creating parallel texts, which are widely used in translation, commentary analysis, and language learning. Alignments help link corresponding sections across different versions or types of texts—whether it's between a root text and its translation, a commentary, or other related materials.
+
