@@ -44,11 +44,12 @@ pecha = Pecha.from_path(Path("/path/to/pecha"))
 ### III. Pecha Attributes
 A `Pecha` object exposes several useful attributes:
 
-- `pecha.id`: The Pecha's unique ID
+- `pecha.id`: The Pecha's unique ID, generated from 8 digits UUID
 - `pecha.pecha_path`: Filesystem path to the Pecha
 - `pecha.metadata`: Metadata object (see below)
 - `pecha.bases`: Dictionary of base file names to text
 - `pecha.layers`: Dictionary of annotation layers
+
 
 ### IV. Metadata
 Each Pecha has a `metadata` attribute, which is a `PechaMetaData` object. Example fields include:
@@ -62,7 +63,7 @@ Each Pecha has a `metadata` attribute, which is a `PechaMetaData` object. Exampl
 - `source_metadata`: Additional source info
 - `copyright`, `licence`, etc.
 
-You can update metadata using:
+You can update metadata by passing a dictionary:
 
 ```python
 pecha.set_metadata({
