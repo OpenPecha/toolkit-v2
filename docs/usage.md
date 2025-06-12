@@ -14,17 +14,18 @@ output_path = Path("./output")
 pecha = Pecha.create(output_path)
 ```
 
-Or, to create a Pecha from a DOCX file with segmentation:
+Or, to create a Pecha after parsing:
 
 ```python
-from openpecha.pecha.parsers.docx import DocxParser
+from openpecha.pecha.parsers.docx.root import DocxRootParser
 from openpecha.pecha.layer import AnnotationType
 
-parser = DocxParser()
+parser = DocxRootParser()
 pecha, annotation_path = parser.parse(
-    docx_file="/path/to/file.docx",
+    input="/path/to/file.docx",
     annotation_type=AnnotationType.SEGMENTATION,
-    metadatas=[{"title": {"en": "Sample Title"}, "language": "bo"}],
+    metadata={"title": {"en": "Sample Title"}, "language": "bo"},
+    output_path=Path("/output_path/")
 )
 ```
 

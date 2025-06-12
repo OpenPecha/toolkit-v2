@@ -71,11 +71,6 @@ To see Usage Guide, see the [Usage Guide](docs/usage.md).
 - **Annotation**: A stand-off annotation (e.g., segment, page, language) defined by a span and optional metadata.
 - **STAM**: The underlying model for stand-off annotation, enabling flexible, interoperable text annotation.
 
----
-
-
----
-
 
 ---
 
