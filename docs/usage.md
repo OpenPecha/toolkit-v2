@@ -119,5 +119,94 @@ for ann in anns:
     print(ann)
 ```
 
+### VII. Alignment Transfer
+
+Alignment transfer allows you to map and serialize aligned segments between a root text and a commentary or translation Pecha. This is useful for exporting how commentary or translation segments correspond to the root text.
+
+#### Commentary Alignment Transfer
+
+To transfer alignment from a root Pecha to a commentary Pecha:
+
+```python
+from openpecha.pecha import Pecha
+from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
+
+# Load the root and commentary Pechas
+root_pecha = Pecha.from_path("/path/to/root_pecha")
+commentary_pecha = Pecha.from_path("/path/to/commentary_pecha")
+
+# Specify the alignment layer IDs (relative to the layer directory)
+root_alignment_id = "B5FE/alignment-6707.json"
+commentary_alignment_id = "B014/alignment-2127.json"
+
+# Get the transferred commentary segments as a list of strings
+transfer = CommentaryAlignmentTransfer()
+aligned_commentary = transfer.get_serialized_commentary(
+    root_pecha,
+    root_alignment_id,
+    commentary_pecha,
+    commentary_alignment_id,
+)
+
+for segment in aligned_commentary:
+    print(segment)
+```
+
+If your commentary Pecha also has a segmentation layer, you can use:
+
+```python
+commentary_segmentation_id = "B014/segmentation-33FC.json"
+aligned_commentary = transfer.get_serialized_commentary_segmentation(
+    root_pecha,
+    root_alignment_id,
+    commentary_pecha,
+    commentary_alignment_id,
+    commentary_segmentation_id,
+)
+```
+
+#### Translation Alignment Transfer
+
+For translation alignment transfer, use the `TranslationAlignmentTransfer` class:
+
+```python
+from openpecha.pecha import Pecha
+from openpecha.alignment.translation_transfer import TranslationAlignmentTransfer
+
+root_pecha = Pecha.from_path("/path/to/root_pecha")
+translation_pecha = Pecha.from_path("/path/to/translation_pecha")
+
+root_alignment_id = "B5FE/alignment-6707.json"
+translation_alignment_id = "B014/alignment-2127.json"
+
+transfer = TranslationAlignmentTransfer()
+aligned_translation = transfer.get_serialized_translation_alignment(
+    root_pecha,
+    root_alignment_id,
+    translation_pecha,
+    translation_alignment_id,
+)
+
+for segment in aligned_translation:
+    print(segment)
+```
+
+If your translation Pecha also has a segmentation layer, use:
+
+```python
+translation_segmentation_id = "B014/segmentation-33FC.json"
+aligned_translation = transfer.get_serialized_translation_segmentation(
+    root_pecha,
+    root_alignment_id,
+    translation_pecha,
+    translation_alignment_id,
+    translation_segmentation_id,
+)
+```
+
+#### Notes
+
+- The alignment and segmentation layer IDs are typically found in the `layers` directory of each Pecha.
+- The output is a list of strings, each representing a segment in the commentary or translation, aligned to the root text.
 
 
