@@ -6,12 +6,12 @@
 
 <h3 align="center">Toolkit V2</h3>
 
-A Python package for working with stand-off text annotations in the [OpenPecha](https://openpecha.org) framework, built around the Stand-off Text Annotation Model (STAM). Toolkit V2 enables robust management, transformation, and serialization of annotated textual corpora, especially for Tibetan and related digital humanities projects.
+A Python package for working with stand-off text annotations in the [OpenPecha](https://openpecha.org) framework, built around the Stand-off Text Annotation Model (STAM). Toolkit V2 features robust parsing, transformation, and serialization of annotated buddhist textual corpora.
 
 ---
 
 ## Table of Contents
-- [Description](#description)
+- [Introduction](#introduction)
 - [Installation](#installation)
 - [Quickstart](#quickstart)
 - [Key Concepts](#key-concepts)
@@ -22,7 +22,7 @@ A Python package for working with stand-off text annotations in the [OpenPecha](
 
 ---
 
-## Description
+## Introduction
 
 **Toolkit V2** is the next-generation Python toolkit for managing annotated texts in the OpenPecha ecosystem. It provides:
 - Tools for creating, editing, and serializing annotated corpora using the STAM model.
