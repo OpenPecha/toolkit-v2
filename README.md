@@ -14,6 +14,7 @@ A Python package for working with stand-off text annotations in the [OpenPecha](
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Quickstart](#quickstart)
+- [Usage Guide](#Usage-Guide)
 - [Key Concepts](#key-concepts)
 - [Diving Deeper](#diving-deeper)
 - [Contributing](#contributing)
@@ -53,6 +54,13 @@ pip install git+https://github.com/OpenPecha/toolkit-v2.git
 ## Quickstart
 
 To get started, see the [Getting Started Guide](docs/getting-started.md).
+
+---
+
+## Usage Guide
+
+To see Usage Guide, see the [Usage Guide](docs/usage.md).
+
 
 ---
 
