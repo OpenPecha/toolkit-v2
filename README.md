@@ -32,6 +32,8 @@ A Python package for working with stand-off text annotations in the [OpenPecha](
 
 **STAM (Stand-off Text Annotation Model)** is a flexible data model for representing all information about a text as stand-off annotations, keeping the base text and annotations separate for maximum interoperability.
 
+**OpenPecha Backend** hosted on Firebase, serves as the central storage system for texts and their corresponding annotations. While the toolkit handles parsing, editing, and serialization, all storage, access, and import operations are managed by the backend.
+
 ---
 
 ## Installation
