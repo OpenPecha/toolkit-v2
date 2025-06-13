@@ -159,7 +159,7 @@ class Pecha:
         ann_store: AnnotationStore,
         annotation: BaseAnnotation,
         layer_type: AnnotationType,
-    ) -> BaseAnnotation:
+    ) -> AnnotationStore:
         """
         Adds an annotation to an Existing Annotation Layer(Annotation Store)
         """
