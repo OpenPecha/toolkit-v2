@@ -60,8 +60,7 @@ A Pecha is the core data model representing a text corpus with its annotations a
 - Includes metadata (title, author, language, etc.)
 - Can be created from scratch or parsed from various formats (DOCX, OCR, etc.)
 
-```
-Pecha (P0001)
+```Pecha (P0001)
 ├── metadata.json
 ├── base/
 │   ├── base1.txt
@@ -74,8 +73,7 @@ Pecha (P0001)
 ```
 
 Example of a Pecha's internal structure:
-```
-Pecha (P0001)
+```Pecha (P0001)
 ├── metadata.json
 │   ├── id: "P0001"
 │   ├── title: {"en": "Sample Text", "bo": "དཔེ་ཚན།"}
@@ -145,6 +143,65 @@ Commentary Pecha (P0002)
         └── {"alignment_index": "1-2", "span": {"start": 0, "end":   30}, ...}
 
 ```
+
+### Alignment Transfer Explained
+
+The alignment transfer system is a crucial component that enables mapping and serialization of aligned segments between different types of Pechas. Here's a detailed breakdown:
+
+#### 1. Root Pecha Structure
+- Contains the original text in the base file
+- Has a segmentation layer that divides the text into meaningful segments
+- Includes an alignment layer that serves as the reference point for other Pechas
+
+#### 2. Commentary Pecha Structure
+- Contains the commentary text in its base file
+- Has its own segmentation layer for dividing commentary into segments
+- Contains an alignment layer that maps commentary segments to root text segments
+- The alignment layer uses `alignment_index` to reference corresponding segments in the root text
+
+#### 3. Alignment Process
+- The alignment transfer system uses the alignment layers to:
+  - Map commentary segments to their corresponding root text segments
+  - Maintain the structural relationship between commentary and root text
+  - Enable proper serialization of aligned content
+  - Preserve the hierarchical relationship between texts
+
+#### 4. Serialization Output
+- The system generates serialized output that shows:
+  - The relationship between commentary and root text segments
+  - The hierarchical structure of the text
+  - The mapping between different versions of the text
+
+#### 5. Key Components
+- `CommentaryAlignmentTransfer`: Handles mapping between root text and commentary
+- `TranslationAlignmentTransfer`: Handles mapping between root text and translation
+- Alignment layers: Store the mapping information between texts
+- Segmentation layers: Define the segment boundaries in each text
+
+#### 6. Usage Example
+```python
+# Create alignment transfer instance
+transfer = CommentaryAlignmentTransfer()
+
+# Get serialized commentary with alignment
+aligned_commentary = transfer.get_serialized_commentary(
+    root_pecha,
+    root_alignment_id,
+    commentary_pecha,
+    commentary_alignment_id
+)
+
+# Process aligned segments
+for segment in aligned_commentary:
+    print(segment)  # Output: "<1><1>Commentary on first segment"
+```
+
+#### 7. Benefits
+- Maintains structural integrity between different versions of the text
+- Enables proper display of commentary in relation to root text
+- Supports multiple levels of commentary and translation
+- Preserves the hierarchical relationship between texts
+- Facilitates easy navigation between related segments
 
 ---
 
