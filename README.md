@@ -13,9 +13,9 @@ A Python package for working with stand-off text annotations in the [OpenPecha](
 ## Table of Contents
 - [Introduction](#introduction)
 - [Installation](#installation)
+- [Key Concepts](#key-concepts)
 - [Quickstart](#quickstart)
 - [Usage Guide](#Usage-Guide)
-- [Key Concepts](#key-concepts)
 - [Diving Deeper](#diving-deeper)
 - [Contributing](#contributing)
 - [License](#license)
@@ -50,6 +50,12 @@ pip install git+https://github.com/OpenPecha/toolkit-v2.git
 ```
 
 ---
+## Key Concepts
+
+- **Pecha**: The `Data Model` representing a text and its associated annotations and metadata.
+- **Layer**: A collection of annotations of a specific type (e.g., Segmentation, Alignment, Pagination) for a given base text.
+- **STAM**: The data format in which Layer file is saved as `JSON file`.
+---
 
 ## Quickstart
 
@@ -60,16 +66,6 @@ To get started, see the [Getting Started Guide](docs/getting-started.md).
 ## Usage Guide
 
 To see Usage Guide, see the [Usage Guide](docs/usage.md).
-
-
----
-
-## Key Concepts
-
-- **Pecha**: The main object representing a text and its associated annotations and metadata.
-- **Layer**: A collection of annotations of a specific type (e.g., segmentation, pagination) for a given base text.
-- **Annotation**: A stand-off annotation (e.g., segment, page, language) defined by a span and optional metadata.
-- **STAM**: The underlying model for stand-off annotation, enabling flexible, interoperable text annotation.
 
 
 ---
