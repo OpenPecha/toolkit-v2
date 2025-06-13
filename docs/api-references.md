@@ -20,6 +20,20 @@
 * [Pecha.publish()](#pechapublish)
 * [Pecha.merge_pecha()](#pechamerge_pecha)
 
+## DocxRootParser
+
+* [DocxRootParser.parse()](#docxrootparserparse)
+* [DocxRootParser.extract_anns()](#docxrootparserextract_anns)
+* [DocxRootParser.extract_segmentation_anns()](#docxrootparserextract_segmentation_anns)
+* [DocxRootParser.extract_alignment_anns()](#docxrootparserextract_alignment_anns)
+
+## DocxSimpleCommentaryParser
+
+* [DocxSimpleCommentaryParser.parse()](#docxsimplecommentaryparserparse)
+* [DocxSimpleCommentaryParser.extract_anns()](#docxsimplecommentaryparserextract_anns)
+* [DocxSimpleCommentaryParser.extract_segmentation_anns()](#docxsimplecommentaryparserextract_segmentation_anns)
+* [DocxSimpleCommentaryParser.extract_alignment_anns()](#docxsimplecommentaryparserextract_alignment_anns)
+
 ### `Pecha.from_path() -> Pecha`
 Loads a Pecha instance from a local path.
 
@@ -276,3 +290,182 @@ Merges the layers of a source pecha into the current pecha.
   ```python
   pecha.merge_pecha(source_pecha, "source_base", "target_base")
   ```
+
+### `DocxRootParser.parse() -> Tuple[Pecha, annotation_path]`
+Parses a DOCX file and creates a Pecha object with annotations.
+
+- **Parameters:**
+  - `input` (str | Path): Path to the DOCX file to be parsed
+  - `annotation_type` (AnnotationType): Type of annotation to extract (SEGMENTATION or ALIGNMENT)
+  - `metadata` (Dict): Dictionary containing metadata for the Pecha
+  - `output_path` (Path, optional): Directory where the Pecha should be created. Defaults to PECHAS_PATH
+  - `pecha_id` (str | None, optional): Custom Pecha ID. If not provided, a new ID will be generated
+- **Returns:** Tuple containing:
+  - Pecha: The created Pecha instance
+  - annotation_path: Path to the created annotation layer file
+- **Example:**
+  ```python
+  from pathlib import Path
+  from openpecha.pecha.layer import AnnotationType
+  from openpecha.pecha.parsers.docx.root import DocxRootParser
+  
+  parser = DocxRootParser()
+  pecha, layer_path = parser.parse(
+      input="path/to/file.docx",
+      annotation_type=AnnotationType.SEGMENTATION,
+      metadata={"title": "Sample Title"},
+      output_path=Path("./output")
+  )
+  ```
+
+### `DocxRootParser.extract_anns() -> Tuple[List[BaseAnnotation], str]`
+Extracts text and annotations from a DOCX file.
+
+- **Parameters:**
+  - `docx_file` (Path): Path to the DOCX file
+  - `annotation_type` (AnnotationType): Type of annotation to extract (SEGMENTATION or ALIGNMENT)
+- **Returns:** Tuple containing:
+  - List[BaseAnnotation]: List of extracted annotations
+  - str: The extracted base text
+- **Example:**
+  ```python
+  from pathlib import Path
+  from openpecha.pecha.layer import AnnotationType
+  from openpecha.pecha.parsers.docx.root import DocxRootParser
+  
+  parser = DocxRootParser()
+  anns, base = parser.extract_anns(
+      Path("path/to/file.docx"),
+      AnnotationType.SEGMENTATION
+  )
+  ```
+
+### `DocxRootParser.extract_segmentation_anns() -> Tuple[List[SegmentationAnnotation], str]`
+Extracts segmentation annotations from numbered text.
+
+- **Parameters:**
+  - `numbered_text` (Dict[str, str]): Dictionary mapping segment numbers to text content
+- **Returns:** Tuple containing:
+  - List[SegmentationAnnotation]: List of segmentation annotations
+  - str: The concatenated base text
+- **Example:**
+  ```python
+  from openpecha.pecha.parsers.docx.root import DocxRootParser
+  
+  parser = DocxRootParser()
+  numbered_text = {
+      "1": "First segment",
+      "2": "Second segment"
+  }
+  anns, base = parser.extract_segmentation_anns(numbered_text)
+  ```
+
+### `DocxRootParser.extract_alignment_anns() -> Tuple[List[AlignmentAnnotation], str]`
+Extracts alignment annotations from numbered text.
+
+- **Parameters:**
+  - `numbered_text` (Dict[str, str]): Dictionary mapping segment numbers to text content
+- **Returns:** Tuple containing:
+  - List[AlignmentAnnotation]: List of alignment annotations
+  - str: The concatenated base text
+- **Example:**
+  ```python
+  from openpecha.pecha.parsers.docx.root import DocxRootParser
+  
+  parser = DocxRootParser()
+  numbered_text = {
+      "1": "First segment",
+      "2": "Second segment"
+  }
+  anns, base = parser.extract_alignment_anns(numbered_text)
+  ```
+
+### `DocxSimpleCommentaryParser.parse() -> Tuple[Pecha, annotation_path]`
+Parses a DOCX file and creates a commentary Pecha object with annotations.
+
+- **Parameters:**
+  - `input` (str | Path): Path to the DOCX file to be parsed
+  - `annotation_type` (AnnotationType): Type of annotation to extract (SEGMENTATION or ALIGNMENT)
+  - `metadata` (Dict[str, Any]): Dictionary containing metadata for the Pecha
+  - `output_path` (Path, optional): Directory where the Pecha should be created. Defaults to PECHAS_PATH
+  - `pecha_id` (str | None, optional): Custom Pecha ID. If not provided, a new ID will be generated
+- **Returns:** Tuple containing:
+  - Pecha: The created Pecha instance
+  - annotation_path: Path to the created annotation layer file
+- **Example:**
+  ```python
+  from pathlib import Path
+  from openpecha.pecha.layer import AnnotationType
+  from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
+  
+  parser = DocxSimpleCommentaryParser()
+  pecha, layer_path = parser.parse(
+      input="path/to/commentary.docx",
+      annotation_type=AnnotationType.ALIGNMENT,
+      metadata={"title": "Commentary Title", "commentary_of": "P0001"},
+      output_path=Path("./output")
+  )
+  ```
+
+### `DocxSimpleCommentaryParser.extract_anns() -> Tuple[List[BaseAnnotation], str]`
+Extracts text and annotations from a commentary DOCX file.
+
+- **Parameters:**
+  - `docx_file` (Path): Path to the DOCX file
+  - `annotation_type` (AnnotationType): Type of annotation to extract (SEGMENTATION or ALIGNMENT)
+- **Returns:** Tuple containing:
+  - List[BaseAnnotation]: List of extracted annotations
+  - str: The extracted base text
+- **Example:**
+  ```python
+  from pathlib import Path
+  from openpecha.pecha.layer import AnnotationType
+  from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
+  
+  parser = DocxSimpleCommentaryParser()
+  anns, base = parser.extract_anns(
+      Path("path/to/commentary.docx"),
+      AnnotationType.ALIGNMENT
+  )
+  ```
+
+### `DocxSimpleCommentaryParser.extract_segmentation_anns() -> Tuple[List[SegmentationAnnotation], str]`
+Extracts segmentation annotations from numbered commentary text.
+
+- **Parameters:**
+  - `numbered_text` (Dict[str, str]): Dictionary mapping segment numbers to text content
+- **Returns:** Tuple containing:
+  - List[SegmentationAnnotation]: List of segmentation annotations
+  - str: The concatenated base text
+- **Example:**
+  ```python
+  from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
+  
+  parser = DocxSimpleCommentaryParser()
+  numbered_text = {
+      "1": "First commentary segment",
+      "2": "Second commentary segment"
+  }
+  anns, base = parser.extract_segmentation_anns(numbered_text)
+  ```
+
+### `DocxSimpleCommentaryParser.extract_alignment_anns() -> Tuple[List[AlignmentAnnotation], str]`
+Extracts alignment annotations from numbered commentary text, handling root text references.
+
+- **Parameters:**
+  - `numbered_text` (Dict[str, str]): Dictionary mapping segment numbers to text content
+- **Returns:** Tuple containing:
+  - List[AlignmentAnnotation]: List of alignment annotations with root text references
+  - str: The concatenated base text
+- **Example:**
+  ```python
+  from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
+  
+  parser = DocxSimpleCommentaryParser()
+  numbered_text = {
+      "1": "1-2 First commentary segment",
+      "2": "3-4 Second commentary segment"
+  }
+  anns, base = parser.extract_alignment_anns(numbered_text)
+  ```
+- **Note:** The commentary text can include root text references in the format "1-2 Commentary text" where "1-2" refers to the root text segments being commented on.
