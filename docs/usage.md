@@ -1,7 +1,5 @@
 # Usage Guide
 
-## Pecha
-
 ### I. Create Pecha
 To create a new Pecha (an annotated text corpus), you can use the `Pecha.create` method directly, or use a parser (e.g., for DOCX files):
 
