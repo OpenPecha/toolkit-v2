@@ -7,7 +7,7 @@
 * [Pecha.base_path()](#pechabase_path)
 
 
-### Pecha.from_path()
+### `Pecha.from_path()`
 Loads a Pecha instance from a local path.
 
 - **Parameters:**
@@ -21,7 +21,7 @@ Loads a Pecha instance from a local path.
   pecha = Pecha.from_path(Path("/path/to/pecha"))
   ```
 
-### Pecha.create()
+### `Pecha.create()`
 Creates a new Pecha instance in the specified output directory.
 
 - **Parameters:**
@@ -36,7 +36,7 @@ Creates a new Pecha instance in the specified output directory.
   pecha = Pecha.create(Path("./output"))
   ```
 
-### Pecha.base_path()
+### `Pecha.base_path()`
 Returns the path to the base directory which contains all the base files. If the directory does not exist, it is created.
 
 - **Returns:** Path object pointing to the base directory
