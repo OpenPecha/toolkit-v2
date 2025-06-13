@@ -85,11 +85,11 @@ Pecha (P0001)
 │   └── base1.txt
 │       └── "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ།..."
 └── layers/
-    ├── segmentation-1234.json
+    ├── Segmentation-1234.json
     │   └── {"index": 1, "span": {"start": 0, "end": 10}, ...}
-    ├── alignment-5678.json
+    ├── Alignment-5678.json
     │   └── {"alignment_index": "1-2", "span": {"start": 0, "end":   20}, ...}
-    └── pagination-9012.json
+    └── Pagination-9012.json
         └── {"page": 1, "span": {"start": 0, "end": 100}, ...}
 ```
 
@@ -117,6 +117,34 @@ The toolkit provides specialized classes for handling alignment between texts:
 - `CommentaryAlignmentTransfer`: Maps commentary segments to root text
 - `TranslationAlignmentTransfer`: Maps translation segments to root text
 - Both support serialization with chapter and segment information
+
+
+```
+Root Pecha (P0001)
+├── metadata.json
+├── base/
+│   └── base1.txt
+│       └── "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ།..."
+└── layers/
+    ├── Segmentation-1234.json
+    │   └── {"index": 1, "span": {"start": 0, "end": 10}, ...}
+    ├── Alignment-5678.json
+        └── {"alignment_index": "1", "span": {"start": 0, "end":   20}, ...}
+
+```
+
+```
+Commentary Pecha (P0002)
+├── metadata.json
+|      - commentary_of: P0001
+├── base/
+│   └── base1.txt
+│       └── "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ།..."
+└── layers/
+    ├── Alignment-3904.json
+        └── {"alignment_index": "1-2", "span": {"start": 0, "end":   30}, ...}
+
+```
 
 ---
 
