@@ -9,6 +9,9 @@
 * [Pecha.metadata_path()](#pechametadata_path)
 * [Pecha.get_base()](#pechaget_base)
 * [Pecha.set_base()](#pechaset_base)
+* [Pecha.add_layer()](#pechaadd_layer)
+* [Pecha.add_annotation()](#pechaadd_annotation)
+* [Pecha.set_metadata()](#pechaset_metadata)
 * [Pecha.get_layers()](#pechaget_layers)
 * [Pecha.get_segmentation_layer_path()](#pechaget_segmentation_layer_path)
 * [Pecha.get_first_layer_path()](#pechaget_first_layer_path)
@@ -98,6 +101,96 @@ Sets the content of a base file.
   ```python
   base_name = pecha.set_base("This is the text content", "base1")
   ```
+
+### `Pecha.add_layer()`
+Adds a new annotation layer for a given base.
+
+- **Parameters:**
+  - `base_name` (str): Name of the base file to associate with this layer
+  - `layer_type` (AnnotationType): Type of annotation layer (must be included in AnnotationType enum)
+- **Returns:** Tuple of (AnnotationStore, Path) containing:
+  - AnnotationStore: The created annotation store
+  - Path: Path to the layer file
+- **Example:**
+  ```python
+  from openpecha.pecha.layer import AnnotationType
+  
+  # Add a segmentation layer
+  layer, layer_path = pecha.add_layer("base1", AnnotationType.SEGMENTATION)
+  
+  # Add a chapter layer
+  layer, layer_path = pecha.add_layer("base1", AnnotationType.CHAPTER)
+  ```
+- **Note:** The layer file will be created with a name format of `{layer_type}-{random_id}.json` in the layers directory under the base name folder.
+
+### `Pecha.add_annotation()`
+Adds an annotation to an existing annotation layer (Annotation Store).
+
+- **Parameters:**
+  - `ann_store` (AnnotationStore): The annotation store/layer to add the annotation to
+  - `annotation` (BaseAnnotation): The annotation object to add (e.g., SegmentationAnnotation, CitationAnnotation)
+  - `layer_type` (AnnotationType): The type of annotation (must match the layer type)
+- **Returns:** AnnotationStore with the added annotation
+- **Example:**
+  ```python
+  from openpecha.pecha.annotations import Span, SegmentationAnnotation
+  from openpecha.pecha.layer import AnnotationType
+  
+  # Create a segmentation annotation
+  ann = SegmentationAnnotation(span=Span(start=0, end=10), index=1)
+  
+  # Add the annotation to the layer
+  layer = pecha.add_annotation(layer, ann, AnnotationType.SEGMENTATION)
+  
+  # Save the layer after adding annotations
+  layer.save()
+  ```
+- **Note:** 
+  - The annotation's span must be valid for the base text
+  - The layer_type must match the type of annotation being added
+  - The layer must be saved after adding annotations to persist the changes
+
+### `Pecha.set_metadata()`
+Updates the Pecha's metadata with new values while preserving existing metadata fields if not overridden.
+
+- **Parameters:**
+  - `pecha_metadata` (Dict): Dictionary containing metadata fields to update. Can include:
+    - `title` (Dict[str, str] | str): Title in different languages or single language
+    - `author` (List[str] | Dict[str, str] | str): Author(s) information
+    - `language` (str): Language code (e.g., 'bo', 'en')
+    - `parser` (str): Name of the parser used
+    - `initial_creation_type` (str): How the Pecha was created
+    - `source_metadata` (Dict): Additional source information
+    - `copyright` (Dict): Copyright information
+    - `licence` (str): License type
+- **Returns:** Updated PechaMetaData object
+- **Example:**
+  ```python
+  # Update metadata with new values
+  pecha.set_metadata({
+      "title": {"en": "New Title", "bo": "གསར་བཅོས་ཁ་བྱང་།"},
+      "author": ["Author 1", "Author 2"],
+      "language": "bo",
+      "source_metadata": {
+          "id": "source123",
+          "publisher": "Publisher Name"
+      }
+  })
+  
+  # Update specific fields while preserving others
+  pecha.set_metadata({
+      "title": {"en": "Updated Title"},
+      "copyright": {
+          "year": "2024",
+          "holder": "Copyright Holder"
+      }
+  })
+  ```
+- **Note:** 
+  - Existing metadata fields not included in the update dictionary will be preserved
+  - The parser and initial_creation_type fields will be preserved from existing metadata if not specified
+  - The metadata is automatically saved to the metadata.json file
+  - Invalid metadata will raise a ValueError
 
 ### `Pecha.get_layers()`
 Returns all layers from the Pecha associated with the given base.
