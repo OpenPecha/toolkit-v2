@@ -104,7 +104,7 @@ Gets the content of a base file by its name.
   base_text = pecha.get_base("base1")
   ```
 
-### `Pecha.set_base() ->str`
+### `Pecha.set_base() -> str`
 Sets the content of a base file.
 
 - **Parameters:**
@@ -137,7 +137,7 @@ Adds a new annotation layer for a given base.
   ```
 - **Note:** The layer file will be created with a name format of `{layer_type}-{random_id}.json` in the layers directory under the base name folder.
 
-### `Pecha.add_annotation()`
+### `Pecha.add_annotation() -> AnnotationStore`
 Adds an annotation to an existing annotation layer (Annotation Store).
 
 - **Parameters:**
@@ -237,7 +237,7 @@ Gets the path to the first layer file.
   layer_path = pecha.get_first_layer_path()
   ```
 
-### `Pecha.get_layer_by_ann_type()`
+### `Pecha.get_layer_by_ann_type() -> Union[Tuple[AnnotationStore, Path], Tuple[List[AnnotationStore], List[Path]]]`
 Gets layers by annotation type.
 
 - **Parameters:**
@@ -249,7 +249,7 @@ Gets layers by annotation type.
   layer, layer_path = pecha.get_layer_by_ann_type("base1", AnnotationType.SEGMENTATION)
   ```
 
-### `Pecha.get_layer_by_filename() -> AnnotationStore`
+### `Pecha.get_layer_by_filename() -> Optional[AnnotationStore]`
 Gets a layer by its filename.
 
 - **Parameters:**
@@ -261,7 +261,7 @@ Gets a layer by its filename.
   layer = pecha.get_layer_by_filename("base1", "segmentation-1234.json")
   ```
 
-### `Pecha.publish()`
+### `Pecha.publish() -> None`
 Publishes the Pecha to GitHub and optionally creates a release with assets.
 
 - **Parameters:**
@@ -279,7 +279,7 @@ Publishes the Pecha to GitHub and optionally creates a release with assets.
   )
   ```
 
-### `Pecha.merge_pecha()`
+### `Pecha.merge_pecha() -> None`
 Merges the layers of a source pecha into the current pecha.
 
 - **Parameters:**
