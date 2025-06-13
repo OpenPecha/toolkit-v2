@@ -45,6 +45,31 @@
 * [DocxAnnotationUpdate.extract_layer_enum()](#docxannotationupdateextract_layer_enum)
 * [DocxAnnotationUpdate.update_annotation()](#docxannotationupdateupdate_annotation)
 
+## TranslationAlignmentTransfer
+
+* [TranslationAlignmentTransfer.is_empty()](#translationalignmenttransferis_empty)
+* [TranslationAlignmentTransfer.get_segmentation_ann_path()](#translationalignmenttransferget_segmentation_ann_path)
+* [TranslationAlignmentTransfer.map_layer_to_layer()](#translationalignmenttransfermap_layer_to_layer)
+* [TranslationAlignmentTransfer.get_root_pechas_mapping()](#translationalignmenttransferget_root_pechas_mapping)
+* [TranslationAlignmentTransfer.get_translation_pechas_mapping()](#translationalignmenttransferget_translation_pechas_mapping)
+* [TranslationAlignmentTransfer.mapping_to_text_list()](#translationalignmenttransfermapping_to_text_list)
+* [TranslationAlignmentTransfer.get_serialized_translation_alignment()](#translationalignmenttransferget_serialized_translation_alignment)
+* [TranslationAlignmentTransfer.get_serialized_translation_segmentation()](#translationalignmenttransferget_serialized_translation_segmentation)
+
+## CommentaryAlignmentTransfer
+
+* [CommentaryAlignmentTransfer.get_first_valid_root_idx()](#commentaryalignmenttransferget_first_valid_root_idx)
+* [CommentaryAlignmentTransfer.is_valid_ann()](#commentaryalignmenttransferis_valid_ann)
+* [CommentaryAlignmentTransfer.get_segmentation_ann_path()](#commentaryalignmenttransferget_segmentation_ann_path)
+* [CommentaryAlignmentTransfer.index_annotations_by_root()](#commentaryalignmenttransferindex_annotations_by_root)
+* [CommentaryAlignmentTransfer.map_layer_to_layer()](#commentaryalignmenttransfermap_layer_to_layer)
+* [CommentaryAlignmentTransfer.get_root_pechas_mapping()](#commentaryalignmenttransferget_root_pechas_mapping)
+* [CommentaryAlignmentTransfer.get_commentary_pechas_mapping()](#commentaryalignmenttransferget_commentary_pechas_mapping)
+* [CommentaryAlignmentTransfer.get_serialized_commentary()](#commentaryalignmenttransferget_serialized_commentary)
+* [CommentaryAlignmentTransfer.get_serialized_commentary_segmentation()](#commentaryalignmenttransferget_serialized_commentary_segmentation)
+* [CommentaryAlignmentTransfer.format_serialized_commentary()](#commentaryalignmenttransferformat_serialized_commentary)
+* [CommentaryAlignmentTransfer.process_commentary_ann()](#commentaryalignmenttransferprocess_commentary_ann)
+
 ### <a id="pechafrom_path"></a>`Pecha.from_path() -> Pecha`
 Loads a Pecha instance from a local path.
 
@@ -578,3 +603,306 @@ Updates annotations in an existing Pecha from a DOCX file while preserving the l
   - The method preserves the original layer ID when updating annotations
   - It automatically determines the annotation type from the existing layer path
   - Uses DocxAnnotationParser internally to handle the actual annotation update
+
+### <a id="translationalignmenttransferis_empty"></a>`TranslationAlignmentTransfer.is_empty() -> bool`
+Checks if a text string is empty (contains only whitespace and newlines).
+
+- **Parameters:**
+  - `text` (str): The text to check
+- **Returns:** bool indicating if the text is empty
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  is_empty = transfer.is_empty("  \n  ")  # True
+  is_empty = transfer.is_empty("Some text")  # False
+  ```
+
+### <a id="translationalignmenttransferget_segmentation_ann_path"></a>`TranslationAlignmentTransfer.get_segmentation_ann_path() -> Path`
+Gets the path to the first segmentation layer JSON file in a Pecha.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha instance to search in
+- **Returns:** Path object pointing to the segmentation layer file
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  seg_path = transfer.get_segmentation_ann_path(pecha)
+  ```
+
+### <a id="translationalignmenttransfermap_layer_to_layer"></a>`TranslationAlignmentTransfer.map_layer_to_layer() -> Dict[int, List[int]]`
+Maps annotations from source layer to target layer based on span overlap or containment.
+
+- **Parameters:**
+  - `src_layer` (AnnotationStore): Source annotation layer
+  - `tgt_layer` (AnnotationStore): Target annotation layer
+- **Returns:** Dictionary mapping source indices to lists of target indices
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  mapping = transfer.map_layer_to_layer(source_layer, target_layer)
+  ```
+- **Note:** 
+  - Maps based on span overlap or containment
+  - Excludes edge overlaps
+  - Returns a sorted dictionary
+
+### <a id="translationalignmenttransferget_root_pechas_mapping"></a>`TranslationAlignmentTransfer.get_root_pechas_mapping() -> Dict[int, List[int]]`
+Gets mapping from a Pecha's alignment layer to its segmentation layer.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha instance
+  - `alignment_id` (str): ID of the alignment layer
+- **Returns:** Dictionary mapping alignment indices to segmentation indices
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  mapping = transfer.get_root_pechas_mapping(pecha, "alignment-1234.json")
+  ```
+
+### <a id="translationalignmenttransferget_translation_pechas_mapping"></a>`TranslationAlignmentTransfer.get_translation_pechas_mapping() -> Dict[int, List]`
+Gets mapping from segmentation to alignment layer in a translation Pecha.
+
+- **Parameters:**
+  - `pecha` (Pecha): The translation Pecha instance
+  - `alignment_id` (str): ID of the alignment layer
+  - `segmentation_id` (str): ID of the segmentation layer
+- **Returns:** Dictionary mapping segmentation indices to alignment indices
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  mapping = transfer.get_translation_pechas_mapping(
+      pecha,
+      "alignment-1234.json",
+      "segmentation-5678.json"
+  )
+  ```
+
+### <a id="translationalignmenttransfermapping_to_text_list"></a>`TranslationAlignmentTransfer.mapping_to_text_list() -> List[str]`
+Flattens a mapping from translation to root text into a list of texts.
+
+- **Parameters:**
+  - `mapping` (Dict[int, List[str]]): Mapping of indices to text lists
+- **Returns:** List of texts, with empty strings for missing indices
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  texts = transfer.mapping_to_text_list({1: ["text1"], 3: ["text2"]})
+  # ["text1", "", "text2"]
+  ```
+
+### <a id="translationalignmenttransferget_serialized_translation_alignment"></a>`TranslationAlignmentTransfer.get_serialized_translation_alignment() -> List[str]`
+Serializes root translation alignment text mapped to root segmentation text.
+
+- **Parameters:**
+  - `root_pecha` (Pecha): The root Pecha instance
+  - `root_alignment_id` (str): ID of the root alignment layer
+  - `root_translation_pecha` (Pecha): The translation Pecha instance
+  - `translation_alignment_id` (str): ID of the translation alignment layer
+- **Returns:** List of texts aligned with root segmentation
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  texts = transfer.get_serialized_translation_alignment(
+      root_pecha,
+      "alignment-1234.json",
+      translation_pecha,
+      "alignment-5678.json"
+  )
+  ```
+
+### <a id="translationalignmenttransferget_serialized_translation_segmentation"></a>`TranslationAlignmentTransfer.get_serialized_translation_segmentation() -> List[str]`
+Serializes root translation segmentation text mapped to root segmentation text.
+
+- **Parameters:**
+  - `root_pecha` (Pecha): The root Pecha instance
+  - `root_alignment_id` (str): ID of the root alignment layer
+  - `translation_pecha` (Pecha): The translation Pecha instance
+  - `translation_alignment_id` (str): ID of the translation alignment layer
+  - `translation_segmentation_id` (str): ID of the translation segmentation layer
+- **Returns:** List of texts aligned with root segmentation
+- **Example:**
+  ```python
+  transfer = TranslationAlignmentTransfer()
+  texts = transfer.get_serialized_translation_segmentation(
+      root_pecha,
+      "alignment-1234.json",
+      translation_pecha,
+      "alignment-5678.json",
+      "segmentation-9012.json"
+  )
+  ```
+
+### <a id="commentaryalignmenttransferget_first_valid_root_idx"></a>`CommentaryAlignmentTransfer.get_first_valid_root_idx() -> int | None`
+Gets the first valid root index from an annotation's alignment index.
+
+- **Parameters:**
+  - `ann` (dict): The annotation dictionary containing alignment_index
+- **Returns:** First valid root index or None if no valid indices found
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  idx = transfer.get_first_valid_root_idx({"alignment_index": "1,2-4"})  # 1
+  ```
+
+### <a id="commentaryalignmenttransferis_valid_ann"></a>`CommentaryAlignmentTransfer.is_valid_ann() -> bool`
+Checks if an annotation is valid (exists and has non-empty text).
+
+- **Parameters:**
+  - `anns` (Dict[int, Dict[str, Any]]): Dictionary of annotations
+  - `idx` (int): Index to check
+- **Returns:** bool indicating if the annotation is valid
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  is_valid = transfer.is_valid_ann(annotations, 1)
+  ```
+
+### <a id="commentaryalignmenttransferget_segmentation_ann_path"></a>`CommentaryAlignmentTransfer.get_segmentation_ann_path() -> Path`
+Gets the path to the first segmentation layer JSON file in a Pecha.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha instance to search in
+- **Returns:** Path object pointing to the segmentation layer file
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  seg_path = transfer.get_segmentation_ann_path(pecha)
+  ```
+
+### <a id="commentaryalignmenttransferindex_annotations_by_root"></a>`CommentaryAlignmentTransfer.index_annotations_by_root() -> Dict[int, Dict[str, Any]]`
+Indexes annotations by their root index.
+
+- **Parameters:**
+  - `anns` (List[Dict[str, Any]]): List of annotation dictionaries
+- **Returns:** Dictionary mapping root indices to annotation dictionaries
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  indexed_anns = transfer.index_annotations_by_root(annotations)
+  ```
+
+### <a id="commentaryalignmenttransfermap_layer_to_layer"></a>`CommentaryAlignmentTransfer.map_layer_to_layer() -> Dict[int, List[int]]`
+Maps annotations from source layer to target layer based on span overlap or containment.
+
+- **Parameters:**
+  - `src_layer` (AnnotationStore): Source annotation layer
+  - `tgt_layer` (AnnotationStore): Target annotation layer
+- **Returns:** Dictionary mapping source indices to lists of target indices
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  mapping = transfer.map_layer_to_layer(source_layer, target_layer)
+  ```
+- **Note:** 
+  - Maps based on span overlap or containment
+  - Excludes edge overlaps
+  - Returns a sorted dictionary
+  - Handles complex alignment indices (e.g., "1,2-4")
+
+### <a id="commentaryalignmenttransferget_root_pechas_mapping"></a>`CommentaryAlignmentTransfer.get_root_pechas_mapping() -> Dict[int, List[int]]`
+Gets mapping from a Pecha's alignment layer to its segmentation layer.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha instance
+  - `alignment_id` (str): ID of the alignment layer
+- **Returns:** Dictionary mapping alignment indices to segmentation indices
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  mapping = transfer.get_root_pechas_mapping(pecha, "alignment-1234.json")
+  ```
+
+### <a id="commentaryalignmenttransferget_commentary_pechas_mapping"></a>`CommentaryAlignmentTransfer.get_commentary_pechas_mapping() -> Dict[int, List[int]]`
+Gets mapping from commentary Pecha's segmentation layer to alignment layer.
+
+- **Parameters:**
+  - `pecha` (Pecha): The commentary Pecha instance
+  - `alignment_id` (str): ID of the alignment layer
+  - `segmentation_id` (str): ID of the segmentation layer
+- **Returns:** Dictionary mapping segmentation indices to alignment indices
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  mapping = transfer.get_commentary_pechas_mapping(
+      pecha,
+      "alignment-1234.json",
+      "segmentation-5678.json"
+  )
+  ```
+
+### <a id="commentaryalignmenttransferget_serialized_commentary"></a>`CommentaryAlignmentTransfer.get_serialized_commentary() -> List[str]`
+Serializes commentary annotations with root/segmentation mapping and formatting.
+
+- **Parameters:**
+  - `root_pecha` (Pecha): The root Pecha instance
+  - `root_alignment_id` (str): ID of the root alignment layer
+  - `commentary_pecha` (Pecha): The commentary Pecha instance
+  - `commentary_alignment_id` (str): ID of the commentary alignment layer
+- **Returns:** List of formatted commentary texts
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  texts = transfer.get_serialized_commentary(
+      root_pecha,
+      "alignment-1234.json",
+      commentary_pecha,
+      "alignment-5678.json"
+  )
+  ```
+
+### <a id="commentaryalignmenttransferget_serialized_commentary_segmentation"></a>`CommentaryAlignmentTransfer.get_serialized_commentary_segmentation() -> List[str]`
+Serializes commentary segmentation annotations with root/segmentation mapping and formatting.
+
+- **Parameters:**
+  - `root_pecha` (Pecha): The root Pecha instance
+  - `root_alignment_id` (str): ID of the root alignment layer
+  - `commentary_pecha` (Pecha): The commentary Pecha instance
+  - `commentary_alignment_id` (str): ID of the commentary alignment layer
+  - `commentary_segmentation_id` (str): ID of the commentary segmentation layer
+- **Returns:** List of formatted commentary texts
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  texts = transfer.get_serialized_commentary_segmentation(
+      root_pecha,
+      "alignment-1234.json",
+      commentary_pecha,
+      "alignment-5678.json",
+      "segmentation-9012.json"
+  )
+  ```
+
+### <a id="commentaryalignmenttransferformat_serialized_commentary"></a>`CommentaryAlignmentTransfer.format_serialized_commentary() -> str`
+Formats a commentary text with chapter and segment information.
+
+- **Parameters:**
+  - `chapter_num` (int): Chapter number
+  - `seg_idx` (int): Segment index
+  - `text` (str): Commentary text
+- **Returns:** Formatted string in the format "<chapter><segment>text"
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  formatted = transfer.format_serialized_commentary(1, 2, "Commentary text")
+  # "<1><2>Commentary text"
+  ```
+
+### <a id="commentaryalignmenttransferprocess_commentary_ann"></a>`CommentaryAlignmentTransfer.process_commentary_ann() -> str | None`
+Processes a single commentary annotation and returns the serialized string.
+
+- **Parameters:**
+  - `ann` (dict): The commentary annotation to process
+  - `root_anns` (dict): Dictionary of root annotations
+  - `root_map` (dict): Mapping from root alignment to segmentation
+  - `root_segmentation_anns` (dict): Dictionary of root segmentation annotations
+- **Returns:** Formatted commentary string or None if not valid
+- **Example:**
+  ```python
+  transfer = CommentaryAlignmentTransfer()
+  result = transfer.process_commentary_ann(
+      commentary_ann,
+      root_anns,
+      root_map,
+      root_segmentation_anns
+  )
+  ```
