@@ -34,6 +34,17 @@
 * [DocxSimpleCommentaryParser.extract_segmentation_anns()](#docxsimplecommentaryparserextract_segmentation_anns)
 * [DocxSimpleCommentaryParser.extract_alignment_anns()](#docxsimplecommentaryparserextract_alignment_anns)
 
+## DocxAnnotationParser
+
+* [DocxAnnotationParser.add_annotation()](#docxannotationparseradd_annotation)
+
+## DocxAnnotationUpdate
+
+* [DocxAnnotationUpdate.extract_layer_name()](#docxannotationupdateextract_layer_name)
+* [DocxAnnotationUpdate.extract_layer_id()](#docxannotationupdateextract_layer_id)
+* [DocxAnnotationUpdate.extract_layer_enum()](#docxannotationupdateextract_layer_enum)
+* [DocxAnnotationUpdate.update_annotation()](#docxannotationupdateupdate_annotation)
+
 ### <a id="pechafrom_path"></a>`Pecha.from_path() -> Pecha`
 Loads a Pecha instance from a local path.
 
@@ -469,3 +480,101 @@ Extracts alignment annotations from numbered commentary text, handling root text
   anns, base = parser.extract_alignment_anns(numbered_text)
   ```
 - **Note:** The commentary text can include root text references in the format "1-2 Commentary text" where "1-2" refers to the root text segments being commented on.
+
+### <a id="docxannotationparseradd_annotation"></a>`DocxAnnotationParser.add_annotation() -> Tuple[Pecha, annotation_path]`
+Adds annotations to an existing Pecha from a DOCX file.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha instance to add annotations to
+  - `type` (AnnotationType | str): Type of annotation to extract (ALIGNMENT, SEGMENTATION, or FOOTNOTE)
+  - `docx_file` (Path): Path to the DOCX file containing annotations
+  - `metadatas` (List[Any]): List of metadata objects to determine if the Pecha is root-related
+- **Returns:** Tuple containing:
+  - Pecha: The updated Pecha instance
+  - annotation_path: Path to the created annotation layer file
+- **Example:**
+  ```python
+  from pathlib import Path
+  from openpecha.pecha.layer import AnnotationType
+  from openpecha.pecha.parsers.docx.annotation import DocxAnnotationParser
+  
+  parser = DocxAnnotationParser()
+  pecha, layer_path = parser.add_annotation(
+      pecha=existing_pecha,
+      type=AnnotationType.FOOTNOTE,
+      docx_file=Path("path/to/annotations.docx"),
+      metadatas=[metadata]
+  )
+  ```
+- **Note:** 
+  - The parser supports three types of annotations: ALIGNMENT, SEGMENTATION, and FOOTNOTE
+  - For FOOTNOTE annotations, it uses DocxFootnoteParser
+  - For root-related Pechas, it uses DocxRootParser
+  - For other cases, it uses DocxSimpleCommentaryParser
+  - The coordinates of annotations are automatically updated to match the base text
+
+### <a id="docxannotationupdateextract_layer_name"></a>`DocxAnnotationUpdate.extract_layer_name() -> str`
+Extracts the layer name from a layer path.
+
+- **Parameters:**
+  - `layer_path` (str): Path to the layer file
+- **Returns:** str containing the layer name (filename without extension)
+- **Example:**
+  ```python
+  updater = DocxAnnotationUpdate()
+  layer_name = updater.extract_layer_name("path/to/segmentation-1234.json")
+  print(layer_name)  # "segmentation-1234"
+  ```
+
+### <a id="docxannotationupdateextract_layer_id"></a>`DocxAnnotationUpdate.extract_layer_id() -> str`
+Extracts the layer ID from a layer path.
+
+- **Parameters:**
+  - `layer_path` (str): Path to the layer file
+- **Returns:** str containing the layer ID (last part of the filename after the hyphen)
+- **Example:**
+  ```python
+  updater = DocxAnnotationUpdate()
+  layer_id = updater.extract_layer_id("path/to/segmentation-1234.json")
+  print(layer_id)  # "1234"
+  ```
+
+### <a id="docxannotationupdateextract_layer_enum"></a>`DocxAnnotationUpdate.extract_layer_enum() -> AnnotationType`
+Extracts the annotation type from a layer path.
+
+- **Parameters:**
+  - `layer_path` (str): Path to the layer file
+- **Returns:** AnnotationType enum value corresponding to the layer type
+- **Example:**
+  ```python
+  updater = DocxAnnotationUpdate()
+  layer_type = updater.extract_layer_enum("path/to/segmentation-1234.json")
+  print(layer_type)  # AnnotationType.SEGMENTATION
+  ```
+
+### <a id="docxannotationupdateupdate_annotation"></a>`DocxAnnotationUpdate.update_annotation() -> Pecha`
+Updates annotations in an existing Pecha from a DOCX file while preserving the layer ID.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha instance to update annotations in
+  - `annotation_path` (str): Path to the existing annotation layer file
+  - `docx_file` (Path): Path to the DOCX file containing new annotations
+  - `metadatas` (List[Any]): List of metadata objects to determine if the Pecha is root-related
+- **Returns:** Updated Pecha instance
+- **Example:**
+  ```python
+  from pathlib import Path
+  from openpecha.pecha.parsers.docx.update import DocxAnnotationUpdate
+  
+  updater = DocxAnnotationUpdate()
+  updated_pecha = updater.update_annotation(
+      pecha=existing_pecha,
+      annotation_path="path/to/segmentation-1234.json",
+      docx_file=Path("path/to/updated_annotations.docx"),
+      metadatas=[metadata]
+  )
+  ```
+- **Note:** 
+  - The method preserves the original layer ID when updating annotations
+  - It automatically determines the annotation type from the existing layer path
+  - Uses DocxAnnotationParser internally to handle the actual annotation update
