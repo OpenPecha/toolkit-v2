@@ -60,6 +60,39 @@ A Pecha is the core data model representing a text corpus with its annotations a
 - Includes metadata (title, author, language, etc.)
 - Can be created from scratch or parsed from various formats (DOCX, OCR, etc.)
 
+```
+Pecha (P0001)
+├── metadata.json
+├── base/
+│   ├── base1.txt
+│   └── base2.txt
+└── layers/
+    ├── segmentation-1234.json
+    ├── alignment-5678.json
+    ├── pagination-9012.json
+    └── footnote-3456.json
+```
+
+Example of a Pecha's internal structure:
+```
+Pecha (P0001)
+├── metadata.json
+│   ├── id: "P0001"
+│   ├── title: {"en": "Sample Text", "bo": "དཔེ་ཚན།"}
+│   ├── author: "Author Name"
+│   └── language: "bo"
+├── base/
+│   └── base1.txt
+│       └── "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ།..."
+└── layers/
+    ├── segmentation-1234.json
+    │   └── {"index": 1, "span": {"start": 0, "end": 10}, ...}
+    ├── alignment-5678.json
+    │   └── {"alignment_index": "1-2", "span": {"start": 0, "end":   20}, ...}
+    └── pagination-9012.json
+        └── {"page": 1, "span": {"start": 0, "end": 100}, ...}
+```
+
 ### Layer
 A Layer is a collection of annotations of a specific type for a given base text. Key features:
 - Each layer has a specific type (e.g., Segmentation, Alignment, Pagination)
