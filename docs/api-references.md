@@ -34,7 +34,7 @@
 * [DocxSimpleCommentaryParser.extract_segmentation_anns()](#docxsimplecommentaryparserextract_segmentation_anns)
 * [DocxSimpleCommentaryParser.extract_alignment_anns()](#docxsimplecommentaryparserextract_alignment_anns)
 
-### `Pecha.from_path() -> Pecha`
+### <a id="pechafrom_path"></a>`Pecha.from_path() -> Pecha`
 Loads a Pecha instance from a local path.
 
 - **Parameters:**
@@ -48,7 +48,7 @@ Loads a Pecha instance from a local path.
   pecha = Pecha.from_path(Path("/path/to/pecha"))
   ```
 
-### `Pecha.create() -> Pecha`
+### <a id="pechacreate"></a>`Pecha.create() -> Pecha`
 Creates a new Pecha instance in the specified output directory.
 
 - **Parameters:**
@@ -63,7 +63,7 @@ Creates a new Pecha instance in the specified output directory.
   pecha = Pecha.create(Path("./output"))
   ```
 
-### `Pecha.base_path() -> Path`
+### <a id="pechabase_path"></a>`Pecha.base_path() -> Path`
 Returns the path to the base directory which contains all the base files. If the directory does not exist, it is created.
 
 - **Returns:** Path object pointing to the base directory
@@ -73,7 +73,7 @@ Returns the path to the base directory which contains all the base files. If the
   print(base_dir)  # /path/to/pecha/base
   ```
 
-### `Pecha.layer_path() -> Path`
+### <a id="pechalayer_path"></a>`Pecha.layer_path() -> Path`
 Returns the path to the layers directory which contains all the annotation files. If the directory does not exist, it is created.
 
 - **Returns:** Path object pointing to the layers directory
@@ -83,7 +83,7 @@ Returns the path to the layers directory which contains all the annotation files
   print(layer_dir)  # /path/to/pecha/layers
   ```
 
-### `Pecha.metadata_path() -> Path`
+### <a id="pechametadata_path"></a>`Pecha.metadata_path() -> Path`
 Returns the path to the metadata file.
 
 - **Returns:** Path object pointing to the metadata file
@@ -93,7 +93,7 @@ Returns the path to the metadata file.
   print(metadata_file)  # /path/to/pecha/metadata.json
   ```
 
-### `Pecha.get_base() -> str`
+### <a id="pechaget_base"></a>`Pecha.get_base() -> str`
 Gets the content of a base file by its name.
 
 - **Parameters:**
@@ -104,7 +104,7 @@ Gets the content of a base file by its name.
   base_text = pecha.get_base("base1")
   ```
 
-### `Pecha.set_base() -> str`
+### <a id="pechaset_base"></a>`Pecha.set_base() -> str`
 Sets the content of a base file.
 
 - **Parameters:**
@@ -116,7 +116,7 @@ Sets the content of a base file.
   base_name = pecha.set_base("This is the text content", "base1")
   ```
 
-### `Pecha.add_layer() -> Tuple[AnnotationStore, Path]`
+### <a id="pechaadd_layer"></a>`Pecha.add_layer() -> Tuple[AnnotationStore, Path]`
 Adds a new annotation layer for a given base.
 
 - **Parameters:**
@@ -137,7 +137,7 @@ Adds a new annotation layer for a given base.
   ```
 - **Note:** The layer file will be created with a name format of `{layer_type}-{random_id}.json` in the layers directory under the base name folder.
 
-### `Pecha.add_annotation() -> AnnotationStore`
+### <a id="pechaadd_annotation"></a>`Pecha.add_annotation() -> AnnotationStore`
 Adds an annotation to an existing annotation layer (Annotation Store).
 
 - **Parameters:**
@@ -164,7 +164,7 @@ Adds an annotation to an existing annotation layer (Annotation Store).
   - The layer_type must match the type of annotation being added
   - The layer must be saved after adding annotations to persist the changes
 
-### `Pecha.set_metadata() -> PechaMetaData`
+### <a id="pechaset_metadata"></a>`Pecha.set_metadata() -> PechaMetaData`
 Updates the Pecha's metadata with new values while preserving existing metadata fields if not overridden.
 
 - **Parameters:**
@@ -206,7 +206,7 @@ Updates the Pecha's metadata with new values while preserving existing metadata 
   - The metadata is automatically saved to the metadata.json file
   - Invalid metadata will raise a ValueError
 
-### `Pecha.get_layers() -> Generator[Tuple[str, AnnotationStore]`
+### <a id="pechaget_layers"></a>`Pecha.get_layers() -> Generator[Tuple[str, AnnotationStore]`
 Returns all layers from the Pecha associated with the given base.
 
 - **Parameters:**
@@ -219,7 +219,7 @@ Returns all layers from the Pecha associated with the given base.
       print(layer_name, layer_store)
   ```
 
-### `Pecha.get_segmentation_layer_path() -> str`
+### <a id="pechaget_segmentation_layer_path"></a>`Pecha.get_segmentation_layer_path() -> str`
 Gets the path to the first segmentation layer file.
 
 - **Returns:** str containing the relative path to the segmentation layer file
@@ -228,7 +228,7 @@ Gets the path to the first segmentation layer file.
   layer_path = pecha.get_segmentation_layer_path()
   ```
 
-### `Pecha.get_first_layer_path() -> str`
+### <a id="pechaget_first_layer_path"></a>`Pecha.get_first_layer_path() -> str`
 Gets the path to the first layer file.
 
 - **Returns:** str containing the relative path to the first layer file
@@ -237,7 +237,7 @@ Gets the path to the first layer file.
   layer_path = pecha.get_first_layer_path()
   ```
 
-### `Pecha.get_layer_by_ann_type() -> Union[Tuple[AnnotationStore, Path], Tuple[List[AnnotationStore], List[Path]]]`
+### <a id="pechaget_layer_by_ann_type"></a>`Pecha.get_layer_by_ann_type() -> Union[Tuple[AnnotationStore, Path], Tuple[List[AnnotationStore], List[Path]]]`
 Gets layers by annotation type.
 
 - **Parameters:**
@@ -249,7 +249,7 @@ Gets layers by annotation type.
   layer, layer_path = pecha.get_layer_by_ann_type("base1", AnnotationType.SEGMENTATION)
   ```
 
-### `Pecha.get_layer_by_filename() -> Optional[AnnotationStore]`
+### <a id="pechaget_layer_by_filename"></a>`Pecha.get_layer_by_filename() -> Optional[AnnotationStore]`
 Gets a layer by its filename.
 
 - **Parameters:**
@@ -261,7 +261,7 @@ Gets a layer by its filename.
   layer = pecha.get_layer_by_filename("base1", "segmentation-1234.json")
   ```
 
-### `Pecha.publish() -> None`
+### <a id="pechapublish"></a>`Pecha.publish() -> None`
 Publishes the Pecha to GitHub and optionally creates a release with assets.
 
 - **Parameters:**
@@ -279,7 +279,7 @@ Publishes the Pecha to GitHub and optionally creates a release with assets.
   )
   ```
 
-### `Pecha.merge_pecha() -> None`
+### <a id="pechamerge_pecha"></a>`Pecha.merge_pecha() -> None`
 Merges the layers of a source pecha into the current pecha.
 
 - **Parameters:**
@@ -291,7 +291,7 @@ Merges the layers of a source pecha into the current pecha.
   pecha.merge_pecha(source_pecha, "source_base", "target_base")
   ```
 
-### `DocxRootParser.parse() -> Tuple[Pecha, annotation_path]`
+### <a id="docxrootparserparse"></a>`DocxRootParser.parse() -> Tuple[Pecha, annotation_path]`
 Parses a DOCX file and creates a Pecha object with annotations.
 
 - **Parameters:**
@@ -318,7 +318,7 @@ Parses a DOCX file and creates a Pecha object with annotations.
   )
   ```
 
-### `DocxRootParser.extract_anns() -> Tuple[List[BaseAnnotation], str]`
+### <a id="docxrootparserextract_anns"></a>`DocxRootParser.extract_anns() -> Tuple[List[BaseAnnotation], str]`
 Extracts text and annotations from a DOCX file.
 
 - **Parameters:**
@@ -340,7 +340,7 @@ Extracts text and annotations from a DOCX file.
   )
   ```
 
-### `DocxRootParser.extract_segmentation_anns() -> Tuple[List[SegmentationAnnotation], str]`
+### <a id="docxrootparserextract_segmentation_anns"></a>`DocxRootParser.extract_segmentation_anns() -> Tuple[List[SegmentationAnnotation], str]`
 Extracts segmentation annotations from numbered text.
 
 - **Parameters:**
@@ -360,7 +360,7 @@ Extracts segmentation annotations from numbered text.
   anns, base = parser.extract_segmentation_anns(numbered_text)
   ```
 
-### `DocxRootParser.extract_alignment_anns() -> Tuple[List[AlignmentAnnotation], str]`
+### <a id="docxrootparserextract_alignment_anns"></a>`DocxRootParser.extract_alignment_anns() -> Tuple[List[AlignmentAnnotation], str]`
 Extracts alignment annotations from numbered text.
 
 - **Parameters:**
@@ -380,7 +380,7 @@ Extracts alignment annotations from numbered text.
   anns, base = parser.extract_alignment_anns(numbered_text)
   ```
 
-### `DocxSimpleCommentaryParser.parse() -> Tuple[Pecha, annotation_path]`
+### <a id="docxsimplecommentaryparserparse"></a>`DocxSimpleCommentaryParser.parse() -> Tuple[Pecha, annotation_path]`
 Parses a DOCX file and creates a commentary Pecha object with annotations.
 
 - **Parameters:**
@@ -407,7 +407,7 @@ Parses a DOCX file and creates a commentary Pecha object with annotations.
   )
   ```
 
-### `DocxSimpleCommentaryParser.extract_anns() -> Tuple[List[BaseAnnotation], str]`
+### <a id="docxsimplecommentaryparserextract_anns"></a>`DocxSimpleCommentaryParser.extract_anns() -> Tuple[List[BaseAnnotation], str]`
 Extracts text and annotations from a commentary DOCX file.
 
 - **Parameters:**
@@ -429,7 +429,7 @@ Extracts text and annotations from a commentary DOCX file.
   )
   ```
 
-### `DocxSimpleCommentaryParser.extract_segmentation_anns() -> Tuple[List[SegmentationAnnotation], str]`
+### <a id="docxsimplecommentaryparserextract_segmentation_anns"></a>`DocxSimpleCommentaryParser.extract_segmentation_anns() -> Tuple[List[SegmentationAnnotation], str]`
 Extracts segmentation annotations from numbered commentary text.
 
 - **Parameters:**
@@ -449,7 +449,7 @@ Extracts segmentation annotations from numbered commentary text.
   anns, base = parser.extract_segmentation_anns(numbered_text)
   ```
 
-### `DocxSimpleCommentaryParser.extract_alignment_anns() -> Tuple[List[AlignmentAnnotation], str]`
+### <a id="docxsimplecommentaryparserextract_alignment_anns"></a>`DocxSimpleCommentaryParser.extract_alignment_anns() -> Tuple[List[AlignmentAnnotation], str]`
 Extracts alignment annotations from numbered commentary text, handling root text references.
 
 - **Parameters:**
