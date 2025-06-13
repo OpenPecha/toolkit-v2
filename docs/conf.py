@@ -7,6 +7,15 @@ project = "OpenPecha Toolkit"
 copyright = "2024, OpenPecha"
 author = "OpenPecha"
 
+# The full version, including alpha/beta/rc tags
+release = "2.1.13"
+
+# The short X.Y version
+version = "2.1"
+
+# The master toctree document
+master_doc = "index"
+
 extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",
@@ -39,3 +48,7 @@ myst_enable_extensions = [
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
 }
+
+# MyST configuration
+myst_heading_anchors = 3
+myst_all_links_external = False
