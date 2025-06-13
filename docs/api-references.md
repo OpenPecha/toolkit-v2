@@ -20,7 +20,7 @@
 * [Pecha.publish()](#pechapublish)
 * [Pecha.merge_pecha()](#pechamerge_pecha)
 
-### `Pecha.from_path()`
+### `Pecha.from_path() -> Pecha`
 Loads a Pecha instance from a local path.
 
 - **Parameters:**
@@ -34,7 +34,7 @@ Loads a Pecha instance from a local path.
   pecha = Pecha.from_path(Path("/path/to/pecha"))
   ```
 
-### `Pecha.create()`
+### `Pecha.create() -> Pecha`
 Creates a new Pecha instance in the specified output directory.
 
 - **Parameters:**
@@ -49,7 +49,7 @@ Creates a new Pecha instance in the specified output directory.
   pecha = Pecha.create(Path("./output"))
   ```
 
-### `Pecha.base_path()`
+### `Pecha.base_path() -> Path`
 Returns the path to the base directory which contains all the base files. If the directory does not exist, it is created.
 
 - **Returns:** Path object pointing to the base directory
@@ -59,7 +59,7 @@ Returns the path to the base directory which contains all the base files. If the
   print(base_dir)  # /path/to/pecha/base
   ```
 
-### `Pecha.layer_path()`
+### `Pecha.layer_path() -> Path`
 Returns the path to the layers directory which contains all the annotation files. If the directory does not exist, it is created.
 
 - **Returns:** Path object pointing to the layers directory
@@ -69,7 +69,7 @@ Returns the path to the layers directory which contains all the annotation files
   print(layer_dir)  # /path/to/pecha/layers
   ```
 
-### `Pecha.metadata_path()`
+### `Pecha.metadata_path() -> Path`
 Returns the path to the metadata file.
 
 - **Returns:** Path object pointing to the metadata file
@@ -79,7 +79,7 @@ Returns the path to the metadata file.
   print(metadata_file)  # /path/to/pecha/metadata.json
   ```
 
-### `Pecha.get_base()`
+### `Pecha.get_base() -> str`
 Gets the content of a base file by its name.
 
 - **Parameters:**
@@ -90,7 +90,7 @@ Gets the content of a base file by its name.
   base_text = pecha.get_base("base1")
   ```
 
-### `Pecha.set_base()`
+### `Pecha.set_base() ->str`
 Sets the content of a base file.
 
 - **Parameters:**
@@ -102,7 +102,7 @@ Sets the content of a base file.
   base_name = pecha.set_base("This is the text content", "base1")
   ```
 
-### `Pecha.add_layer()`
+### `Pecha.add_layer() -> Tuple[AnnotationStore, Path]`
 Adds a new annotation layer for a given base.
 
 - **Parameters:**
