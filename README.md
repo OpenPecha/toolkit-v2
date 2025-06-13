@@ -52,9 +52,39 @@ pip install git+https://github.com/OpenPecha/toolkit-v2.git
 ---
 ## Key Concepts
 
-- **Pecha**: The `Data Model` representing a text and its associated annotations and metadata.
-- **Layer**: A collection of annotations of a specific type (e.g., Segmentation, Alignment, Pagination) for a given base text.
-- **STAM**: The data format in which Layer file is saved as `JSON file`.
+### Pecha
+A Pecha is the core data model representing a text corpus with its annotations and metadata. Each Pecha:
+- Has a unique ID (8-digit UUID)
+- Contains one or more base texts
+- Stores multiple annotation layers
+- Includes metadata (title, author, language, etc.)
+- Can be created from scratch or parsed from various formats (DOCX, OCR, etc.)
+
+### Layer
+A Layer is a collection of annotations of a specific type for a given base text. Key features:
+- Each layer has a specific type (e.g., Segmentation, Alignment, Pagination)
+- Layers are stored as JSON files in the STAM format
+- Common layer types include:
+  - Segmentation: Divides text into meaningful segments
+  - Alignment: Maps segments between different texts (e.g., root text and commentary)
+  - Pagination: Marks page boundaries
+  - Language: Indicates language of text segments
+  - Footnote: Contains footnote annotations
+
+### STAM (Stand-off Text Annotation Model)
+STAM is the underlying data format for storing annotations. It:
+- Keeps base text and annotations separate
+- Uses a flexible JSON structure
+- Supports multiple annotation types
+- Enables interoperability between different systems
+- Allows for complex annotation relationships
+
+### Alignment Transfer
+The toolkit provides specialized classes for handling alignment between texts:
+- `CommentaryAlignmentTransfer`: Maps commentary segments to root text
+- `TranslationAlignmentTransfer`: Maps translation segments to root text
+- Both support serialization with chapter and segment information
+
 ---
 
 ## Quickstart
