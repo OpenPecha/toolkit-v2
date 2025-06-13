@@ -221,7 +221,7 @@ To see Usage Guide, see the [Usage Guide](docs/usage.md).
 
 ## Tutorial Guide
 
-To see Tutorial Guide, see the [Tutorial Guideg](docs/tutorials.md)
+To see Tutorial Guide, see the [Tutorial Guide](docs/tutorials.md)
 
 ---
 
