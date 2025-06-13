@@ -150,7 +150,7 @@ Adds an annotation to an existing annotation layer (Annotation Store).
   - The layer_type must match the type of annotation being added
   - The layer must be saved after adding annotations to persist the changes
 
-### `Pecha.set_metadata()`
+### `Pecha.set_metadata() -> PechaMetaData`
 Updates the Pecha's metadata with new values while preserving existing metadata fields if not overridden.
 
 - **Parameters:**
@@ -192,7 +192,7 @@ Updates the Pecha's metadata with new values while preserving existing metadata 
   - The metadata is automatically saved to the metadata.json file
   - Invalid metadata will raise a ValueError
 
-### `Pecha.get_layers()`
+### `Pecha.get_layers() -> Generator[Tuple[str, AnnotationStore]`
 Returns all layers from the Pecha associated with the given base.
 
 - **Parameters:**
@@ -205,7 +205,7 @@ Returns all layers from the Pecha associated with the given base.
       print(layer_name, layer_store)
   ```
 
-### `Pecha.get_segmentation_layer_path()`
+### `Pecha.get_segmentation_layer_path() -> str`
 Gets the path to the first segmentation layer file.
 
 - **Returns:** str containing the relative path to the segmentation layer file
@@ -214,7 +214,7 @@ Gets the path to the first segmentation layer file.
   layer_path = pecha.get_segmentation_layer_path()
   ```
 
-### `Pecha.get_first_layer_path()`
+### `Pecha.get_first_layer_path() -> str`
 Gets the path to the first layer file.
 
 - **Returns:** str containing the relative path to the first layer file
@@ -235,7 +235,7 @@ Gets layers by annotation type.
   layer, layer_path = pecha.get_layer_by_ann_type("base1", AnnotationType.SEGMENTATION)
   ```
 
-### `Pecha.get_layer_by_filename()`
+### `Pecha.get_layer_by_filename() -> AnnotationStore`
 Gets a layer by its filename.
 
 - **Parameters:**
