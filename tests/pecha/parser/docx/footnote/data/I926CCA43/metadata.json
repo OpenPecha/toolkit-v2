@@ -8,6 +8,8 @@
   "parser": "DocxRootParser",
   "initial_creation_type": "google_docx",
   "language": "bo",
+  "type": "root",
+  "parent":null,
   "source_metadata": {},
   "bases": {},
   "copyright": {

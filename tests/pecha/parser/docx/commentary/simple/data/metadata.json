@@ -11,6 +11,7 @@
     "title_alt_1":{
         "bo": "དབུ་མ་ལ་འཇུག་པ་སོགས། སེམས་བསྐྱེད་དྲུག་པ། - ཤོ་ལོ་ག་༢༩-༦༤"
     },
-    "commentary_of": "I54C654B4",
+    "type": "commentary",
+    "parent": "I54C654B4",
     "language": "bo"
 }
