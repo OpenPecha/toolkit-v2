@@ -31,8 +31,7 @@ class TestDocxParser(TestCase):
         metadatas: list[MetadataType] = [
             DummyMetadataModel(
                 **{
-                    "translation_of": None,
-                    "commentary_of": None,
+                    "type": "root",
                     **extra_fields,
                 }
             )
@@ -44,15 +43,14 @@ class TestDocxParser(TestCase):
         metadatas: list[MetadataType] = [
             DummyMetadataModel(
                 **{
-                    "translation_of": "P0001",
-                    "commentary_of": None,
+                    "type": "translation",
+                    "parent": "P0001",
                     **extra_fields,
                 }
             ),
             DummyMetadataModel(
                 **{
-                    "translation_of": None,
-                    "commentary_of": None,
+                    "type": "root",
                     **extra_fields,
                 }
             ),
@@ -63,15 +61,14 @@ class TestDocxParser(TestCase):
         metadatas: list[MetadataType] = [
             DummyMetadataModel(
                 **{
-                    "translation_of": None,
-                    "commentary_of": "P0001",
+                    "type": "commentary",
+                    "parent": "P0001",
                     **extra_fields,
                 }
             ),
             DummyMetadataModel(
                 **{
-                    "translation_of": None,
-                    "commentary_of": None,
+                    "type": "root",
                     **extra_fields,
                 }
             ),
@@ -83,22 +80,21 @@ class TestDocxParser(TestCase):
         metadatas: list[MetadataType] = [
             DummyMetadataModel(
                 **{
-                    "translation_of": "P0001",
-                    "commentary_of": None,
+                    "type": "translation",
+                    "parent": "P0001",
                     **extra_fields,
                 }
             ),
             DummyMetadataModel(
                 **{
-                    "translation_of": None,
-                    "commentary_of": "P0002",
+                    "type": "commentary",
+                    "parent": "P0002",
                     **extra_fields,
                 }
             ),
             DummyMetadataModel(
                 **{
-                    "translation_of": None,
-                    "commentary_of": None,
+                    "type": "root",
                     **extra_fields,
                 }
             ),

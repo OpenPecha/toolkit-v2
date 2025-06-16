@@ -22,7 +22,7 @@ class DocxParser:
             bool: True if the Pecha is a commentary, otherwise False.
         """
         for metadata in metadatas:
-            if metadata.commentary_of:
+            if metadata.type == "commentary":
                 return True
         return False
 
