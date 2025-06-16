@@ -32,6 +32,7 @@ class TestDocxParser(TestCase):
             DummyMetadataModel(
                 **{
                     "type": "root",
+                    "parent": None,
                     **extra_fields,
                 }
             )
@@ -51,6 +52,7 @@ class TestDocxParser(TestCase):
             DummyMetadataModel(
                 **{
                     "type": "root",
+                    "parent": None,
                     **extra_fields,
                 }
             ),
@@ -69,6 +71,7 @@ class TestDocxParser(TestCase):
             DummyMetadataModel(
                 **{
                     "type": "root",
+                    "parent": None,
                     **extra_fields,
                 }
             ),
@@ -95,6 +98,7 @@ class TestDocxParser(TestCase):
             DummyMetadataModel(
                 **{
                     "type": "root",
+                    "parent": None,
                     **extra_fields,
                 }
             ),
