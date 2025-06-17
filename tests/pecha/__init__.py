@@ -41,8 +41,8 @@ class SharedPechaSetup:
 
         self.root_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": None,
-                "commentary_of": None,
+                "type": "root",
+                "parent": None,
                 **self.root_pecha.metadata.to_dict(),
             }
         )
@@ -67,8 +67,8 @@ class SharedPechaSetup:
 
         self.root_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": "IE60BBDE8",
-                "commentary_of": None,
+                "type": "translation",
+                "parent": "I6556B464",
                 **self.root_translation_pecha.metadata.to_dict(),
             }
         )
@@ -87,8 +87,8 @@ class SharedPechaSetup:
 
         self.commentary_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": None,
-                "commentary_of": "IE60BBDE8",
+                "type": "commentary",
+                "parent": "IE60BBDE8",
                 **self.commentary_pecha.metadata.to_dict(),
             }
         )
@@ -107,8 +107,8 @@ class SharedPechaSetup:
 
         self.commentary_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": "I6944984E",
-                "commentary_of": None,
+                "type": "translation",
+                "parent": "I6944984E",
                 **self.commentary_translation_pecha.metadata.to_dict(),
             }
         )
@@ -127,8 +127,8 @@ class SharedPechaSetup:
 
         self.prealigned_root_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": "IE60BBDE8",
-                "commentary_of": None,
+                "type": "translation",
+                "parent": "IE60BBDE8",
                 **self.root_translation_pecha.metadata.to_dict(),
             }
         )
@@ -148,8 +148,8 @@ class SharedPechaSetup:
         self.prealigned_root_translation_segmentation_pecha_metadata = (
             DummyMetadataModel(
                 **{
-                    "translation_of": "IE60BBDE8",
-                    "commentary_of": None,
+                    "type": "translation",
+                    "parent": "IE60BBDE8",
                     **self.root_translation_pecha.metadata.to_dict(),
                 }
             )
@@ -177,8 +177,8 @@ class SharedPechaSetup:
 
         self.prealigned_commentary_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": None,
-                "commentary_of": "IE60BBDE8",
+                "type": "commentary",
+                "parent": "IE60BBDE8",
                 **self.commentary_pecha.metadata.to_dict(),
             }
         )
@@ -197,8 +197,8 @@ class SharedPechaSetup:
 
         self.prealigned_commentary_segmentation_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": None,
-                "commentary_of": "IE60BBDE8",
+                "type": "commentary",
+                "parent": "IE60BBDE8",
                 **self.commentary_pecha.metadata.to_dict(),
             }
         )
@@ -225,8 +225,8 @@ class SharedPechaSetup:
 
         self.prealigned_commentary_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": "I6944984E",
-                "commentary_of": None,
+                "type": "translation",
+                "parent": "I6944984E",
                 **self.prealigned_commentary_translation_pecha.metadata.to_dict(),
             }
         )
