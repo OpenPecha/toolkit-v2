@@ -16,7 +16,8 @@
   "initial_creation_type": "google_docx",
   "language": "bo",
   "source_metadata": {
-    "commentary_of": "IA6E66F92"
+    "type": "commentary",
+    "parent": "IA6E66F92"
   },
   "bases": {},
   "copyright": {

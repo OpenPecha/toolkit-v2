@@ -30,14 +30,14 @@ def get_metadatachain_from_metadatatree(
     while flag:
         for metadata_pecha_id, metadata in metadatatree:
             if metadata_pecha_id == pecha_id:
-                if metadata.commentary_of:
+                if metadata.type == "commentary":
                     metadatachain.append((metadata_pecha_id, metadata))
-                    pecha_id = metadata.commentary_of
+                    pecha_id = metadata.parent
                     break
 
-                if metadata.translation_of:
+                if metadata.type == "translation":
                     metadatachain.append((metadata_pecha_id, metadata))
-                    pecha_id = metadata.translation_of
+                    pecha_id = metadata.parent
                     break
 
                 flag = False
