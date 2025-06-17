@@ -119,6 +119,6 @@ def is_root_related_pecha(metadatas: List[Any]) -> bool:
     Returns True if the pecha type is root-related.
     """
     for metadata in metadatas:
-        if metadata.commentary_of:
+        if metadata.type == "commentary":
             return False
     return True
