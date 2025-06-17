@@ -13,6 +13,8 @@
   "parser": "DocxSimpleCommentaryParser",
   "initial_creation_type": "google_docx",
   "language": "en",
+  "type": "translation",
+  "parent": "IDD1DF976",
   "source_metadata": {
     "translation_of": "I6944984E"
   },

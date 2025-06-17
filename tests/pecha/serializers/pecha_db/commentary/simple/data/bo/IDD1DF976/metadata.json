@@ -14,6 +14,8 @@
   "parser": "DocxSimpleCommentaryParser",
   "initial_creation_type": "google_docx",
   "language": "bo",
+  "type": "commentary",
+  "parent": "I6556B464",
   "source_metadata": {
     "commentary_of": "IA74EAD05"
   },
