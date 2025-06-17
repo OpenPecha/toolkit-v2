@@ -135,7 +135,8 @@ Root Pecha (P0001)
 ```
 Commentary Pecha (P0002)
 ├── metadata.json
-|      - commentary_of: P0001
+|      - type: commentary
+|      - parent: P0001
 ├── base/
 │   └── base1.txt
 │       └── "ཨོཾ་མ་ཎི་པདྨེ་ཧཱུྃ།..."

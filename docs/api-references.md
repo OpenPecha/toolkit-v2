@@ -438,7 +438,7 @@ Parses a DOCX file and creates a commentary Pecha object with annotations.
   pecha, layer_path = parser.parse(
       input="path/to/commentary.docx",
       annotation_type=AnnotationType.ALIGNMENT,
-      metadata={"title": "Commentary Title", "commentary_of": "P0001"},
+      metadata={"title": "Commentary Title", "type": "commentary", "parent": "P0001"},
       output_path=Path("./output")
   )
   ```
