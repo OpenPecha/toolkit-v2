@@ -80,7 +80,7 @@ def is_translation_pecha(metadatas: List[Any]) -> bool:
         True if i) Translation of Root Pecha ii) Translation of Commentary Pecha
         False otherwise
     """
-    if metadatas[0].translation_of:
+    if metadatas[0].type == "translation":
         return True
     return False
 
