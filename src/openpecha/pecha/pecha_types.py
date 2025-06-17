@@ -69,7 +69,7 @@ def is_commentary_pecha(metadatas: List[Any]) -> bool:
     Output: True if Commentary Pecha, False otherwise
     """
     for metadata in metadatas:
-        if metadata.commentary_of:
+        if metadata.type == "commentary":
             return True
     return False
 
