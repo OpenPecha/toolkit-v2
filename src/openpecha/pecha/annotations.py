@@ -1,6 +1,5 @@
 import json
 import re
-from enum import Enum
 from typing import Dict, Optional
 
 from pydantic import (
@@ -205,11 +204,6 @@ class PechaId(str):
                 "PechaId must start with 'I' followed by 8 uppercase hex characters"
             )
         return v
-
-
-class PechaRelationship(str, Enum):
-    commentary_of = "commentary_of"
-    translation_of = "translation_of"
 
 
 class PechaAlignment(BaseModel):
