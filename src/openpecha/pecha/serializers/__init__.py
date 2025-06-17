@@ -287,7 +287,11 @@ class SerializerLogicHandler:
         root_pecha_id = metadata_chain[-1][0]
 
         for metadata_pecha_id, metadata in metadatatree:
-            if metadata.language == lang and metadata.translation_of == root_pecha_id:
+            if (
+                metadata.language == lang
+                and metadata.type == "translation"
+                and metadata.parent == root_pecha_id
+            ):
                 return metadata_pecha_id
 
         return None
