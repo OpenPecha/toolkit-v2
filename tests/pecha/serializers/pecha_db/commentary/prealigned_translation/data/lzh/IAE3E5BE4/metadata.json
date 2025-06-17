@@ -12,6 +12,8 @@
   "parser": "DocxSimpleCommentaryParser",
   "initial_creation_type": "google_docx",
   "language": "lzh",
+  "type": "translation",
+  "parent": "I6556B464",
   "source_metadata": {},
   "bases": {},
   "copyright": {
