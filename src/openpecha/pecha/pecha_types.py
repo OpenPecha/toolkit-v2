@@ -69,7 +69,7 @@ def is_commentary_pecha(metadatas: List[Any]) -> bool:
     Output: True if Commentary Pecha, False otherwise
     """
     for metadata in metadatas:
-        if metadata.commentary_of:
+        if metadata.type == "commentary":
             return True
     return False
 
@@ -80,7 +80,7 @@ def is_translation_pecha(metadatas: List[Any]) -> bool:
         True if i) Translation of Root Pecha ii) Translation of Commentary Pecha
         False otherwise
     """
-    if metadatas[0].translation_of:
+    if metadatas[0].type == "translation":
         return True
     return False
 
@@ -119,6 +119,6 @@ def is_root_related_pecha(metadatas: List[Any]) -> bool:
     Returns True if the pecha type is root-related.
     """
     for metadata in metadatas:
-        if metadata.commentary_of:
+        if metadata.type == "commentary":
             return False
     return True

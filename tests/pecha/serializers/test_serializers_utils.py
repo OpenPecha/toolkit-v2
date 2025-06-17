@@ -47,29 +47,29 @@ class TestGetMetadataChain(TestCase, SharedPechaSetup):
         # Set up `id` field in metadatas (Not included in Backend Db)
         self.root_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": None,
-                "commentary_of": None,
+                "type": "root",
+                "parent": None,
                 **self.root_pecha.metadata.to_dict(),
             }
         )
         self.root_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": self.root_pecha.id,
-                "commentary_of": None,
+                "type": "translation",
+                "parent": self.root_pecha.id,
                 **self.root_translation_pecha.metadata.to_dict(),
             }
         )
         self.commentary_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": None,
-                "commentary_of": self.root_pecha.id,
+                "type": "commentary",
+                "parent": self.root_pecha.id,
                 **self.commentary_pecha.metadata.to_dict(),
             }
         )
         self.commentary_translation_pecha_metadata = DummyMetadataModel(
             **{
-                "translation_of": self.commentary_pecha.id,
-                "commentary_of": None,
+                "type": "translation",
+                "parent": self.commentary_pecha.id,
                 **self.commentary_translation_pecha.metadata.to_dict(),
             }
         )
