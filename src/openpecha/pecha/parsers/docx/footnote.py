@@ -78,6 +78,7 @@ class DocxFootnoteParser:
         return str(layer_path.relative_to(pecha.layer_path))
 
     def parse(self, pecha: Pecha, input: str | Path) -> str:
+        logger.info(f"Parsing footnote annotation for {pecha.id}")
         text = read_docx(input)
         text, footnote_contents = self.get_footnote_contents(text)
         text, footnote_spans = self.get_footnote_spans(text, footnote_contents)
