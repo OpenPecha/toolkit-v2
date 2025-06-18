@@ -2,10 +2,13 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from openpecha.config import get_logger
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import BaseAnnotation, FootnoteAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.utils import read_docx, update_coords
+
+logger = get_logger(__name__)
 
 
 class DocxFootnoteParser:
@@ -26,6 +29,7 @@ class DocxFootnoteParser:
             footnote_contents[footnote_number] = footnote_content
 
         text = re.sub(self.footnote_content, "", text)
+        logger.info(f"Footnote content successfully extracted: {footnote_contents}")
         return (text, footnote_contents)
 
     def get_footnote_spans(
@@ -45,6 +49,7 @@ class DocxFootnoteParser:
             offset += match.end() - match.start()
 
         text = re.sub(self.footnote_number, "", text)
+        logger.info(f"Footnote spans successfully extracted: {footnote_spans}")
         return (text, footnote_spans)
 
     def create_footnote_annotations(
@@ -87,4 +92,5 @@ class DocxFootnoteParser:
         annotation_path: str = self.add_footnote_layer(
             pecha, anns, AnnotationType.FOOTNOTE
         )
+        logger.info(f"Footnote annotation successfully added to Pecha {pecha.id}")
         return annotation_path
