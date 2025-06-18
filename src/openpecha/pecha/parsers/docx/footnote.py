@@ -24,7 +24,7 @@ class DocxFootnoteParser:
         footnote_contents: Dict[int, str] = {}
 
         for match in matches:
-            footnote_number = int(match[0])
+            footnote_number = int(match[0]) + 1  # footnote number starts from 0
             footnote_content = match[1]
             footnote_contents[footnote_number] = footnote_content
 
@@ -41,7 +41,7 @@ class DocxFootnoteParser:
         offset = 0
 
         for match in matches:
-            footnote_number = int(match.group(1))
+            footnote_number = int(match.group(1)) + 1  # footnote number starts from 0
             if footnote_number in footnote_contents:
                 start_pos = match.start() - offset
                 footnote_spans[footnote_number] = (start_pos, start_pos)
@@ -59,6 +59,7 @@ class DocxFootnoteParser:
     ) -> List[FootnoteAnnotation]:
         return [
             FootnoteAnnotation(
+                index=footnote_number,
                 span=Span(start=span[0], end=span[1]),
                 note=footnote_contents[footnote_number],
             )
@@ -79,7 +80,7 @@ class DocxFootnoteParser:
 
     def parse(self, pecha: Pecha, input: str | Path) -> str:
         logger.info(f"Parsing footnote annotation for {pecha.id}")
-        text = read_docx(input)
+        text = read_docx(docx_file=input, ignore_footnotes=False)
         text, footnote_contents = self.get_footnote_contents(text)
         text, footnote_spans = self.get_footnote_spans(text, footnote_contents)
 

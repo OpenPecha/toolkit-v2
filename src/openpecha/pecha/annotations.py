@@ -68,6 +68,7 @@ class AlignmentAnnotation(BaseAnnotation):
 
 
 class FootnoteAnnotation(BaseAnnotation):
+    index: int
     note: str
 
 
