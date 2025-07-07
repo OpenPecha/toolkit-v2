@@ -1,10 +1,21 @@
 from pathlib import Path
 from openpecha.pecha import Pecha
+from diff_match_patch import diff_match_patch
+
 
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list, read_docx
-from openpecha.pecha.blupdate import DiffMatchPatch
 
 class DocxEditionParser:
+    def __init__(self):
+        self.dmp = diff_match_patch()
+        self.dmp.Diff_Timeout = 0
+        self.dmp.Diff_EditCost = 4
+        self.dmp.Match_Threshold = 0.4
+        self.dmp.Match_Distance = 300
+        self.dmp.Patch_DeleteThreshold = 0.4
+        # Patch_Margin and Match_MaxBits can remain defaults
+
+
     def parse_segmentation(self, input: str | Path) -> str:
         numbered_text = extract_numbered_list(input)
         anns = []
@@ -13,19 +24,12 @@ class DocxEditionParser:
         for index, segment in numbered_text.items():
             anns.append({
                  "Span": {"start": char_count, "end": char_count + len(segment)},
-                "index": index
+                 "index": index
             })
             char_count += len(segment) + 1
 
         return anns
 
-    def parse_spelling_variant(self, pecha: Pecha, input: str | Path) -> str:
-        basename = list(pecha.bases.keys())[0]
-        old_base = pecha.get_base(basename)
-        new_base = read_docx(input)
-        
-        blupdate = DiffMatchPatch(old_base, new_base)
-        diffs = blupdate.diffs
-
+    def parse_spelling_variant(self, old_base:str, new_base:str) -> str:
         pass 
 
