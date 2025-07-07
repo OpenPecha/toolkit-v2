@@ -12,8 +12,8 @@ class TestDocxEditionParser(TestCase, SharedPechaSetup):
 
     def test_segmentation_parse(self):
         parser = DocxEditionParser()
-        res = parser.parse_segmentation(self.docx_file)
-        print(res)
+        anns = parser.parse_segmentation(self.docx_file)
+        print(anns)
 
     def test_spelling_variant_parse(self):
         pass 
