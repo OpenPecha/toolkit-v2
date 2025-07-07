@@ -2,6 +2,7 @@ from pathlib import Path
 from openpecha.pecha import Pecha
 
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list, read_docx
+from openpecha.pecha.blupdate import DiffMatchPatch
 
 class DocxEditionParser:
     def parse_segmentation(self, input: str | Path) -> str:
@@ -20,8 +21,11 @@ class DocxEditionParser:
 
     def parse_spelling_variant(self, pecha: Pecha, input: str | Path) -> str:
         basename = list(pecha.bases.keys())[0]
-        base = pecha.get_base(basename)
+        old_base = pecha.get_base(basename)
+        new_base = read_docx(input)
+        
+        blupdate = DiffMatchPatch(old_base, new_base)
+        diffs = blupdate.diffs
 
-        text = read_docx(input)
         pass 
 
