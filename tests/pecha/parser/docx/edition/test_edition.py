@@ -35,13 +35,19 @@ class TestDocxEditionParser(TestCase):
     def test_spelling_variant_parse(self):
         parser = DocxEditionParser()
 
-        basename = list(self.pecha.bases.keys())[0]
-        old_base = self.pecha.get_base(basename)
-        
-        numbered_list = extract_numbered_list(self.docx_file)
-        new_base = "\n".join(list(numbered_list.values()))
-        
+        # Insertion        
+        old_base = "Hello"
+        new_base = "Hello World"
         diffs = parser.parse_spelling_variant(old_base, new_base)
+        assert diffs == [{'operation': 'insertion', 'start': 5, 'text': ' World'}]
+
+        # Deletion        
+        old_base = "Hello World"
+        new_base = "Hello"
+        diffs = parser.parse_spelling_variant(old_base, new_base)
+        assert diffs == [{'operation': 'deletion', 'start': 5, 'end': 11}]
+        
+
 
     def tearDown(self):
         pass 

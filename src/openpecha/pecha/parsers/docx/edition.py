@@ -9,10 +9,10 @@ class DocxEditionParser:
     def __init__(self):
         self.dmp = diff_match_patch()
         self.dmp.Diff_Timeout = 0
-        self.dmp.Diff_EditCost = 4
-        self.dmp.Match_Threshold = 0.4
-        self.dmp.Match_Distance = 300
-        self.dmp.Patch_DeleteThreshold = 0.4
+        self.dmp.Diff_EditCost = 8
+        self.dmp.Match_Threshold = 0.8
+        self.dmp.Match_Distance = 1000
+        self.dmp.Patch_DeleteThreshold = 0.8
         # Patch_Margin and Match_MaxBits can remain defaults
 
 
@@ -30,6 +30,21 @@ class DocxEditionParser:
 
         return anns
 
-    def parse_spelling_variant(self, old_base:str, new_base:str) -> str:
-        pass 
+    def parse_spelling_variant(self, source:str, target:str) -> str:
+        diffs = self.dmp.diff_main(source, target, checklines=False)
 
+        anns = []
+        char_count = 0
+
+        for marker, text in diffs:
+            if marker == 0:
+                pass 
+
+            elif marker == 1:
+                anns.append({"operation":"insertion", "start": char_count, "text": text})
+
+            else:
+                anns.append({"operation": "deletion", "start": char_count, "end": char_count + len(text)})
+
+            char_count += len(text)
+        return anns
