@@ -4,7 +4,7 @@ from pathlib import Path
 from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.docx.edition import DocxEditionParser
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list
-from openpecha.pecha.annotations import SegmentationAnnotation, Span
+from openpecha.pecha.annotations import SegmentationAnnotation, Span, SpellingVariantAnnotation
 
 class TestDocxEditionParser(TestCase):
     def setUp(self):
@@ -40,31 +40,42 @@ class TestDocxEditionParser(TestCase):
         old_base = "Hello"
         new_base = "Hello World"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [{'operation': 'insertion', 'start': 5, 'text': ' World'}]
+        assert diffs == [
+            SpellingVariantAnnotation(span=Span(start=5, end=5), operation="insertion", text=" World")
+        ]
 
         # Deletion        
         old_base = "Hello World"
         new_base = "Hello"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [{'operation': 'deletion', 'start': 5, 'end': 11}]
+        assert diffs == [
+            SpellingVariantAnnotation(span=Span(start=5, end=11), operation="deletion")
+        ]
         
         # Insertion in Between
         old_base = "Hello World"
         new_base = "Hello!! World"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [{'operation': 'insertion', 'start': 5, 'text': '!!'}]
+        assert diffs == [
+            SpellingVariantAnnotation(span=Span(start=5, end=5), operation="insertion", text="!!")
+        ]
 
         # Deletion in Between
         old_base = "Good morning, Everyone"
         new_base = "Good Everyone"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [{'operation': 'deletion', 'start': 4, 'end': 13}]
+        assert diffs == [
+            SpellingVariantAnnotation(span=Span(start=4, end=13), operation="deletion")
+        ]
 
         # Insertion and Deletion
         old_base = "Good morning, Ladies and Gentlemen"
         new_base = "Good Attractive Ladies and Gentlemen"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [{'operation': 'deletion', 'start': 5, 'end': 13}, {'operation': 'insertion', 'start': 13, 'text': 'Attractive'}]   
+        assert diffs == [
+            SpellingVariantAnnotation(span=Span(start=5, end=13), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=13, end=13), operation="insertion", text="Attractive")
+        ]   
 
         # Test with google docs
         old_basename = list(self.pecha.bases.keys())[0]
