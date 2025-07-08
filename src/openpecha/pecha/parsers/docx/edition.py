@@ -8,6 +8,7 @@ from openpecha.pecha.annotations import (
     Span,
     SpellingVariantAnnotation,
 )
+from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list, update_coords
 
 
@@ -84,7 +85,30 @@ class DocxEditionParser:
         new_base = "\n".join(list(numbered_text.values()))
 
         seg_anns = self.parse_segmentation(input)
-        updated_seg_anns = update_coords(seg_anns, old_base, new_base)  # noqa
+        updated_seg_anns = update_coords(seg_anns, old_base, new_base) 
+        spelling_var_anns = self.parse_spelling_variant(old_base, new_base) 
 
-        spelling_var_anns = self.parse_spelling_variant(old_base, new_base)  # noqa
-        pass
+        seg_layer_path = self.add_segmentation_layer(pecha, updated_seg_anns)
+        spelling_variant_path = self.add_spelling_variant_layer(pecha, spelling_var_anns)
+
+        return seg_layer_path, spelling_variant_path
+
+    def add_segmentation_layer(self, pecha: Pecha, anns: list[SegmentationAnnotation]):
+        basename = list(pecha.bases.keys())[0]
+        layer, layer_path = pecha.add_layer(basename, AnnotationType.SEGMENTATION)
+        for ann in anns:
+            pecha.add_annotation(layer, ann, AnnotationType.SEGMENTATION)
+        layer.save()
+
+        return str(layer_path.relative_to(pecha.layer_path))
+
+    def add_spelling_variant_layer(
+        self, pecha: Pecha, anns: list[SpellingVariantAnnotation]
+    ):
+        basename = list(pecha.bases.keys())[0]
+        layer, layer_path = pecha.add_layer(basename, AnnotationType)
+        for ann in anns:
+            pecha.add_annotation(layer, ann, AnnotationType.SPELLING_VARIANT)
+        layer.save()
+
+        return str(layer_path.relative_to(pecha.layer_path))
