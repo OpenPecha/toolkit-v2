@@ -85,23 +85,22 @@ class TestDocxEditionParser(TestCase):
         new_base = "\n".join(list(numbered_list.values()))
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [
-            {'operation': 'insertion', 'start': 87, 'text': '\n'}, 
-            {'operation': 'insertion', 'start': 283, 'text': '\n'}, 
-            {'operation': 'deletion', 'start': 675, 'end': 676}, 
-            {'operation': 'insertion', 'start': 890, 'text': ' རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།'}, 
-            {'operation': 'deletion', 'start': 1081, 'end': 1127}, 
-            {'operation': 'insertion', 'start': 1127, 'text': 'འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌'}, 
-            {'operation': 'insertion', 'start': 1176, 'text': '\n'}, 
-            {'operation': 'deletion', 'start': 1264, 'end': 1307}, 
-            {'operation': 'insertion', 'start': 1373, 'text': 'པར་'}, 
-            {'operation': 'deletion', 'start': 1419, 'end': 1420}, 
-            {'operation': 'insertion', 'start': 1420, 'text': 'བ'}, 
-            {'operation': 'deletion', 'start': 1539, 'end': 1542}, 
-            {'operation': 'deletion', 'start': 1595, 'end': 1598}, 
-            {'operation': 'deletion', 'start': 1671, 'end': 1683}, 
-            {'operation': 'deletion', 'start': 1714, 'end': 1715}
+            SpellingVariantAnnotation(span=Span(start=87, end=87), operation="insertion", text='\n'),
+            SpellingVariantAnnotation(span=Span(start=283, end=283), operation="insertion", text='\n'),
+            SpellingVariantAnnotation(span=Span(start=675, end=676), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=890, end=890), operation="insertion", text=' རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།'),
+            SpellingVariantAnnotation(span=Span(start=1081, end=1127), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=1127, end=1127), operation="insertion", text='འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌'),
+            SpellingVariantAnnotation(span=Span(start=1176, end=1176), operation="insertion", text='\n'),
+            SpellingVariantAnnotation(span=Span(start=1264, end=1307), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=1373, end=1373), operation="insertion", text='པར་'),
+            SpellingVariantAnnotation(span=Span(start=1419, end=1420), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=1420, end=1420), operation="insertion", text='བ'),
+            SpellingVariantAnnotation(span=Span(start=1539, end=1542), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=1595, end=1598), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=1671, end=1683), operation="deletion"),
+            SpellingVariantAnnotation(span=Span(start=1714, end=1715), operation="deletion")
         ]
-
 
     def tearDown(self):
         pass 
