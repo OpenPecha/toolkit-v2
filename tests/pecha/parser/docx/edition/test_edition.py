@@ -47,6 +47,23 @@ class TestDocxEditionParser(TestCase):
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [{'operation': 'deletion', 'start': 5, 'end': 11}]
         
+        # Insertion in Between
+        old_base = "Hello World"
+        new_base = "Hello!! World"
+        diffs = parser.parse_spelling_variant(old_base, new_base)
+        assert diffs == [{'operation': 'insertion', 'start': 5, 'text': '!!'}]
+
+        # Deletion in Between
+        old_base = "Good morning, Everyone"
+        new_base = "Good Everyone"
+        diffs = parser.parse_spelling_variant(old_base, new_base)
+        assert diffs == [{'operation': 'deletion', 'start': 4, 'end': 13}]
+
+        ## Insertion and Deletion
+        old_base = "Good morning, Ladies and Gentlemen"
+        new_base = "Good Attractive Ladies and Gentlemen"
+        diffs = parser.parse_spelling_variant(old_base, new_base)
+        assert diffs == [{'operation': 'deletion', 'start': 5, 'end': 13}, {'operation': 'insertion', 'start': 13, 'text': 'Attractive'}]        
 
 
     def tearDown(self):
