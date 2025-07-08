@@ -66,6 +66,11 @@ class AlignmentAnnotation(BaseAnnotation):
         json_schema_extra={"example": {"index": 5, "alignment_index": "1-5,7"}}
     )
 
+class SpellingVariantAnnotation(BaseAnnotation):
+    span: Span
+    operation:str # Could be insertion or deletion
+    text:str # Required for insertion, empty for deletion
+    
 
 class FootnoteAnnotation(BaseAnnotation):
     index: int
