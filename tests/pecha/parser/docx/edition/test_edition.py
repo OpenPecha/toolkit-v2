@@ -59,20 +59,38 @@ class TestDocxEditionParser(TestCase):
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [{'operation': 'deletion', 'start': 4, 'end': 13}]
 
-        ## Insertion and Deletion
+        # Insertion and Deletion
         old_base = "Good morning, Ladies and Gentlemen"
         new_base = "Good Attractive Ladies and Gentlemen"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [{'operation': 'deletion', 'start': 5, 'end': 13}, {'operation': 'insertion', 'start': 13, 'text': 'Attractive'}]        
+        assert diffs == [{'operation': 'deletion', 'start': 5, 'end': 13}, {'operation': 'insertion', 'start': 13, 'text': 'Attractive'}]   
+
+        # Test with google docs
+        old_basename = list(self.pecha.bases.keys())[0]
+        old_base = self.pecha.get_base(old_basename)
+
+        numbered_list = extract_numbered_list(self.docx_file)
+        new_base = "\n".join(list(numbered_list.values()))
+        diffs = parser.parse_spelling_variant(old_base, new_base)
+        assert diffs == [
+            {'operation': 'insertion', 'start': 87, 'text': '\n'}, 
+            {'operation': 'insertion', 'start': 283, 'text': '\n'}, 
+            {'operation': 'deletion', 'start': 675, 'end': 676}, 
+            {'operation': 'insertion', 'start': 890, 'text': ' རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།'}, 
+            {'operation': 'deletion', 'start': 1081, 'end': 1127}, 
+            {'operation': 'insertion', 'start': 1127, 'text': 'འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌'}, 
+            {'operation': 'insertion', 'start': 1176, 'text': '\n'}, 
+            {'operation': 'deletion', 'start': 1264, 'end': 1307}, 
+            {'operation': 'insertion', 'start': 1373, 'text': 'པར་'}, 
+            {'operation': 'deletion', 'start': 1419, 'end': 1420}, 
+            {'operation': 'insertion', 'start': 1420, 'text': 'བ'}, 
+            {'operation': 'deletion', 'start': 1539, 'end': 1542}, 
+            {'operation': 'deletion', 'start': 1595, 'end': 1598}, 
+            {'operation': 'deletion', 'start': 1671, 'end': 1683}, 
+            {'operation': 'deletion', 'start': 1714, 'end': 1715}
+        ]
 
 
     def tearDown(self):
         pass 
 
-
-if __name__ == "__main__":
-    test = TestDocxEditionParser()
-    
-    test.setUp()
-    test.test_segmentation_parse()
-    test.test_spelling_variant_parse()
