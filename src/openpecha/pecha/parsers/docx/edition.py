@@ -3,7 +3,8 @@ from openpecha.pecha import Pecha
 from diff_match_patch import diff_match_patch
 
 
-from openpecha.pecha.parsers.docx.utils import extract_numbered_list, read_docx
+from openpecha.pecha.parsers.docx.utils import extract_numbered_list
+from openpecha.pecha.annotations import SegmentationAnnotation, Span
 
 class DocxEditionParser:
     def __init__(self):
@@ -15,20 +16,28 @@ class DocxEditionParser:
         self.dmp.Patch_DeleteThreshold = 0.5
         # Patch_Margin and Match_MaxBits can remain defaults
 
-
-    def parse_segmentation(self, input: str | Path) -> str:
-        numbered_text = extract_numbered_list(input)
+    def parse_segmentation_from_text(self, numbered_text: dict):
         anns = []
         char_count = 0
-
         for index, segment in numbered_text.items():
-            anns.append({
-                 "Span": {"start": char_count, "end": char_count + len(segment)},
-                 "index": index
-            })
+            anns.append(
+                SegmentationAnnotation(
+                    span=Span(start=char_count, end=char_count + len(segment)),
+                    index=index,
+                )
+            )
             char_count += len(segment) + 1
 
         return anns
+
+
+    def parse_segmentation(self, input: str | Path) -> str:
+        """
+        Extract text from docx and calculate coordinates for segments.
+        """
+        numbered_text = extract_numbered_list(input)
+        anns = self.parse_segmentation_from_text(numbered_text)
+        return anns 
 
     def parse_spelling_variant(self, source:str, target:str) -> str:
         diffs = self.dmp.diff_main(source, target, checklines=True)
