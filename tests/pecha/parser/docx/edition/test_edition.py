@@ -4,6 +4,7 @@ from pathlib import Path
 from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.docx.edition import DocxEditionParser
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list
+from openpecha.pecha.annotations import SegmentationAnnotation, Span
 
 class TestDocxEditionParser(TestCase):
     def setUp(self):
@@ -18,16 +19,16 @@ class TestDocxEditionParser(TestCase):
         anns = parser.parse_segmentation(self.docx_file)
         
         expected_anns = [
-            {'Span': {'start': 0, 'end': 87}, 'index': '1'},
-            {'Span': {'start': 88, 'end': 207}, 'index': '2'},
-            {'Span': {'start': 208, 'end': 283}, 'index': '3'},
-            {'Span': {'start': 284, 'end': 361}, 'index': '4'},
-            {'Span': {'start': 362, 'end': 508}, 'index': '5'},
-            {'Span': {'start': 509, 'end': 844}, 'index': '6'},
-            {'Span': {'start': 845, 'end': 1129}, 'index': '7'},
-            {'Span': {'start': 1130, 'end': 1217}, 'index': '8'},
-            {'Span': {'start': 1218, 'end': 1409}, 'index': '9'},
-            {'Span': {'start': 1410, 'end': 1605}, 'index': '10'}
+            SegmentationAnnotation(span=Span(start=0, end=87), index=1),
+            SegmentationAnnotation(span=Span(start=88, end=207), index=2),
+            SegmentationAnnotation(span=Span(start=208, end=283), index=3),
+            SegmentationAnnotation(span=Span(start=284, end=361), index=4),
+            SegmentationAnnotation(span=Span(start=362, end=508), index=5),
+            SegmentationAnnotation(span=Span(start=509, end=844), index=6),
+            SegmentationAnnotation(span=Span(start=845, end=1129), index=7),
+            SegmentationAnnotation(span=Span(start=1130, end=1217), index=8),
+            SegmentationAnnotation(span=Span(start=1218, end=1409), index=9),
+            SegmentationAnnotation(span=Span(start=1410, end=1605), index=10)
         ]
 
         assert anns == expected_anns
