@@ -28,7 +28,7 @@ class DocxEditionParser:
         # Patch_Margin and Match_MaxBits can remain defaults
 
     def parse_segmentation_from_text(
-        self, numbered_text: dict[int, str]
+        self, numbered_text: dict
     ) -> list[SegmentationAnnotation]:
         """
         Create segmentation annotations from numbered text segments.
@@ -65,8 +65,8 @@ class DocxEditionParser:
         char_count = 0
         for marker, text in diffs:
             if marker == 0:
-                # No change
-                pass
+                char_count += len(text)
+
             elif marker == 1:
                 # Insertion
                 anns.append(
@@ -84,7 +84,7 @@ class DocxEditionParser:
                         operation="deletion",
                     )
                 )
-            char_count += len(text)
+                char_count += len(text)
         return anns
 
     def parse(self, pecha: Pecha, input: str | Path):
