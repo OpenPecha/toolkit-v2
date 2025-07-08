@@ -4,7 +4,7 @@ from diff_match_patch import diff_match_patch
 
 
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list
-from openpecha.pecha.annotations import SegmentationAnnotation, Span
+from openpecha.pecha.annotations import SegmentationAnnotation, Span, SpellingVariantAnnotation
 
 class DocxEditionParser:
     def __init__(self):
@@ -51,10 +51,21 @@ class DocxEditionParser:
                 pass 
 
             elif marker == 1:
-                anns.append({"operation":"insertion", "start": char_count, "text": text})
+                anns.append(
+                    SpellingVariantAnnotation(
+                        span=Span(start=char_count, end=char_count),
+                        operation="insertion",
+                        text=text
+                    )
+                )
 
             else:
-                anns.append({"operation": "deletion", "start": char_count, "end": char_count + len(text)})
+                anns.append(
+                    SpellingVariantAnnotation(
+                        span=Span(start=char_count, end=char_count + len(text)),
+                        operation="deletion"
+                    )
+                )
 
             char_count += len(text)
         return anns

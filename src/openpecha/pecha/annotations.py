@@ -69,7 +69,7 @@ class AlignmentAnnotation(BaseAnnotation):
 class SpellingVariantAnnotation(BaseAnnotation):
     span: Span
     operation:str # Could be insertion or deletion
-    text:str # Required for insertion, empty for deletion
+    text:str ="" # Required for insertion, empty for deletion
     
 
 class FootnoteAnnotation(BaseAnnotation):
