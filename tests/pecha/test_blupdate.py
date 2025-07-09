@@ -1,6 +1,48 @@
+from unittest import TestCase
+
 import pytest
 
-from openpecha.pecha.blupdate import Blupdate
+from openpecha.pecha.blupdate import Blupdate, DiffMatchPatch
+
+
+class TestDiffMatchPatch(TestCase):
+    def setUp(self):
+        pass
+
+    def test_insertion(self):
+        old_base = "Hello"
+        new_base = "Hello World"
+        diff = DiffMatchPatch(old_base, new_base)
+
+        assert diff.get_updated_coord(0) == 0
+
+    def test_deletion(self):
+        old_base = "Hello World"
+        new_base = "Hello"
+        diff = DiffMatchPatch(old_base, new_base)
+
+        assert diff.get_updated_coord(0) == 0
+
+    def test_insertion_in_between(self):
+        old_base = "Hello World"
+        new_base = "Hello!! World"
+        diff = DiffMatchPatch(old_base, new_base)
+
+        assert diff.get_updated_coord(0) == 0
+
+    def test_deletion_in_between(self):
+        old_base = "Good morning, Everyone"
+        new_base = "Good Everyone"
+        diff = DiffMatchPatch(old_base, new_base)
+
+        assert diff.get_updated_coord(0) == 0
+
+    def test_insertion_and_deletion(self):
+        old_base = "Good morning, Ladies and Gentlemen"
+        new_base = "Good Attractive Ladies and Gentlemen"
+        diff = DiffMatchPatch(old_base, new_base)
+
+        assert diff.get_updated_coord(0) == 0
 
 
 @pytest.fixture(params=[{"srcbl": "abefghijkl", "dstbl": "abcdefgkl"}])
