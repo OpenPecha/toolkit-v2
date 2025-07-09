@@ -1,7 +1,9 @@
 from pathlib import Path
 from unittest import TestCase
 
-from openpecha.pecha import Pecha
+from stam import AnnotationStore
+
+from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.annotations import (
     SegmentationAnnotation,
     Span,
@@ -16,8 +18,14 @@ class TestDocxEditionParser(TestCase):
         self.DATA = Path(__file__).parent / "data"
         self.docx_file = self.DATA / "edition.docx"
 
-        pecha_path = Path("tests/alignment/commentary_transfer/data/root/I6556B464")
-        self.pecha = Pecha.from_path(pecha_path)
+        self.pecha_path = Path(
+            "tests/alignment/commentary_transfer/data/root/I6556B464"
+        )
+        self.pecha = Pecha.from_path(self.pecha_path)
+
+        self.pecha_backup = {
+            f: f.read_bytes() for f in self.pecha_path.glob("**/*") if f.is_file()
+        }
 
     def test_segmentation_parse(self):
         parser = DocxEditionParser()
@@ -97,58 +105,184 @@ class TestDocxEditionParser(TestCase):
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [
             SpellingVariantAnnotation(
-                span=Span(start=87, end=87), operation="insertion", text="\n"
+                span=Span(start=87, end=87, errors=None),
+                metadata=None,
+                operation="insertion",
+                text="\n",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=283, end=283), operation="insertion", text="\n"
+                span=Span(start=282, end=282, errors=None),
+                metadata=None,
+                operation="insertion",
+                text="\n",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=675, end=676), operation="deletion"
+                span=Span(start=673, end=674, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=890, end=890),
+                span=Span(start=888, end=888, errors=None),
+                metadata=None,
                 operation="insertion",
                 text=" རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1081, end=1127), operation="deletion"
+                span=Span(start=1034, end=1080, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1127, end=1127),
+                span=Span(start=1080, end=1080, errors=None),
+                metadata=None,
                 operation="insertion",
                 text="འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1176, end=1176), operation="insertion", text="\n"
+                span=Span(start=1083, end=1083, errors=None),
+                metadata=None,
+                operation="insertion",
+                text="\n",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1264, end=1307), operation="deletion"
+                span=Span(start=1170, end=1213, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1373, end=1373), operation="insertion", text="པར་"
+                span=Span(start=1279, end=1279, errors=None),
+                metadata=None,
+                operation="insertion",
+                text="པར་",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1419, end=1420), operation="deletion"
+                span=Span(start=1322, end=1323, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1420, end=1420), operation="insertion", text="བ"
+                span=Span(start=1323, end=1323, errors=None),
+                metadata=None,
+                operation="insertion",
+                text="བ",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1539, end=1542), operation="deletion"
+                span=Span(start=1441, end=1444, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1595, end=1598), operation="deletion"
+                span=Span(start=1497, end=1500, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1671, end=1683), operation="deletion"
+                span=Span(start=1573, end=1585, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
             SpellingVariantAnnotation(
-                span=Span(start=1714, end=1715), operation="deletion"
+                span=Span(start=1616, end=1617, errors=None),
+                metadata=None,
+                operation="deletion",
+                text="",
             ),
         ]
 
     def test_parse(self):
-        pass
+        parser = DocxEditionParser()
+
+        seg_layer_path, spelling_variant_path = parser.parse(self.pecha, self.docx_file)
+
+        seg_anns = get_anns(
+            ann_store=AnnotationStore(file=str(self.pecha.layer_path / seg_layer_path)),
+            include_span=True,
+        )
+        expected_seg_anns = [
+            {
+                "index": 1,
+                "segmentation_type": "segmentation",
+                "text": "བུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ། །ར",
+                "Span": {"start": 0, "end": 88},
+            },
+            {
+                "index": 2,
+                "segmentation_type": "segmentation",
+                "text": "ོགས་པའི་སངས་རྒྱས་ཆོས་ལ་མངོན་ཕྱོགས་ཤིང༌། །འདི་བརྟེན་འབྱུང་བའི་དེ་ཉིད་མཐོང་བ་དེས། །ཤེས་རབ་གནས་པས་འགོག་པ་ཐོབ་པར་འགྱུར། །\nཇ",
+                "Span": {"start": 89, "end": 208},
+            },
+            {
+                "index": 3,
+                "segmentation_type": "segmentation",
+                "text": "་ལྟར་ལོང་བའི་ཚོགས་ཀུན་བདེ་བླག་ཏུ། །མིག་ལྡན་སྐྱེས་བུ་གཅིག་གིས་འདོད་པ་ཡི། །ཡུལ",
+                "Span": {"start": 209, "end": 285},
+            },
+            {
+                "index": 4,
+                "segmentation_type": "segmentation",
+                "text": "དུ་འཁྲིད་པ་དེ་བཞིན་འདིར་ཡང་བློས། །མིག་ཉམས་ཡོན་ཏན་བླངས་ཏེ་རྒྱལ་ཉིད་འགྲོ། །\nཇི་",
+                "Span": {"start": 286, "end": 363},
+            },
+            {
+                "index": 5,
+                "segmentation_type": "segmentation",
+                "text": "ྟར་དེ་ཡིས་ཆེས་ཟབ་ཆོས་རྟོགས་པ། །ལུང་དང་གཞན་ཡང་རིགས་པས་ཡིན་པས་ན། །དེ་ལྟར་འཕགས་པ་ཀླུ་སྒྲུབ་གཞུང་ལུགས་ལས། །ཇི་ལྟར་གནས་པའི་ལུགས་བཞིན་བརྗོད་པར་བྱ། །\nསོ་",
+                "Span": {"start": 364, "end": 510},
+            },
+            {
+                "index": 6,
+                "segmentation_type": "segmentation",
+                "text": "ོ་སྐྱེ་བོའི་དུས་ནའང་སྟོང་པ་ཉིད་ཐོས་ནས། །ནང་དུ་རབ་ཏུ་དགའ་བ་ཡང་དང་ཡང་དུ་འབྱུང༌། །རབ་ཏུ་དགའ་བ་ལས་བྱུང་མཆི་མས་མིག་བརླན་ཞིང༌། །ལུས་ཀྱི་བ་སྤུ་ལྡང་པར་འགྱུར་པ་གང་ཡིན་པ། །\nདེ་ལ་རྫོགས་པའི་སངས་རྒྱས་བློ་ཡི་ས་བོན་ཡོད། །དེ་ཉིད་ཉེ་བར་བསྟན་པའི་སྣོད་ནི་དེ་ཡིན་ཏེ། །དེ་ལ་དམ་པའི་དོན་གྱི་བདེན་པ་བསྟན་པར་བྱ། །དེ་ལ་དེ་ཡི་རྗེས་སུ་འགྲོ་བའི་ཡོན་ཏན་འབྱུང༌། །\nར",
+                "Span": {"start": 511, "end": 845},
+            },
+            {
+                "index": 7,
+                "segmentation_type": "segmentation",
+                "text": "ག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར། །སྦྱིན་པ་གཏོང་བར་འགྱུར་ཞིང་སྙིང་རྗེ་བསྟེན་པར་བྱེད། །བཟོད་པ་སྒོམ་བྱེད་དེ་ཡི་དགེ་བའང་བྱང་ཆུབ་ཏུ། །འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌། །\nརྫོགས་པའི་བྱང་ཆུབ་སེམས་དཔའ་རྣམས་ལ་གུས་པར་བྱེད། །ཟབ་ཅིང་རྒྱ་ཆེའི་ཚུལ་ལ་མཁས་པའི་སྐྱེ་བོས་ནི། །རིམ་གྱིས་རབ་ཏུ་དགའ་བའི་ས་ནི་འཐོབ་འགྱུར་བས། །དེ་ནི",
+                "Span": {"start": 846, "end": 1176},
+            },
+            {
+                "index": 8,
+                "segmentation_type": "segmentation",
+                "text": "དོན་དུ་གཉེར་བས་ལམ་འདི་མཉན་པར་གྱིས། །\nདེ་ཉིད་",
+                "Span": {"start": 1177, "end": 1221},
+            },
+            {
+                "index": 9,
+                "segmentation_type": "segmentation",
+                "text": "ེ་ལས་འབྱུང་མིན་གཞན་དག་ལས་ལྟ་ག་ལ་ཞིག །གཉིས་ཀ་ལས་ཀྱང་མ་ཡིན་རྒྱུ་མེད་པར་ནི་ག་ལ་ཡོད། །དེ་ནི་དེ་ལས་འབྱུང་ན་ཡོན་ཏན་འགའ་ཡང་ཡོད་མ་ཡིན། །སྐྱེས་པར་གྱུར་པ་སླར་ཡང་སྐྱེ་བར་རིགས་པའང་མ་ཡིན་ཉིད། །\nསྐྱེས་ཟིན་སླར",
+                "Span": {"start": 1222, "end": 1416},
+            },
+            {
+                "index": 10,
+                "segmentation_type": "segmentation",
+                "text": "ཡང་སྐྱེ་བར་ཡོངས་སུ་རྟོག་པར་འགྱུར་ན་ནི། །མྱུ་གུ་ལ་སོགས་རྣམས་ཀྱི་སྐྱེ་བ་འདིར་རྙེད་མི་འགྱུར་ཞིང༌། །ས་བོན་སྲིད་མཐར་ཐུག་པར་རབ་ཏུ་སྐྱེ་བ་ཉིད་དུ་འགྱུར། །ཇི་ལྟར་དེ་ཉིད་ཀྱིས་དེ་རྣམ་པར་འཇ",
+                "Span": {"start": 1417, "end": 1594},
+            },
+        ]
+        assert seg_anns == expected_seg_anns
 
     def tearDown(self):
-        pass
+        # Revert all original files
+        for f, content in self.pecha_backup.items():
+            f.write_bytes(content)
+
+        # Remove any new files that weren't in the original backup
+        for f in self.pecha_path.glob("**/*"):
+            if f.is_file() and f not in self.pecha_backup:
+                f.unlink()
+
+
+if __name__ == "__main__":
+    test = TestDocxEditionParser()
+    test.setUp()
+
+    test.test_segmentation_parse()
+    test.test_parse()
