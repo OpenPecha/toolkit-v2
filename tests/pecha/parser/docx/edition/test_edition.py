@@ -360,6 +360,12 @@ class TestDocxEditionParser(TestCase):
                 "spelling_variation": "spelling_variant",
                 "Span": {"start": 1573, "end": 1585},
             },
+            {
+                "operation": "deletion",
+                "text": "\n",
+                "spelling_variation": "spelling_variant",
+                "Span": {"start": 1616, "end": 1617},
+            },
         ]
         assert spelling_variant_anns == expected_spelling_variant_anns
 
