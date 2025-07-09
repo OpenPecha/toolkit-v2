@@ -9,14 +9,13 @@ from openpecha.pecha.annotations import (
     Span,
     SpellingVariantAnnotation,
 )
-from openpecha.pecha.parsers.docx.edition import DocxEditionParser
-from openpecha.pecha.parsers.docx.utils import extract_numbered_list
+from openpecha.pecha.parsers.edition import EditionParser
 
 
 class TestDocxEditionParser(TestCase):
     def setUp(self):
         self.DATA = Path(__file__).parent / "data"
-        self.docx_file = self.DATA / "edition.docx"
+        self.txt_file = self.DATA / "edition.txt"
 
         self.pecha_path = Path(
             "tests/alignment/commentary_transfer/data/root/I6556B464"
@@ -28,8 +27,9 @@ class TestDocxEditionParser(TestCase):
         }
 
     def test_segmentation_parse(self):
-        parser = DocxEditionParser()
-        anns = parser.parse_segmentation(self.docx_file)
+        parser = EditionParser()
+        segments = self.txt_file.read_text(encoding="utf-8").splitlines()
+        anns = parser.parse_segmentation(segments)
 
         expected_anns = [
             SegmentationAnnotation(span=Span(start=0, end=87), index=1),
@@ -47,7 +47,7 @@ class TestDocxEditionParser(TestCase):
         assert anns == expected_anns
 
     def test_spelling_variant_parse(self):
-        parser = DocxEditionParser()
+        parser = EditionParser()
 
         # Insertion
         old_base = "Hello"
@@ -100,8 +100,8 @@ class TestDocxEditionParser(TestCase):
         old_basename = list(self.pecha.bases.keys())[0]
         old_base = self.pecha.get_base(old_basename)
 
-        numbered_list = extract_numbered_list(self.docx_file)
-        new_base = "\n".join(list(numbered_list.values()))
+        segments = self.txt_file.read_text(encoding="utf-8").splitlines()
+        new_base = "\n".join(segments)
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [
             SpellingVariantAnnotation(
@@ -197,9 +197,10 @@ class TestDocxEditionParser(TestCase):
         ]
 
     def test_parse(self):
-        parser = DocxEditionParser()
+        parser = EditionParser()
 
-        seg_layer_path, spelling_variant_path = parser.parse(self.pecha, self.docx_file)
+        segments = self.txt_file.read_text(encoding="utf-8").splitlines()
+        seg_layer_path, spelling_variant_path = parser.parse(self.pecha, segments)
 
         seg_anns = get_anns(
             ann_store=AnnotationStore(file=str(self.pecha.layer_path / seg_layer_path)),
@@ -384,5 +385,4 @@ if __name__ == "__main__":
     test = TestDocxEditionParser()
     test.setUp()
 
-    test.test_segmentation_parse()
-    test.test_parse()
+    test.test_spelling_variant_parse()

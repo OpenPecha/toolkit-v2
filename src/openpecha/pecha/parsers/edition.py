@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from diff_match_patch import diff_match_patch
 
 from openpecha.pecha import Pecha
@@ -9,10 +7,10 @@ from openpecha.pecha.annotations import (
     SpellingVariantAnnotation,
 )
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.parsers.docx.utils import extract_numbered_list, update_coords
+from openpecha.pecha.parsers.docx.utils import update_coords
 
 
-class DocxEditionParser:
+class EditionParser:
     """
     Parser for extracting segmentation and spelling variant annotations from DOCX files.
     Only used in test context.
@@ -27,30 +25,21 @@ class DocxEditionParser:
         self.dmp.Patch_DeleteThreshold = 0.5
         # Patch_Margin and Match_MaxBits can remain defaults
 
-    def parse_segmentation_from_text(
-        self, numbered_text: dict
-    ) -> list[SegmentationAnnotation]:
+    def parse_segmentation(self, segments: list[str]) -> list[SegmentationAnnotation]:
         """
-        Create segmentation annotations from numbered text segments.
+        Extract text from txt and calculate coordinates for segments.
         """
         anns = []
         char_count = 0
-        for index, segment in numbered_text.items():
+        for index, segment in enumerate(segments, start=1):
             anns.append(
                 SegmentationAnnotation(
                     span=Span(start=char_count, end=char_count + len(segment)),
                     index=index,
                 )
             )
-            char_count += len(segment) + 1  # +1 for newline or separator
+            char_count += len(segment) + 1
         return anns
-
-    def parse_segmentation(self, input: str | Path) -> list[SegmentationAnnotation]:
-        """
-        Extract text from docx and calculate coordinates for segments.
-        """
-        numbered_text = extract_numbered_list(input)
-        return self.parse_segmentation_from_text(numbered_text)
 
     def parse_spelling_variant(
         self, source: str, target: str
@@ -87,7 +76,7 @@ class DocxEditionParser:
                 char_count += len(text)
         return anns
 
-    def parse(self, pecha: Pecha, input: str | Path):
+    def parse(self, pecha: Pecha, segments: list[str]):
         """
         Parse the DOCX file and add segmentation and spelling variant layers to the Pecha.
         Returns the relative paths to the created layers.
@@ -95,10 +84,9 @@ class DocxEditionParser:
         old_basename = list(pecha.bases.keys())[0]
         old_base = pecha.get_base(old_basename)
 
-        numbered_text = extract_numbered_list(input)
-        new_base = "\n".join(list(numbered_text.values()))
+        new_base = "".join(segments)
 
-        seg_anns = self.parse_segmentation(input)
+        seg_anns = self.parse_segmentation(segments)
         updated_seg_anns = update_coords(seg_anns, old_base, new_base)
         spelling_var_anns = self.parse_spelling_variant(old_base, new_base)
 
