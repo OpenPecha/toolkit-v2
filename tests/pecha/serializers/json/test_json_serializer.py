@@ -20,3 +20,23 @@ class TestJsonSerializer(TestCase):
             "tests/alignment/commentary_transfer/data/root/I6556B464/base/B5FE.txt"
         ).read_text(encoding="utf-8")
         assert base == expected_base
+
+    def test_get_annotations(self):
+        serializer = JsonSerializer()
+        layer_name = "B5FE/segmentation-4FD1.json"
+
+        annotations = serializer.get_annotations(
+            pecha=self.pecha, layer_name=layer_name
+        )
+        expected_annotations = [
+            {"index": 1, "segmentation_type": "segmentation"},
+            {"index": 2, "segmentation_type": "segmentation"},
+            {"index": 3, "segmentation_type": "segmentation"},
+            {"index": 4, "segmentation_type": "segmentation"},
+            {"index": 5, "segmentation_type": "segmentation"},
+            {"index": 6, "segmentation_type": "segmentation"},
+            {"index": 7, "segmentation_type": "segmentation"},
+            {"index": 8, "segmentation_type": "segmentation"},
+            {"index": 9, "segmentation_type": "segmentation"},
+        ]
+        assert annotations == expected_annotations
