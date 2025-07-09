@@ -9,6 +9,7 @@ from openpecha.pecha.annotations import (
     Span,
     SpellingVariantAnnotation,
 )
+from openpecha.pecha.parsers.docx.utils import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
 
 
@@ -43,8 +44,50 @@ class TestEditionParser(TestCase):
             SegmentationAnnotation(span=Span(start=1218, end=1409), index=9),
             SegmentationAnnotation(span=Span(start=1410, end=1605), index=10),
         ]
-
         assert anns == expected_anns
+
+        # Update coordinate to base present in Pecha
+
+        old_base = "".join(segments)
+
+        new_basename = list(self.pecha.bases.keys())[0]
+        new_base = self.pecha.get_base(new_basename)
+
+        updated_anns = update_coords(anns, old_base, new_base)
+        expected_updated_anns = [
+            SegmentationAnnotation(
+                span=Span(start=0, end=87, errors=None), metadata=None, index=1
+            ),
+            SegmentationAnnotation(
+                span=Span(start=88, end=208, errors=None), metadata=None, index=2
+            ),
+            SegmentationAnnotation(
+                span=Span(start=209, end=284, errors=None), metadata=None, index=3
+            ),
+            SegmentationAnnotation(
+                span=Span(start=285, end=363, errors=None), metadata=None, index=4
+            ),
+            SegmentationAnnotation(
+                span=Span(start=364, end=511, errors=None), metadata=None, index=5
+            ),
+            SegmentationAnnotation(
+                span=Span(start=512, end=843, errors=None), metadata=None, index=6
+            ),
+            SegmentationAnnotation(
+                span=Span(start=843, end=1089, errors=None), metadata=None, index=7
+            ),
+            SegmentationAnnotation(
+                span=Span(start=1090, end=1221, errors=None), metadata=None, index=8
+            ),
+            SegmentationAnnotation(
+                span=Span(start=1222, end=1411, errors=None), metadata=None, index=9
+            ),
+            SegmentationAnnotation(
+                span=Span(start=1412, end=1626, errors=None), metadata=None, index=10
+            ),
+        ]
+
+        assert updated_anns == expected_updated_anns
 
     def test_spelling_variant_parse(self):
         parser = EditionParser()
@@ -391,3 +434,10 @@ class TestEditionParser(TestCase):
         for f in self.pecha_path.glob("**/*"):
             if f.is_file() and f not in self.pecha_backup:
                 f.unlink()
+
+
+if __name__ == "__main__":
+    test = TestEditionParser()
+    test.setUp()
+
+    test.test_segmentation_parse()
