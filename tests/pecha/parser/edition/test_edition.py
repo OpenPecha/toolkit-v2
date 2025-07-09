@@ -12,7 +12,7 @@ from openpecha.pecha.annotations import (
 from openpecha.pecha.parsers.edition import EditionParser
 
 
-class TestDocxEditionParser(TestCase):
+class TestEditionParser(TestCase):
     def setUp(self):
         self.DATA = Path(__file__).parent / "data"
         self.txt_file = self.DATA / "edition.txt"
@@ -391,10 +391,3 @@ class TestDocxEditionParser(TestCase):
         for f in self.pecha_path.glob("**/*"):
             if f.is_file() and f not in self.pecha_backup:
                 f.unlink()
-
-
-if __name__ == "__main__":
-    test = TestDocxEditionParser()
-    test.setUp()
-
-    test.test_parse()
