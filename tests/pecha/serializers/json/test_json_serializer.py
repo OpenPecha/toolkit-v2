@@ -29,14 +29,21 @@ class TestJsonSerializer(TestCase):
             pecha=self.pecha, layer_name=layer_name
         )
         expected_annotations = [
-            {"index": 1, "segmentation_type": "segmentation"},
-            {"index": 2, "segmentation_type": "segmentation"},
-            {"index": 3, "segmentation_type": "segmentation"},
-            {"index": 4, "segmentation_type": "segmentation"},
-            {"index": 5, "segmentation_type": "segmentation"},
-            {"index": 6, "segmentation_type": "segmentation"},
-            {"index": 7, "segmentation_type": "segmentation"},
-            {"index": 8, "segmentation_type": "segmentation"},
-            {"index": 9, "segmentation_type": "segmentation"},
+            {"id": "59EBB25F49", "index": 1, "segmentation_type": "segmentation"},
+            {"id": "1C6219999D", "index": 2, "segmentation_type": "segmentation"},
+            {"id": "2E324FF8E3", "index": 3, "segmentation_type": "segmentation"},
+            {"id": "248229AD9C", "index": 4, "segmentation_type": "segmentation"},
+            {"id": "AFF893CC4A", "index": 5, "segmentation_type": "segmentation"},
+            {"id": "E6350684CA", "index": 6, "segmentation_type": "segmentation"},
+            {"id": "8725807438", "index": 7, "segmentation_type": "segmentation"},
+            {"id": "D2BACBFB51", "index": 8, "segmentation_type": "segmentation"},
+            {"id": "E9DCF0CBEB", "index": 9, "segmentation_type": "segmentation"},
         ]
         assert annotations == expected_annotations
+
+
+if __name__ == "__main__":
+    test = TestJsonSerializer()
+
+    test.setUp()
+    test.test_get_annotations()

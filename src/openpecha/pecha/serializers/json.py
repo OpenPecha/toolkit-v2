@@ -16,7 +16,7 @@ class JsonSerializer:
             ann_data = {}
             for data in ann:
                 ann_data[data.key().id()] = data.value().get()
-            curr_ann = {**ann_data}
+            curr_ann = {"id": ann.id(), **ann_data}
             if include_span:
                 curr_ann["Span"] = {
                     "start": ann.offset().begin().value(),
