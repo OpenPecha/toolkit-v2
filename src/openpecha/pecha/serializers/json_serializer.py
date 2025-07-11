@@ -12,18 +12,21 @@ class JsonSerializer:
         return base
 
     @staticmethod
-    def to_dict(ann_store: AnnotationStore, include_span: bool = False):
+    def to_dict(ann_store: AnnotationStore):
         anns = []
         for ann in ann_store:
             ann_data = {}
             for data in ann:
                 ann_data[data.key().id()] = data.value().get()
-            curr_ann = {"id": ann.id(), **ann_data}
-            if include_span:
-                curr_ann["Span"] = {
+            curr_ann = {
+                "id": ann.id(),
+                "Span": {
                     "start": ann.offset().begin().value(),
                     "end": ann.offset().end().value(),
-                }
+                },
+                **ann_data,
+            }
+
             anns.append(curr_ann)
         return anns
 
@@ -59,10 +62,10 @@ class JsonSerializer:
         ]:
             raise AnnotationLayerIsNotSegmentationOrAlignment(pecha.id, tgt_layer_name)
 
-        src_anns = self.get_annotations(pecha, src_layer_name) 
-        tgt_anns = self.get_annotations(pecha, tgt_layer_name)
+        src_anns = self.get_annotations(pecha, src_layer_name)  # noqa
+        tgt_anns = self.get_annotations(pecha, tgt_layer_name)  # noqa
 
-        map = []
+        map: list[dict] = []  # noqa
         if src_layer_type == AnnotationType.SEGMENTATION:
             if tgt_layer_type == AnnotationType.SEGMENTATION:
                 pass
