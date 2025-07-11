@@ -59,6 +59,22 @@ class JsonSerializer:
         ]:
             raise AnnotationLayerIsNotSegmentationOrAlignment(pecha.id, tgt_layer_name)
 
+        src_anns = self.get_annotations(pecha, src_layer_name)
+        tgt_anns = self.get_annotations(pecha, tgt_layer_name)
+
+        map = []
+        if src_layer_type == AnnotationType.SEGMENTATION:
+            if tgt_layer_type == AnnotationType.SEGMENTATION:
+                pass
+            else:
+                pass
+
+        else:
+            if tgt_layer_type == AnnotationType.SEGMENTATION:
+                pass
+            else:
+                pass
+
 
 if __name__ == "__main__":
     ann_type = AnnotationType("segmentation")
