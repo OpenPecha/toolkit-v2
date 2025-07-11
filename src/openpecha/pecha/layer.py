@@ -49,7 +49,7 @@ class AnnotationType(str, Enum):
 def get_annotation_type(layer_name: str):
     try:
         return AnnotationType(layer_name)
-    except:  # noqa
+    except ValueError:
         raise InValidAnnotationLayerName(
             f"Layer name {layer_name} is not associated with any Annotation."
         )
