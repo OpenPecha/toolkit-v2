@@ -34,32 +34,30 @@ class JsonSerializer:
 
     def map_layers(
         self,
-        src_pecha: Pecha,
+        pecha: Pecha,
         src_layer_name: str,
-        tgt_pecha: Pecha,
         tgt_layer_name: str,
     ):
         """
         Create a mapping from source annotation layer to target annotation layer.
         """
 
-        src_ann_type = get_annotation_type(
+        src_layer_type = get_annotation_type(
             src_layer_name.split("/")[1]
         )  # src_layer_name contains base_name/layer_name
-        tgt_ann_type = get_annotation_type(tgt_layer_name.split("/")[1])
+        tgt_layer_type = get_annotation_type(tgt_layer_name.split("/")[1])
 
-        if src_ann_type not in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
-            raise AnnotationLayerIsNotSegmentationOrAlignment(
-                src_pecha.id, src_layer_name
-            )
+        if src_layer_type not in [
+            AnnotationType.SEGMENTATION,
+            AnnotationType.ALIGNMENT,
+        ]:
+            raise AnnotationLayerIsNotSegmentationOrAlignment(pecha.id, src_layer_name)
 
-        if tgt_ann_type not in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
-            raise AnnotationLayerIsNotSegmentationOrAlignment(
-                tgt_pecha.id, tgt_layer_name
-            )
-
-        src_annotations = self.get_annotations(src_pecha, src_layer_name)  # noqa
-        tgt_annotations = self.get_annotations(tgt_pecha, tgt_layer_name)  # noqa
+        if tgt_layer_type not in [
+            AnnotationType.SEGMENTATION,
+            AnnotationType.ALIGNMENT,
+        ]:
+            raise AnnotationLayerIsNotSegmentationOrAlignment(pecha.id, tgt_layer_name)
 
 
 if __name__ == "__main__":
