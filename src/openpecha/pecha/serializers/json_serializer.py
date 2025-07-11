@@ -50,12 +50,12 @@ class JsonSerializer:
 
         if src_ann_type not in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
             raise AnnotationLayerIsNotSegmentationOrAlignment(
-                f"Pecha {src_pecha.id} and its layer {src_layer_name} is not segmentation or alignment layer to map with other layer."
+                src_pecha.id, src_layer_name
             )
 
         if tgt_ann_type not in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
             raise AnnotationLayerIsNotSegmentationOrAlignment(
-                f"Pecha {src_pecha.id} and its layer {src_layer_name} is not segmentation or alignment layer to map with other layer."
+                tgt_pecha.id, tgt_layer_name
             )
 
         src_annotations = self.get_annotations(src_pecha, src_layer_name)  # noqa
