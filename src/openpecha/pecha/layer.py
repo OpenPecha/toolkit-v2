@@ -1,5 +1,7 @@
 from enum import Enum
 
+from openpecha.exceptions import InValidAnnotationLayerName
+
 
 class AnnotationCollectionType(str, Enum):
     """In STAM, this is used for setting DataSet id"""
@@ -42,6 +44,15 @@ class AnnotationType(str, Enum):
     @property
     def annotation_group_type(self):
         return get_annotation_group_type(self)
+
+
+def get_annotation_type(layer_name: str):
+    try:
+        return AnnotationType(layer_name)
+    except:  # noqa
+        raise InValidAnnotationLayerName(
+            f"Layer name {layer_name} is not associated with any Annotation."
+        )
 
 
 def get_annotation_group_type(layer_type: AnnotationType) -> AnnotationGroupType:

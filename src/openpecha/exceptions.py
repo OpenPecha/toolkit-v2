@@ -80,3 +80,15 @@ class ParseNotReadyForThisAnnotation(Exception):
     """Raised when the parser is not ready for this annotation."""
 
     pass
+
+
+class InValidAnnotationLayerName(Exception):
+    """Raised when the layer name is not associated with any Annotations"""
+
+    pass
+
+
+class AnnotationLayerIsNotSegmentationOrAlignment(Exception):
+    """Raise when a annotation layer is not Segmentation or Alignment Layer"""
+
+    pass
