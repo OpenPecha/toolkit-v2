@@ -36,6 +36,10 @@ class JsonSerializer:
         return get_annotation_type(ann_name)
 
     def get_annotations(self, pecha: Pecha, layer_path: str):
+        """
+        layer_path is a combination of base and layer name
+        For eg: "B5FE/segmentation-4FD1.json"
+        """
         anns = self.to_dict(
             ann_store=AnnotationStore(file=str(pecha.layer_path / layer_path))
         )
