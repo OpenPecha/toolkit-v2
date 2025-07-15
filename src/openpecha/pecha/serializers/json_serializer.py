@@ -1,6 +1,7 @@
 from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
+from openpecha.pecha.layer import get_annotation_type
 
 
 class JsonSerializer:
@@ -28,7 +29,17 @@ class JsonSerializer:
             anns.append(curr_ann)
         return anns
 
-    def get_annotations(self, pecha: Pecha, layer_name: str):
-        layer_path = pecha.layer_path / layer_name
+    @staticmethod
+    def _get_ann_type(layer_path: str):
+        layer_name = layer_path.split("/")[1]
+        ann_name = layer_name.split("-")[0]
+        return get_annotation_type(ann_name)
+
+    def get_annotations(self, pecha: Pecha, relative_layer_path: str):
+        layer_path = pecha.layer_path / relative_layer_path
         anns = self.to_dict(ann_store=AnnotationStore(file=str(layer_path)))
-        return anns
+        base = self.get_base(pecha)
+
+        ann_type = self._get_ann_type(relative_layer_path)
+        res = {"base": base, "annotations": {ann_type.value: anns}}
+        return res
