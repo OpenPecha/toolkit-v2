@@ -58,12 +58,12 @@ class SegmentationAnnotation(BaseAnnotation):
 
 class AlignmentAnnotation(BaseAnnotation):
     index: int
-    alignment_index: str = Field(
+    alignment_index: list[int] = Field(
         description="Index of the alignment, which can be of translation or commentary"
     )
 
     model_config = ConfigDict(
-        json_schema_extra={"example": {"index": 5, "alignment_index": "1-5,7"}}
+        json_schema_extra={"example": {"index": 5, "alignment_index": [1, 3, 4]}}
     )
 
 
