@@ -50,3 +50,9 @@ class TestJsonSerializer(TestCase):
         assert annotations == expected_annotations
 
         # SEGMENTATION AND ALIGNMENT(Annotations for Edition)
+        layer_paths = ["B014/segmentation-33FC.json", "B014/alignment-2127.json"]
+        annotations = serializer.get_annotations(
+            pecha=self.commentary_pecha, layer_paths=layer_paths
+        )
+        expected_annotations = read_json(self.DATA_DIR / "edition_annotations.json")
+        assert annotations == expected_annotations
