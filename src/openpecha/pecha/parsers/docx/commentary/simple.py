@@ -49,7 +49,6 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
             match = re.match(self.root_alignment_index_regex, segment)
 
             alignment_indices: str = match.group(1) if match else index
-            alignment_indices: list[int] = parse_alignment_index(alignment_indices)
 
             segment = match.group(2) if match else segment
 
@@ -57,7 +56,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
                 AlignmentAnnotation(
                     span=Span(start=char_count, end=char_count + len(segment)),
                     index=index,
-                    alignment_index=alignment_indices,
+                    alignment_index=parse_alignment_index(alignment_indices),
                 )
             )
             base += f"{segment}\n"

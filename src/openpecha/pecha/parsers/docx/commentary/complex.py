@@ -11,6 +11,7 @@ from openpecha.pecha.annotations import AlignmentAnnotation, SapcheAnnotation, S
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType
 from openpecha.pecha.parsers import BaseParser
+from openpecha.utils import parse_alignment_index
 
 
 class DocxComplexCommentaryParser(BaseParser):
@@ -161,13 +162,13 @@ class DocxComplexCommentaryParser(BaseParser):
             curr_segment_ann = AlignmentAnnotation(
                 span=Span(start=char_count, end=char_count + len(updated_segment)),
                 index=index,
-                alignment_index=alignment_index,
+                alignment_index=parse_alignment_index(alignment_index),
             )
         else:
             curr_segment_ann = AlignmentAnnotation(
                 span=Span(start=char_count, end=char_count + len(segment)),
                 index=index,
-                alignment_index="",
+                alignment_index=[],
             )
 
         self.temp_state["meaning_segment"]["anns"].append(curr_segment_ann)  # type: ignore
