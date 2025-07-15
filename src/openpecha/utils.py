@@ -59,7 +59,7 @@ def get_text_direction_with_lang(lang):
         return "ltr"
 
 
-def parse_root_mapping(root_mapping) -> List[int]:
+def parse_alignment_index(root_mapping) -> List[int]:
     """
     Parse the root_mapping into List of Integers.
     Examples:>

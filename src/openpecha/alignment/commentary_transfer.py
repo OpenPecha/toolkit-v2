@@ -5,7 +5,11 @@ from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha, get_anns, load_layer
-from openpecha.utils import adjust_segment_num_for_chapter, get_chapter_for_segment
+from openpecha.utils import (
+    adjust_segment_num_for_chapter,
+    get_chapter_for_segment,
+    parse_alignment_index,
+)
 
 logger = get_logger(__name__)
 
@@ -17,26 +21,10 @@ def is_empty(text: str) -> bool:
     return not text.strip().replace("\n", "")
 
 
-def parse_root_mapping(mapping: str) -> List[int]:
-    """
-    Parse root_idx_mapping string like '1,2-4' into a sorted list of ints.
-    """
-    res = []
-    for part in mapping.strip().split(","):
-        part = part.strip()
-        if "-" in part:
-            start, end = part.split("-")
-            res.extend(list(range(int(start), int(end) + 1)))
-        else:
-            res.append(int(part))
-    res.sort()
-    return res
-
-
 class CommentaryAlignmentTransfer:
     @staticmethod
     def get_first_valid_root_idx(ann) -> int | None:
-        indices = parse_root_mapping(ann["alignment_index"])
+        indices = parse_alignment_index(ann["alignment_index"])
         return indices[0] if indices else None
 
     @staticmethod
