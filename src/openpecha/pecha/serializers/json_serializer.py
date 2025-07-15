@@ -1,8 +1,6 @@
 from stam import AnnotationStore
 
-from openpecha.exceptions import AnnotationLayerIsNotSegmentationOrAlignment
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import AnnotationType, get_annotation_type
 
 
 class JsonSerializer:
@@ -34,51 +32,3 @@ class JsonSerializer:
         layer_path = pecha.layer_path / layer_name
         anns = self.to_dict(ann_store=AnnotationStore(file=str(layer_path)))
         return anns
-
-    def map_layers(
-        self,
-        pecha: Pecha,
-        src_layer_name: str,
-        tgt_layer_name: str,
-    ):
-        """
-        Create a mapping from source annotation layer to target annotation layer.
-        """
-
-        src_layer_type = get_annotation_type(
-            src_layer_name.split("/")[1]
-        )  # src_layer_name contains base_name/layer_name
-        tgt_layer_type = get_annotation_type(tgt_layer_name.split("/")[1])
-
-        if src_layer_type not in [
-            AnnotationType.SEGMENTATION,
-            AnnotationType.ALIGNMENT,
-        ]:
-            raise AnnotationLayerIsNotSegmentationOrAlignment(pecha.id, src_layer_name)
-
-        if tgt_layer_type not in [
-            AnnotationType.SEGMENTATION,
-            AnnotationType.ALIGNMENT,
-        ]:
-            raise AnnotationLayerIsNotSegmentationOrAlignment(pecha.id, tgt_layer_name)
-
-        src_anns = self.get_annotations(pecha, src_layer_name)  # noqa
-        tgt_anns = self.get_annotations(pecha, tgt_layer_name)  # noqa
-
-        map: list[dict] = []  # noqa
-        if src_layer_type == AnnotationType.SEGMENTATION:
-            if tgt_layer_type == AnnotationType.SEGMENTATION:
-                pass
-            else:
-                pass
-
-        else:
-            if tgt_layer_type == AnnotationType.SEGMENTATION:
-                pass
-            else:
-                pass
-
-
-if __name__ == "__main__":
-    ann_type = AnnotationType("segmentation")
-    print(ann_type)
