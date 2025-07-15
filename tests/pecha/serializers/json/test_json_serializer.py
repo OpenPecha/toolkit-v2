@@ -32,19 +32,21 @@ class TestJsonSerializer(TestCase):
         serializer = JsonSerializer()
 
         # SEGMENTATION
-        relative_layer_path = "B5FE/segmentation-4FD1.json"
+        layer_path = "B5FE/segmentation-4FD1.json"
         annotations = serializer.get_annotations(
-            pecha=self.root_pecha, layer_paths=relative_layer_path
+            pecha=self.root_pecha, layer_paths=layer_path
         )
         expected_annotations = read_json(
             self.DATA_DIR / "segmentation_annotations.json"
         )
         assert annotations == expected_annotations
 
-        # Alignment Layer
-        relative_layer_path = "B014/alignment-2127.json"
+        # ALIGNMENT
+        layer_path = "B014/alignment-2127.json"
         annotations = serializer.get_annotations(
-            pecha=self.commentary_pecha, layer_paths=relative_layer_path
+            pecha=self.commentary_pecha, layer_paths=layer_path
         )
         expected_annotations = read_json(self.DATA_DIR / "alignment_annotations.json")
         assert annotations == expected_annotations
+
+        # SEGMENTATION AND ALIGNMENT(Annotations for Edition)
