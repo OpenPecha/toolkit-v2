@@ -16,6 +16,7 @@ A Python package for working with stand-off text annotations in the [OpenPecha](
 - [Key Concepts](#key-concepts)
 - [Getting Started & Usage Guide](#getting-started--usage-guide)
 - [Tutorial](#Tutorial)
+- [API Reference](#api-reference)
 - [Diving Deeper](#diving-deeper)
 - [Contributing](#contributing)
 - [License](#license)
@@ -124,6 +125,10 @@ To get started and explore all features, see the [Getting Started & Usage Guide]
 ## Tutorial Guide
 
 To see a story-driven walkthrough of parsing, annotating, and serializing a Tibetan text, with code and explanations., see the [Tutorial Guide](docs/tutorials.md)
+
+## API Reference
+
+For a detailed list of classes and methods, see the [API Reference](docs/api-references.md).
 
 ---
 
