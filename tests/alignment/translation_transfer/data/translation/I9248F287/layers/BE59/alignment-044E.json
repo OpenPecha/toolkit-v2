@@ -41,8 +41,13 @@
           "@id": "2D00056BBB",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "1"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 1
+              }
+            ]
           }
         },
         {
@@ -68,8 +73,13 @@
           "@id": "1F70515313",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "2"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 2
+              }
+            ]
           }
         },
         {
@@ -86,8 +96,13 @@
           "@id": "F89212B44E",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "3"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 3
+              }
+            ]
           }
         },
         {
@@ -104,8 +119,13 @@
           "@id": "AA49DB284B",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "4"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 4
+              }
+            ]
           }
         },
         {
@@ -122,8 +142,13 @@
           "@id": "F75EF7A6B3",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "5"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 5
+              }
+            ]
           }
         },
         {
@@ -140,8 +165,13 @@
           "@id": "465F28F0F6",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "6"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 6
+              }
+            ]
           }
         },
         {
@@ -158,8 +188,13 @@
           "@id": "995690DC68",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "7"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 7
+              }
+            ]
           }
         },
         {
@@ -176,8 +211,13 @@
           "@id": "E855F543CE",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "8"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 8
+              }
+            ]
           }
         },
         {
@@ -194,8 +234,13 @@
           "@id": "39FEAA6EA2",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "9"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 9
+              }
+            ]
           }
         },
         {
@@ -212,8 +257,13 @@
           "@id": "66FE0C222B",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "10"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 10
+              }
+            ]
           }
         },
         {
@@ -230,8 +280,13 @@
           "@id": "697BCB4494",
           "key": "alignment_index",
           "value": {
-            "@type": "String",
-            "value": "11"
+            "@type": "List",
+            "value": [
+              {
+                "@type": "Int",
+                "value": 11
+              }
+            ]
           }
         }
       ]
