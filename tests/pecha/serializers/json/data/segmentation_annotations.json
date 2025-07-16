@@ -8,8 +8,7 @@
           "start": 0,
           "end": 206
         },
-        "index": 1,
-        "segmentation_type": "segmentation"
+        "index": 1
       },
       {
         "id": "1C6219999D",
@@ -17,8 +16,7 @@
           "start": 207,
           "end": 359
         },
-        "index": 2,
-        "segmentation_type": "segmentation"
+        "index": 2
       },
       {
         "id": "2E324FF8E3",
@@ -26,8 +24,7 @@
           "start": 360,
           "end": 506
         },
-        "index": 3,
-        "segmentation_type": "segmentation"
+        "index": 3
       },
       {
         "id": "248229AD9C",
@@ -35,8 +32,7 @@
           "start": 507,
           "end": 673
         },
-        "index": 4,
-        "segmentation_type": "segmentation"
+        "index": 4
       },
       {
         "id": "AFF893CC4A",
@@ -44,8 +40,7 @@
           "start": 674,
           "end": 843
         },
-        "index": 5,
-        "segmentation_type": "segmentation"
+        "index": 5
       },
       {
         "id": "E6350684CA",
@@ -53,8 +48,7 @@
           "start": 844,
           "end": 1034
         },
-        "index": 6,
-        "segmentation_type": "segmentation"
+        "index": 6
       },
       {
         "id": "8725807438",
@@ -62,8 +56,7 @@
           "start": 1035,
           "end": 1213
         },
-        "index": 7,
-        "segmentation_type": "segmentation"
+        "index": 7
       },
       {
         "id": "D2BACBFB51",
@@ -71,8 +64,7 @@
           "start": 1214,
           "end": 1402
         },
-        "index": 8,
-        "segmentation_type": "segmentation"
+        "index": 8
       },
       {
         "id": "E9DCF0CBEB",
@@ -80,8 +72,7 @@
           "start": 1403,
           "end": 1616
         },
-        "index": 9,
-        "segmentation_type": "segmentation"
+        "index": 9
       }
     ]
   }

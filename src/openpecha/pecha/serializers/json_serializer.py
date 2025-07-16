@@ -1,7 +1,11 @@
 from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.layer import get_annotation_type
+from openpecha.pecha.layer import (
+    AnnotationType,
+    get_annotation_group_type,
+    get_annotation_type,
+)
 
 
 class JsonSerializer:
@@ -11,12 +15,15 @@ class JsonSerializer:
         return base
 
     @staticmethod
-    def to_dict(ann_store: AnnotationStore):
+    def to_dict(ann_store: AnnotationStore, ann_type: AnnotationType):
+        ann_group = get_annotation_group_type(ann_type)
         anns = []
         for ann in ann_store:
             ann_data = {}
             for data in ann:
-                ann_data[data.key().id()] = data.value().get()
+                k, v = data.key().id(), data.value().get()
+                if k != ann_group.value:
+                    ann_data[k] = v
             curr_ann = {
                 "id": ann.id(),
                 "Span": {
@@ -46,8 +53,8 @@ class JsonSerializer:
         annotations = {}
         for layer_path in layer_paths:
             ann_store = AnnotationStore(file=str(pecha.layer_path / layer_path))
-            anns = self.to_dict(ann_store)
             ann_type = self._get_ann_type(layer_path)
+            anns = self.to_dict(ann_store, ann_type)
             annotations[ann_type.value] = anns
 
         base = self.get_base(pecha)
