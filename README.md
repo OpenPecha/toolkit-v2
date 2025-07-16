@@ -14,8 +14,7 @@ A Python package for working with stand-off text annotations in the [OpenPecha](
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Key Concepts](#key-concepts)
-- [Quickstart](#quickstart)
-- [Usage Guide](#Usage-Guide)
+- [Getting Started & Usage Guide](#getting-started--usage-guide)
 - [Tutorial](#Tutorial)
 - [Diving Deeper](#diving-deeper)
 - [Contributing](#contributing)
@@ -116,18 +115,11 @@ Alignment refers to mapping relationships between two or more texts. This proces
 
 ---
 
-## Quickstart
+## Getting Started & Usage Guide
 
-To get started, see the [Getting Started Guide](docs/getting-started.md).
-
----
-
-## Usage Guide
-
-To see Usage Guide, see the [Usage Guide](docs/usage.md).
+To get started and explore all features, see the [Getting Started & Usage Guide](docs/usage.md).
 
 ---
-
 
 ## Tutorial Guide
 

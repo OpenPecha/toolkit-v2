@@ -1,4 +1,6 @@
-# Usage Guide
+# Getting Started & Usage Guide
+
+## Quickstart
 
 ### I. Create Pecha
 To create a new Pecha (an annotated text corpus), you can use the `Pecha.create` method directly, or use a parser (e.g., for DOCX files):
@@ -26,7 +28,6 @@ pecha, annotation_path = parser.parse(
     output_path=Path("/output_path/")
 )
 ```
-
 ### II. Load Pecha
 You can load an existing Pecha either from a local path after downloading from the openpecha backend:
 
