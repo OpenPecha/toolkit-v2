@@ -20,6 +20,12 @@
 * [Pecha.publish()](#pechapublish)
 * [Pecha.merge_pecha()](#pechamerge_pecha)
 
+## JsonSerializer
+
+* [JsonSerializer.get_base()](#jsonserializerget_base)
+* [JsonSerializer.to_dict()](#jsonserializerto_dict)
+* [JsonSerializer.get_annotations()](#jsonserializerget_annotations)
+
 ## DocxRootParser
 
 * [DocxRootParser.parse()](#docxrootparserparse)
@@ -905,4 +911,44 @@ Processes a single commentary annotation and returns the serialized string.
       root_map,
       root_segmentation_anns
   )
+  ```
+
+
+### <a id="jsonserializerget_base"></a>`JsonSerializer.get_base(pecha: Pecha) -> str`
+Returns the base text from the first base in the given Pecha.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha object to extract the base from
+- **Returns:** str containing the base text
+- **Example:**
+  ```python
+  from openpecha.pecha.serializers.json_serializer import JsonSerializer
+  base = JsonSerializer().get_base(pecha)
+  ```
+
+### <a id="jsonserializerto_dict"></a>`JsonSerializer.to_dict(ann_store: AnnotationStore, ann_type: AnnotationType) -> list[dict]`
+Converts an AnnotationStore to a list of annotation dictionaries for the given annotation type.
+
+- **Parameters:**
+  - `ann_store` (AnnotationStore): The annotation store to convert
+  - `ann_type` (AnnotationType): The type of annotation
+- **Returns:** List of annotation dictionaries
+- **Example:**
+  ```python
+  anns = JsonSerializer.to_dict(ann_store, AnnotationType.SEGMENTATION)
+  ```
+
+### <a id="jsonserializerget_annotations"></a>`JsonSerializer.get_annotations(pecha: Pecha, layer_paths: str | list[str]) -> dict`
+Gets the base text and annotations for one or more layer paths from a Pecha.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha object
+  - `layer_paths` (str or list of str): Layer path(s) like "B5FE/segmentation-4FD1.json"
+- **Returns:** Dict with keys `base` (str) and `annotations` (dict of annotation lists)
+- **Example:**
+  ```python
+  serializer = JsonSerializer()
+  result = serializer.get_annotations(pecha, ["B5FE/segmentation-4FD1.json"])
+  print(result["base"])
+  print(result["annotations"])
   ```
