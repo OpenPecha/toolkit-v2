@@ -131,7 +131,7 @@ To see Usage Guide, see the [Usage Guide](docs/usage.md).
 
 ## Tutorial Guide
 
-To see Tutorial Guide, see the [Tutorial Guide](docs/tutorials.md)
+To see a story-driven walkthrough of parsing, annotating, and serializing a Tibetan text, with code and explanations., see the [Tutorial Guide](docs/tutorials.md)
 
 ---
 
