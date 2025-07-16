@@ -64,7 +64,6 @@
 
 ## CommentaryAlignmentTransfer
 
-* [CommentaryAlignmentTransfer.get_first_valid_root_idx()](#commentaryalignmenttransferget_first_valid_root_idx)
 * [CommentaryAlignmentTransfer.is_valid_ann()](#commentaryalignmenttransferis_valid_ann)
 * [CommentaryAlignmentTransfer.get_segmentation_ann_path()](#commentaryalignmenttransferget_segmentation_ann_path)
 * [CommentaryAlignmentTransfer.index_annotations_by_root()](#commentaryalignmenttransferindex_annotations_by_root)
@@ -738,17 +737,6 @@ Serializes root translation segmentation text mapped to root segmentation text.
   )
   ```
 
-### <a id="commentaryalignmenttransferget_first_valid_root_idx"></a>`CommentaryAlignmentTransfer.get_first_valid_root_idx() -> int | None`
-Gets the first valid root index from an annotation's alignment index.
-
-- **Parameters:**
-  - `ann` (dict): The annotation dictionary containing alignment_index
-- **Returns:** First valid root index or None if no valid indices found
-- **Example:**
-  ```python
-  transfer = CommentaryAlignmentTransfer()
-  idx = transfer.get_first_valid_root_idx({"alignment_index": "1,2-4"})  # 1
-  ```
 
 ### <a id="commentaryalignmenttransferis_valid_ann"></a>`CommentaryAlignmentTransfer.is_valid_ann() -> bool`
 Checks if an annotation is valid (exists and has non-empty text).
