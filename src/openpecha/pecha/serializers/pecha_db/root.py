@@ -65,7 +65,7 @@ class RootSerializer:
             segments: Dict[int, List[str]] = {}
             anns = get_anns(layer)
             for ann in anns:
-                segments[int(ann["alignment_index"])] = [ann["text"]]
+                segments[ann["alignment_index"][0]] = [ann["text"]]
 
             max_idx = max(segments.keys())
             content = []
