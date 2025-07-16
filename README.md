@@ -16,6 +16,7 @@ A Python package for working with stand-off text annotations in the [OpenPecha](
 - [Key Concepts](#key-concepts)
 - [Getting Started & Usage Guide](#getting-started--usage-guide)
 - [Tutorial](#Tutorial)
+- [Serializer](#serializer)
 - [API Reference](#api-reference)
 - [Diving Deeper](#diving-deeper)
 - [Contributing](#contributing)
@@ -126,9 +127,20 @@ To get started and explore all features, see the [Getting Started & Usage Guide]
 
 To see a story-driven walkthrough of parsing, annotating, and serializing a Tibetan text, with code and explanations., see the [Tutorial Guide](docs/tutorials.md)
 
+## Serializer
+
+The `JsonSerializer` class provides utilities for extracting and serializing annotation data from a Pecha. Key methods include:
+- `get_base(pecha)`: Returns the base text from a Pecha.
+- `to_dict(ann_store, ann_type)`: Converts an annotation store to a list of annotation dictionaries.
+- `get_annotations(pecha, layer_paths)`: Gets the base text and annotations for one or more layer paths from a Pecha.
+
+See the [API Reference](docs/api-references.md#jsonserializer) for full details and usage examples.
+
+
 ## API Reference
 
 For a detailed list of classes and methods, see the [API Reference](docs/api-references.md).
+
 
 ---
 
