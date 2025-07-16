@@ -53,17 +53,6 @@ class CommentaryAlignmentTransfer:
         Returns a mapping from source indices to lists of target indices.
         """
 
-        def extract_idx(ann: dict) -> int:
-            """Helper to extract a single int index from root_idx_mapping."""
-            if "-" in ann["alignment_index"] or "," in ann["alignment_index"]:
-                idx = self.get_first_valid_root_idx(ann)
-                if idx is None:
-                    raise ValueError(
-                        f"Invalid alignment_index: {ann['alignment_index']}"
-                    )
-                return idx
-            return int(ann["alignment_index"])
-
         def is_match(src_start, src_end, tgt_start, tgt_end):
             """Helper to check if spans overlap or are contained (not edge overlap)."""
             is_overlap = (
@@ -81,7 +70,7 @@ class CommentaryAlignmentTransfer:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
             try:
                 src_idx = (
-                    extract_idx(src_ann)
+                    src_ann["alignment_index"][0]
                     if src_ann["segmentation_type"] == "alignment"
                     else int(src_ann["index"])
                 )
@@ -92,7 +81,7 @@ class CommentaryAlignmentTransfer:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
                 try:
                     tgt_idx = (
-                        extract_idx(tgt_ann)
+                        tgt_ann["alignment_index"][0]
                         if tgt_ann["segmentation_type"] == "alignment"
                         else int(tgt_ann["index"])
                     )
@@ -239,7 +228,7 @@ class CommentaryAlignmentTransfer:
         if is_empty(commentary_text):
             return None
 
-        root_idx = self.get_first_valid_root_idx(ann)
+        root_idx = ann["alignment_index"][0]
         if root_idx is None or not self.is_valid_ann(root_anns, root_idx):
             return commentary_text
 
