@@ -42,7 +42,7 @@ class JsonSerializer:
         ann_name = layer_name.split("-")[0]
         return get_annotation_type(ann_name)
 
-    def get_annotations(self, pecha: Pecha, layer_paths: str | list[str]):
+    def serialize(self, pecha: Pecha, layer_paths: str | list[str]):
         """
         Get annotations for a single or list of layer paths.
         Each layer_path is a string like: "B5FE/segmentation-4FD1.json"
