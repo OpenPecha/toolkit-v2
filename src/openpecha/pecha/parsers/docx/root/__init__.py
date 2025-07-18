@@ -55,7 +55,7 @@ class DocxRootParser(DocxBaseParser):
                 AlignmentAnnotation(
                     span=Span(start=char_count, end=char_count + len(segment)),
                     index=index,
-                    alignment_index=index,
+                    alignment_index=[int(index)],
                 )
             )
             base += f"{segment}\n"
