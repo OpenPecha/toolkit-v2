@@ -5,6 +5,7 @@ from openpecha.pecha.annotations import (
     SegmentationAnnotation,
     Span,
     SpellingVariantAnnotation,
+    SpellingVariantOperations,
 )
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.utils import update_coords
@@ -61,7 +62,7 @@ class EditionParser:
                 anns.append(
                     SpellingVariantAnnotation(
                         span=Span(start=char_count, end=char_count),
-                        operation="insertion",
+                        operation=SpellingVariantOperations.INSERTION,
                         text=text,
                     )
                 )
@@ -70,7 +71,7 @@ class EditionParser:
                 anns.append(
                     SpellingVariantAnnotation(
                         span=Span(start=char_count, end=char_count + len(text)),
-                        operation="deletion",
+                        operation=SpellingVariantOperations.DELETION,
                     )
                 )
                 char_count += len(text)
