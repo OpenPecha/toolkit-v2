@@ -28,7 +28,7 @@ class TestJsonSerializer(TestCase):
         ).read_text(encoding="utf-8")
         assert base == expected_base
 
-    def test_get_annotations(self):
+    def test_serialize_segmenation(self):
         serializer = JsonSerializer()
 
         # SEGMENTATION
@@ -41,6 +41,9 @@ class TestJsonSerializer(TestCase):
         )
         assert annotations == expected_annotations
 
+    def test_serialize_alignment(self):
+        serializer = JsonSerializer()
+
         # ALIGNMENT
         layer_path = "B014/alignment-2127.json"
         annotations = serializer.serialize(
@@ -48,6 +51,9 @@ class TestJsonSerializer(TestCase):
         )
         expected_annotations = read_json(self.DATA_DIR / "alignment_annotations.json")
         assert annotations == expected_annotations
+
+    def test_serialize_segmentation_and_alignment(self):
+        serializer = JsonSerializer()
 
         # SEGMENTATION AND ALIGNMENT(Annotations for Edition)
         layer_paths = ["B014/segmentation-33FC.json", "B014/alignment-2127.json"]
