@@ -63,7 +63,7 @@ class TestJsonSerializer(TestCase):
         expected_annotations = read_json(self.DATA_DIR / "edition_annotations.json")
         assert annotations == expected_annotations
 
-    def test_serialize_spelling_variant(self):
+    def test_serialize_spelling_variant_insertion(self):
         serializer = JsonSerializer()
 
         pecha_path = self.DATA_DIR / "IA099A11B"
@@ -75,9 +75,14 @@ class TestJsonSerializer(TestCase):
         )
         assert edition_base == expected_edition_base
 
+    def test_serialize_spelling_variant_deletion(self):
+        serializer = JsonSerializer()
 
-if __name__ == "__main__":
-    test = TestJsonSerializer()
-    test.setUp()
-
-    test.test_serialize_spelling_variant()
+        pecha_path = self.DATA_DIR / "IA099A11B"
+        pecha = Pecha.from_path(pecha_path)
+        edition_layer_path = "4C00/spelling_variant-658D.json"
+        edition_base = serializer.get_edition_base(pecha, edition_layer_path)
+        expected_edition_base = Path(self.DATA_DIR / "deletion.txt").read_text(
+            encoding="utf-8"
+        )
+        assert edition_base == expected_edition_base
