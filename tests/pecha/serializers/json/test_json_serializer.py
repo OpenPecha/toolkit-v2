@@ -92,9 +92,9 @@ class TestJsonSerializer(TestCase):
 
         pecha_path = self.DATA_DIR / "IA099A11B"
         pecha = Pecha.from_path(pecha_path)
-        edition_layer_path = "4C00/spelling_variant-6816.json.json"
+        edition_layer_path = "4C00/spelling_variant-6816.json"
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
-        expected_edition_base = Path(self.DATA_DIR / "deletion.txt").read_text(
-            encoding="utf-8"
-        )
+        expected_edition_base = Path(
+            self.DATA_DIR / "insertion_and_deletion.txt"
+        ).read_text(encoding="utf-8")
         assert edition_base == expected_edition_base
