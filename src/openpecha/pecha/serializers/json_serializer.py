@@ -52,30 +52,28 @@ class JsonSerializer:
         ann_type = self._get_ann_type(edition_layer_path)
         anns = self.to_dict(ann_store, ann_type)
 
-        old_base = self.get_base(pecha)  # noqa
-        new_base = ""  # noqa
+        old_base = self.get_base(pecha)
+        edition_base = ""
 
-        last = 0
+        cursor = 0
         for ann in anns:
             start, end = ann["Span"]["start"], ann["Span"]["end"]
             operation, text = ann["operation"], ann["text"]
 
-            new_base += old_base[last:start]
+            edition_base += old_base[cursor:start]
 
             if operation == "insertion":
-                new_base += text
-
+                edition_base += text
             elif operation == "deletion":
-                pass
-
+                pass  # Skip deleted text
             else:
                 raise ValueError(
-                    f"Operation should be either 'insertion' or 'deletion'. This has value {operation}"
+                    f"Invalid operation: {operation}. Expected 'insertion' or 'deletion'."
                 )
 
-            last = end
+            cursor = end
 
-        return new_base
+        return edition_base
 
     def serialize(self, pecha: Pecha, layer_paths: str | list[str]):
         """
