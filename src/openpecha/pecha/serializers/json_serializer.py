@@ -54,8 +54,26 @@ class JsonSerializer:
 
         old_base = self.get_base(pecha)  # noqa
         new_base = ""  # noqa
+
+        last = 0
         for ann in anns:
-            pass
+            start, end = ann["Span"]["start"], ann["Span"]["end"]
+            operation, text = ann["operation"], ann["text"]
+
+            new_base += old_base[last:start]
+
+            if operation == "insertion":
+                new_base += text
+
+            elif operation == "deletion":
+                pass
+
+            else:
+                raise ValueError(
+                    f"Operation should be either 'insertion' or 'deletion'. This has value {operation}"
+                )
+
+            last = end
 
         return new_base
 
