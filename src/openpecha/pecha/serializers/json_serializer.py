@@ -42,6 +42,23 @@ class JsonSerializer:
         ann_name = layer_name.split("-")[0]
         return get_annotation_type(ann_name)
 
+    def get_edition_base(self, pecha: Pecha, edition_layer_path: str) -> str:
+        """
+        1.Get base from Pecha.
+        2.Read Spelling Variant Annotations from Edition Layer path
+        3.Form a new base for Edition
+        """
+        ann_store = AnnotationStore(file=str(pecha.layer_path / edition_layer_path))
+        ann_type = self._get_ann_type(edition_layer_path)
+        anns = self.to_dict(ann_store, ann_type)
+
+        old_base = self.get_base(pecha)  # noqa
+        new_base = ""  # noqa
+        for ann in anns:
+            pass
+
+        return new_base
+
     def serialize(self, pecha: Pecha, layer_paths: str | list[str]):
         """
         Get annotations for a single or list of layer paths.
