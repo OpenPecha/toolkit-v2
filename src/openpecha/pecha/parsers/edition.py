@@ -1,14 +1,18 @@
 from diff_match_patch import diff_match_patch
+from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import (
+    Pagination,
     SegmentationAnnotation,
     Span,
     SpellingVariantAnnotation,
     SpellingVariantOperations,
 )
+from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.utils import update_coords
+from openpecha.pecha.serializers.json_serializer import JsonSerializer
 
 
 class EditionParser:
@@ -76,6 +80,37 @@ class EditionParser:
                 )
                 char_count += len(text)
         return anns
+
+    def parse_pagination(
+        self, pecha: Pecha, edition_layer_path: str, pagination_anns: list[Pagination]
+    ) -> list[Pagination]:
+        """
+        Parse pagination annotations for a given Pecha object and edition layer.
+
+        Args:
+            pecha (Pecha): The Pecha object containing the base text and layers.
+            edition_layer_name (str): The name of the edition's spelling variant layer to which pagination annotation is build on.
+            pagination_anns (list[Pagination]): A list of Pagination annotation objects to process.
+
+        Returns:
+            list[Pagination]: A list of processed Pagination annotation objects.
+        """
+        pass
+        basename = list(pecha.bases.keys())[0]
+        base = pecha.get_base(basename)
+
+        serializer = JsonSerializer()
+        edition_base = serializer.get_edition_base(pecha, edition_layer_path)
+
+        updated_anns: list[Pagination] = []
+        dmp = DiffMatchPatch(base, edition_base)
+
+        for ann in pagination_anns:
+            start, end = ann.span["start"], ann.span["end"]
+            new_start = dmp.get_updated_coord(start)
+            new_end = dmp.get_updated_coord(end)
+
+        pass
 
     def parse(self, pecha: Pecha, segments: list[str]):
         """
