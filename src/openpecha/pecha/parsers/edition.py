@@ -121,18 +121,24 @@ class EditionParser:
         base_name = list(pecha.bases.keys())[0]
         layer_type = AnnotationType.PAGINATION
 
-        ann_store = AnnotationStore(id=pecha.id)
+        store = AnnotationStore(id=pecha.id, config={"use_include": True})
+
+        layer_path = pecha.layer_path / edition_layer_path
+        substore = store.add_new_substore(
+            id=layer_path.stem, filename=layer_path.as_posix()
+        )
+
         ann_store_path = (
             pecha.layer_path / base_name / f"{layer_type.value}-{get_layer_id()}.json"
         )
-        ann_store.set_filename(str(ann_store_path))
-        ann_store.add_resource(
+        store.set_filename(str(ann_store_path))
+        store.add_resource(
             id=base_name,
             filename=f"../../base/{base_name}.txt",
         )
         dataset_id = layer_type.annotation_collection_type._value_
-        ann_store.add_dataset(id=dataset_id)
-        pecha.layers[base_name][layer_type].append(ann_store)
+        store.add_dataset(id=dataset_id)
+        pecha.layers[base_name][layer_type].append(store)
 
         return updated_anns
 
