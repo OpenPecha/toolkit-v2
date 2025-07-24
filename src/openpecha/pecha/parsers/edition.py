@@ -81,32 +81,9 @@ class EditionParser:
                 char_count += len(text)
         return anns
 
-    def add_edition_level_layer(
-        self, pecha: Pecha, layer_path: str, layer_type: AnnotationType
-    ):
-
-        basename = list(pecha.bases.keys())[0]
-        layer, new_layer_path = pecha.add_layer(basename, layer_type)
-
-        layer.add_new_substore(id=Path(layer_path).stem, filename=layer_path)
-
-        return layer, new_layer_path
-
     def add_pagination_layer(
-        self, pecha: Pecha, edition_layer_path: str, anns: list[Pagination]
-    ):
-        layer, new_layer_path = self.add_edition_level_layer(
-            pecha, edition_layer_path, AnnotationType.PAGINATION
-        )
-        for ann in anns:
-            pecha.add_annotation(layer, ann, AnnotationType.PAGINATION)
-
-        layer.save()
-        return str(new_layer_path.relative_to(pecha.layer_path))
-
-    def parse_pagination(
         self, pecha: Pecha, edition_layer_path: str, pagination_anns: list[Pagination]
-    ) -> list[Pagination]:
+    ) -> str:
         """
         Parse pagination annotations for a given Pecha object and edition layer.
 
@@ -119,14 +96,19 @@ class EditionParser:
             list[Pagination]: A list of processed Pagination annotation objects.
         """
         pass
-        basename = list(pecha.bases.keys())[0]
-        base = pecha.get_base(basename)
 
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
-        updated_anns = update_coords(pagination_anns, edition_base, base)
 
-        return updated_anns
+        base_name = Path(edition_layer_path).stem
+        pecha.set_base(edition_base, base_name)
+
+        layer, new_layer_path = pecha.add_layer(base_name, AnnotationType.PAGINATION)
+        for ann in pagination_anns:
+            pecha.add_annotation(layer, ann, AnnotationType.PAGINATION)
+
+        layer.save()
+        return str(new_layer_path.relative_to(pecha.layer_path))
 
     def parse(self, pecha: Pecha, segments: list[str]):
         """
