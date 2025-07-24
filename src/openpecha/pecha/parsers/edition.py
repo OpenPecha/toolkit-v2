@@ -1,7 +1,7 @@
-from diff_match_patch import diff_match_patch
-from stam import AnnotationStore
+from pathlib import Path
 
-from openpecha.ids import get_layer_id
+from diff_match_patch import diff_match_patch
+
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import (
     Pagination,
@@ -82,6 +82,29 @@ class EditionParser:
                 char_count += len(text)
         return anns
 
+    def add_edition_level_layer(
+        self, pecha: Pecha, layer_path: str, layer_type: AnnotationType
+    ):
+
+        basename = list(pecha.bases.keys())[0]
+        layer, new_layer_path = pecha.add_layer(basename, layer_type)
+
+        layer.add_new_substore(id=Path(layer_path).stem, filename=layer_path)
+
+        return layer, new_layer_path
+
+    def add_pagination_layer(
+        self, pecha: Pecha, edition_layer_path: str, anns: list[Pagination]
+    ):
+        layer, new_layer_path = self.add_edition_level_layer(
+            pecha, edition_layer_path, AnnotationType.PAGINATION
+        )
+        for ann in anns:
+            pecha.add_annotation(layer, ann, AnnotationType.PAGINATION)
+
+        layer.save()
+        return str(new_layer_path.relative_to(pecha.layer_path))
+
     def parse_pagination(
         self, pecha: Pecha, edition_layer_path: str, pagination_anns: list[Pagination]
     ) -> list[Pagination]:
@@ -104,7 +127,6 @@ class EditionParser:
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
 
         dmp = DiffMatchPatch(base, edition_base)
-        edition_anns = serializer.serialize(pecha, edition_layer_path)
         updated_anns: list[Pagination] = []
         for ann in pagination_anns:
             start, end = ann.span["start"], ann.span["end"]
@@ -117,28 +139,6 @@ class EditionParser:
                 reference=ann.reference,
             )
             updated_anns.append(ann)
-
-        base_name = list(pecha.bases.keys())[0]
-        layer_type = AnnotationType.PAGINATION
-
-        store = AnnotationStore(id=pecha.id, config={"use_include": True})
-
-        layer_path = pecha.layer_path / edition_layer_path
-        substore = store.add_new_substore(
-            id=layer_path.stem, filename=layer_path.as_posix()
-        )
-
-        ann_store_path = (
-            pecha.layer_path / base_name / f"{layer_type.value}-{get_layer_id()}.json"
-        )
-        store.set_filename(str(ann_store_path))
-        store.add_resource(
-            id=base_name,
-            filename=f"../../base/{base_name}.txt",
-        )
-        dataset_id = layer_type.annotation_collection_type._value_
-        store.add_dataset(id=dataset_id)
-        pecha.layers[base_name][layer_type].append(store)
 
         return updated_anns
 
