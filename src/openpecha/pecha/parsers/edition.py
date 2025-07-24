@@ -102,15 +102,21 @@ class EditionParser:
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
 
-        updated_anns: list[Pagination] = []
         dmp = DiffMatchPatch(base, edition_base)
-
+        edition_anns = serializer.serialize(pecha, edition_layer_path)
+        updated_anns: list[Pagination] = []
         for ann in pagination_anns:
             start, end = ann.span["start"], ann.span["end"]
             new_start = dmp.get_updated_coord(start)
             new_end = dmp.get_updated_coord(end)
 
-        pass
+            ann = Pagination(
+                span=Span(start=new_start, end=new_end),
+                imgnum=ann.imgnum,
+                reference=ann.reference,
+            )
+            updated_anns.append(ann)
+        return updated_anns
 
     def parse(self, pecha: Pecha, segments: list[str]):
         """
