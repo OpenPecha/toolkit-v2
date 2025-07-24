@@ -1,0 +1,43 @@
+{
+  "id": "IA099A11B",
+  "title": null,
+  "author": {
+    "bo": "སྟོན་པ་བཅོམ་ལྡན་འདས།"
+  },
+  "imported": "2025-07-18T05:54:02.006828",
+  "source": null,
+  "toolkit_version": "2.1.13",
+  "parser": "DocxRootParser",
+  "initial_creation_type": "google_docx",
+  "language": "bo",
+  "source_metadata": {
+    "title_short": {
+      "bo": "ཚོད་ལྟ་དཔེ་དེབ་",
+      "en": "English aligned test"
+    },
+    "title_long_clean": {
+      "bo": "འཕགས་པ་ཤེས་རབ་ཀྱི་ཕ་རོལ་ཏུ་ཕྱིན་པ་རྡོ་རྗེ་གཅོད་པ་ཞེས་བྱ་བ།"
+    },
+    "title_alt_1": {
+      "bo": "འཕགས་པ་ཤེས་རབ་ཀྱི་ཕ་རོལད་ཏུ་ཕྱིནད་པ་རྡོ་རྗེ་གཅོད་པ་ཞེས་བྱ་བ་ཐེག་པ་ཆེན་པོའི་མདོ།"
+    },
+    "title_alt_2": {
+      "bo": "རྡོ་རྗེ་སུམ་བརྒྱ་པའམ་རྡོ་རྗེ་གཅོད་པ།"
+    },
+    "type": "root",
+    "parent": null
+  },
+  "bases": {},
+  "copyright": {
+    "status": "Unknown",
+    "notice": "",
+    "info_url": null
+  },
+  "licence": "Unknown",
+  "legacy_id": null,
+  "source_file": null,
+  "ocr_import_info": null,
+  "statistics": null,
+  "quality": null,
+  "last_modified": "2025-07-18T05:54:02.006826"
+}

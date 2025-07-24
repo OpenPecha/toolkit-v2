@@ -1,5 +1,6 @@
 import json
 import re
+from enum import Enum
 from typing import Dict, Optional
 
 from pydantic import (
@@ -65,6 +66,17 @@ class AlignmentAnnotation(BaseAnnotation):
     model_config = ConfigDict(
         json_schema_extra={"example": {"index": 5, "alignment_index": [1, 3, 4]}}
     )
+
+
+class SpellingVariantOperations(str, Enum):
+    INSERTION = "insertion"
+    DELETION = "deletion"
+
+
+class SpellingVariantAnnotation(BaseAnnotation):
+    span: Span
+    operation: SpellingVariantOperations
+    text: str = ""  # Required for insertion, empty for deletion
 
 
 class FootnoteAnnotation(BaseAnnotation):
