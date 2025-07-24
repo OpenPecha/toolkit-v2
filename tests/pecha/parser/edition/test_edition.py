@@ -13,6 +13,7 @@ from openpecha.pecha.annotations import (
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
 from openpecha.pecha.serializers.json_serializer import JsonSerializer
+from openpecha.utils import read_json
 
 
 class TestEditionParser(TestCase):
@@ -439,35 +440,20 @@ class TestEditionParser(TestCase):
         assert edition_base == expected_base
 
         anns = [
-            Pagination(span=Span(start=0, end=26), imgnum=1, reference="image-001.jpg"),
+            Pagination(span=Span(start=0, end=24), imgnum=1, reference="image-001.jpg"),
             Pagination(
-                span=Span(start=26, end=59), imgnum=2, reference="image-002.jpg"
+                span=Span(start=24, end=54), imgnum=2, reference="image-002.jpg"
             ),
         ]
 
         parser = EditionParser()
-        updated_anns = parser.parse_pagination(pecha, edition_layer_path, anns)
+        pagination_layer_path = parser.add_pagination_layer(
+            pecha, edition_layer_path, anns
+        )
+        pagination_anns = serializer.serialize(pecha, pagination_layer_path)
 
-        expected_updated_anns = [
-            Pagination(
-                span=Span(start=0, end=25, errors=None),
-                metadata=None,
-                page_info=None,
-                imgnum=1,
-                order=None,
-                reference="image-001.jpg",
-            ),
-            Pagination(
-                span=Span(start=25, end=62, errors=None),
-                metadata=None,
-                page_info=None,
-                imgnum=2,
-                order=None,
-                reference="image-002.jpg",
-            ),
-        ]
-
-        assert updated_anns == expected_updated_anns
+        expected_pagination_anns = read_json(self.DATA / "pagination.json")
+        assert pagination_anns == expected_pagination_anns
 
     def tearDown(self):
         # Revert all original files
@@ -478,3 +464,10 @@ class TestEditionParser(TestCase):
         for f in self.pecha_path.glob("**/*"):
             if f.is_file() and f not in self.pecha_backup:
                 f.unlink()
+
+
+if __name__ == "__main__":
+    test = TestEditionParser()
+    test.setUp()
+
+    test.parse_pagination()
