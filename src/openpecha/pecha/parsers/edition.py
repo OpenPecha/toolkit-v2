@@ -10,7 +10,6 @@ from openpecha.pecha.annotations import (
     SpellingVariantAnnotation,
     SpellingVariantOperations,
 )
-from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.serializers.json_serializer import JsonSerializer
@@ -125,20 +124,7 @@ class EditionParser:
 
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
-
-        dmp = DiffMatchPatch(base, edition_base)
-        updated_anns: list[Pagination] = []
-        for ann in pagination_anns:
-            start, end = ann.span["start"], ann.span["end"]
-            new_start = dmp.get_updated_coord(start)
-            new_end = dmp.get_updated_coord(end)
-
-            ann = Pagination(
-                span=Span(start=new_start, end=new_end),
-                imgnum=ann.imgnum,
-                reference=ann.reference,
-            )
-            updated_anns.append(ann)
+        updated_anns = update_coords(pagination_anns, edition_base, base)
 
         return updated_anns
 
