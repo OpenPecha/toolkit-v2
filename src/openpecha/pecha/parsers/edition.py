@@ -1,6 +1,7 @@
 from diff_match_patch import diff_match_patch
 from stam import AnnotationStore
 
+from openpecha.ids import get_layer_id
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import (
     Pagination,
@@ -116,6 +117,23 @@ class EditionParser:
                 reference=ann.reference,
             )
             updated_anns.append(ann)
+
+        base_name = list(pecha.bases.keys())[0]
+        layer_type = AnnotationType.PAGINATION
+
+        ann_store = AnnotationStore(id=pecha.id)
+        ann_store_path = (
+            pecha.layer_path / base_name / f"{layer_type.value}-{get_layer_id()}.json"
+        )
+        ann_store.set_filename(str(ann_store_path))
+        ann_store.add_resource(
+            id=base_name,
+            filename=f"../../base/{base_name}.txt",
+        )
+        dataset_id = layer_type.annotation_collection_type._value_
+        ann_store.add_dataset(id=dataset_id)
+        pecha.layers[base_name][layer_type].append(ann_store)
+
         return updated_anns
 
     def parse(self, pecha: Pecha, segments: list[str]):
