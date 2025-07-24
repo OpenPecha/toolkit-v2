@@ -108,6 +108,10 @@ class EditionParser:
             pecha.add_annotation(layer, ann, AnnotationType.PAGINATION)
 
         layer.save()
+        # Remove the .txt file created by set_base
+        base_file = pecha.base_path / f"{base_name}.txt"
+        if base_file.exists():
+            base_file.unlink()
         return str(new_layer_path.relative_to(pecha.layer_path))
 
     def parse(self, pecha: Pecha, segments: list[str]):
