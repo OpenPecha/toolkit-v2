@@ -12,7 +12,7 @@ from openpecha.pecha.annotations import (
 )
 from openpecha.pecha.blupdate import DiffMatchPatch
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.parsers.docx.utils import update_coords
+from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.serializers.json_serializer import JsonSerializer
 
 

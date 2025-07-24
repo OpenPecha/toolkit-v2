@@ -7,10 +7,10 @@ from openpecha.config import get_logger
 from openpecha.exceptions import ParseNotReadyForThisAnnotation
 from openpecha.pecha import Pecha, annotation_path, get_anns
 from openpecha.pecha.layer import AnnotationType
+from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.pecha.parsers.docx.footnote import DocxFootnoteParser
 from openpecha.pecha.parsers.docx.root import DocxRootParser
-from openpecha.pecha.parsers.docx.utils import update_coords
 from openpecha.pecha.pecha_types import is_root_related_pecha
 
 pecha_id = str

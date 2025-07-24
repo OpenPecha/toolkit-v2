@@ -6,7 +6,8 @@ from openpecha.config import get_logger
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import BaseAnnotation, FootnoteAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.parsers.docx.utils import read_docx, update_coords
+from openpecha.pecha.parsers import update_coords
+from openpecha.pecha.parsers.docx.utils import read_docx
 
 logger = get_logger(__name__)
 

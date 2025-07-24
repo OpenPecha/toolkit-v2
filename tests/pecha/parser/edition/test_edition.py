@@ -9,7 +9,7 @@ from openpecha.pecha.annotations import (
     Span,
     SpellingVariantAnnotation,
 )
-from openpecha.pecha.parsers.docx.utils import update_coords
+from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
 
 
