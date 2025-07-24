@@ -11,6 +11,7 @@ from openpecha.pecha.annotations import (
 )
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
+from openpecha.pecha.serializers.json_serializer import JsonSerializer
 
 
 class TestEditionParser(TestCase):
@@ -424,6 +425,18 @@ class TestEditionParser(TestCase):
             },
         ]
         assert spelling_variant_anns == expected_spelling_variant_anns
+
+    def parse_pagination(self):
+        pecha_path = Path("tests/pecha/serializers/json/data/IA099A11B")
+        pecha = Pecha.from_path(pecha_path)
+        edition_layer_path = "4C00/spelling_variant-6816.json"
+
+        serializer = JsonSerializer()
+        edition_base = serializer.get_edition_base(pecha, edition_layer_path)
+
+        expected_base = "Second Line\nSecond Line\nThird \nThird Line\nFourth Line\n"
+
+        assert edition_base == expected_base
 
     def tearDown(self):
         # Revert all original files
