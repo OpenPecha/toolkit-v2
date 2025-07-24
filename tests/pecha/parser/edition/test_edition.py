@@ -5,6 +5,7 @@ from stam import AnnotationStore
 
 from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.annotations import (
+    Pagination,
     SegmentationAnnotation,
     Span,
     SpellingVariantAnnotation,
@@ -435,8 +436,38 @@ class TestEditionParser(TestCase):
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
 
         expected_base = "Second Line\nSecond Line\nThird \nThird Line\nFourth Line\n"
-
         assert edition_base == expected_base
+
+        anns = [
+            Pagination(span=Span(start=0, end=26), imgnum=1, reference="image-001.jpg"),
+            Pagination(
+                span=Span(start=26, end=59), imgnum=2, reference="image-002.jpg"
+            ),
+        ]
+
+        parser = EditionParser()
+        updated_anns = parser.parse_pagination(pecha, edition_layer_path, anns)
+
+        expected_updated_anns = [
+            Pagination(
+                span=Span(start=0, end=25, errors=None),
+                metadata=None,
+                page_info=None,
+                imgnum=1,
+                order=None,
+                reference="image-001.jpg",
+            ),
+            Pagination(
+                span=Span(start=25, end=62, errors=None),
+                metadata=None,
+                page_info=None,
+                imgnum=2,
+                order=None,
+                reference="image-002.jpg",
+            ),
+        ]
+
+        assert updated_anns == expected_updated_anns
 
     def tearDown(self):
         # Revert all original files
