@@ -14,6 +14,7 @@ from openpecha.pecha.annotations import (
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import DocxBaseParser
 from openpecha.pecha.parsers.docx.utils import extract_numbered_list
+from openpecha.utils import parse_alignment_index
 
 logger = get_logger(__name__)
 
@@ -47,14 +48,15 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
         for index, segment in numbered_text.items():
             match = re.match(self.root_alignment_index_regex, segment)
 
-            alignment_index = match.group(1) if match else index
+            alignment_indices: str = match.group(1) if match else index
+
             segment = match.group(2) if match else segment
 
             anns.append(
                 AlignmentAnnotation(
                     span=Span(start=char_count, end=char_count + len(segment)),
                     index=index,
-                    alignment_index=alignment_index,
+                    alignment_index=parse_alignment_index(alignment_indices),
                 )
             )
             base += f"{segment}\n"

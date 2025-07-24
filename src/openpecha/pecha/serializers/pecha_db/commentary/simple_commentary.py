@@ -46,7 +46,7 @@ class SimpleCommentarySerializer:
                     If root mapping number is not available, then just return the text
         Output Format: string
         """
-        root_map = int(ann["alignment_index"])
+        root_map = ann["alignment_index"][0]
         chapter_num = get_chapter_for_segment(root_map)
 
         processed_root_map = adjust_segment_num_for_chapter(root_map)

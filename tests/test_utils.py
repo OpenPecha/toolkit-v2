@@ -2,22 +2,22 @@ from openpecha.utils import (
     adjust_segment_num_for_chapter,
     chunk_strings,
     get_chapter_for_segment,
-    parse_root_mapping,
+    parse_alignment_index,
 )
 
 
 def test_parse_root_mapping():
     input = "1"
-    assert parse_root_mapping(input) == [1]
+    assert parse_alignment_index(input) == [1]
 
     input = "1,2,3,4"
-    assert parse_root_mapping(input) == [1, 2, 3, 4]
+    assert parse_alignment_index(input) == [1, 2, 3, 4]
 
     input = "1-4"
-    assert parse_root_mapping(input) == [1, 2, 3, 4]
+    assert parse_alignment_index(input) == [1, 2, 3, 4]
 
     input = "1-4,5-8"
-    assert parse_root_mapping(input) == [1, 2, 3, 4, 5, 6, 7, 8]
+    assert parse_alignment_index(input) == [1, 2, 3, 4, 5, 6, 7, 8]
 
 
 def test_chunk_strings():

@@ -5,7 +5,11 @@ from stam import AnnotationStore
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha, get_anns, load_layer
-from openpecha.utils import adjust_segment_num_for_chapter, get_chapter_for_segment
+from openpecha.utils import (
+    adjust_segment_num_for_chapter,
+    get_chapter_for_segment,
+    parse_alignment_index,
+)
 
 logger = get_logger(__name__)
 
@@ -17,26 +21,10 @@ def is_empty(text: str) -> bool:
     return not text.strip().replace("\n", "")
 
 
-def parse_root_mapping(mapping: str) -> List[int]:
-    """
-    Parse root_idx_mapping string like '1,2-4' into a sorted list of ints.
-    """
-    res = []
-    for part in mapping.strip().split(","):
-        part = part.strip()
-        if "-" in part:
-            start, end = part.split("-")
-            res.extend(list(range(int(start), int(end) + 1)))
-        else:
-            res.append(int(part))
-    res.sort()
-    return res
-
-
 class CommentaryAlignmentTransfer:
     @staticmethod
     def get_first_valid_root_idx(ann) -> int | None:
-        indices = parse_root_mapping(ann["alignment_index"])
+        indices = parse_alignment_index(ann["alignment_index"])
         return indices[0] if indices else None
 
     @staticmethod
@@ -65,17 +53,6 @@ class CommentaryAlignmentTransfer:
         Returns a mapping from source indices to lists of target indices.
         """
 
-        def extract_idx(ann: dict) -> int:
-            """Helper to extract a single int index from root_idx_mapping."""
-            if "-" in ann["alignment_index"] or "," in ann["alignment_index"]:
-                idx = self.get_first_valid_root_idx(ann)
-                if idx is None:
-                    raise ValueError(
-                        f"Invalid alignment_index: {ann['alignment_index']}"
-                    )
-                return idx
-            return int(ann["alignment_index"])
-
         def is_match(src_start, src_end, tgt_start, tgt_end):
             """Helper to check if spans overlap or are contained (not edge overlap)."""
             is_overlap = (
@@ -93,7 +70,7 @@ class CommentaryAlignmentTransfer:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
             try:
                 src_idx = (
-                    extract_idx(src_ann)
+                    src_ann["alignment_index"][0]
                     if src_ann["segmentation_type"] == "alignment"
                     else int(src_ann["index"])
                 )
@@ -104,7 +81,7 @@ class CommentaryAlignmentTransfer:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
                 try:
                     tgt_idx = (
-                        extract_idx(tgt_ann)
+                        tgt_ann["alignment_index"][0]
                         if tgt_ann["segmentation_type"] == "alignment"
                         else int(tgt_ann["index"])
                     )
@@ -251,7 +228,7 @@ class CommentaryAlignmentTransfer:
         if is_empty(commentary_text):
             return None
 
-        root_idx = self.get_first_valid_root_idx(ann)
+        root_idx = ann["alignment_index"][0]
         if root_idx is None or not self.is_valid_ann(root_anns, root_idx):
             return commentary_text
 

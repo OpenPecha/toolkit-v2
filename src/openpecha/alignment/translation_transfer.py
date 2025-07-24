@@ -35,7 +35,7 @@ class TranslationAlignmentTransfer:
         for src_ann in src_anns:
             src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
             src_idx = (
-                int(src_ann["alignment_index"])
+                src_ann["alignment_index"][0]
                 if src_ann["segmentation_type"] == "alignment"
                 else int(src_ann["index"])
             )
@@ -43,7 +43,7 @@ class TranslationAlignmentTransfer:
             for tgt_ann in tgt_anns:
                 tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
                 tgt_idx = (
-                    int(tgt_ann["alignment_index"])
+                    tgt_ann["alignment_index"][0]
                     if tgt_ann["segmentation_type"] == "alignment"
                     else int(tgt_ann["index"])
                 )
@@ -114,7 +114,7 @@ class TranslationAlignmentTransfer:
         # Root segmentation idx and Root Translation Alignment Text mapping
         map: Dict[int, List[str]] = {}
         for ann in anns:
-            aligned_idx = int(ann["alignment_index"])
+            aligned_idx = ann["alignment_index"][0]
             text = ann["text"]
             if not root_map.get(aligned_idx):
                 continue

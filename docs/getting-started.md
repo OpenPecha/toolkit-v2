@@ -32,13 +32,13 @@ This step shows how to access and iterate over annotations (e.g., segmentation, 
 
 
 ```python
-from stam import AnnotationStore
+from openpecha.pecha.serializers.json_serializer import JsonSerializer
 
-layer_path = "76C5/Segmentation-97DE.json"
-annotation_path = pecha.layer_path / layer_path
-
-for ann in AnnotationStore(file=str(annotation_path)):
-    print(str(ann))
+serializer = JsonSerializer()
+layer_path = "B5FE/segmentation-4FD1.json"
+annotations = serializer.get_annotations(
+    pecha=pecha, layer_paths=layer_path
+)
 
 ```
 
