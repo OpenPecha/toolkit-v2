@@ -447,7 +447,7 @@ class TestEditionParser(TestCase):
         ]
 
         parser = EditionParser()
-        pagination_layer_path = parser.add_pagination_layer(
+        _, pagination_layer_path = parser.add_pagination_layer(
             pecha, edition_layer_path, anns
         )
         pagination_anns = serializer.serialize(pecha, pagination_layer_path)
@@ -464,10 +464,3 @@ class TestEditionParser(TestCase):
         for f in self.pecha_path.glob("**/*"):
             if f.is_file() and f not in self.pecha_backup:
                 f.unlink()
-
-
-if __name__ == "__main__":
-    test = TestEditionParser()
-    test.setUp()
-
-    test.parse_pagination()

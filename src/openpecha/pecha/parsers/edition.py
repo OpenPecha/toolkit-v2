@@ -83,7 +83,7 @@ class EditionParser:
 
     def add_pagination_layer(
         self, pecha: Pecha, edition_layer_path: str, pagination_anns: list[Pagination]
-    ) -> str:
+    ) -> tuple[Pecha, str]:
         """
         Parse pagination annotations for a given Pecha object and edition layer.
 
@@ -95,8 +95,6 @@ class EditionParser:
         Returns:
             list[Pagination]: A list of processed Pagination annotation objects.
         """
-        pass
-
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
 
@@ -112,7 +110,9 @@ class EditionParser:
         base_file = pecha.base_path / f"{base_name}.txt"
         if base_file.exists():
             base_file.unlink()
-        return str(new_layer_path.relative_to(pecha.layer_path))
+
+        relative_layer_path = str(new_layer_path.relative_to(pecha.layer_path))
+        return (pecha, relative_layer_path)
 
     def parse(self, pecha: Pecha, segments: list[str]):
         """
@@ -128,8 +128,8 @@ class EditionParser:
         updated_seg_anns = update_coords(seg_anns, old_base, new_base)
         spelling_var_anns = self.parse_spelling_variant(old_base, new_base)
 
-        seg_layer_path = self.add_segmentation_layer(pecha, updated_seg_anns)
-        spelling_variant_path = self.add_spelling_variant_layer(
+        _, seg_layer_path = self.add_segmentation_layer(pecha, updated_seg_anns)
+        _, spelling_variant_path = self.add_spelling_variant_layer(
             pecha, spelling_var_anns
         )
 
@@ -137,7 +137,7 @@ class EditionParser:
 
     def add_segmentation_layer(
         self, pecha: Pecha, anns: list[SegmentationAnnotation]
-    ) -> str:
+    ) -> tuple[Pecha, str]:
         """
         Add a segmentation layer to the Pecha and return its relative path.
         """
@@ -146,11 +146,13 @@ class EditionParser:
         for ann in anns:
             pecha.add_annotation(layer, ann, AnnotationType.SEGMENTATION)
         layer.save()
-        return str(layer_path.relative_to(pecha.layer_path))
+
+        relative_layer_path = str(layer_path.relative_to(pecha.layer_path))
+        return (pecha, relative_layer_path)
 
     def add_spelling_variant_layer(
         self, pecha: Pecha, anns: list[SpellingVariantAnnotation]
-    ) -> str:
+    ) -> tuple[Pecha, str]:
         """
         Add a spelling variant layer to the Pecha and return its relative path.
         """
@@ -159,4 +161,6 @@ class EditionParser:
         for ann in anns:
             pecha.add_annotation(layer, ann, AnnotationType.SPELLING_VARIANT)
         layer.save()
-        return str(layer_path.relative_to(pecha.layer_path))
+
+        relative_layer_path = str(layer_path.relative_to(pecha.layer_path))
+        return (pecha, relative_layer_path)
