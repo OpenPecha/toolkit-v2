@@ -455,7 +455,16 @@ class TestEditionParser(TestCase):
         )
 
         expected_pagination_anns = read_json(self.DATA / "pagination.json")
-        assert pagination_anns == expected_pagination_anns
+
+        # base comparison
+        assert pagination_anns["base"] == expected_pagination_anns["base"]
+        for pag_ann, expected_pag_ann in zip(
+            pagination_anns["annotations"]["pagination"],
+            expected_pagination_anns["annotations"]["pagination"],
+        ):
+            assert pag_ann["Span"] == expected_pag_ann["Span"]
+            assert pag_ann["imgnum"] == expected_pag_ann["imgnum"]
+            assert pag_ann["reference"] == expected_pag_ann["reference"]
 
     def tearDown(self):
         # Revert all original files

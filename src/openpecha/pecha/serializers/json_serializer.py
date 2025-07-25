@@ -1,4 +1,5 @@
 import shutil
+import tempfile
 from pathlib import Path
 
 from stam import AnnotationStore
@@ -106,7 +107,7 @@ class JsonSerializer:
         """
         edition_base = self.get_edition_base(pecha, edition_layer_path)
         edition_basename = Path(edition_layer_path).stem
-        output_path = str(Path(".") / pecha.id)
+        output_path = str(Path(tempfile.mkdtemp()) / pecha.id)
 
         shutil.copytree(pecha.pecha_path.as_posix(), output_path)
         Path(f"{output_path}/base/{edition_basename}.txt").write_text(

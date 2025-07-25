@@ -1,4 +1,5 @@
 import shutil
+import tempfile
 from pathlib import Path
 
 from diff_match_patch import diff_match_patch
@@ -100,7 +101,7 @@ class EditionParser:
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
         edition_basename = Path(edition_layer_path).stem
 
-        output_path = Path(".")
+        output_path = Path(tempfile.mkdtemp())
         temp_pecha = Pecha.create(output_path)
         temp_pecha.set_base(edition_base, edition_basename)
 
