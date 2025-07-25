@@ -1,0 +1,25 @@
+{
+  "base": "Second Line\nSecond Line\nThird \nThird Line\nFourth Line\n",
+  "annotations": {
+    "pagination": [
+      {
+        "id": "67E8969167",
+        "Span": {
+          "start": 0,
+          "end": 24
+        },
+        "imgnum": 1,
+        "reference": "image-001.jpg"
+      },
+      {
+        "id": "9471C9CC20",
+        "Span": {
+          "start": 24,
+          "end": 54
+        },
+        "imgnum": 2,
+        "reference": "image-002.jpg"
+      }
+    ]
+  }
+}

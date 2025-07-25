@@ -1,14 +1,20 @@
+import shutil
+import tempfile
+from pathlib import Path
+
 from diff_match_patch import diff_match_patch
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import (
+    Pagination,
     SegmentationAnnotation,
     Span,
     SpellingVariantAnnotation,
     SpellingVariantOperations,
 )
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.parsers.docx.utils import update_coords
+from openpecha.pecha.parsers import update_coords
+from openpecha.pecha.serializers.json_serializer import JsonSerializer
 
 
 class EditionParser:
@@ -77,6 +83,44 @@ class EditionParser:
                 char_count += len(text)
         return anns
 
+    def add_pagination_layer(
+        self, pecha: Pecha, edition_layer_path: str, pagination_anns: list[Pagination]
+    ) -> tuple[Pecha, str]:
+        """
+        Parse pagination annotations for a given Pecha object and edition layer.
+
+        Args:
+            pecha (Pecha): The Pecha object containing the base text and layers.
+            edition_layer_name (str): The name of the edition's spelling variant layer to which pagination annotation is build on.
+            pagination_anns (list[Pagination]): A list of Pagination annotation objects to process.
+
+        Returns:
+            list[Pagination]: A list of processed Pagination annotation objects.
+        """
+        serializer = JsonSerializer()
+        edition_base = serializer.get_edition_base(pecha, edition_layer_path)
+        edition_basename = Path(edition_layer_path).stem
+
+        output_path = Path(tempfile.mkdtemp())
+        temp_pecha = Pecha.create(output_path)
+        temp_pecha.set_base(edition_base, edition_basename)
+
+        layer, new_layer_path = temp_pecha.add_layer(
+            edition_basename, AnnotationType.PAGINATION
+        )
+        for ann in pagination_anns:
+            pecha.add_annotation(layer, ann, AnnotationType.PAGINATION)
+
+        layer.save()
+
+        # Copy Pagination JSON annotation file to pecha.
+        pecha_basename = Path(edition_layer_path).parent
+        tgt_path = pecha.layer_path / pecha_basename / new_layer_path.name
+        shutil.copy(new_layer_path.as_posix(), tgt_path.as_posix())
+
+        relative_layer_path = str(tgt_path.relative_to(pecha.layer_path))
+        return (pecha, relative_layer_path)
+
     def parse(self, pecha: Pecha, segments: list[str]):
         """
         Parse the DOCX file and add segmentation and spelling variant layers to the Pecha.
@@ -91,8 +135,8 @@ class EditionParser:
         updated_seg_anns = update_coords(seg_anns, old_base, new_base)
         spelling_var_anns = self.parse_spelling_variant(old_base, new_base)
 
-        seg_layer_path = self.add_segmentation_layer(pecha, updated_seg_anns)
-        spelling_variant_path = self.add_spelling_variant_layer(
+        _, seg_layer_path = self.add_segmentation_layer(pecha, updated_seg_anns)
+        _, spelling_variant_path = self.add_spelling_variant_layer(
             pecha, spelling_var_anns
         )
 
@@ -100,7 +144,7 @@ class EditionParser:
 
     def add_segmentation_layer(
         self, pecha: Pecha, anns: list[SegmentationAnnotation]
-    ) -> str:
+    ) -> tuple[Pecha, str]:
         """
         Add a segmentation layer to the Pecha and return its relative path.
         """
@@ -109,11 +153,13 @@ class EditionParser:
         for ann in anns:
             pecha.add_annotation(layer, ann, AnnotationType.SEGMENTATION)
         layer.save()
-        return str(layer_path.relative_to(pecha.layer_path))
+
+        relative_layer_path = str(layer_path.relative_to(pecha.layer_path))
+        return (pecha, relative_layer_path)
 
     def add_spelling_variant_layer(
         self, pecha: Pecha, anns: list[SpellingVariantAnnotation]
-    ) -> str:
+    ) -> tuple[Pecha, str]:
         """
         Add a spelling variant layer to the Pecha and return its relative path.
         """
@@ -122,4 +168,6 @@ class EditionParser:
         for ann in anns:
             pecha.add_annotation(layer, ann, AnnotationType.SPELLING_VARIANT)
         layer.save()
-        return str(layer_path.relative_to(pecha.layer_path))
+
+        relative_layer_path = str(layer_path.relative_to(pecha.layer_path))
+        return (pecha, relative_layer_path)

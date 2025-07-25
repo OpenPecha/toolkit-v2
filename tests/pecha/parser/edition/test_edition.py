@@ -5,12 +5,15 @@ from stam import AnnotationStore
 
 from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.annotations import (
+    Pagination,
     SegmentationAnnotation,
     Span,
     SpellingVariantAnnotation,
 )
-from openpecha.pecha.parsers.docx.utils import update_coords
+from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
+from openpecha.pecha.serializers.json_serializer import JsonSerializer
+from openpecha.utils import read_json
 
 
 class TestEditionParser(TestCase):
@@ -424,6 +427,44 @@ class TestEditionParser(TestCase):
             },
         ]
         assert spelling_variant_anns == expected_spelling_variant_anns
+
+    def parse_pagination(self):
+        pecha_path = Path("tests/pecha/serializers/json/data/IA099A11B")
+        pecha = Pecha.from_path(pecha_path)
+        edition_layer_path = "4C00/spelling_variant-6816.json"
+
+        serializer = JsonSerializer()
+        edition_base = serializer.get_edition_base(pecha, edition_layer_path)
+
+        expected_base = "Second Line\nSecond Line\nThird \nThird Line\nFourth Line\n"
+        assert edition_base == expected_base
+
+        anns = [
+            Pagination(span=Span(start=0, end=24), imgnum=1, reference="image-001.jpg"),
+            Pagination(
+                span=Span(start=24, end=54), imgnum=2, reference="image-002.jpg"
+            ),
+        ]
+
+        parser = EditionParser()
+        _, pagination_layer_path = parser.add_pagination_layer(
+            pecha, edition_layer_path, anns
+        )
+        pagination_anns = serializer.serialize_edition_annotations(
+            pecha, edition_layer_path, pagination_layer_path
+        )
+
+        expected_pagination_anns = read_json(self.DATA / "pagination.json")
+
+        # base comparison
+        assert pagination_anns["base"] == expected_pagination_anns["base"]
+        for pag_ann, expected_pag_ann in zip(
+            pagination_anns["annotations"]["pagination"],
+            expected_pagination_anns["annotations"]["pagination"],
+        ):
+            assert pag_ann["Span"] == expected_pag_ann["Span"]
+            assert pag_ann["imgnum"] == expected_pag_ann["imgnum"]
+            assert pag_ann["reference"] == expected_pag_ann["reference"]
 
     def tearDown(self):
         # Revert all original files
