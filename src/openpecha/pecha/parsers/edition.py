@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 from diff_match_patch import diff_match_patch
@@ -98,20 +99,24 @@ class EditionParser:
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
 
-        base_name = Path(edition_layer_path).stem
-        pecha.set_base(edition_base, base_name)
+        output_path = Path(".")
+        temp_pecha = Pecha.create(output_path)
+        basename = temp_pecha.set_base(edition_base)
 
-        layer, new_layer_path = pecha.add_layer(base_name, AnnotationType.PAGINATION)
+        layer, new_layer_path = temp_pecha.add_layer(
+            basename, AnnotationType.PAGINATION
+        )
         for ann in pagination_anns:
             pecha.add_annotation(layer, ann, AnnotationType.PAGINATION)
 
         layer.save()
-        # Remove the .txt file created by set_base
-        base_file = pecha.base_path / f"{base_name}.txt"
-        if base_file.exists():
-            base_file.unlink()
 
-        relative_layer_path = str(new_layer_path.relative_to(pecha.layer_path))
+        # Copy Pagination JSON annotation file to pecha.
+        pecha_basename = Path(edition_layer_path).parent
+        tgt_path = pecha.layer_path / pecha_basename / new_layer_path.name
+        shutil.copy(new_layer_path.as_posix(), tgt_path.as_posix())
+
+        relative_layer_path = str(tgt_path.relative_to(pecha.layer_path))
         return (pecha, relative_layer_path)
 
     def parse(self, pecha: Pecha, segments: list[str]):

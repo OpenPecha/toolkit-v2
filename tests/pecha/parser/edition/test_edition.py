@@ -464,3 +464,9 @@ class TestEditionParser(TestCase):
         for f in self.pecha_path.glob("**/*"):
             if f.is_file() and f not in self.pecha_backup:
                 f.unlink()
+
+
+test = TestEditionParser()
+test.setUp()
+
+test.parse_pagination()
