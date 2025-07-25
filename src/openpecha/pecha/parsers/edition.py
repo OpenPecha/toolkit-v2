@@ -9,8 +9,8 @@ from openpecha.pecha.annotations import (
     Pagination,
     SegmentationAnnotation,
     Span,
-    SpellingVariantAnnotation,
-    SpellingVariantOperations,
+    Version,
+    VersionVariantOperations,
 )
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import update_coords
@@ -48,9 +48,7 @@ class EditionParser:
             char_count += len(segment) + 1
         return anns
 
-    def parse_spelling_variant(
-        self, source: str, target: str
-    ) -> list[SpellingVariantAnnotation]:
+    def parse_spelling_variant(self, source: str, target: str) -> list[Version]:
         """
         Compute spelling variant annotations (insertions/deletions) between source and target strings.
         """
@@ -66,18 +64,18 @@ class EditionParser:
             elif marker == 1:
                 # Insertion
                 anns.append(
-                    SpellingVariantAnnotation(
+                    Version(
                         span=Span(start=char_count, end=char_count),
-                        operation=SpellingVariantOperations.INSERTION,
+                        operation=VersionVariantOperations.INSERTION,
                         text=text,
                     )
                 )
             else:
                 # Deletion
                 anns.append(
-                    SpellingVariantAnnotation(
+                    Version(
                         span=Span(start=char_count, end=char_count + len(text)),
-                        operation=SpellingVariantOperations.DELETION,
+                        operation=VersionVariantOperations.DELETION,
                     )
                 )
                 char_count += len(text)
@@ -158,7 +156,7 @@ class EditionParser:
         return (pecha, relative_layer_path)
 
     def add_spelling_variant_layer(
-        self, pecha: Pecha, anns: list[SpellingVariantAnnotation]
+        self, pecha: Pecha, anns: list[Version]
     ) -> tuple[Pecha, str]:
         """
         Add a spelling variant layer to the Pecha and return its relative path.

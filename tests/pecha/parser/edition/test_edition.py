@@ -8,7 +8,7 @@ from openpecha.pecha.annotations import (
     Pagination,
     SegmentationAnnotation,
     Span,
-    SpellingVariantAnnotation,
+    Version,
 )
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
@@ -100,44 +100,36 @@ class TestEditionParser(TestCase):
         new_base = "Hello World"
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(
-                span=Span(start=5, end=5), operation="insertion", text=" World"
-            )
+            Version(span=Span(start=5, end=5), operation="insertion", text=" World")
         ]
 
         # Deletion
         old_base = "Hello World"
         new_base = "Hello"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [
-            SpellingVariantAnnotation(span=Span(start=5, end=11), operation="deletion")
-        ]
+        assert diffs == [Version(span=Span(start=5, end=11), operation="deletion")]
 
         # Insertion in Between
         old_base = "Hello World"
         new_base = "Hello!! World"
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(
-                span=Span(start=5, end=5), operation="insertion", text="!!"
-            )
+            Version(span=Span(start=5, end=5), operation="insertion", text="!!")
         ]
 
         # Deletion in Between
         old_base = "Good morning, Everyone"
         new_base = "Good Everyone"
         diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [
-            SpellingVariantAnnotation(span=Span(start=4, end=13), operation="deletion")
-        ]
+        assert diffs == [Version(span=Span(start=4, end=13), operation="deletion")]
 
         # Insertion and Deletion
         old_base = "Good morning, Ladies and Gentlemen"
         new_base = "Good Attractive Ladies and Gentlemen"
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(span=Span(start=5, end=13), operation="deletion"),
-            SpellingVariantAnnotation(
+            Version(span=Span(start=5, end=13), operation="deletion"),
+            Version(
                 span=Span(start=13, end=13), operation="insertion", text="Attractive"
             ),
         ]
@@ -150,91 +142,91 @@ class TestEditionParser(TestCase):
         new_base = "\n".join(segments)
         diffs = parser.parse_spelling_variant(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=87, end=87, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=282, end=282, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=673, end=674, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=888, end=888, errors=None),
                 metadata=None,
                 operation="insertion",
                 text=" རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1034, end=1080, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1080, end=1080, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1083, end=1083, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1170, end=1213, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1279, end=1279, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="པར་",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1322, end=1323, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1323, end=1323, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="བ",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1441, end=1444, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1497, end=1500, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1573, end=1585, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1616, end=1617, errors=None),
                 metadata=None,
                 operation="deletion",
