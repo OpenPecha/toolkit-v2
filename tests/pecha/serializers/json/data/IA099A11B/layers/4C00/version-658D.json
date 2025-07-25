@@ -51,7 +51,7 @@
           "key": "spelling_variation",
           "value": {
             "@type": "String",
-            "value": "spelling_variant"
+            "value": "version"
           }
         }
       ]
