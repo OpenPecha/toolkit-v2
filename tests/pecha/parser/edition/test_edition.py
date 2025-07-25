@@ -98,7 +98,7 @@ class TestEditionParser(TestCase):
         # Insertion
         old_base = "Hello"
         new_base = "Hello World"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
             Version(span=Span(start=5, end=5), operation="insertion", text=" World")
         ]
@@ -106,13 +106,13 @@ class TestEditionParser(TestCase):
         # Deletion
         old_base = "Hello World"
         new_base = "Hello"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [Version(span=Span(start=5, end=11), operation="deletion")]
 
         # Insertion in Between
         old_base = "Hello World"
         new_base = "Hello!! World"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
             Version(span=Span(start=5, end=5), operation="insertion", text="!!")
         ]
@@ -120,13 +120,13 @@ class TestEditionParser(TestCase):
         # Deletion in Between
         old_base = "Good morning, Everyone"
         new_base = "Good Everyone"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [Version(span=Span(start=4, end=13), operation="deletion")]
 
         # Insertion and Deletion
         old_base = "Good morning, Ladies and Gentlemen"
         new_base = "Good Attractive Ladies and Gentlemen"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
             Version(span=Span(start=5, end=13), operation="deletion"),
             Version(
@@ -140,7 +140,7 @@ class TestEditionParser(TestCase):
 
         segments = self.txt_file.read_text(encoding="utf-8").splitlines()
         new_base = "\n".join(segments)
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
             Version(
                 span=Span(start=87, end=87, errors=None),

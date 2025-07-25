@@ -48,9 +48,9 @@ class EditionParser:
             char_count += len(segment) + 1
         return anns
 
-    def parse_spelling_variant(self, source: str, target: str) -> list[Version]:
+    def parse_version(self, source: str, target: str) -> list[Version]:
         """
-        Compute spelling variant annotations (insertions/deletions) between source and target strings.
+        Compute version variant annotations (insertions/deletions) between source and target strings.
         """
         diffs = self.dmp.diff_main(source, target, checklines=True)
         self.dmp.diff_cleanupSemantic(diffs)
@@ -121,7 +121,7 @@ class EditionParser:
 
     def parse(self, pecha: Pecha, segments: list[str]):
         """
-        Parse the DOCX file and add segmentation and spelling variant layers to the Pecha.
+        Parse the DOCX file and add segmentation and version layers to the Pecha.
         Returns the relative paths to the created layers.
         """
         old_basename = list(pecha.bases.keys())[0]
@@ -131,14 +131,12 @@ class EditionParser:
 
         seg_anns = self.parse_segmentation(segments)
         updated_seg_anns = update_coords(seg_anns, old_base, new_base)
-        spelling_var_anns = self.parse_spelling_variant(old_base, new_base)
+        version_anns = self.parse_version(old_base, new_base)
 
         _, seg_layer_path = self.add_segmentation_layer(pecha, updated_seg_anns)
-        _, spelling_variant_path = self.add_spelling_variant_layer(
-            pecha, spelling_var_anns
-        )
+        _, version_layer_path = self.add_version_layer(pecha, version_anns)
 
-        return seg_layer_path, spelling_variant_path
+        return seg_layer_path, version_layer_path
 
     def add_segmentation_layer(
         self, pecha: Pecha, anns: list[SegmentationAnnotation]
@@ -155,9 +153,7 @@ class EditionParser:
         relative_layer_path = str(layer_path.relative_to(pecha.layer_path))
         return (pecha, relative_layer_path)
 
-    def add_spelling_variant_layer(
-        self, pecha: Pecha, anns: list[Version]
-    ) -> tuple[Pecha, str]:
+    def add_version_layer(self, pecha: Pecha, anns: list[Version]) -> tuple[Pecha, str]:
         """
         Add a spelling variant layer to the Pecha and return its relative path.
         """
