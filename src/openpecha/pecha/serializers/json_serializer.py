@@ -1,3 +1,6 @@
+import shutil
+from pathlib import Path
+
 from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
@@ -93,3 +96,23 @@ class JsonSerializer:
 
         base = self.get_base(pecha)
         return {"base": base, "annotations": annotations}
+
+    def serialize_edition_annotations(
+        self, pecha: Pecha, edition_layer_path: str, layer_path: str
+    ):
+        """
+        Get annotations for a single or list of edition layer paths.
+        Edition annotations are annotations done on top of edition base rather than the base.
+        """
+        edition_base = self.get_edition_base(pecha, edition_layer_path)
+        edition_basename = Path(edition_layer_path).stem
+        output_path = str(Path(".") / pecha.id)
+
+        shutil.copytree(pecha.pecha_path.as_posix(), output_path)
+        Path(f"{output_path}/base/{edition_basename}.txt").write_text(
+            edition_base, encoding="utf-8"
+        )
+        temp_pecha = pecha.from_path(Path(output_path))
+
+        serialized = self.serialize(temp_pecha, layer_path)
+        return serialized

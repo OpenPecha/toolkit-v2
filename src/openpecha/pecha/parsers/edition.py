@@ -98,13 +98,14 @@ class EditionParser:
         """
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
+        edition_basename = Path(edition_layer_path).stem
 
         output_path = Path(".")
         temp_pecha = Pecha.create(output_path)
-        basename = temp_pecha.set_base(edition_base)
+        temp_pecha.set_base(edition_base, edition_basename)
 
         layer, new_layer_path = temp_pecha.add_layer(
-            basename, AnnotationType.PAGINATION
+            edition_basename, AnnotationType.PAGINATION
         )
         for ann in pagination_anns:
             pecha.add_annotation(layer, ann, AnnotationType.PAGINATION)

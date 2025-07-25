@@ -450,7 +450,9 @@ class TestEditionParser(TestCase):
         _, pagination_layer_path = parser.add_pagination_layer(
             pecha, edition_layer_path, anns
         )
-        pagination_anns = serializer.serialize(pecha, pagination_layer_path)
+        pagination_anns = serializer.serialize_edition_annotations(
+            pecha, edition_layer_path, pagination_layer_path
+        )
 
         expected_pagination_anns = read_json(self.DATA / "pagination.json")
         assert pagination_anns == expected_pagination_anns
@@ -464,9 +466,3 @@ class TestEditionParser(TestCase):
         for f in self.pecha_path.glob("**/*"):
             if f.is_file() and f not in self.pecha_backup:
                 f.unlink()
-
-
-test = TestEditionParser()
-test.setUp()
-
-test.parse_pagination()
