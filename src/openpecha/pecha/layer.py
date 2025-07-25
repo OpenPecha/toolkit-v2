@@ -25,7 +25,7 @@ class AnnotationType(str, Enum):
     SEGMENTATION = "segmentation"
     ALIGNMENT = "alignment"
 
-    SPELLING_VARIANT = "spelling_variant"
+    VERSION = "version"
 
     FOOTNOTE = "footnote"
 
@@ -63,7 +63,7 @@ def get_annotation_group_type(layer_type: AnnotationType) -> AnnotationGroupType
     if layer_type in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
         return AnnotationGroupType.SEGMENTATION_TYPE
 
-    if layer_type == AnnotationType.SPELLING_VARIANT:
+    if layer_type == AnnotationType.VERSION:
         return AnnotationGroupType.SPELLING_VARIATION
 
     if layer_type in [
@@ -94,7 +94,7 @@ def get_annotation_collection_type(
     if layer_type in [AnnotationType.SEGMENTATION, AnnotationType.ALIGNMENT]:
         return AnnotationCollectionType.SEGMENTATION_ANNOTATION
 
-    if layer_type == AnnotationType.SPELLING_VARIANT:
+    if layer_type == AnnotationType.VERSION:
         return AnnotationCollectionType.VARIATION_ANNOTATION
 
     if layer_type in [

@@ -162,9 +162,9 @@ class EditionParser:
         Add a spelling variant layer to the Pecha and return its relative path.
         """
         basename = list(pecha.bases.keys())[0]
-        layer, layer_path = pecha.add_layer(basename, AnnotationType.SPELLING_VARIANT)
+        layer, layer_path = pecha.add_layer(basename, AnnotationType.VERSION)
         for ann in anns:
-            pecha.add_annotation(layer, ann, AnnotationType.SPELLING_VARIANT)
+            pecha.add_annotation(layer, ann, AnnotationType.VERSION)
         layer.save()
 
         relative_layer_path = str(layer_path.relative_to(pecha.layer_path))
