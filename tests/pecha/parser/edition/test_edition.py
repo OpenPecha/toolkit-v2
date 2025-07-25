@@ -8,7 +8,7 @@ from openpecha.pecha.annotations import (
     Pagination,
     SegmentationAnnotation,
     Span,
-    SpellingVariantAnnotation,
+    Version,
 )
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
@@ -92,52 +92,44 @@ class TestEditionParser(TestCase):
 
         assert updated_anns == expected_updated_anns
 
-    def test_spelling_variant_parse(self):
+    def test_version_parse(self):
         parser = EditionParser()
 
         # Insertion
         old_base = "Hello"
         new_base = "Hello World"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(
-                span=Span(start=5, end=5), operation="insertion", text=" World"
-            )
+            Version(span=Span(start=5, end=5), operation="insertion", text=" World")
         ]
 
         # Deletion
         old_base = "Hello World"
         new_base = "Hello"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [
-            SpellingVariantAnnotation(span=Span(start=5, end=11), operation="deletion")
-        ]
+        diffs = parser.parse_version(old_base, new_base)
+        assert diffs == [Version(span=Span(start=5, end=11), operation="deletion")]
 
         # Insertion in Between
         old_base = "Hello World"
         new_base = "Hello!! World"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(
-                span=Span(start=5, end=5), operation="insertion", text="!!"
-            )
+            Version(span=Span(start=5, end=5), operation="insertion", text="!!")
         ]
 
         # Deletion in Between
         old_base = "Good morning, Everyone"
         new_base = "Good Everyone"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
-        assert diffs == [
-            SpellingVariantAnnotation(span=Span(start=4, end=13), operation="deletion")
-        ]
+        diffs = parser.parse_version(old_base, new_base)
+        assert diffs == [Version(span=Span(start=4, end=13), operation="deletion")]
 
         # Insertion and Deletion
         old_base = "Good morning, Ladies and Gentlemen"
         new_base = "Good Attractive Ladies and Gentlemen"
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(span=Span(start=5, end=13), operation="deletion"),
-            SpellingVariantAnnotation(
+            Version(span=Span(start=5, end=13), operation="deletion"),
+            Version(
                 span=Span(start=13, end=13), operation="insertion", text="Attractive"
             ),
         ]
@@ -148,93 +140,93 @@ class TestEditionParser(TestCase):
 
         segments = self.txt_file.read_text(encoding="utf-8").splitlines()
         new_base = "\n".join(segments)
-        diffs = parser.parse_spelling_variant(old_base, new_base)
+        diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=87, end=87, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=282, end=282, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=673, end=674, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=888, end=888, errors=None),
                 metadata=None,
                 operation="insertion",
                 text=" རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1034, end=1080, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1080, end=1080, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1083, end=1083, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1170, end=1213, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1279, end=1279, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="པར་",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1322, end=1323, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1323, end=1323, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="བ",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1441, end=1444, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1497, end=1500, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1573, end=1585, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
-            SpellingVariantAnnotation(
+            Version(
                 span=Span(start=1616, end=1617, errors=None),
                 metadata=None,
                 operation="deletion",
@@ -246,7 +238,7 @@ class TestEditionParser(TestCase):
         parser = EditionParser()
 
         segments = self.txt_file.read_text(encoding="utf-8").splitlines()
-        seg_layer_path, spelling_variant_path = parser.parse(self.pecha, segments)
+        seg_layer_path, version_path = parser.parse(self.pecha, segments)
 
         seg_anns = get_anns(
             ann_store=AnnotationStore(file=str(self.pecha.layer_path / seg_layer_path)),
@@ -316,122 +308,120 @@ class TestEditionParser(TestCase):
         ]
         assert seg_anns == expected_seg_anns
 
-        spelling_variant_anns = get_anns(
-            ann_store=AnnotationStore(
-                file=str(self.pecha.layer_path / spelling_variant_path)
-            ),
+        version_anns = get_anns(
+            ann_store=AnnotationStore(file=str(self.pecha.layer_path / version_path)),
             include_span=True,
         )
-        expected_spelling_variant_anns = [
+        expected_version_anns = [
             {
                 "operation": "deletion",
                 "text": "\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 206, "end": 207},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 359, "end": 360},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 506, "end": 507},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 673, "end": 674},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 843, "end": 844},
             },
             {
                 "operation": "insertion",
                 "text": "",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 844, "end": 844},
             },
             {
                 "operation": "deletion",
                 "text": "\nརྫོགས་པའི་བྱང་ཆུབ་སེམས་དཔའ་རྣམས་ལ་གུས་པར་བྱེད",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1034, "end": 1080},
             },
             {
                 "operation": "insertion",
                 "text": "",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1080, "end": 1080},
             },
             {
                 "operation": "deletion",
                 "text": "།དེ་ནི་དོན་དུ་གཉེར་བས་ལམ་འདི་མཉན་པར་གྱིས། །\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1170, "end": 1214},
             },
             {
                 "operation": "insertion",
                 "text": "",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1279, "end": 1279},
             },
             {
                 "operation": "deletion",
                 "text": "ན",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1322, "end": 1323},
             },
             {
                 "operation": "insertion",
                 "text": "",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1323, "end": 1323},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1402, "end": 1403},
             },
             {
                 "operation": "deletion",
                 "text": "པར་",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1441, "end": 1444},
             },
             {
                 "operation": "deletion",
                 "text": "མི་",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1497, "end": 1500},
             },
             {
                 "operation": "deletion",
                 "text": "ཉིད་ཀྱིས་དེ་",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1573, "end": 1585},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
-                "spelling_variation": "spelling_variant",
+                "spelling_variation": "version",
                 "Span": {"start": 1616, "end": 1617},
             },
         ]
-        assert spelling_variant_anns == expected_spelling_variant_anns
+        assert version_anns == expected_version_anns
 
     def parse_pagination(self):
         pecha_path = Path("tests/pecha/serializers/json/data/IA099A11B")
         pecha = Pecha.from_path(pecha_path)
-        edition_layer_path = "4C00/spelling_variant-6816.json"
+        edition_layer_path = "4C00/version-6816.json"
 
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)

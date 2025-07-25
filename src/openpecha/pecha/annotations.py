@@ -68,14 +68,14 @@ class AlignmentAnnotation(BaseAnnotation):
     )
 
 
-class SpellingVariantOperations(str, Enum):
+class VersionVariantOperations(str, Enum):
     INSERTION = "insertion"
     DELETION = "deletion"
 
 
-class SpellingVariantAnnotation(BaseAnnotation):
+class Version(BaseAnnotation):
     span: Span
-    operation: SpellingVariantOperations
+    operation: VersionVariantOperations
     text: str = ""  # Required for insertion, empty for deletion
 
 

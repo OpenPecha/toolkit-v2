@@ -5,7 +5,7 @@ from pathlib import Path
 from stam import AnnotationStore
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.annotations import SpellingVariantOperations
+from openpecha.pecha.annotations import VersionVariantOperations
 from openpecha.pecha.layer import (
     AnnotationType,
     get_annotation_group_type,
@@ -67,9 +67,9 @@ class JsonSerializer:
 
             edition_base += old_base[cursor:start]
 
-            if operation == SpellingVariantOperations.INSERTION:
+            if operation == VersionVariantOperations.INSERTION:
                 edition_base += text
-            elif operation == SpellingVariantOperations.DELETION:
+            elif operation == VersionVariantOperations.DELETION:
                 pass  # Skip deleted text
             else:
                 raise ValueError(
