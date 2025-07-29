@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, field_serializer, model_validator
 
-from openpecha.ids import get_diplomatic_id, get_initial_pecha_id, get_open_pecha_id
+from openpecha.ids import get_initial_pecha_id
 
 
 class InitialCreationType(Enum):
@@ -260,20 +260,4 @@ class InitialPechaMetadata(PechaMetaData):
     def set_id(cls, values):
         if "id" not in values or values["id"] is None:
             values["id"] = get_initial_pecha_id()
-        return values
-
-
-class OpenPechaMetadata(PechaMetaData):
-    @model_validator(mode="before")
-    def set_id(cls, values):
-        if "id" not in values or values["id"] is None:
-            values["id"] = get_open_pecha_id()
-        return values
-
-
-class DiplomaticPechaMetadata(PechaMetaData):
-    @model_validator(mode="before")
-    def set_id(cls, values):
-        if "id" not in values or values["id"] is None:
-            values["id"] = get_diplomatic_id()
         return values

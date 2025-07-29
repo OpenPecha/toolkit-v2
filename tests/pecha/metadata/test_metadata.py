@@ -7,11 +7,9 @@ from openpecha.bdrc_utils import extract_metadata_for_work, format_metadata_for_
 from openpecha.pecha.metadata import (
     Copyright,
     CopyrightStatus,
-    DiplomaticPechaMetadata,
     InitialCreationType,
     InitialPechaMetadata,
     LicenseType,
-    OpenPechaMetadata,
     PechaMetaData,
 )
 from openpecha.pecha.parsers import DummyParser
@@ -116,26 +114,6 @@ def test_initial_pecha_metadata():
     assert metadata.statistics["ocr_word_median_confidence_index"] == 0.9
     assert metadata.bases is not None
     assert metadata.bases["id"] == "529C"
-
-
-def test_diplomatic_pecha_metadata():
-    metadata = DiplomaticPechaMetadata(
-        initial_creation_type=InitialCreationType.ocr,
-        parser=DummyParser().name,  # Add parser field.
-    )
-
-    assert metadata.initial_creation_type.value == InitialCreationType.ocr.value
-    assert metadata.id.startswith("D")
-
-
-def test_open_pecha_metadata():
-    metadata = OpenPechaMetadata(
-        initial_creation_type=InitialCreationType.ocr,
-        parser=DummyParser().name,  # Add parser field.
-    )
-
-    assert metadata.initial_creation_type.value == InitialCreationType.ocr.value
-    assert metadata.id.startswith("O")
 
 
 def test_pecha_copyright():
