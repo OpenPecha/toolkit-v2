@@ -22,12 +22,6 @@ class MetaDataValidationError(Exception):
     pass
 
 
-class BaseUpdateFailedError(Exception):
-    """Raised when the base update mechanism failed."""
-
-    pass
-
-
 class StamAnnotationStoreLoadError(Exception):
     """Raised when there is an error loading annotation store in STAM."""
 
