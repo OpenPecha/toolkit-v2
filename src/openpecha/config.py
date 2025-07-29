@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 from shutil import rmtree
 
@@ -39,7 +38,6 @@ ALIGNMENT_PATH = _mkdir_if_not(BASE_PATH / "alignments")
 INPUT_DATA_PATH = _mkdir_if_not(BASE_PATH / "input_data")
 JSON_OUTPUT_PATH = _mkdir_if_not(BASE_PATH / "pechadb_json_output")
 
-GITHUB_ORG_NAME: str = os.environ.get("GITHUB_ORG_NAME", "PechaData")
 
 LINE_BREAKERS = [
     "། །",
