@@ -8,10 +8,8 @@ from git import Repo
 from stam import AnnotationData, AnnotationStore, Offset, Selector
 
 from openpecha import utils
-from openpecha.catalog import PechaDataCatalog
 from openpecha.config import PECHAS_PATH
-from openpecha.exceptions import GithubCloneError, StamAddAnnotationError
-from openpecha.github_utils import clone_repo, create_release
+from openpecha.exceptions import StamAddAnnotationError
 from openpecha.ids import (
     get_annotation_id,
     get_base_id,
@@ -23,7 +21,6 @@ from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import PechaMetaData
-from openpecha.storages import GithubStorage, commit_and_push
 
 BASE_NAME = str
 annotation_path = str
@@ -36,18 +33,6 @@ class Pecha:
         self.metadata = self.load_metadata()
         self.bases = self.load_bases()
         self.layers = self.load_layers()
-        self.storage: Optional[GithubStorage] = None
-
-    @classmethod
-    def from_id(cls, pecha_id: str):
-        try:
-            pecha_path = clone_repo(pecha_id, PECHAS_PATH)
-        except Exception as e:
-            raise GithubCloneError(
-                f"[Error] Failed to clone the pecha {pecha_id}. {str(e)}"
-            )
-        else:
-            return Pecha.from_path(pecha_path)
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
@@ -290,71 +275,6 @@ class Pecha:
             return AnnotationStore(file=str(layer_file))
         else:
             return None
-
-    def publish(
-        self,
-        asset_path: Optional[Path] = None,
-        asset_name: Optional[str] = "source_data",
-        branch: Optional[str] = "main",
-        is_private: bool = False,
-    ):
-        def prepare_repo_description(title):
-            """
-            Input: title which can be string, List of string, or an dictionary
-            Return: a string, which will be used as repo description
-            """
-            if isinstance(title, str):
-                return title
-            if isinstance(title, list):
-                return ", ".join(title)
-
-            if isinstance(title, dict):
-                return ", ".join([f"{k}: {v}" for k, v in title.items()])
-
-            return title
-
-        if not self.storage:
-            self.storage = GithubStorage()
-        if isinstance(self.storage, GithubStorage) and self.storage.is_git_repo(
-            self.pecha_path
-        ):
-            local_repo = Repo(self.pecha_path)
-            commit_and_push(repo=local_repo, message="Pecha update", branch=branch)
-        else:
-            self.storage.add_dir(
-                path=self.pecha_path,
-                description=prepare_repo_description(self.metadata.title),
-                is_private=is_private,
-                branch=branch,
-            )
-        asset_paths = []
-        if asset_path:
-            repo_name = self.id
-            assert asset_name is not None, "asset_name should be provided."
-            archieve_path = asset_path.parent / asset_name
-            shutil.make_archive(str(archieve_path), "zip", asset_path)
-            asset_paths.append(f"{str(archieve_path)}.zip")
-            create_release(
-                repo_name,
-                prerelease=False,
-                asset_paths=asset_paths,
-                org=self.storage.org_name,
-                token=self.storage.token,
-            )
-            (asset_path.parent / f"{asset_name}.zip").unlink()
-
-        row = [
-            self.id,
-            self.metadata.title,
-            self.metadata.author,
-            self.metadata.source_metadata.get("id", ""),
-            self.metadata.language.value,
-            self.metadata.initial_creation_type.value,
-            self.metadata.imported,
-        ]
-
-        catalog = PechaDataCatalog()
-        catalog.add_entry_to_pecha_catalog(row)
 
     @staticmethod
     def map_stam_ann_data(ann_data: AnnotationData) -> Dict:
