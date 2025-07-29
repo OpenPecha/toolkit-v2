@@ -14,7 +14,7 @@ from openpecha.pecha.annotations import (
 )
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import update_coords
-from openpecha.pecha.serializers.json_serializer import JsonSerializer
+from openpecha.pecha.serializers.json import JsonSerializer
 
 
 class EditionParser:

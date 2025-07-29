@@ -12,7 +12,7 @@ from openpecha.pecha.annotations import (
 )
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
-from openpecha.pecha.serializers.json_serializer import JsonSerializer
+from openpecha.pecha.serializers.json import JsonSerializer
 from openpecha.utils import read_json
 
 
