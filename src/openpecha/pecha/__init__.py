@@ -2,13 +2,11 @@ import json
 import shutil
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Generator, List, Optional, Tuple
+from typing import Dict, List
 
 from git import Repo
 from stam import AnnotationData, AnnotationStore, Offset, Selector
 
-from openpecha import utils
-from openpecha.config import PECHAS_PATH
 from openpecha.exceptions import StamAddAnnotationError
 from openpecha.ids import (
     get_annotation_id,
@@ -18,7 +16,6 @@ from openpecha.ids import (
     get_uuid,
 )
 from openpecha.pecha.annotations import BaseAnnotation
-from openpecha.pecha.blupdate import get_updated_layer_anns
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import PechaMetaData
 
@@ -212,44 +209,6 @@ class Pecha:
 
         return self.metadata
 
-    def get_layers(
-        self, base_name, from_cache=False
-    ) -> Generator[Tuple[str, AnnotationStore], None, None]:
-        """
-        Return all layers from the Pecha associated with the given base.
-        """
-        for layer_fn in (self.layer_path / base_name).iterdir():
-            rel_layer_fn = layer_fn.relative_to(self.pecha_path.parent)
-            if from_cache:
-                store = self.layers[base_name].get(rel_layer_fn.name)
-            else:
-                store = None
-
-            if store:
-                yield layer_fn.name, store
-            else:
-                with utils.cwd(self.pecha_path.parent):
-                    store = AnnotationStore(file=str(rel_layer_fn))
-                self.layers[base_name][rel_layer_fn.name] = store
-                yield layer_fn.name, store
-
-    def get_segmentation_layer_path(self) -> str:
-        """
-        1. Get the first layer file from the pecha
-        2. Get the relative path of the layer file
-        TODO: Modify this function in future in case of more layers in a Pecha
-        """
-        layer_path = list(self.layer_path.rglob("segmentation-*.json"))[0]
-        relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()
-
-        return relative_layer_path
-
-    def get_first_layer_path(self) -> str:
-        layer_path = list(self.layer_path.rglob("*.json"))[0]
-        relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()
-
-        return relative_layer_path
-
     def get_layer_by_ann_type(self, base_name: str, layer_type: AnnotationType):
         """
         Get layers by annotation type i.e Chapter, Sabche, Segment,...
@@ -265,60 +224,6 @@ class Pecha:
         if len(annotation_stores) == 1:
             return annotation_stores[0], ann_store_files[0]
         return annotation_stores, ann_store_files
-
-    def get_layer_by_filename(self, base_name: str, filename: str) -> AnnotationStore:
-        """
-        Get layer by filename i.e basename and layer file name
-        """
-        layer_file = self.layer_path / base_name / filename
-        if layer_file.exists():
-            return AnnotationStore(file=str(layer_file))
-        else:
-            return None
-
-    @staticmethod
-    def map_stam_ann_data(ann_data: AnnotationData) -> Dict:
-        key = str(ann_data.key().id())
-        value = ann_data.value().get()
-        id = ann_data.id()
-        dataset_id = ann_data.dataset().id()
-        return {"id": id, "key": key, "value": value, "set": dataset_id}
-
-    def merge_pecha(
-        self,
-        source_pecha: "Pecha",
-        source_base_name: str,
-        target_base_name: str,
-    ):
-        """
-        This function merges the layers of the source pecha into the current pecha.
-
-        Args:
-            source_pecha_path (Path | str): The path of the source pecha.
-            source_base_name (str): The base name of the source pecha.
-            target_base_name (str): The base name of the target (current) pecha.
-        """
-
-        target_base = self.get_base(target_base_name)
-        source_base = source_pecha.get_base(source_base_name)
-
-        for layer_name, layer in source_pecha.get_layers(source_base_name):
-            updated_anns = get_updated_layer_anns(source_base, target_base, layer)
-            layer, _ = self.add_layer(
-                target_base_name, AnnotationType(layer_name.split("-")[0])
-            )
-            resource = next(layer.resources())
-            for ann in updated_anns:
-                start, end = ann["span"][0], ann["span"][1]
-                ann_data = [self.map_stam_ann_data(data) for data in ann["ann_data"]]
-                layer.annotate(
-                    id=ann["id"],
-                    target=Selector.textselector(resource, Offset.simple(start, end)),
-                    data=ann_data,
-                )
-            layer_output_path = self.layer_path / target_base_name / layer_name
-            layer.set_filename(layer_output_path.as_posix())
-            layer.save()
 
 
 def get_anns(ann_store: AnnotationStore, include_span: bool = False):
@@ -339,18 +244,3 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
 
 def load_layer(path: Path) -> AnnotationStore:
     return AnnotationStore(file=str(path))
-
-
-def get_annotations_data(ann_store: AnnotationStore):
-    annotations = []
-    for ann in ann_store:
-        span = {
-            "start": ann.offset().begin().value(),
-            "end": ann.offset().end().value(),
-        }
-        curr_ann = {"span": span}
-        for data in ann:
-            curr_ann.update({"mapping": data.value().get()})
-            break
-        annotations.append(curr_ann)
-    return annotations
