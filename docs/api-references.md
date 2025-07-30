@@ -12,11 +12,7 @@
 * [Pecha.add_layer()](#pechaadd_layer)
 * [Pecha.add_annotation()](#pechaadd_annotation)
 * [Pecha.set_metadata()](#pechaset_metadata)
-* [Pecha.get_layers()](#pechaget_layers)
-* [Pecha.get_segmentation_layer_path()](#pechaget_segmentation_layer_path)
-* [Pecha.get_first_layer_path()](#pechaget_first_layer_path)
 * [Pecha.get_layer_by_ann_type()](#pechaget_layer_by_ann_type)
-* [Pecha.get_layer_by_filename()](#pechaget_layer_by_filename)
 * [Pecha.publish()](#pechapublish)
 * [Pecha.merge_pecha()](#pechamerge_pecha)
 
@@ -247,37 +243,6 @@ Updates the Pecha's metadata with new values while preserving existing metadata 
   - The metadata is automatically saved to the metadata.json file
   - Invalid metadata will raise a ValueError
 
-### <a id="pechaget_layers"></a>`Pecha.get_layers() -> Generator[Tuple[str, AnnotationStore]`
-Returns all layers from the Pecha associated with the given base.
-
-- **Parameters:**
-  - `base_name` (str): Name of the base file
-  - `from_cache` (bool, optional): Whether to load from cache. Defaults to False
-- **Returns:** Generator yielding tuples of (layer_name, AnnotationStore)
-- **Example:**
-  ```python
-  for layer_name, layer_store in pecha.get_layers("base1"):
-      print(layer_name, layer_store)
-  ```
-
-### <a id="pechaget_segmentation_layer_path"></a>`Pecha.get_segmentation_layer_path() -> str`
-Gets the path to the first segmentation layer file.
-
-- **Returns:** str containing the relative path to the segmentation layer file
-- **Example:**
-  ```python
-  layer_path = pecha.get_segmentation_layer_path()
-  ```
-
-### <a id="pechaget_first_layer_path"></a>`Pecha.get_first_layer_path() -> str`
-Gets the path to the first layer file.
-
-- **Returns:** str containing the relative path to the first layer file
-- **Example:**
-  ```python
-  layer_path = pecha.get_first_layer_path()
-  ```
-
 ### <a id="pechaget_layer_by_ann_type"></a>`Pecha.get_layer_by_ann_type() -> Union[Tuple[AnnotationStore, Path], Tuple[List[AnnotationStore], List[Path]]]`
 Gets layers by annotation type.
 
@@ -288,18 +253,6 @@ Gets layers by annotation type.
 - **Example:**
   ```python
   layer, layer_path = pecha.get_layer_by_ann_type("base1", AnnotationType.SEGMENTATION)
-  ```
-
-### <a id="pechaget_layer_by_filename"></a>`Pecha.get_layer_by_filename() -> Optional[AnnotationStore]`
-Gets a layer by its filename.
-
-- **Parameters:**
-  - `base_name` (str): Name of the base file
-  - `filename` (str): Name of the layer file
-- **Returns:** AnnotationStore or None if not found
-- **Example:**
-  ```python
-  layer = pecha.get_layer_by_filename("base1", "segmentation-1234.json")
   ```
 
 ### <a id="pechapublish"></a>`Pecha.publish() -> None`
