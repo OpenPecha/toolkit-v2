@@ -35,7 +35,6 @@ class Pecha:
         self.pecha_path = pecha_path
         self.metadata = self.load_metadata()
         self.bases = self.load_bases()
-        self.layers = self.load_layers()
         self.storage: Optional[GithubStorage] = None
 
     @classmethod
@@ -150,7 +149,6 @@ class Pecha:
         )
         dataset_id = layer_type.annotation_collection_type._value_
         ann_store.add_dataset(id=dataset_id)
-        self.layers[base_name][layer_type].append(ann_store)
 
         return ann_store, ann_store_path
 
@@ -226,27 +224,6 @@ class Pecha:
             json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)
 
         return self.metadata
-
-    def get_layers(
-        self, base_name, from_cache=False
-    ) -> Generator[Tuple[str, AnnotationStore], None, None]:
-        """
-        Return all layers from the Pecha associated with the given base.
-        """
-        for layer_fn in (self.layer_path / base_name).iterdir():
-            rel_layer_fn = layer_fn.relative_to(self.pecha_path.parent)
-            if from_cache:
-                store = self.layers[base_name].get(rel_layer_fn.name)
-            else:
-                store = None
-
-            if store:
-                yield layer_fn.name, store
-            else:
-                with utils.cwd(self.pecha_path.parent):
-                    store = AnnotationStore(file=str(rel_layer_fn))
-                self.layers[base_name][rel_layer_fn.name] = store
-                yield layer_fn.name, store
 
     def get_segmentation_layer_path(self) -> str:
         """
@@ -363,42 +340,6 @@ class Pecha:
         id = ann_data.id()
         dataset_id = ann_data.dataset().id()
         return {"id": id, "key": key, "value": value, "set": dataset_id}
-
-    def merge_pecha(
-        self,
-        source_pecha: "Pecha",
-        source_base_name: str,
-        target_base_name: str,
-    ):
-        """
-        This function merges the layers of the source pecha into the current pecha.
-
-        Args:
-            source_pecha_path (Path | str): The path of the source pecha.
-            source_base_name (str): The base name of the source pecha.
-            target_base_name (str): The base name of the target (current) pecha.
-        """
-
-        target_base = self.get_base(target_base_name)
-        source_base = source_pecha.get_base(source_base_name)
-
-        for layer_name, layer in source_pecha.get_layers(source_base_name):
-            updated_anns = get_updated_layer_anns(source_base, target_base, layer)
-            layer, _ = self.add_layer(
-                target_base_name, AnnotationType(layer_name.split("-")[0])
-            )
-            resource = next(layer.resources())
-            for ann in updated_anns:
-                start, end = ann["span"][0], ann["span"][1]
-                ann_data = [self.map_stam_ann_data(data) for data in ann["ann_data"]]
-                layer.annotate(
-                    id=ann["id"],
-                    target=Selector.textselector(resource, Offset.simple(start, end)),
-                    data=ann_data,
-                )
-            layer_output_path = self.layer_path / target_base_name / layer_name
-            layer.set_filename(layer_output_path.as_posix())
-            layer.save()
 
 
 def get_anns(ann_store: AnnotationStore, include_span: bool = False):
