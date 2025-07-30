@@ -13,7 +13,6 @@ from openpecha.ids import (
     get_base_id,
     get_initial_pecha_id,
     get_layer_id,
-    get_uuid,
 )
 from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.layer import AnnotationType
@@ -29,7 +28,6 @@ class Pecha:
         self.pecha_path = pecha_path
         self.metadata = self.load_metadata()
         self.bases = self.load_bases()
-        self.layers = self.load_layers()
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
@@ -79,16 +77,6 @@ class Pecha:
             bases[base_name] = base_file.read_text(encoding="utf-8")
         return bases
 
-    def load_layers(self):
-        layers: Dict[str, Dict[AnnotationType, List[AnnotationStore]]] = defaultdict(
-            lambda: defaultdict(list)
-        )
-        for layer_file in self.layer_path.rglob("*.json"):
-            base_name = layer_file.parent.name
-            ann_enum = AnnotationType(layer_file.stem.split("-")[0])
-            layers[base_name][ann_enum].append(AnnotationStore(file=str(layer_file)))
-        return layers
-
     def get_base(self, base_name) -> str:
         return (self.base_path / f"{base_name}.txt").read_text()
 
@@ -132,7 +120,6 @@ class Pecha:
         )
         dataset_id = layer_type.annotation_collection_type._value_
         ann_store.add_dataset(id=dataset_id)
-        self.layers[base_name][layer_type].append(ann_store)
 
         return ann_store, ann_store_path
 
@@ -208,6 +195,23 @@ class Pecha:
             json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)
 
         return self.metadata
+
+    def get_segmentation_layer_path(self) -> str:
+        """
+        1. Get the first layer file from the pecha
+        2. Get the relative path of the layer file
+        TODO: Modify this function in future in case of more layers in a Pecha
+        """
+        layer_path = list(self.layer_path.rglob("segmentation-*.json"))[0]
+        relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()
+
+        return relative_layer_path
+
+    def get_first_layer_path(self) -> str:
+        layer_path = list(self.layer_path.rglob("*.json"))[0]
+        relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()
+
+        return relative_layer_path
 
     def get_layer_by_ann_type(self, base_name: str, layer_type: AnnotationType):
         """
