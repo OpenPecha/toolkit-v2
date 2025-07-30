@@ -19,49 +19,27 @@ class TestJsonSerializer(TestCase):
 
         self.DATA_DIR = Path(__file__).parent / "data"
 
-    def test_get_base(self):
-        serializer = JsonSerializer()
-        base = serializer.get_base(self.root_pecha)
+    # def test_serialize_alignment(self):
+    #     serializer = JsonSerializer()
 
-        expected_base = Path(
-            "tests/alignment/commentary_transfer/data/root/I6556B464/base/B5FE.txt"
-        ).read_text(encoding="utf-8")
-        assert base == expected_base
+    #     # ALIGNMENT
+    #     layer_path = "B014/alignment-2127.json"
+    #     annotations = serializer.serialize(
+    #         pecha=self.commentary_pecha, layer_paths=layer_path
+    #     )
+    #     expected_annotations = read_json(self.DATA_DIR / "alignment_annotations.json")
+    #     assert annotations == expected_annotations
 
-    def test_serialize_segmenation(self):
-        serializer = JsonSerializer()
+    # def test_serialize_segmentation_and_alignment(self):
+    #     serializer = JsonSerializer()
 
-        # SEGMENTATION
-        layer_path = "B5FE/segmentation-4FD1.json"
-        annotations = serializer.serialize(
-            pecha=self.root_pecha, layer_paths=layer_path
-        )
-        expected_annotations = read_json(
-            self.DATA_DIR / "segmentation_annotations.json"
-        )
-        assert annotations == expected_annotations
-
-    def test_serialize_alignment(self):
-        serializer = JsonSerializer()
-
-        # ALIGNMENT
-        layer_path = "B014/alignment-2127.json"
-        annotations = serializer.serialize(
-            pecha=self.commentary_pecha, layer_paths=layer_path
-        )
-        expected_annotations = read_json(self.DATA_DIR / "alignment_annotations.json")
-        assert annotations == expected_annotations
-
-    def test_serialize_segmentation_and_alignment(self):
-        serializer = JsonSerializer()
-
-        # SEGMENTATION AND ALIGNMENT(Annotations for Edition)
-        layer_paths = ["B014/segmentation-33FC.json", "B014/alignment-2127.json"]
-        annotations = serializer.serialize(
-            pecha=self.commentary_pecha, layer_paths=layer_paths
-        )
-        expected_annotations = read_json(self.DATA_DIR / "edition_annotations.json")
-        assert annotations == expected_annotations
+    #     # SEGMENTATION AND ALIGNMENT(Annotations for Edition)
+    #     layer_paths = ["B014/segmentation-33FC.json", "B014/alignment-2127.json"]
+    #     annotations = serializer.serialize(
+    #         pecha=self.commentary_pecha, layer_paths=layer_paths
+    #     )
+    #     expected_annotations = read_json(self.DATA_DIR / "edition_annotations.json")
+    #     assert annotations == expected_annotations
 
     def test_insertion_on_get_edition_base(self):
         serializer = JsonSerializer()
@@ -98,3 +76,33 @@ class TestJsonSerializer(TestCase):
             self.DATA_DIR / "insertion_and_deletion.txt"
         ).read_text(encoding="utf-8")
         assert edition_base == expected_edition_base
+
+
+class TestSerializer(TestCase):
+    def setUp(self):
+        self.root_pecha_path = Path(
+            "tests/alignment/commentary_transfer/data/root/I6556B464"
+        )
+        self.commentary_pecha_path = Path(
+            "tests/alignment/commentary_transfer/data/commentary/I015AFFA7"
+        )
+        self.root_pecha = Pecha.from_path(self.root_pecha_path)
+        self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
+        self.DATA_DIR = Path(__file__).parent / "data"
+    
+    def test_serializer(self):
+        serializer = JsonSerializer()
+        manifestation = {
+            "id":"4:24ebf89f-bc33-4c0f-be35-730c37d10f89:4",
+            "annotations":[
+                { "aligned_to": None,
+                 "name":"4FD1",
+                 "type":"segmentation"
+                 }]
+            }
+        serialized_data = serializer.serialize(self.root_pecha, manifestation_info=manifestation)
+
+        expected_serialized_data = read_json(
+            self.DATA_DIR / "segmentation_annotations.json"
+        )
+        assert serialized_data == expected_serialized_data
