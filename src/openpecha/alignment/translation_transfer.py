@@ -15,18 +15,15 @@ class TranslationAlignmentTransfer:
         return not text.strip().replace("\n", "")
 
     def get_segmentation_ann_path(self, pecha: Pecha) -> Path:
-        """
-        Return the path to the first segmentation layer JSON file in the pecha.
-        """
-        return next(pecha.layer_path.rglob("segmentation-*.json"))
+        path = next(pecha.layer_path.rglob("segmentation-*.json"))
+        return path
 
     def map_layer_to_layer(
         self, src_layer: AnnotationStore, tgt_layer: AnnotationStore
     ) -> Dict[int, List[int]]:
-        """
-        Map annotations from src_layer to tgt_layer based on span overlap or containment.
-        Returns a mapping from source indices to lists of target indices.
-        """
+        logger.info(
+            "Mapping annotations from source layer to target layer based on span overlaps..."
+        )
         map: Dict[int, List[int]] = {}
 
         src_anns = get_anns(src_layer, include_span=True)
@@ -56,44 +53,50 @@ class TranslationAlignmentTransfer:
                 if (is_overlap or is_contained) and not is_edge_overlap:
                     map[src_idx].append(tgt_idx)
 
-        # Sort the dictionary
+        logger.info("Mapping from layer to layer complete.")
         return dict(sorted(map.items()))
 
     def get_root_pechas_mapping(
         self, pecha: Pecha, alignment_id: str
     ) -> Dict[int, List[int]]:
-        """
-        Get mapping from pecha's alignment layer to segmentation layer.
-        """
+        logger.info(
+            f"Getting root mapping for pecha '{pecha.id}' using alignment layer '{alignment_id}'..."
+        )
         segmentation_ann_path = self.get_segmentation_ann_path(pecha)
         segmentation_layer = load_layer(segmentation_ann_path)
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
-        return self.map_layer_to_layer(alignment_layer, segmentation_layer)
+        mapping = self.map_layer_to_layer(alignment_layer, segmentation_layer)
+        logger.info("Root pecha mapping created.")
+        return mapping
 
     def get_translation_pechas_mapping(
         self,
         pecha: Pecha,
         alignment_id: str,
         segmentation_id: str,
-    ) -> Dict[int, List]:
-        """
-        Get Segmentation mapping from segmentation to alignment layer.
-        """
+    ) -> Dict[int, List[int]]:
+        logger.info(f"Getting translation mapping for pecha '{pecha.id}'...")
         segmentation_ann_path = pecha.layer_path / segmentation_id
         segmentation_layer = load_layer(segmentation_ann_path)
         alignment_layer = load_layer(pecha.layer_path / alignment_id)
-        return self.map_layer_to_layer(segmentation_layer, alignment_layer)
+        mapping = self.map_layer_to_layer(segmentation_layer, alignment_layer)
+        logger.info("Translation pecha mapping created.")
+        return mapping
 
     def mapping_to_text_list(self, mapping: Dict[int, List[str]]) -> List[str]:
-        """
-        Flatten the mapping from Translation to Root Text
-        """
+        logger.info("Flattening mapping to text list...")
         max_root_idx = max(mapping.keys(), default=0)
         res = []
         for i in range(1, max_root_idx + 1):
             texts = mapping.get(i, [])
             text = "\n".join(texts)
-            res.append("") if self.is_empty(text) else res.append(text)
+            if self.is_empty(text):
+                logger.debug(f"Text at index {i} is empty. Appending empty string.")
+                res.append("")
+            else:
+                logger.debug(f"Text at index {i} has content. Appending text.")
+                res.append(text)
+        logger.info(f"Flattened list created with {len(res)} segments.")
         return res
 
     def get_serialized_translation_alignment(
@@ -103,24 +106,24 @@ class TranslationAlignmentTransfer:
         root_translation_pecha: Pecha,
         translation_alignment_id: str,
     ) -> List[str]:
-        """
-        Serialize with Root Translation Alignment Text mapped to Root Segmentation Text
-        """
+        logger.info("Generating serialized translation alignment...")
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
-
         layer = load_layer(root_translation_pecha.layer_path / translation_alignment_id)
         anns = get_anns(layer, include_span=True)
 
-        # Root segmentation idx and Root Translation Alignment Text mapping
         map: Dict[int, List[str]] = {}
         for ann in anns:
             aligned_idx = ann["alignment_index"][0]
             text = ann["text"]
             if not root_map.get(aligned_idx):
+                logger.debug(
+                    f"No root mapping found for aligned index {aligned_idx}. Skipping."
+                )
                 continue
             root_segmentation_idx = root_map[aligned_idx][0]
             map.setdefault(root_segmentation_idx, []).append(text)
 
+        logger.info("Serialized translation alignment mapping created.")
         return self.mapping_to_text_list(map)
 
     def get_serialized_translation_segmentation(
@@ -130,10 +133,8 @@ class TranslationAlignmentTransfer:
         translation_pecha: Pecha,
         translation_alignment_id: str,
         translation_segmentation_id: str,
-    ):
-        """
-        Serialize with Root Translation Segmentation Text mapped to Root Segmentation Text
-        """
+    ) -> List[str]:
+        logger.info("Generating serialized translation segmentation...")
         root_map = self.get_root_pechas_mapping(root_pecha, root_alignment_id)
         translation_map = self.get_translation_pechas_mapping(
             translation_pecha, translation_alignment_id, translation_segmentation_id
@@ -141,8 +142,8 @@ class TranslationAlignmentTransfer:
 
         layer = load_layer(translation_pecha.layer_path / translation_segmentation_id)
         anns = get_anns(layer, include_span=True)
+        logger.debug(f"Loaded {len(anns)} translation segmentation annotations.")
 
-        # Root segmentation idx and Root Translation Segmentation Text mapping
         map: Dict[int, List[str]] = {}
         for ann in anns:
             text = ann["text"]
@@ -152,4 +153,5 @@ class TranslationAlignmentTransfer:
             root_segmentation_idx = root_map[aligned_idx][0]
             map.setdefault(root_segmentation_idx, []).append(text)
 
+        logger.info("Serialized translation segmentation mapping created.")
         return self.mapping_to_text_list(map)
