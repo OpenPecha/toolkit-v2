@@ -80,13 +80,30 @@ class JsonSerializer:
 
         return edition_base
 
-    def serialize(self, pecha: Pecha, layer_paths: str | list[str]):
+    def get_layer_paths(self, pecha: Pecha, annotations: list[dict]):
+    
+        def get_annotation_names(annotations: list[dict]):
+            annotation_filenames = []
+            for annotation in annotations:
+                filename = annotation['type'] + "-" + annotation["name"]
+                annotation_filenames.append(filename)
+            return annotation_filenames
+        
+        layer_paths = []
+        annotation_names = get_annotation_names(annotations)
+        for base_name in pecha.bases.keys():
+            for path in Path(pecha.layer_path/base_name).iterdir():
+                if path.stem in annotation_names:
+                    layer_paths.append("/".join(path._tail[-2:]))
+        return layer_paths
+
+    def serialize(self, pecha: Pecha, manifestation_info: dict = None):
         """
         Get annotations for a single or list of layer paths.
         Each layer_path is a string like: "B5FE/segmentation-4FD1.json"
         """
-        if isinstance(layer_paths, str):
-            layer_paths = [layer_paths]
+        
+        layer_paths = self.get_layer_paths(pecha, manifestation_info["annotations"])
 
         annotations = {}
         for layer_path in layer_paths:
