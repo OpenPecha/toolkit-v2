@@ -7,6 +7,7 @@ import pyewts
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
+from openpecha.pecha.annotations import Pagination, SegmentationAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import BaseParser
 
@@ -137,20 +138,28 @@ class DharamanexusParser(BaseParser):
             base_name = pecha.set_base(content=data["base_text"])
 
             segment, _ = pecha.add_layer(base_name, AnnotationType.SEGMENTATION)
+            index = 1
             for segment_id, segment_span in data["annotations"]["segments"].items():
-                segment_ann = {
-                    AnnotationType.SEGMENTATION.value: segment_span["span"],
-                    "segment_id": segment_id,
-                }
+                segment_ann = SegmentationAnnotation(
+                    span=Span(
+                        start=segment_span["span"]["start"],
+                        end=segment_span["span"]["end"],
+                    ),
+                    index=index,
+                    segment_id=segment_id,
+                )
                 pecha.add_annotation(segment, segment_ann, AnnotationType.SEGMENTATION)
+                index += 1
             segment.save()
 
             pagination, _ = pecha.add_layer(base_name, AnnotationType.PAGINATION)
             for page_id, page_ann in data["annotations"]["pages"].items():
-                page_ann = {
-                    AnnotationType.PAGINATION.value: page_ann["span"],
-                    "folio": page_id,
-                }
+                page_ann = Pagination(
+                    span=Span(
+                        start=page_ann["span"]["start"], end=page_ann["span"]["end"]
+                    ),
+                    page_info=page_id,  # folio
+                )
                 pecha.add_annotation(pagination, page_ann, AnnotationType.PAGINATION)
             pagination.save()
 

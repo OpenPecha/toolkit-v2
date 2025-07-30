@@ -42,7 +42,7 @@ class BaseAnnotation(BaseModel):
     span: Span
     metadata: Optional[Dict] = None
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="allow")
 
     def get_dict(self):
         res = self.model_dump()
