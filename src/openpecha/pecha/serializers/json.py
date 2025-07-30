@@ -4,6 +4,7 @@ from pathlib import Path
 
 from stam import AnnotationStore
 
+from openpecha.config import get_logger
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import VersionVariantOperations
 from openpecha.pecha.layer import (
@@ -12,17 +13,24 @@ from openpecha.pecha.layer import (
     get_annotation_type,
 )
 
+logger = get_logger(__name__)
+
 
 class JsonSerializer:
     def get_base(self, pecha: Pecha):
         basename = list(pecha.bases.keys())[0]
         base = pecha.get_base(basename)
+        logger.info(
+            f"Retrieved base text from Pecha '{pecha.id}' (basename: {basename})."
+        )
         return base
 
     @staticmethod
     def to_dict(ann_store: AnnotationStore, ann_type: AnnotationType):
         ann_group = get_annotation_group_type(ann_type)
         anns = []
+
+        logger.info(f"Converting annotations of type '{ann_type.value}' to dict.")
         for ann in ann_store:
             ann_data = {}
             for data in ann:
@@ -39,6 +47,10 @@ class JsonSerializer:
             }
 
             anns.append(curr_ann)
+
+        logger.info(
+            f"Converted {len(anns)} annotations to dict for type '{ann_type.value}'."
+        )
         return anns
 
     @staticmethod
@@ -78,6 +90,7 @@ class JsonSerializer:
 
             cursor = end
 
+        logger.info("Successfully constructed edition base.")
         return edition_base
 
     def serialize(self, pecha: Pecha, layer_paths: str | list[str]):
@@ -85,17 +98,21 @@ class JsonSerializer:
         Get annotations for a single or list of layer paths.
         Each layer_path is a string like: "B5FE/segmentation-4FD1.json"
         """
+        logger.info(f"Serializing annotations from layer(s): {layer_paths}")
+
         if isinstance(layer_paths, str):
             layer_paths = [layer_paths]
 
         annotations = {}
         for layer_path in layer_paths:
+            logger.info(f"Processing layer path: {layer_path}")
             ann_store = AnnotationStore(file=str(pecha.layer_path / layer_path))
             ann_type = self._get_ann_type(layer_path)
             anns = self.to_dict(ann_store, ann_type)
             annotations[ann_type.value] = anns
 
         base = self.get_base(pecha)
+        logger.info(f"Serialization complete for Pecha '{pecha.id}'.")
         return {"base": base, "annotations": annotations}
 
     def serialize_edition_annotations(
@@ -105,6 +122,9 @@ class JsonSerializer:
         Get annotations for a single or list of edition layer paths.
         Edition annotations are annotations done on top of edition base rather than the base.
         """
+        logger.info(
+            f"Serializing edition annotations from layer '{layer_path}' based on edition layer '{edition_layer_path}'."
+        )
         edition_base = self.get_edition_base(pecha, edition_layer_path)
         edition_basename = Path(edition_layer_path).stem
         output_path = str(Path(tempfile.mkdtemp()) / pecha.id)
@@ -116,4 +136,7 @@ class JsonSerializer:
         temp_pecha = pecha.from_path(Path(output_path))
 
         serialized = self.serialize(temp_pecha, layer_path)
+        logger.info(
+            f"Successfully serialized edition annotations for layer '{layer_path}'."
+        )
         return serialized
