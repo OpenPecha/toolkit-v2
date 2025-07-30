@@ -80,6 +80,20 @@ class BaseParser(ABC):
         raise NotImplementedError
 
 
+class DummyParser(BaseParser):
+    @property
+    def name(self):
+        return self.__class__.__name__
+
+    def parse(
+        self,
+        input: Any,
+        metadata: Dict,
+        output_path: Path = PECHAS_PATH,
+    ) -> Pecha:
+        raise NotImplementedError
+
+
 class OCRBaseParser(ABC):
     @property
     def name(self):
