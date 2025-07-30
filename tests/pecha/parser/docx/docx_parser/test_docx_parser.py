@@ -104,6 +104,3 @@ class TestDocxParser(TestCase):
             ),
         ]
         assert self.parser.is_commentary_pecha(metadatas)
-
-    def tearDown(self):
-        pass

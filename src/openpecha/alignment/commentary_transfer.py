@@ -89,6 +89,8 @@ class CommentaryAlignmentTransfer:
                     continue
                 if is_match(src_start, src_end, tgt_start, tgt_end):
                     mapping[src_idx].append(tgt_idx)
+
+        logger.info("Mapping from layer to layer complete.")
         return dict(sorted(mapping.items()))
 
     def get_root_pechas_mapping(

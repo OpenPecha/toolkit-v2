@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from openpecha.config import PECHAS_PATH, get_logger
-from openpecha.exceptions import FileNotFoundError, MetaDataValidationError
+from openpecha.exceptions import FileNotFoundError
 from openpecha.pecha import Pecha, annotation_path
 from openpecha.pecha.annotations import (
     AlignmentAnnotation,
