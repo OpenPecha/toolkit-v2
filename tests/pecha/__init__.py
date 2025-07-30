@@ -16,17 +16,13 @@ class SharedPechaSetup:
         self.root_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/root/I6556B464"
         )
-        self.root_translation_pecha_path = Path(
-            "tests/pecha/serializers/pecha_db/root/data/en/I5003D420"
-        )
+        self.root_translation_pecha_path = Path("tests/pecha/data/I5003D420")
         self.commentary_pecha_path = Path(
             "tests/alignment/commentary_transfer/data/commentary/I015AFFA7"
         )
-        self.commentary_translation_pecha_path = Path(
-            "tests/pecha/serializers/pecha_db/commentary/simple/data/en/ICFCF1CDC"
-        )
+        self.commentary_translation_pecha_path = Path("tests/pecha/data/ICFCF1CDC")
         self.prealigned_commentary_translation_pecha_path = Path(
-            "tests/pecha/serializers/pecha_db/commentary/prealigned_translation/data/en/IF5944957"
+            "tests/pecha/data/IF5944957"
         )
 
         self.root_pecha = Pecha.from_path(self.root_pecha_path)

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from diff_match_patch import diff_match_patch
 
+from openpecha.config import get_logger
 from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import (
     Pagination,
@@ -14,7 +15,9 @@ from openpecha.pecha.annotations import (
 )
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import update_coords
-from openpecha.pecha.serializers.json_serializer import JsonSerializer
+from openpecha.pecha.serializers.json import JsonSerializer
+
+logger = get_logger(__name__)
 
 
 class EditionParser:
@@ -46,6 +49,8 @@ class EditionParser:
                 )
             )
             char_count += len(segment) + 1
+
+        logger.info(f"Parsed {len(anns)} Segmentation Annotations.")
         return anns
 
     def parse_version(self, source: str, target: str) -> list[Version]:
@@ -79,6 +84,8 @@ class EditionParser:
                     )
                 )
                 char_count += len(text)
+
+        logger.info(f"Parsed {len(anns)} Segmentation Annotations.")
         return anns
 
     def add_pagination_layer(
@@ -98,6 +105,7 @@ class EditionParser:
         serializer = JsonSerializer()
         edition_base = serializer.get_edition_base(pecha, edition_layer_path)
         edition_basename = Path(edition_layer_path).stem
+        logger.info(f"Retrieved edition base for {edition_basename}")
 
         output_path = Path(tempfile.mkdtemp())
         temp_pecha = Pecha.create(output_path)
@@ -116,8 +124,9 @@ class EditionParser:
         tgt_path = pecha.layer_path / pecha_basename / new_layer_path.name
         shutil.copy(new_layer_path.as_posix(), tgt_path.as_posix())
 
-        relative_layer_path = str(tgt_path.relative_to(pecha.layer_path))
-        return (pecha, relative_layer_path)
+        rel_path = str(tgt_path.relative_to(pecha.layer_path))
+        logger.info(f"Pagination layer added at {rel_path}")
+        return (pecha, rel_path)
 
     def parse(self, pecha: Pecha, segments: list[str]):
         """

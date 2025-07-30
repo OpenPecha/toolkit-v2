@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Any, Dict
 
 from openpecha.config import get_logger
-from openpecha.exceptions import MetaDataMissingError, MetaDataValidationError
 from openpecha.pecha import Pecha
 from openpecha.pecha.parsers.ocr.data_source import (
     BDRCGBSource,

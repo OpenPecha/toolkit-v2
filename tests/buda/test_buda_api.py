@@ -14,7 +14,3 @@ def test_buda_info_from_model():
     with open(expected_path) as expected_file:
         expected = json.load(expected_file)
         assert res == expected
-
-
-if __name__ == "__main__":
-    test_buda_info_from_model()

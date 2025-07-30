@@ -87,6 +87,3 @@ class TestCommentaryAlignmentTransfer(TestCase):
             self.DATA_DIR / "expected_serialized_commentary_with_display.json"
         )
         assert serialized_json == expected_json
-
-    def tearDown(self):
-        pass
