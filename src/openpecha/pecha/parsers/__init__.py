@@ -93,20 +93,6 @@ class OCRBaseParser(ABC):
         raise NotImplementedError
 
 
-class DummyParser(BaseParser):
-    @property
-    def name(self):
-        return self.__class__.__name__
-
-    def parse(
-        self,
-        input: Any,
-        metadata: Dict,
-        output_path: Path = PECHAS_PATH,
-    ) -> Pecha:
-        raise NotImplementedError
-
-
 def update_coords(
     anns: List[BaseAnnotation],
     old_base: str,
