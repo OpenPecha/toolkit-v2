@@ -1,11 +1,9 @@
 import json
 import shutil
-from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 
-from git import Repo
-from stam import AnnotationData, AnnotationStore, Offset, Selector
+from stam import AnnotationStore, Offset, Selector
 
 from openpecha.exceptions import StamAddAnnotationError
 from openpecha.ids import (
