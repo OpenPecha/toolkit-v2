@@ -288,6 +288,90 @@ Merges the layers of a source pecha into the current pecha.
   pecha.merge_pecha(source_pecha, "source_base", "target_base")
   ```
 
+
+### <a id="jsonserializerget_base"></a>`JsonSerializer.get_base(pecha: Pecha) -> str`
+Returns the base text from the first base in the given Pecha.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha object to extract the base from
+- **Returns:** str containing the base text
+- **Example:**
+  ```python
+  from openpecha.pecha.serializers.json_serializer import JsonSerializer
+  base = JsonSerializer().get_base(pecha)
+  ```
+
+### <a id="jsonserializerto_dict"></a>`JsonSerializer.to_dict(ann_store: AnnotationStore, ann_type: AnnotationType) -> list[dict]`
+Converts an AnnotationStore to a list of annotation dictionaries for the given annotation type.
+
+- **Parameters:**
+  - `ann_store` (AnnotationStore): The annotation store to convert
+  - `ann_type` (AnnotationType): The type of annotation
+- **Returns:** List of annotation dictionaries
+- **Example:**
+  ```python
+  anns = JsonSerializer.to_dict(ann_store, AnnotationType.SEGMENTATION)
+  ```
+
+### <a id="jsonserializerget_edition_base"></a>`JsonSerializer.get_edition_base(pecha: Pecha, edition_layer_path: str) -> str`
+Constructs a new base text by applying version variant operations (insertions/deletions) from an edition layer.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha object
+  - `edition_layer_path` (str): Path to the edition layer file
+- **Returns:** str containing the constructed edition base text
+- **Example:**
+  ```python
+  from openpecha.pecha.serializers.json import JsonSerializer
+  edition_base = JsonSerializer().get_edition_base(pecha, "4C00/version-9D95.json")
+  ```
+
+### <a id="jsonserializerget_layer_paths"></a>`JsonSerializer.get_layer_paths(pecha: Pecha, annotations: list[dict]) -> list[str]`
+Extracts layer paths from a Pecha based on annotation information.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha object
+  - `annotations` (list[dict]): List of annotation dictionaries with 'type' and 'name' keys
+- **Returns:** List of layer paths
+- **Example:**
+  ```python
+  from openpecha.pecha.serializers.json import JsonSerializer
+  annotations = [{"type": "segmentation", "name": "4FD1"}]
+  layer_paths = JsonSerializer().get_layer_paths(pecha, annotations)
+  ```
+
+### <a id="jsonserializerserialize"></a>`JsonSerializer.serialize(pecha: Pecha, manifestation_info: dict = None) -> dict`
+Serializes a Pecha with its annotations based on manifestation information, returning base text and annotations.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha object to serialize
+  - `manifestation_info` (dict, optional): Dictionary containing annotation information
+- **Returns:** Dictionary with keys `base` (str) and `annotations` (dict of annotation lists)
+- **Example:**
+  ```python
+  from openpecha.pecha.serializers.json import JsonSerializer
+  manifestation_info = {
+      "annotations": [{"type": "segmentation", "name": "4FD1"}]
+  }
+  result = JsonSerializer().serialize(pecha, manifestation_info)
+  ```
+
+### <a id="jsonserializerserialize_edition_annotations"></a>`JsonSerializer.serialize_edition_annotations(pecha: Pecha, edition_layer_path: str, layer_path: str) -> dict`
+Serializes annotations that are based on an edition base rather than the original base.
+
+- **Parameters:**
+  - `pecha` (Pecha): The Pecha object
+  - `edition_layer_path` (str): Path to the edition layer file
+  - `layer_path` (str): Path to the layer file to serialize
+- **Returns:** Dictionary with keys `base` (str) and `annotations` (dict of annotation lists)
+- **Example:**
+  ```python
+  from openpecha.pecha.serializers.json import JsonSerializer
+  result = JsonSerializer().serialize_edition_annotations(
+      pecha, "4C00/version-9D95.json", "4C00/segmentation-4FD1.json"
+  )
+  ```
+
 ### <a id="docxrootparserparse"></a>`DocxRootParser.parse() -> Tuple[Pecha, annotation_path]`
 Parses a DOCX file and creates a Pecha object with annotations.
 
@@ -854,89 +938,5 @@ Processes a single commentary annotation and returns the serialized string.
       root_anns,
       root_map,
       root_segmentation_anns
-  )
-  ```
-
-
-### <a id="jsonserializerget_base"></a>`JsonSerializer.get_base(pecha: Pecha) -> str`
-Returns the base text from the first base in the given Pecha.
-
-- **Parameters:**
-  - `pecha` (Pecha): The Pecha object to extract the base from
-- **Returns:** str containing the base text
-- **Example:**
-  ```python
-  from openpecha.pecha.serializers.json_serializer import JsonSerializer
-  base = JsonSerializer().get_base(pecha)
-  ```
-
-### <a id="jsonserializerto_dict"></a>`JsonSerializer.to_dict(ann_store: AnnotationStore, ann_type: AnnotationType) -> list[dict]`
-Converts an AnnotationStore to a list of annotation dictionaries for the given annotation type.
-
-- **Parameters:**
-  - `ann_store` (AnnotationStore): The annotation store to convert
-  - `ann_type` (AnnotationType): The type of annotation
-- **Returns:** List of annotation dictionaries
-- **Example:**
-  ```python
-  anns = JsonSerializer.to_dict(ann_store, AnnotationType.SEGMENTATION)
-  ```
-
-### <a id="jsonserializerget_edition_base"></a>`JsonSerializer.get_edition_base(pecha: Pecha, edition_layer_path: str) -> str`
-Constructs a new base text by applying version variant operations (insertions/deletions) from an edition layer.
-
-- **Parameters:**
-  - `pecha` (Pecha): The Pecha object
-  - `edition_layer_path` (str): Path to the edition layer file
-- **Returns:** str containing the constructed edition base text
-- **Example:**
-  ```python
-  from openpecha.pecha.serializers.json import JsonSerializer
-  edition_base = JsonSerializer().get_edition_base(pecha, "4C00/version-9D95.json")
-  ```
-
-### <a id="jsonserializerget_layer_paths"></a>`JsonSerializer.get_layer_paths(pecha: Pecha, annotations: list[dict]) -> list[str]`
-Extracts layer paths from a Pecha based on annotation information.
-
-- **Parameters:**
-  - `pecha` (Pecha): The Pecha object
-  - `annotations` (list[dict]): List of annotation dictionaries with 'type' and 'name' keys
-- **Returns:** List of layer paths
-- **Example:**
-  ```python
-  from openpecha.pecha.serializers.json import JsonSerializer
-  annotations = [{"type": "segmentation", "name": "4FD1"}]
-  layer_paths = JsonSerializer().get_layer_paths(pecha, annotations)
-  ```
-
-### <a id="jsonserializerserialize"></a>`JsonSerializer.serialize(pecha: Pecha, manifestation_info: dict = None) -> dict`
-Serializes a Pecha with its annotations based on manifestation information, returning base text and annotations.
-
-- **Parameters:**
-  - `pecha` (Pecha): The Pecha object to serialize
-  - `manifestation_info` (dict, optional): Dictionary containing annotation information
-- **Returns:** Dictionary with keys `base` (str) and `annotations` (dict of annotation lists)
-- **Example:**
-  ```python
-  from openpecha.pecha.serializers.json import JsonSerializer
-  manifestation_info = {
-      "annotations": [{"type": "segmentation", "name": "4FD1"}]
-  }
-  result = JsonSerializer().serialize(pecha, manifestation_info)
-  ```
-
-### <a id="jsonserializerserialize_edition_annotations"></a>`JsonSerializer.serialize_edition_annotations(pecha: Pecha, edition_layer_path: str, layer_path: str) -> dict`
-Serializes annotations that are based on an edition base rather than the original base.
-
-- **Parameters:**
-  - `pecha` (Pecha): The Pecha object
-  - `edition_layer_path` (str): Path to the edition layer file
-  - `layer_path` (str): Path to the layer file to serialize
-- **Returns:** Dictionary with keys `base` (str) and `annotations` (dict of annotation lists)
-- **Example:**
-  ```python
-  from openpecha.pecha.serializers.json import JsonSerializer
-  result = JsonSerializer().serialize_edition_annotations(
-      pecha, "4C00/version-9D95.json", "4C00/segmentation-4FD1.json"
   )
   ```
