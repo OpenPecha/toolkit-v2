@@ -107,7 +107,7 @@ class JsonSerializer:
         for base_name in pecha.bases.keys():
             for path in Path(pecha.layer_path/base_name).iterdir():
                 if path.stem in annotation_names:
-                    layer_paths.append("/".join(path._tail[-2:]))
+                    layer_paths.append("/".join(path.parts[-2:]))
         return layer_paths
 
     def serialize(self, pecha: Pecha, manifestation_info: dict = None):
