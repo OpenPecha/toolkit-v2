@@ -130,9 +130,12 @@ To see a story-driven walkthrough of parsing, annotating, and serializing a Tibe
 ## Serializer
 
 The `JsonSerializer` class provides utilities for extracting and serializing annotation data from a Pecha. Key methods include:
-- `get_base(pecha)`: Returns the base text from a Pecha.
-- `to_dict(ann_store, ann_type)`: Converts an annotation store to a list of annotation dictionaries.
-- `get_annotations(pecha, layer_paths)`: Gets the base text and annotations for one or more layer paths from a Pecha.
+
+- `get_base(pecha)`: Returns the base text from the first base in the given Pecha.
+- `to_dict(ann_store, ann_type)`: Converts an AnnotationStore to a list of annotation dictionaries for the given annotation type.
+- `get_edition_base(pecha, edition_layer_path)`: Constructs a new base text by applying version variant operations (insertions/deletions) from an edition layer.
+- `serialize(pecha, manifestation_info)`: Serializes a Pecha with its annotations based on manifestation information, returning base text and annotations.
+- `serialize_edition_annotations(pecha, edition_layer_path, layer_path)`: Serializes annotations that are based on an edition base rather than the original base.
 
 See the [API Reference](docs/api-references.md#jsonserializer) for full details and usage examples.
 
