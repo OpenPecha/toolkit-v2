@@ -111,7 +111,7 @@ class TestSerializer(TestCase):
             "annotations":[
                 {"id":"ko2uLrLUEyeejg7y",
                  "type":"version"
-                 }]
+                }]
             }
         serialized_data = serializer.serialize(self.opf, manifestation=manifestation)
         expected_serialized_data = read_json(

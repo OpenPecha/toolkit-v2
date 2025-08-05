@@ -123,7 +123,7 @@ class JsonSerializer:
         Get annotations for a single or list of layer paths.
         Each layer_path is a string like: "B5FE/segmentation-4FD1.json"
         """
-        base_name = pecha.base_path
+        
         version_annotation_path, annotation_paths = self.get_annotation_paths(pecha, manifestation['annotations'])
         
         if version_annotation_path != None:
@@ -138,7 +138,9 @@ class JsonSerializer:
             ann_type = self._get_ann_type(annotation_path)
             anns = self.to_dict(ann_store, ann_type)
             ann_id = annotation_path.split("/")[1][(len(ann_type.value)+1):-5]
-            annotations[ann_type.value].update({ann_id:anns})
+            if ann_type.value not in annotations:
+                annotations[ann_type.value] = {}
+            annotations[ann_type.value][ann_id] = anns
 
         
         logger.info(f"Serialization complete for Pecha '{pecha.id}'.")
