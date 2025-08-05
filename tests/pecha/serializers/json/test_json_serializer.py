@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.json import JsonSerializer
-from openpecha.utils import read_json
+from openpecha.utils import read_json, write_json
 
 
 class TestJsonSerializer(TestCase):
@@ -80,29 +80,41 @@ class TestJsonSerializer(TestCase):
 
 class TestSerializer(TestCase):
     def setUp(self):
-        self.root_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/root/I6556B464"
-        )
-        self.commentary_pecha_path = Path(
-            "tests/alignment/commentary_transfer/data/commentary/I015AFFA7"
-        )
-        self.root_pecha = Pecha.from_path(self.root_pecha_path)
-        self.commentary_pecha = Pecha.from_path(self.commentary_pecha_path)
         self.DATA_DIR = Path(__file__).parent / "data"
+        self.opf_path =  Path("tests/pecha/serializers/json/data/ID8Sv2ynVKZX8wIt")
+        self.opf = Pecha.from_path(self.opf_path)
+
     
-    def test_serializer(self):
+    def test_critical_serializer(self):
         serializer = JsonSerializer()
         manifestation = {
-            "id":"4:24ebf89f-bc33-4c0f-be35-730c37d10f89:4",
             "annotations":[
-                { "aligned_to": None,
-                 "name":"4FD1",
-                 "type":"segmentation"
+                {
+                    "id":"Tm3Uewnh3ySsvgIE",
+                    "type":"segmentation"
+                },
+                {
+                    "id":"pdpDABvI2yRSISt6",
+                    "type":"alignment"
+                }]
+            }
+        serialized_data = serializer.serialize(self.opf, manifestation=manifestation)
+        expected_serialized_data = read_json(
+            self.DATA_DIR / "critical_annotations.json"
+        )
+        assert serialized_data == expected_serialized_data
+    
+
+    def test_diplomatic_serializer(self):
+        serializer = JsonSerializer()
+        manifestation = {
+            "annotations":[
+                {"id":"ko2uLrLUEyeejg7y",
+                 "type":"version"
                  }]
             }
-        serialized_data = serializer.serialize(self.root_pecha, manifestation_info=manifestation)
-
+        serialized_data = serializer.serialize(self.opf, manifestation=manifestation)
         expected_serialized_data = read_json(
-            self.DATA_DIR / "segmentation_annotations.json"
+            self.DATA_DIR / "diplomatic_annotations.json"
         )
         assert serialized_data == expected_serialized_data

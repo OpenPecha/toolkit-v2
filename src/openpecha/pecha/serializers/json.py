@@ -93,40 +93,54 @@ class JsonSerializer:
         logger.info("Successfully constructed edition base.")
         return edition_base
 
-    def get_layer_paths(self, pecha: Pecha, annotations: list[dict]):
-    
+    def get_annotation_paths(self, pecha: Pecha, annotations: list[dict]):
+        version_annotation_path = None
+
         def get_annotation_names(annotations: list[dict]):
+            version_annotation = None
             annotation_filenames = []
             for annotation in annotations:
-                filename = annotation['type'] + "-" + annotation["name"]
-                annotation_filenames.append(filename)
-            return annotation_filenames
+                if annotation['type'] == 'version':
+                    version_annotation = annotation['type'] + "-" + annotation["id"]
+                else:
+                    filename = annotation['type'] + "-" + annotation["id"]
+                    annotation_filenames.append(filename)
+            return version_annotation, annotation_filenames
         
-        layer_paths = []
-        annotation_names = get_annotation_names(annotations)
+        annotation_paths = []
+        version_annotation, annotation_filenames = get_annotation_names(annotations)
         for base_name in pecha.bases.keys():
             for path in Path(pecha.layer_path/base_name).iterdir():
-                if path.stem in annotation_names:
-                    layer_paths.append("/".join(path.parts[-2:]))
-        return layer_paths
+                if path.stem in annotation_filenames:
+                    annotation_paths.append("/".join(path.parts[-2:]))
+                if version_annotation != None and path.stem in version_annotation:
+                    version_annotation_path = "/".join(path.parts[-2:])
 
-    def serialize(self, pecha: Pecha, manifestation_info: dict = None):
+        return version_annotation_path, annotation_paths
+
+    def serialize(self, pecha: Pecha, manifestation: dict = None):
         """
         Get annotations for a single or list of layer paths.
         Each layer_path is a string like: "B5FE/segmentation-4FD1.json"
         """
+        base_name = pecha.base_path
+        version_annotation_path, annotation_paths = self.get_annotation_paths(pecha, manifestation['annotations'])
         
-        layer_paths = self.get_layer_paths(pecha, manifestation_info["annotations"])
+        if version_annotation_path != None:
+            base = self.get_edition_base(pecha, version_annotation_path) 
+        else:
+            base = self.get_base(pecha)
 
         annotations = {}
-        for layer_path in layer_paths:
-            logger.info(f"Processing layer path: {layer_path}")
-            ann_store = AnnotationStore(file=str(pecha.layer_path / layer_path))
-            ann_type = self._get_ann_type(layer_path)
+        for annotation_path in annotation_paths:
+            logger.info(f"Processing layer path: {annotation_path}")
+            ann_store = AnnotationStore(file=str(pecha.layer_path / annotation_path))
+            ann_type = self._get_ann_type(annotation_path)
             anns = self.to_dict(ann_store, ann_type)
-            annotations[ann_type.value] = anns
+            ann_id = annotation_path.split("/")[1][(len(ann_type.value)+1):-5]
+            annotations[ann_type.value].update({ann_id:anns})
 
-        base = self.get_base(pecha)
+        
         logger.info(f"Serialization complete for Pecha '{pecha.id}'.")
         return {"base": base, "annotations": annotations}
 
