@@ -87,18 +87,16 @@ class TestSerializer(TestCase):
     
     def test_critical_serializer(self):
         serializer = JsonSerializer()
-        manifestation = {
-            "annotations":[
-                {
-                    "id":"Tm3Uewnh3ySsvgIE",
-                    "type":"segmentation"
-                },
-                {
-                    "id":"pdpDABvI2yRSISt6",
-                    "type":"alignment"
-                }]
-            }
-        serialized_data = serializer.serialize(self.opf, manifestation=manifestation)
+        annotations = [
+            {
+                "id":"Tm3Uewnh3ySsvgIE",
+                "type":"segmentation"
+            },
+            {
+                "id":"pdpDABvI2yRSISt6",
+                "type":"alignment"
+            }]
+        serialized_data = serializer.serialize(self.opf, annotations=annotations)
         expected_serialized_data = read_json(
             self.DATA_DIR / "critical_annotations.json"
         )
@@ -107,13 +105,11 @@ class TestSerializer(TestCase):
 
     def test_diplomatic_serializer(self):
         serializer = JsonSerializer()
-        manifestation = {
-            "annotations":[
-                {"id":"ko2uLrLUEyeejg7y",
-                 "type":"version"
-                }]
-            }
-        serialized_data = serializer.serialize(self.opf, manifestation=manifestation)
+        annotations = [
+            {"id":"ko2uLrLUEyeejg7y",
+                "type":"version"
+            }]
+        serialized_data = serializer.serialize(self.opf, annotations=annotations)
         expected_serialized_data = read_json(
             self.DATA_DIR / "diplomatic_annotations.json"
         )
