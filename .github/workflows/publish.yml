@@ -90,7 +90,7 @@ jobs:
       # First, use semantic-release just for versioning
       - name: Python Semantic Release for versioning
         id: release
-        uses: python-semantic-release/python-semantic-release@v7.34.6
+        uses: python-semantic-release/python-semantic-release@v8.x.x
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
 
