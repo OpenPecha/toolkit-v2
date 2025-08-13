@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.json import JsonSerializer
+from openpecha.pecha.serializers import SerializerLogicHandler
 from openpecha.utils import read_json, write_json
 
 
@@ -86,7 +87,6 @@ class TestSerializer(TestCase):
 
     
     def test_critical_serializer(self):
-        serializer = JsonSerializer()
         annotations = [
             {
                 "id":"Tm3Uewnh3ySsvgIE",
@@ -96,7 +96,11 @@ class TestSerializer(TestCase):
                 "id":"pdpDABvI2yRSISt6",
                 "type":"alignment"
             }]
-        serialized_data = serializer.serialize(self.opf, annotations=annotations)
+        target = {
+            "pecha": self.opf,
+            "annotations": annotations
+        }
+        serialized_data = SerializerLogicHandler().serialize(target)
         expected_serialized_data = read_json(
             self.DATA_DIR / "critical_annotations.json"
         )
@@ -104,12 +108,15 @@ class TestSerializer(TestCase):
     
 
     def test_diplomatic_serializer(self):
-        serializer = JsonSerializer()
         annotations = [
             {"id":"ko2uLrLUEyeejg7y",
                 "type":"version"
             }]
-        serialized_data = serializer.serialize(self.opf, annotations=annotations)
+        target = {
+            "pecha": self.opf,
+            "annotations": annotations
+        }
+        serialized_data = SerializerLogicHandler().serialize(target)
         expected_serialized_data = read_json(
             self.DATA_DIR / "diplomatic_annotations.json"
         )

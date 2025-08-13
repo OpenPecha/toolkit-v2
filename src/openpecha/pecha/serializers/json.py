@@ -118,7 +118,7 @@ class JsonSerializer:
 
         return version_annotation_path, annotation_paths
 
-    def serialize(self, pecha: Pecha, annotations: list[dict] = None):
+    def serialize_single_pecha(self, pecha: Pecha, annotations: list[dict] = None):
         """
         Get annotations for a single or list of layer paths.
         Each layer_path is a string like: "B5FE/segmentation-4FD1.json"
@@ -171,3 +171,11 @@ class JsonSerializer:
             f"Successfully serialized edition annotations for layer '{layer_path}'."
         )
         return serialized
+
+    def get_base_from_pecha(self, pecha: Pecha, annotations: list[dict]):
+        version_annotation_path, _ = self.get_annotation_paths(pecha, annotations)
+        if version_annotation_path != None:
+            base = self.get_edition_base(pecha, version_annotation_path) 
+        else:
+            base = self.get_base(pecha)
+        return base
