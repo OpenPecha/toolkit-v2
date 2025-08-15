@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## v2.2.0 (2025-08-15)
+
+### Feature
+
+* feat: added SerializerLogicHandler ([`8ccee50`](https://github.com/OpenPecha/toolkit-v2/commit/8ccee50945346c8fd8df14a8914945457c15176a))
+
+### Fix
+
+* fix: removed an unused test function ([`32f8da0`](https://github.com/OpenPecha/toolkit-v2/commit/32f8da0a3aef1912c69c311d52bdff2d5c2b788e))
+
+### Unknown
+
+* Merge pull request #414 from OpenPecha/json_serializer
+
+fix: removed an unused test function ([`6b28190`](https://github.com/OpenPecha/toolkit-v2/commit/6b28190f6ce1cb9398cc5892a9603613e4ab37cd))
+
+* Merge pull request #413 from OpenPecha/json_serializer
+
+Feat: Json serializer ([`be5a32a`](https://github.com/OpenPecha/toolkit-v2/commit/be5a32af2df3feb95b4abb3c90460bc29a280839))
+
+* Merge pull request #412 from OpenPecha/serialize_aligned_pecha
+
+Serialize aligned pecha ([`d3a16e2`](https://github.com/OpenPecha/toolkit-v2/commit/d3a16e243f46b9cab4a7d38c0cfcc621bb7ddd01))
+
+* added translation aligned pecha serializer with test ([`f9f91ae`](https://github.com/OpenPecha/toolkit-v2/commit/f9f91aefd15bb85aa41f316add29fd40a4cf3279))
+
 ## v2.1.14 (2025-08-07)
 
 ### Fix
