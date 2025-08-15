@@ -84,43 +84,46 @@ jobs:
             echo "PYPI_TOKEN is set. Will be used for publishing."
           fi
           
-      # First, use semantic-release just for versioning
-      # Replace only this section in your existing workflow:
-
-      # First, use semantic-release just for versioning
-      - name: Python Semantic Release for versioning
+      # Check if a new version should be released using GitHub Action
+      - name: Python Semantic Release
         id: release
-        uses: python-semantic-release/python-semantic-release@v7.34.6
+        uses: python-semantic-release/python-semantic-release@v9.8.9
         with:
           github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          directory: "."
+          root_options: "--noop"
 
-      - name: Get current and new version
+      # Get version information
+      - name: Get version info
         id: version_check
         run: |
           # Get current version from PyPI
           PYPI_VERSION=$(pip index versions openpecha 2>/dev/null | grep -oP '(?<=\().*(?=\))' | cut -d ',' -f1 || echo "0.0.0")
           echo "Current PyPI version: $PYPI_VERSION"
           
-          # Get new version after semantic-release
-          if [ -f "pyproject.toml" ]; then
-            NEW_VERSION=$(grep -o 'version = "[^"]*"' pyproject.toml | head -1 | cut -d'"' -f2)
-          elif [ -f "openpecha/__init__.py" ]; then
-            NEW_VERSION=$(grep -o '__version__ = "[^"]*"' openpecha/__init__.py | cut -d'"' -f2)
-          elif [ -f "setup.py" ]; then
-            NEW_VERSION=$(grep -o "version=['\"][^'\"]*['\"]" setup.py | cut -d'"' -f2 | cut -d"'" -f2)
-          else
-            echo "Could not locate version file"
-            exit 1
-          fi
-          echo "New version: $NEW_VERSION"
+          # Get current version from pyproject.toml
+          CURRENT_VERSION=$(grep 'version = ' pyproject.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "Current project version: $CURRENT_VERSION"
           
-          if [ "$PYPI_VERSION" = "$NEW_VERSION" ]; then
-            echo "No version change detected. Will skip upload."
-            echo "should_upload=false" >> $GITHUB_OUTPUT
-          else
-            echo "Version updated from $PYPI_VERSION to $NEW_VERSION. Will proceed with upload."
+          # Check if semantic-release would make a new release
+          if [ "${{ steps.release.outputs.released }}" == "true" ]; then
+            NEW_VERSION="${{ steps.release.outputs.version }}"
+            echo "New version will be: $NEW_VERSION"
             echo "should_upload=true" >> $GITHUB_OUTPUT
+            echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "No version change needed. Current: $CURRENT_VERSION"
+            echo "should_upload=false" >> $GITHUB_OUTPUT
+            echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           fi
+
+      # Actually run semantic-release to update version (without noop)
+      - name: Run semantic-release version
+        if: steps.version_check.outputs.should_upload == 'true'
+        uses: python-semantic-release/python-semantic-release@v9.8.9
+        with:
+          github_token: ${{ secrets.ADMIN_GITHUB_TOKEN }}
+          directory: "."
 
       - name: Build and Publish Package
         if: steps.version_check.outputs.should_upload == 'true'

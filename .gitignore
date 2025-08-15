@@ -11,7 +11,7 @@ sherab_nyingpo/
 add.py
 main.py
 temp.py
-
+.env.act
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
