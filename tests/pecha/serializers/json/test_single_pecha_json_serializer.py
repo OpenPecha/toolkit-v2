@@ -101,10 +101,16 @@ class TestSerializer(TestCase):
             "annotations": annotations
         }
         serialized_data = SerializerLogicHandler().serialize(target)
+
+        if hasattr(serialized_data, 'model_dump'):
+            serialized_dict = serialized_data.model_dump()
+        else:
+            serialized_dict = serialized_data
+
         expected_serialized_data = read_json(
             self.DATA_DIR / "critical_annotations.json"
         )
-        assert serialized_data == expected_serialized_data
+        assert serialized_dict == expected_serialized_data
     
 
     def test_diplomatic_serializer(self):
@@ -117,7 +123,13 @@ class TestSerializer(TestCase):
             "annotations": annotations
         }
         serialized_data = SerializerLogicHandler().serialize(target)
+
+        if hasattr(serialized_data, 'model_dump'):
+            serialized_dict = serialized_data.model_dump()
+        else:
+            serialized_dict = serialized_data
+
         expected_serialized_data = read_json(
             self.DATA_DIR / "diplomatic_annotations.json"
         )
-        assert serialized_data == expected_serialized_data
+        assert serialized_dict == expected_serialized_data

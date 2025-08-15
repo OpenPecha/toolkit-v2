@@ -1,7 +1,7 @@
 import json
 import re
 from enum import Enum
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from pydantic import (
     BaseModel,
@@ -252,3 +252,18 @@ class AnnotationModel(BaseModel):
             }
         },
     )
+
+class PechaJson(BaseModel):
+    base: str = Field(..., description="Base text content")
+    annotations: Dict[str, Any] = Field(..., description="Annotations dictionary")
+    
+    model_config = ConfigDict(extra="forbid")
+
+class AlignedPechaJson(BaseModel):
+    source_base: str = Field(..., description="Source base text content")
+    target_base: str = Field(..., description="Target base text content")
+    annotation_transformed: Dict[str, Dict[str, Any]] = Field(..., description="Transformed annotations")
+    annotation_untransformed: Dict[str, Dict[str, Any]] = Field(..., description="Untransformed annotations")
+    
+    model_config = ConfigDict(extra="forbid")
+    
