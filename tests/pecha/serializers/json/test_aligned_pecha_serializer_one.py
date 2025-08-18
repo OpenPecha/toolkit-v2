@@ -2,9 +2,8 @@ from pathlib import Path
 from unittest import TestCase
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.serializers.json import JsonSerializer
 from openpecha.pecha.serializers import SerializerLogicHandler
-from openpecha.utils import read_json, write_json
+from openpecha.utils import read_json
 
 
 class TestAlignedPechaSerializer(TestCase):
