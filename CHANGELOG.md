@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## v2.2.1 (2025-08-18)
+
+### Fix
+
+* fix: updated test ([`2938060`](https://github.com/OpenPecha/toolkit-v2/commit/29380600fce1ac1d9169dc5b29dd55d295de35c9))
+
+* fix: removed all the aligment from single pecha serializer and annotation id from serialized json ([`91f4663`](https://github.com/OpenPecha/toolkit-v2/commit/91f4663a42ad9aa52cee89feff4776d1d71181ae))
+
+### Unknown
+
+* Merge pull request #417 from OpenPecha/json_serializer
+
+fix: updated test ([`fb35d00`](https://github.com/OpenPecha/toolkit-v2/commit/fb35d0009713eb11e5d6c603945d3fb2a70ee4b5))
+
+* Merge pull request #416 from OpenPecha/json_serializer
+
+Fix: json serializer updated ([`a7462ad`](https://github.com/OpenPecha/toolkit-v2/commit/a7462adab8a24f53952896a487bfd1af8769d2c6))
+
+* Merge branch &#39;json_serializer&#39; of https://github.com/OpenPecha/toolkit-v2 into json_serializer ([`15c6f98`](https://github.com/OpenPecha/toolkit-v2/commit/15c6f98164b1db578e995b67a8c1f25c268af3f6))
+
+* removed all the aligment from single pecha serializer and annotation id from serialized json ([`191bca4`](https://github.com/OpenPecha/toolkit-v2/commit/191bca434050c15a5ff38371c134626c0d3dcc9a))
+
 ## v2.2.0 (2025-08-15)
 
 ### Feature
