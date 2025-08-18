@@ -24,10 +24,7 @@ class JsonSerializer:
             logger.info(f"Processing layer path: {annotation_path}")
             ann_store = AnnotationStore(file=str(pecha.layer_path / annotation_path))
             ann_type = self._get_ann_type(annotation_path)
-            ann_id = annotation_path.split("/")[1][(len(ann_type.value)+1):-5]
-            if ann_type.value not in annotations:
-                annotations[ann_type.value] = {}
-            annotations[ann_type.value][ann_id] = self.to_dict(ann_store, ann_type)
+            annotations[ann_type.value] = self.to_dict(ann_store, ann_type)
         return annotations
     
 
@@ -130,6 +127,8 @@ class JsonSerializer:
             for annotation in annotations:
                 if annotation['type'] == 'version':
                     version_annotation = annotation['type'] + "-" + annotation["id"]
+                elif annotation['type'] == 'alignment':
+                    continue
                 else:
                     filename = annotation['type'] + "-" + annotation["id"]
                     annotation_filenames.append(filename)
@@ -207,6 +206,41 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         self.source_pecha = source_pecha
         self.source_annotations = source_annotations
 
+    def get_annotation(self, pecha: Pecha, annotation_paths: list[str], annotation_id: str):
+        annotations = {}
+        for annotation_path in annotation_paths:
+            ann_store = AnnotationStore(file=str(pecha.layer_path / annotation_path))
+            ann_type = self._get_ann_type(annotation_path)
+            ann_id = annotation_path.split("/")[1][(len(ann_type.value)+1):-5]
+            if ann_id == annotation_id:
+                annotations[ann_type.value] = self.to_dict(ann_store, ann_type)
+                return annotations
+        raise ValueError(f"Annotation with id {annotation_id} not found")
+
+    def get_annotation_paths(self, pecha: Pecha, annotations: list[dict]):
+        version_annotation_path = None
+
+        def get_annotation_names(annotations: list[dict]):
+            version_annotation = None
+            annotation_filenames = []
+            for annotation in annotations:
+                if annotation['type'] == 'version':
+                    version_annotation = annotation['type'] + "-" + annotation["id"]
+                else:
+                    filename = annotation['type'] + "-" + annotation["id"]
+                    annotation_filenames.append(filename)
+            return version_annotation, annotation_filenames
+        
+        annotation_paths = []
+        version_annotation, annotation_filenames = get_annotation_names(annotations)
+        for base_name in pecha.bases.keys():
+            for path in Path(pecha.layer_path/base_name).iterdir():
+                if path.stem in annotation_filenames:
+                    annotation_paths.append("/".join(path.parts[-2:]))
+                if version_annotation != None and path.stem in version_annotation:
+                    version_annotation_path = "/".join(path.parts[-2:])
+
+        return version_annotation_path, annotation_paths
 
     def serialize(self) -> AlignedPechaJson:
         source_base = JsonSerializer().get_base_from_pecha(self.source_pecha, self.source_annotations)
