@@ -13,6 +13,7 @@ from openpecha.pecha.layer import (
     get_annotation_type,
 )
 from openpecha.pecha.annotations import PechaJson, AlignedPechaJson
+from openpecha.alignment.translation_transfer import get_layer_mapping
 
 logger = get_logger(__name__)
 
@@ -274,9 +275,38 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         source_annotation = self.get_annotation(self.source_pecha, source_annotation_paths, source_annotation_id)
         
         return { "target_annotation": target_annotation, "source_annotation": source_annotation }
+    
 
+    def get_segmentation_annotation_store(self, pecha: Pecha, annotation_paths: list[str]):
+        for annotation_path in annotation_paths:
+            ann_store = AnnotationStore(file=str(pecha.layer_path / annotation_path))
+            ann_type = self._get_ann_type(annotation_path)
+            if ann_type.value == 'segmentation':
+                return ann_store
+        raise ValueError("No segmentation annotation found")
+
+
+    def get_transformed_annotation(self, pecha: Pecha, annotation_paths: list[str], annotation_id: str):
+        annotations = []
+        for annotation_path in annotation_paths:
+            ann_store = AnnotationStore(file=str(pecha.layer_path / annotation_path))
+            ann_type = self._get_ann_type(annotation_path)
+            ann_id = annotation_path.split("/")[1][(len(ann_type.value)+1):-5]
+            if ann_id == annotation_id and ann_type.value == 'segmentation':
+                return self.to_dict(ann_store, ann_type)
+            elif ann_id == annotation_id and ann_type.value == 'alignment':
+                src_ann_store = AnnotationStore(file=str(self.source_pecha.layer_path / annotation_path))
+                tgt_ann_store = self.get_segmentation_annotation_store(self.target_pecha, annotation_paths)
+                transformed_annotation_mapping = get_layer_mapping(src_ann_store, tgt_ann_store)
+                print(transformed_annotation_mapping)
+        raise ValueError(f"Annotation with id {annotation_id} not found")
 
     def serialize_aligned_pechas_transformed_annotations(self):
+        target_annotation_id, source_annotation_id = self.get_aligned_to_annotation_id(self.source_annotations)
         _, target_annotation_paths = self.get_annotation_paths(self.target_pecha, self.target_annotations)
         _, source_annotation_paths = self.get_annotation_paths(self.source_pecha, self.source_annotations)
+        target_annotation = self.get_transformed_annotation(self.target_pecha, target_annotation_paths, target_annotation_id)
+        source_annotation = self.get_annotation(self.source_pecha, source_annotation_paths, source_annotation_id)
+        return { "target_annotation": target_annotation, "source_annotation": source_annotation }
+
         return { "target_annotations": {}, "source_annotations": {} }
