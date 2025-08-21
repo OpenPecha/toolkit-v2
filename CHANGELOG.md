@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v2.3.0 (2025-08-21)
+
+### Feature
+
+* feat: added create_pecha and add to the Pecha class with test ([`309d295`](https://github.com/OpenPecha/toolkit-v2/commit/309d295f3a71fca4e5fdb3a4468f551fba538b7c))
+
+### Unknown
+
+* Merge pull request #419 from OpenPecha/create_pecha
+
+feat: added create_pecha and add to the Pecha class with test ([`e6c9696`](https://github.com/OpenPecha/toolkit-v2/commit/e6c969623694eb433daa894f64eb719b713197b0))
+
 ## v2.2.2 (2025-08-21)
 
 ### Fix
