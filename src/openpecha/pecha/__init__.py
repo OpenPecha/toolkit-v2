@@ -1,7 +1,7 @@
 import json
 import shutil
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Optional
 
 from stam import AnnotationStore, Offset, Selector
 
@@ -15,6 +15,7 @@ from openpecha.ids import (
 from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import PechaMetaData
+from openpecha.config import PECHAS_PATH
 
 BASE_NAME = str
 annotation_path = str
@@ -32,14 +33,42 @@ class Pecha:
         pecha_id = pecha_path.stem
         return cls(pecha_id, pecha_path)
 
-    @classmethod
-    def create(cls, output_path: Path, pecha_id: str | None = None) -> "Pecha":
-        pecha_id = get_initial_pecha_id() if not pecha_id else pecha_id
+    @classmethod  
+    def create(cls, output_path: Optional[Path] = None, pecha_id: Optional[str] = None) -> "Pecha":
+        if pecha_id is None:
+            pecha_id = get_initial_pecha_id()
+        
+        if output_path is None:
+            output_path = PECHAS_PATH
+            
         pecha_path = output_path / pecha_id
         if pecha_path.exists():
             shutil.rmtree(pecha_path)
         pecha_path.mkdir(parents=True, exist_ok=True)
         return cls(pecha_id, pecha_path)
+    
+    @classmethod
+    def create_pecha(cls, pecha_id: str, base_text: str, annotation: List[BaseAnnotation]) -> "Pecha":
+        pecha = cls.create(pecha_id=pecha_id)
+        base_name = pecha.set_base(base_text)
+        ann_type = get_annotation_type(annotation)
+        ann_store, _ = pecha.add_layer(base_name=base_name, layer_type=ann_type)
+        
+        for single_annotation in annotation:
+            ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=ann_type)
+            ann_store.save()
+        return pecha
+    
+    @classmethod
+    def add(cls, pecha: "Pecha", annotation: List[BaseAnnotation]) -> "Pecha":
+        base_name = next(iter(pecha.bases))
+        ann_type = get_annotation_type(annotation)
+        ann_store, ann_store_path = pecha.add_layer(base_name=base_name, layer_type=ann_type)
+        annotation_id = ann_store_path.stem
+        for single_annotation in annotation:
+            ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=ann_type)
+            ann_store.save()
+        return annotation_id
 
     @property
     def base_path(self) -> Path:
@@ -58,6 +87,7 @@ class Pecha:
     @property
     def metadata_path(self):
         return self.pecha_path / "metadata.json"
+        
 
     def load_metadata(self):
         if not self.metadata_path.exists():
@@ -241,8 +271,17 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
                 "end": ann.offset().end().value(),
             }
         anns.append(curr_ann)
-    return anns
+    return anns   
 
 
 def load_layer(path: Path) -> AnnotationStore:
     return AnnotationStore(file=str(path))
+
+
+def get_annotation_type(annotation: List[BaseAnnotation]):
+    if hasattr(annotation[0], "alignment_index") and hasattr(annotation[0], "index"):
+        return AnnotationType.ALIGNMENT
+    elif hasattr(annotation[0], "index") and not hasattr(annotation[0], "alignment_index"):
+        return AnnotationType.SEGMENTATION
+    else:
+        raise ValueError("Invalid annotation type")
