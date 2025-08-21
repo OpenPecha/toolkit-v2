@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v2.2.2 (2025-08-21)
+
+### Fix
+
+* fix: test error ([`a4fea37`](https://github.com/OpenPecha/toolkit-v2/commit/a4fea3776b49bd3b97c2772bef5fcf96c17ecd4f))
+
+* fix: updated the test opfs and test ([`9f8726d`](https://github.com/OpenPecha/toolkit-v2/commit/9f8726db2234b06791124995eabf1f7ab42be17c))
+
+* fix: transformed annotations script added ([`b07b3be`](https://github.com/OpenPecha/toolkit-v2/commit/b07b3bece784b6868559445ebd2e7358c90e3f72))
+
+### Unknown
+
+* Merge pull request #418 from OpenPecha/json_serializer
+
+fix: test opfs and test ([`c1c0e40`](https://github.com/OpenPecha/toolkit-v2/commit/c1c0e409a9ad2e45cfd8e97cb2f6c65285e69f36))
+
 ## v2.2.1 (2025-08-18)
 
 ### Fix
