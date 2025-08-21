@@ -3,260 +3,260 @@
   "annotations": {
     "segmentation": [
       {
-        "id": "8C89EDC885",
+        "id": "B07549701B",
         "Span": {
           "start": 0,
           "end": 54
         },
-        "root_idx_mapping": "1"
+        "index": 1
       },
       {
-        "id": "7F93D65BD7",
+        "id": "60010AB6CD",
         "Span": {
           "start": 55,
           "end": 110
         },
-        "root_idx_mapping": "2"
+        "index": 2
       },
       {
-        "id": "EECCA0C8D1",
+        "id": "C8B26CFFA4",
         "Span": {
           "start": 111,
           "end": 175
         },
-        "root_idx_mapping": "3"
+        "index": 3
       },
       {
-        "id": "51821B43DF",
+        "id": "5C519C091F",
         "Span": {
           "start": 176,
           "end": 193
         },
-        "root_idx_mapping": "4"
+        "index": 4
       },
       {
-        "id": "84B69444B4",
+        "id": "A99CFE3DC3",
         "Span": {
           "start": 194,
           "end": 251
         },
-        "root_idx_mapping": "5"
+        "index": 5
       },
       {
-        "id": "3C11EA26E3",
+        "id": "BCBF7B0B44",
         "Span": {
           "start": 252,
           "end": 287
         },
-        "root_idx_mapping": "6"
+        "index": 6
       },
       {
-        "id": "A0397118AD",
+        "id": "74CAE409E9",
         "Span": {
           "start": 288,
           "end": 428
         },
-        "root_idx_mapping": "7"
+        "index": 7
       },
       {
-        "id": "B5B55FB0DA",
+        "id": "2E2FB82547",
         "Span": {
           "start": 429,
           "end": 527
         },
-        "root_idx_mapping": "8"
+        "index": 8
       },
       {
-        "id": "CC2CCC2020",
+        "id": "43ECDEE9B0",
         "Span": {
           "start": 528,
           "end": 669
         },
-        "root_idx_mapping": "9"
+        "index": 9
       },
       {
-        "id": "03D1428B40",
+        "id": "AA18B6218B",
         "Span": {
           "start": 670,
           "end": 730
         },
-        "root_idx_mapping": "10"
+        "index": 10
       },
       {
-        "id": "2510814C11",
+        "id": "418BE00783",
         "Span": {
           "start": 731,
           "end": 861
         },
-        "root_idx_mapping": "11"
+        "index": 11
       },
       {
-        "id": "88D68C0496",
+        "id": "DA91DA4BE4",
         "Span": {
           "start": 862,
           "end": 1321
         },
-        "root_idx_mapping": "12"
+        "index": 12
       },
       {
-        "id": "E2E129462A",
+        "id": "B4245065D7",
         "Span": {
           "start": 1322,
           "end": 1362
         },
-        "root_idx_mapping": "13"
+        "index": 13
       },
       {
-        "id": "B81C5C9FE4",
+        "id": "0F1030EE43",
         "Span": {
           "start": 1363,
           "end": 1363
         },
-        "root_idx_mapping": "14"
+        "index": 14
       },
       {
-        "id": "2070BD0007",
+        "id": "97F7C93C66",
         "Span": {
           "start": 1364,
           "end": 1435
         },
-        "root_idx_mapping": "15"
+        "index": 15
       },
       {
-        "id": "AA6A27A6A1",
+        "id": "3A307BA7F7",
         "Span": {
           "start": 1436,
           "end": 1516
         },
-        "root_idx_mapping": "16"
+        "index": 16
       },
       {
-        "id": "FA0980F133",
+        "id": "B8EE2A4C35",
         "Span": {
           "start": 1517,
           "end": 1667
         },
-        "root_idx_mapping": "17"
+        "index": 17
       },
       {
-        "id": "14913C468E",
+        "id": "80D90F8088",
         "Span": {
           "start": 1668,
           "end": 1888
         },
-        "root_idx_mapping": "18"
+        "index": 18
       },
       {
-        "id": "D444778C74",
+        "id": "7BBBEC254B",
         "Span": {
           "start": 1889,
           "end": 1976
         },
-        "root_idx_mapping": "19"
+        "index": 19
       },
       {
-        "id": "B313A11312",
+        "id": "7CE016E497",
         "Span": {
           "start": 1977,
           "end": 2155
         },
-        "root_idx_mapping": "20"
+        "index": 20
       },
       {
-        "id": "F486C8418F",
+        "id": "CEDCB38435",
         "Span": {
           "start": 2156,
           "end": 2269
         },
-        "root_idx_mapping": "21"
+        "index": 21
       },
       {
-        "id": "04A0289526",
+        "id": "8FF1A6F3F3",
         "Span": {
           "start": 2270,
           "end": 2366
         },
-        "root_idx_mapping": "22"
+        "index": 22
       },
       {
-        "id": "2CFA7991F1",
+        "id": "671711C44C",
         "Span": {
           "start": 2367,
           "end": 2527
         },
-        "root_idx_mapping": "23"
+        "index": 23
       },
       {
-        "id": "1B83E5A108",
+        "id": "0CFE1EF97C",
         "Span": {
           "start": 2528,
           "end": 2763
         },
-        "root_idx_mapping": "24"
+        "index": 24
       },
       {
-        "id": "80A9D99D44",
+        "id": "0BFEA4BBEF",
         "Span": {
           "start": 2764,
           "end": 2821
         },
-        "root_idx_mapping": "25"
+        "index": 25
       },
       {
-        "id": "2ACBFD49BC",
+        "id": "6D8BDFC8FD",
         "Span": {
           "start": 2822,
           "end": 2923
         },
-        "root_idx_mapping": "26"
+        "index": 26
       },
       {
-        "id": "B16051956B",
+        "id": "74E5403E03",
         "Span": {
           "start": 2924,
           "end": 3106
         },
-        "root_idx_mapping": "27"
+        "index": 27
       },
       {
-        "id": "4734C7CCF9",
+        "id": "3F2B818452",
         "Span": {
           "start": 3107,
           "end": 3216
         },
-        "root_idx_mapping": "28"
+        "index": 28
       },
       {
-        "id": "8ED1F6FAF4",
+        "id": "D050E18B90",
         "Span": {
           "start": 3217,
           "end": 3262
         },
-        "root_idx_mapping": "29"
+        "index": 29
       },
       {
-        "id": "F065FF8F36",
+        "id": "4544050EE3",
         "Span": {
           "start": 3263,
           "end": 3305
         },
-        "root_idx_mapping": "30"
+        "index": 30
       },
       {
-        "id": "53A2068D4B",
+        "id": "9853B76832",
         "Span": {
           "start": 3306,
           "end": 3548
         },
-        "root_idx_mapping": "31"
+        "index": 31
       },
       {
-        "id": "694696C0CD",
+        "id": "769E1974BB",
         "Span": {
           "start": 3549,
           "end": 3606
         },
-        "root_idx_mapping": "32"
+        "index": 32
       }
     ]
   }
