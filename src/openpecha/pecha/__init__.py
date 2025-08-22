@@ -48,11 +48,11 @@ class Pecha:
         return cls(pecha_id, pecha_path)
     
     @classmethod
-    def create_pecha(cls, pecha_id: str, base_text: str, annotation: List[BaseAnnotation]) -> "Pecha":
+    def create_pecha(cls, pecha_id: str, base_text: str, annotation_id: str, annotation: List[BaseAnnotation]) -> "Pecha":
         pecha = cls.create(pecha_id=pecha_id)
         base_name = pecha.set_base(base_text)
         ann_type = get_annotation_type(annotation)
-        ann_store, _ = pecha.add_layer(base_name=base_name, layer_type=ann_type)
+        ann_store, _ = pecha.add_layer(base_name=base_name, layer_type=ann_type, annotation_id=annotation_id)
         
         for single_annotation in annotation:
             ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=ann_type)
@@ -120,7 +120,7 @@ class Pecha:
         (self.layer_path / base_name).mkdir(parents=True, exist_ok=True)
         return base_name
 
-    def add_layer(self, base_name: str, layer_type: AnnotationType):
+    def add_layer(self, base_name: str, layer_type: AnnotationType, annotation_id: str = None):
         """
         Inputs:
             base_name: .txt file which this annotation is associated with
@@ -137,9 +137,12 @@ class Pecha:
         if base_name not in self.bases:
             raise ValueError(f"Base {base_name} does not exist.")
 
-        ann_store = AnnotationStore(id=self.id)
+        if annotation_id is None:
+            annotation_id = get_layer_id()
+
+        ann_store = AnnotationStore(id=annotation_id)
         ann_store_path = (
-            self.layer_path / base_name / f"{layer_type.value}-{get_layer_id()}.json"
+            self.layer_path / base_name / f"{layer_type.value}-{annotation_id}.json"
         )
         ann_store.set_filename(str(ann_store_path))
         ann_store.add_resource(

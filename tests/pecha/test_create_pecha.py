@@ -15,8 +15,9 @@ def convert_to_base_annotation(raw_annotation):
 def test_create_pecha():
     data = read_json("tests/pecha/data/ITEST001.json")
     annotation = [convert_to_base_annotation(ann) for ann in data["annotation"]]
-    pecha = Pecha.create_pecha(pecha_id=data["pecha_id"], base_text=data["base_text"], annotation=annotation)
-
+    annotation_id = "alRs1jlri2ASE123"
+    pecha = Pecha.create_pecha(pecha_id=data["pecha_id"], base_text=data["base_text"], annotation_id=annotation_id, annotation=annotation)
+    
     assert pecha.id == data["pecha_id"]
 
     base_name = list(pecha.bases.keys())[0]
