@@ -1,4 +1,4 @@
-from openpecha.pecha import Pecha, get_anns
+from openpecha.pecha import Pecha, get_anns, get_annotation_type
 from openpecha.utils import read_json
 from pathlib import Path
 from openpecha.pecha.annotations import BaseAnnotation, Span
@@ -15,8 +15,9 @@ def convert_to_base_annotation(raw_annotation):
 def test_create_pecha():
     data = read_json("tests/pecha/data/ITEST001.json")
     annotation = [convert_to_base_annotation(ann) for ann in data["annotation"]]
-    pecha = Pecha.create_pecha(pecha_id=data["pecha_id"], base_text=data["base_text"], annotation=annotation)
-
+    annotation_id = "alRs1jlri2ASE123"
+    pecha = Pecha.create_pecha(pecha_id=data["pecha_id"], base_text=data["base_text"], annotation_id=annotation_id, annotation=annotation)
+    
     assert pecha.id == data["pecha_id"]
 
     base_name = list(pecha.bases.keys())[0]
@@ -41,10 +42,10 @@ def test_add():
     pecha = Pecha.from_path(Path("tests/pecha/data/ITEST001"))
 
     base_name = next(iter(pecha.bases))
-
-    annotation_id = pecha.add(pecha, annotation)
+    annotation_id = "alRs1jlri2ASE123"
+    annotation_id = pecha.add(annotation_id=annotation_id, annotation=annotation)
     
-    ann_store, ann_store_path = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
+    ann_store, _ = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
     
     created_annotations = get_anns(ann_store[0] if isinstance(ann_store, list) else ann_store, include_span=True)
 
@@ -58,7 +59,8 @@ def test_add():
     assert first_created["alignment_index"] == first_original["alignment_index"]
 
     # Clean up - remove the added annotation layer to keep test data clean
-    annotation_layer_file = pecha.layer_path / base_name / f"{annotation_id}.json"
+    ann_type = get_annotation_type(annotation)
+    annotation_layer_file = pecha.layer_path / base_name / f"{ann_type.value}-{annotation_id}.json"
     if annotation_layer_file.exists():
         annotation_layer_file.unlink()
 
