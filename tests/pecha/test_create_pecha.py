@@ -3,7 +3,7 @@ from openpecha.utils import read_json
 from pathlib import Path
 from openpecha.pecha.annotations import BaseAnnotation, Span
 from openpecha.pecha.layer import AnnotationType
-
+from openpecha.ids import generate_id
 
 def convert_to_base_annotation(raw_annotation):
     span_data = raw_annotation["Span"]
@@ -15,7 +15,7 @@ def convert_to_base_annotation(raw_annotation):
 def test_create_pecha():
     data = read_json("tests/pecha/data/ITEST001.json")
     annotation = [convert_to_base_annotation(ann) for ann in data["annotation"]]
-    annotation_id = "alRs1jlri2ASE123"
+    annotation_id = generate_id()
     pecha = Pecha.create_pecha(pecha_id=data["pecha_id"], base_text=data["base_text"], annotation_id=annotation_id, annotation=annotation)
     
     assert pecha.id == data["pecha_id"]
@@ -42,7 +42,7 @@ def test_add():
     pecha = Pecha.from_path(Path("tests/pecha/data/ITEST001"))
 
     base_name = next(iter(pecha.bases))
-    annotation_id = "alRs1jlri2ASE123"
+    annotation_id = generate_id()
     annotation_id = pecha.add(annotation_id=annotation_id, annotation=annotation)
     
     ann_store, _ = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
