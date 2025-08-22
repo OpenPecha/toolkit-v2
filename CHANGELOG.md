@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v2.3.1 (2025-08-22)
+
+### Fix
+
+* fix: updated the annotation_id ([`1815f6c`](https://github.com/OpenPecha/toolkit-v2/commit/1815f6c2835f1a47db1e77dcbea502e8f3ab78c6))
+
+* fix: updated add with new arguments and test ([`449174b`](https://github.com/OpenPecha/toolkit-v2/commit/449174bbeb836800ceefca9800452398bf4ab35f))
+
+* fix: updated create_pecha with new arguments and test ([`8046065`](https://github.com/OpenPecha/toolkit-v2/commit/8046065c2842be055220e0aff31f2628f0f22ab8))
+
+### Unknown
+
+* Merge pull request #420 from OpenPecha/create_pecha
+
+Create pecha ([`7dbd841`](https://github.com/OpenPecha/toolkit-v2/commit/7dbd8415048871c03abaaf802cf6044ad4a44edf))
+
 ## v2.3.0 (2025-08-21)
 
 ### Feature
