@@ -35,7 +35,7 @@ class TranslationAlignmentMapping:
                 target_end = segment_item["Span"]["end"]
 
                 # Check for overlap
-                if source_start < target_end and source_end > target_start:
+                if source_start <= target_end and source_end >= target_start:
                     overlapping_segments.append(target_index)
 
             mapping[source_index] = overlapping_segments

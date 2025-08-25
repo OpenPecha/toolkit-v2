@@ -323,17 +323,14 @@ class AlignedPechaJsonSerializer(JsonSerializer):
 
         mapped_compare_annotation = TranslationAlignmentMapping().map_annotation_layer_to_layer(target_segmentation_annotation, target_alignment_annotation)
 
-        source_segmentation_annotation = None
         source_alignment_annotation = self.get_annotation(self.source_pecha, source_annotation_paths, source_annotation_id)
-
         
         source_annotation = self._updated_source_annotation_base_on_mapped_compare_annotation_(source_alignment_annotation, mapped_compare_annotation)
-
 
         return { "target_annotations": target_segmentation_annotation, "source_annotations": source_annotation }
     
     def _updated_source_annotation_base_on_mapped_compare_annotation_(self, source_alignment_annotation: dict, mapped_compare_annotation: dict) -> dict:
-        if mapped_compare_annotation is None:
+        if mapped_compare_annotation == {}:
             return source_alignment_annotation
         
         for source_annotation in source_alignment_annotation['alignment']:
@@ -370,12 +367,12 @@ if __name__ == "__main__":
     source_opf = Pecha.from_path(source_opf_path)
     
     target_annotations = [
-        {
+            {
                 "id":"677JWyBWgjpWH9_u",
                 "type":"segmentation"
             }]
     source_annotations = [
-        {
+            {
                 "id": "nYmYcFl0c4easGla",
                 "type":"alignment",
                 "aligned_to": "677JWyBWgjpWH9_u"
