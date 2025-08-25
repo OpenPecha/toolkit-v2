@@ -326,18 +326,9 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         source_segmentation_annotation = None
         source_alignment_annotation = self.get_annotation(self.source_pecha, source_annotation_paths, source_annotation_id)
 
-        print(source_alignment_annotation)
-
         
         source_annotation = self._updated_source_annotation_base_on_mapped_compare_annotation_(source_alignment_annotation, mapped_compare_annotation)
 
-        import json
-
-        with open("target_segmentation_annotation.json", "w", encoding="utf-8") as f:
-            json.dump(target_segmentation_annotation, f, ensure_ascii=False, indent=2)
-
-        with open("source_annotation.json", "w", encoding="utf-8") as f:
-            json.dump(source_annotation, f, ensure_ascii=False, indent=2)
 
         return { "target_annotations": target_segmentation_annotation, "source_annotations": source_annotation }
     
@@ -348,19 +339,12 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         for source_annotation in source_alignment_annotation['alignment']:
             new_alignment_index = []
             for alignment_index in source_annotation['alignment_index']:
-                print(alignment_index)
                 if alignment_index in mapped_compare_annotation:
-                    print(mapped_compare_annotation[alignment_index])
                     new_alignment_index.extend(mapped_compare_annotation[alignment_index])
 
-            print(new_alignment_index)
             new_alignment_index = list(set(new_alignment_index))
-
-            print(source_annotation['alignment_index'])
             
             source_annotation['alignment_index'] = new_alignment_index
-
-            print(source_annotation['alignment_index'])
 
         return source_alignment_annotation
             
