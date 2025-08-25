@@ -13,6 +13,7 @@ from openpecha.pecha.layer import (
     get_annotation_type,
 )
 from openpecha.pecha.annotations import PechaJson, AlignedPechaJson
+from openpecha.alignment import TranslationAlignmentMapping
 
 logger = get_logger(__name__)
 
@@ -245,6 +246,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
     def serialize(self) -> AlignedPechaJson:
         source_base = JsonSerializer().get_base_from_pecha(self.source_pecha, self.source_annotations)
         target_base = JsonSerializer().get_base_from_pecha(self.target_pecha, self.target_annotations)
+        # transformed_annotation = { "target_annotations": {}, "source_annotations": {} }
         transformed_annotation = self.serialize_aligned_pechas_transformed_annotations()
         untransformed_annotation = self.serialize_aligned_pechas_untransformed_annotations()
         return AlignedPechaJson(
@@ -298,8 +300,117 @@ class AlignedPechaJsonSerializer(JsonSerializer):
     #             tgt_ann_store = self.get_segmentation_annotation_store(self.target_pecha, annotation_paths)
     #     raise ValueError(f"Annotation with id {annotation_id} not found")
 
+    
+
     def serialize_aligned_pechas_transformed_annotations(self):
         target_annotation_id, source_annotation_id = self.get_aligned_to_annotation_id(self.source_annotations)
         _, target_annotation_paths = self.get_annotation_paths(self.target_pecha, self.target_annotations)
         _, source_annotation_paths = self.get_annotation_paths(self.source_pecha, self.source_annotations)
-        return { "target_annotations": {}, "source_annotations": {} }
+
+        target_annotation_id, source_annotation_id = self.get_aligned_to_annotation_id(self.source_annotations)
+
+        
+        target_segmentatation_annotation_id = self._get_target_segmentation_annotation_id_(self.target_annotations)
+        
+        target_segmentation_annotation = self.get_annotation(self.target_pecha, target_annotation_paths, target_segmentatation_annotation_id)
+        
+        is_target_annnotation_is_alignement = self._check_if_target_annotation_is_alignment_(self.target_annotations)
+        
+        target_alignment_annotation = None
+        if is_target_annnotation_is_alignement:
+            target_alignment_annotation_id = target_annotation_id
+            target_alignment_annotation = self.get_annotation(self.target_pecha, target_annotation_paths, target_alignment_annotation_id)
+
+        mapped_compare_annotation = TranslationAlignmentMapping().map_annotation_layer_to_layer(target_segmentation_annotation, target_alignment_annotation)
+
+        source_segmentation_annotation = None
+        source_alignment_annotation = self.get_annotation(self.source_pecha, source_annotation_paths, source_annotation_id)
+
+        print(source_alignment_annotation)
+
+        
+        source_annotation = self._updated_source_annotation_base_on_mapped_compare_annotation_(source_alignment_annotation, mapped_compare_annotation)
+
+        import json
+
+        with open("target_segmentation_annotation.json", "w", encoding="utf-8") as f:
+            json.dump(target_segmentation_annotation, f, ensure_ascii=False, indent=2)
+
+        with open("source_annotation.json", "w", encoding="utf-8") as f:
+            json.dump(source_annotation, f, ensure_ascii=False, indent=2)
+
+        return { "target_annotations": target_segmentation_annotation, "source_annotations": source_annotation }
+    
+    def _updated_source_annotation_base_on_mapped_compare_annotation_(self, source_alignment_annotation: dict, mapped_compare_annotation: dict) -> dict:
+        if mapped_compare_annotation is None:
+            return source_alignment_annotation
+        
+        for source_annotation in source_alignment_annotation['alignment']:
+            new_alignment_index = []
+            for alignment_index in source_annotation['alignment_index']:
+                print(alignment_index)
+                if alignment_index in mapped_compare_annotation:
+                    print(mapped_compare_annotation[alignment_index])
+                    new_alignment_index.extend(mapped_compare_annotation[alignment_index])
+
+            print(new_alignment_index)
+            new_alignment_index = list(set(new_alignment_index))
+
+            print(source_annotation['alignment_index'])
+            
+            source_annotation['alignment_index'] = new_alignment_index
+
+            print(source_annotation['alignment_index'])
+
+        return source_alignment_annotation
+            
+
+    
+    def _get_target_segmentation_annotation_id_(self, target_annotations: list[dict]) -> str:
+        for target_annotation in target_annotations:
+            if (target_annotation['type'] == 'segmentation'):
+                return target_annotation['id']
+        raise ValueError("No segmentation annotation found")
+
+    def _check_if_target_annotation_is_alignment_(self, target_annotations: list[dict]) -> bool:
+        for target_annotation in target_annotations:
+            if (target_annotation['type'] == 'alignment'):
+                return True
+        return False
+
+if __name__ == "__main__":
+    DATA_DIR = Path("tests/pecha/serializers/json/data")
+    target_opf_path = Path(DATA_DIR / "j03fF9jp4dqveyIG")
+    source_opf_path = Path(DATA_DIR / "315eLL7LxtqaIyfX")
+    target_opf = Pecha.from_path(target_opf_path)
+    source_opf = Pecha.from_path(source_opf_path)
+    
+    target_annotations = [
+        {
+                "id":"677JWyBWgjpWH9_u",
+                "type":"segmentation"
+            }]
+    source_annotations = [
+        {
+                "id": "nYmYcFl0c4easGla",
+                "type":"alignment",
+                "aligned_to": "677JWyBWgjpWH9_u"
+            }]
+    target = {
+        "pecha": target_opf,
+        "annotations": target_annotations
+    }
+    source = {
+        "pecha": source_opf,
+        "annotations": source_annotations
+    }
+    target_pecha = target['pecha']
+    target_annotations = target['annotations']
+
+    source_pecha = source['pecha']
+    source_annotations = source['annotations']
+
+    print(AlignedPechaJsonSerializer(
+                target_pecha, target_annotations,
+                source_pecha, source_annotations
+            ).serialize())
