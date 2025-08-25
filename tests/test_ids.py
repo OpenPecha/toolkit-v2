@@ -36,7 +36,7 @@ def test_get_base_id():
 def test_get_layer_id():
     layer_id = get_layer_id()
     assert re.match(
-        r"^[0-9A-F]{4}$", layer_id
+        r"^[0-9A-Za-z_-]{16}$", layer_id
     ), f"Layer ID {layer_id} is not in the correct format"
 
 
