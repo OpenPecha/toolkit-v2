@@ -308,18 +308,17 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         _, source_annotation_paths = self.get_annotation_paths(self.source_pecha, self.source_annotations)
 
         target_annotation_id, source_annotation_id = self.get_aligned_to_annotation_id(self.source_annotations)
-
-        
-        target_segmentatation_annotation_id = self._get_target_segmentation_annotation_id_(self.target_annotations)
-        
-        target_segmentation_annotation = self.get_annotation(self.target_pecha, target_annotation_paths, target_segmentatation_annotation_id)
         
         is_target_annnotation_is_alignement = self._check_if_target_annotation_is_alignment_(self.target_annotations)
-        
+
         target_alignment_annotation = None
         if is_target_annnotation_is_alignement:
             target_alignment_annotation_id = target_annotation_id
             target_alignment_annotation = self.get_annotation(self.target_pecha, target_annotation_paths, target_alignment_annotation_id)
+
+        target_segmentatation_annotation_id = self._get_target_segmentation_annotation_id_(self.target_annotations)
+        
+        target_segmentation_annotation = self.get_annotation(self.target_pecha, target_annotation_paths, target_segmentatation_annotation_id)
 
         mapped_compare_annotation = TranslationAlignmentMapping().map_annotation_layer_to_layer(target_segmentation_annotation, target_alignment_annotation)
 
@@ -345,7 +344,6 @@ class AlignedPechaJsonSerializer(JsonSerializer):
 
         return source_alignment_annotation
             
-
     
     def _get_target_segmentation_annotation_id_(self, target_annotations: list[dict]) -> str:
         for target_annotation in target_annotations:
@@ -358,40 +356,3 @@ class AlignedPechaJsonSerializer(JsonSerializer):
             if (target_annotation['type'] == 'alignment'):
                 return True
         return False
-
-if __name__ == "__main__":
-    DATA_DIR = Path("tests/pecha/serializers/json/data")
-    target_opf_path = Path(DATA_DIR / "j03fF9jp4dqveyIG")
-    source_opf_path = Path(DATA_DIR / "315eLL7LxtqaIyfX")
-    target_opf = Pecha.from_path(target_opf_path)
-    source_opf = Pecha.from_path(source_opf_path)
-    
-    target_annotations = [
-            {
-                "id":"677JWyBWgjpWH9_u",
-                "type":"segmentation"
-            }]
-    source_annotations = [
-            {
-                "id": "nYmYcFl0c4easGla",
-                "type":"alignment",
-                "aligned_to": "677JWyBWgjpWH9_u"
-            }]
-    target = {
-        "pecha": target_opf,
-        "annotations": target_annotations
-    }
-    source = {
-        "pecha": source_opf,
-        "annotations": source_annotations
-    }
-    target_pecha = target['pecha']
-    target_annotations = target['annotations']
-
-    source_pecha = source['pecha']
-    source_annotations = source['annotations']
-
-    print(AlignedPechaJsonSerializer(
-                target_pecha, target_annotations,
-                source_pecha, source_annotations
-            ).serialize())
