@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## v2.4.0 (2025-08-28)
+
+### Feature
+
+* feat: merged transform_annotation_alignment logic
+
+Transform annotation alignment ([`bb9b879`](https://github.com/OpenPecha/toolkit-v2/commit/bb9b8791230b08691924fb006d612a0cf41b1677))
+
+### Unknown
+
+* code cleanup ([`c5af63d`](https://github.com/OpenPecha/toolkit-v2/commit/c5af63d969266fa4da9c092df9f69b10b038fde1))
+
+* fixed layer mapping bug ([`addb88c`](https://github.com/OpenPecha/toolkit-v2/commit/addb88c676a817345325d8e1e64b92ff13d2c03e))
+
+* Merge branch &#39;main&#39; into transform_annotation_alignment ([`232bc38`](https://github.com/OpenPecha/toolkit-v2/commit/232bc380f52686071d5141e6af27697efe5e63ed))
+
 ## v2.3.1 (2025-08-22)
 
 ### Fix
@@ -27,6 +43,10 @@ Create pecha ([`7dbd841`](https://github.com/OpenPecha/toolkit-v2/commit/7dbd841
 * Merge pull request #419 from OpenPecha/create_pecha
 
 feat: added create_pecha and add to the Pecha class with test ([`e6c9696`](https://github.com/OpenPecha/toolkit-v2/commit/e6c969623694eb433daa894f64eb719b713197b0))
+
+* removed print statment and code clean up ([`bf29f90`](https://github.com/OpenPecha/toolkit-v2/commit/bf29f904a0ee86a39f03a971f903bcf3d70cbcae))
+
+* transformed annotation method and test case update ([`3a352cc`](https://github.com/OpenPecha/toolkit-v2/commit/3a352cc6cd475ae777a37cbf760045d38a4b9ece))
 
 ## v2.2.2 (2025-08-21)
 
