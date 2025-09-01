@@ -1,9 +1,5 @@
-from typing import Dict, List, Any
-from openpecha.pecha import Pecha
-from openpecha.pecha.pecha_types import PechaType, get_pecha_type
+from typing import Dict, Any
 from openpecha.pecha.serializers.json import JsonSerializer, AlignedPechaJsonSerializer
-from openpecha.alignment.commentary_transfer import CommentaryAlignmentTransfer
-from openpecha.alignment.translation_transfer import TranslationAlignmentTransfer
 from openpecha.config import get_logger
 from openpecha.pecha.annotations import AlignedPechaJson, PechaJson
 
@@ -42,12 +38,13 @@ class SerializerLogicHandler:
         
         if source == None:
             # Simple serialization of target pecha only
+            logger.info(f"Serializing target pecha only for Pecha '{target_pecha.id}'.")
             return JsonSerializer().serialize(target_pecha, target_annotations)
         else:
             # Alignment-based serialization
             source_pecha = source['pecha']
             source_annotations = source['annotations']
-        
+            logger.info(f"Serializing aligned target and source pechas for Pecha '{target_pecha.id}' and Pecha '{source_pecha.id}'.")
             return AlignedPechaJsonSerializer(
                 target_pecha, target_annotations,
                 source_pecha, source_annotations
