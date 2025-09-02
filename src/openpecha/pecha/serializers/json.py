@@ -65,7 +65,7 @@ class JsonSerializer:
                     ann_data[k] = v
             curr_ann = {
                 "id": ann.id(),
-                "Span": {
+                "span": {
                     "start": ann.offset().begin().value(),
                     "end": ann.offset().end().value(),
                 },
@@ -100,7 +100,7 @@ class JsonSerializer:
 
         cursor = 0
         for ann in anns:
-            start, end = ann["Span"]["start"], ann["Span"]["end"]
+            start, end = ann["span"]["start"], ann["span"]["end"]
             operation, text = ann["operation"], ann["text"]
 
             edition_base += old_base[cursor:start]

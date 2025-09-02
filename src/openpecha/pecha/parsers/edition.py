@@ -9,7 +9,7 @@ from openpecha.pecha import Pecha
 from openpecha.pecha.annotations import (
     Pagination,
     SegmentationAnnotation,
-    Span,
+    span,
     Version,
     VersionVariantOperations,
 )
@@ -44,7 +44,7 @@ class EditionParser:
         for index, segment in enumerate(segments, start=1):
             anns.append(
                 SegmentationAnnotation(
-                    span=Span(start=char_count, end=char_count + len(segment)),
+                    span=span(start=char_count, end=char_count + len(segment)),
                     index=index,
                 )
             )
@@ -70,7 +70,7 @@ class EditionParser:
                 # Insertion
                 anns.append(
                     Version(
-                        span=Span(start=char_count, end=char_count),
+                        span=span(start=char_count, end=char_count),
                         operation=VersionVariantOperations.INSERTION,
                         text=text,
                     )
@@ -79,7 +79,7 @@ class EditionParser:
                 # Deletion
                 anns.append(
                     Version(
-                        span=Span(start=char_count, end=char_count + len(text)),
+                        span=span(start=char_count, end=char_count + len(text)),
                         operation=VersionVariantOperations.DELETION,
                     )
                 )

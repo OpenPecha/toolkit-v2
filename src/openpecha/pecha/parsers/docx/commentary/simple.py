@@ -9,7 +9,7 @@ from openpecha.pecha.annotations import (
     AlignmentAnnotation,
     BaseAnnotation,
     SegmentationAnnotation,
-    Span,
+    span,
 )
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import DocxBaseParser
@@ -31,7 +31,7 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
         for index, segment in numbered_text.items():
             anns.append(
                 SegmentationAnnotation(
-                    span=Span(start=char_count, end=char_count + len(segment)),
+                    span=span(start=char_count, end=char_count + len(segment)),
                     index=index,
                 )
             )
@@ -51,10 +51,10 @@ class DocxSimpleCommentaryParser(DocxBaseParser):
             alignment_indices: str = match.group(1) if match else index
 
             segment = match.group(2) if match else segment
-
+            
             anns.append(
                 AlignmentAnnotation(
-                    span=Span(start=char_count, end=char_count + len(segment)),
+                    span=span(start=char_count, end=char_count + len(segment)),
                     index=index,
                     alignment_index=parse_alignment_index(alignment_indices),
                 )

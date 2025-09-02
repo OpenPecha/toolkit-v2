@@ -17,7 +17,7 @@ from openpecha.ids import get_uuid
 from openpecha.pecha.layer import AnnotationType
 
 
-class Span(BaseModel):
+class span(BaseModel):
     start: int = Field(..., ge=0)
     end: int = Field(..., ge=0)
     errors: Optional[Dict] = None
@@ -32,14 +32,14 @@ class Span(BaseModel):
         return v
 
     @model_validator(mode="after")
-    def end_must_not_be_less_than_start(self) -> "Span":
+    def end_must_not_be_less_than_start(self) -> "span":
         if self.end < self.start:
             raise ValueError("Span end must not be less than start")
         return self
 
 
 class BaseAnnotation(BaseModel):
-    span: Span
+    span: span
     metadata: Optional[Dict] = None
 
     model_config = ConfigDict(extra="allow")
@@ -74,7 +74,7 @@ class VersionVariantOperations(str, Enum):
 
 
 class Version(BaseAnnotation):
-    span: Span
+    span: span
     operation: VersionVariantOperations
     text: str = ""  # Required for insertion, empty for deletion
 

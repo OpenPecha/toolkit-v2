@@ -4,7 +4,7 @@
     "segmentation": [
       {
         "id": "59EBB25F49",
-        "Span": {
+        "span": {
           "start": 0,
           "end": 206
         },
@@ -12,7 +12,7 @@
       },
       {
         "id": "1C6219999D",
-        "Span": {
+        "span": {
           "start": 207,
           "end": 359
         },
@@ -20,7 +20,7 @@
       },
       {
         "id": "2E324FF8E3",
-        "Span": {
+        "span": {
           "start": 360,
           "end": 506
         },
@@ -28,7 +28,7 @@
       },
       {
         "id": "248229AD9C",
-        "Span": {
+        "span": {
           "start": 507,
           "end": 673
         },
@@ -36,7 +36,7 @@
       },
       {
         "id": "AFF893CC4A",
-        "Span": {
+        "span": {
           "start": 674,
           "end": 843
         },
@@ -44,7 +44,7 @@
       },
       {
         "id": "E6350684CA",
-        "Span": {
+        "span": {
           "start": 844,
           "end": 1034
         },
@@ -52,7 +52,7 @@
       },
       {
         "id": "8725807438",
-        "Span": {
+        "span": {
           "start": 1035,
           "end": 1213
         },
@@ -60,7 +60,7 @@
       },
       {
         "id": "D2BACBFB51",
-        "Span": {
+        "span": {
           "start": 1214,
           "end": 1402
         },
@@ -68,7 +68,7 @@
       },
       {
         "id": "E9DCF0CBEB",
-        "Span": {
+        "span": {
           "start": 1403,
           "end": 1616
         },

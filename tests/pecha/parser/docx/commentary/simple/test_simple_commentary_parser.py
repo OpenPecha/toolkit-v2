@@ -4,7 +4,7 @@ from unittest import TestCase, mock
 from unittest.mock import patch
 
 from openpecha.pecha import Pecha
-from openpecha.pecha.annotations import AlignmentAnnotation, Span
+from openpecha.pecha.annotations import AlignmentAnnotation, span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers.docx.commentary.simple import DocxSimpleCommentaryParser
 from openpecha.utils import read_json
@@ -17,31 +17,31 @@ class TestDocxSimpleCommentaryParser(TestCase):
         self.metadata = read_json(self.data_dir / "metadata.json")
         self.expected_anns = [
             AlignmentAnnotation(
-                span=Span(start=0, end=65, errors=None),
+                span=span(start=0, end=65, errors=None),
                 metadata=None,
                 index=1,
                 alignment_index=[1],
             ),
             AlignmentAnnotation(
-                span=Span(start=66, end=330, errors=None),
+                span=span(start=66, end=330, errors=None),
                 metadata=None,
                 index=2,
                 alignment_index=[2],
             ),
             AlignmentAnnotation(
-                span=Span(start=331, end=758, errors=None),
+                span=span(start=331, end=758, errors=None),
                 metadata=None,
                 index=3,
                 alignment_index=[2, 3],
             ),
             AlignmentAnnotation(
-                span=Span(start=759, end=1075, errors=None),
+                span=span(start=759, end=1075, errors=None),
                 metadata=None,
                 index=4,
                 alignment_index=[3, 4, 5],
             ),
             AlignmentAnnotation(
-                span=Span(start=1076, end=1470, errors=None),
+                span=span(start=1076, end=1470, errors=None),
                 metadata=None,
                 index=5,
                 alignment_index=[2, 4, 5],
