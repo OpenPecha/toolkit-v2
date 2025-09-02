@@ -67,7 +67,7 @@ class CommentaryAlignmentTransfer:
         tgt_anns = get_anns(tgt_layer, include_span=True)
 
         for src_ann in src_anns:
-            src_start, src_end = src_ann["Span"]["start"], src_ann["Span"]["end"]
+            src_start, src_end = src_ann["span"]["start"], src_ann["span"]["end"]
             try:
                 src_idx = (
                     src_ann["alignment_index"][0]
@@ -78,7 +78,7 @@ class CommentaryAlignmentTransfer:
                 continue
             mapping[src_idx] = []
             for tgt_ann in tgt_anns:
-                tgt_start, tgt_end = tgt_ann["Span"]["start"], tgt_ann["Span"]["end"]
+                tgt_start, tgt_end = tgt_ann["span"]["start"], tgt_ann["span"]["end"]
                 try:
                     tgt_idx = (
                         tgt_ann["alignment_index"][0]

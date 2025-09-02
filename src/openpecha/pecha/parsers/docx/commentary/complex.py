@@ -7,7 +7,7 @@ from docx.shared import RGBColor
 
 from openpecha.config import PECHAS_PATH
 from openpecha.pecha import Pecha
-from openpecha.pecha.annotations import AlignmentAnnotation, SapcheAnnotation, Span
+from openpecha.pecha.annotations import AlignmentAnnotation, SapcheAnnotation, span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.metadata import InitialCreationType
 from openpecha.pecha.parsers import BaseParser
@@ -160,13 +160,13 @@ class DocxComplexCommentaryParser(BaseParser):
             doc = self.update_doc(doc, len(alignment_index) + 1)
             updated_segment = segment.strip()
             curr_segment_ann = AlignmentAnnotation(
-                span=Span(start=char_count, end=char_count + len(updated_segment)),
+                span=span(start=char_count, end=char_count + len(updated_segment)),
                 index=index,
                 alignment_index=parse_alignment_index(alignment_index),
             )
         else:
             curr_segment_ann = AlignmentAnnotation(
-                span=Span(start=char_count, end=char_count + len(segment)),
+                span=span(start=char_count, end=char_count + len(segment)),
                 index=index,
                 alignment_index=[],
             )
@@ -201,7 +201,7 @@ class DocxComplexCommentaryParser(BaseParser):
                         end = start + len(doc_style["texts"][idx])
                         sapche_anns.append(
                             SapcheAnnotation(
-                                span=Span(start=start, end=end),
+                                span=span(start=start, end=end),
                                 sapche_number=sapche_number,
                             )
                         )

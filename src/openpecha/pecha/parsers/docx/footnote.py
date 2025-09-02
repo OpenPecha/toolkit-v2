@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 
 from openpecha.config import get_logger
 from openpecha.pecha import Pecha
-from openpecha.pecha.annotations import BaseAnnotation, FootnoteAnnotation, Span
+from openpecha.pecha.annotations import BaseAnnotation, FootnoteAnnotation, span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.docx.utils import read_docx
@@ -61,10 +61,10 @@ class DocxFootnoteParser:
         return [
             FootnoteAnnotation(
                 index=footnote_number,
-                span=Span(start=span[0], end=span[1]),
+                span=span(start=Span[0], end=Span[1]),
                 note=footnote_contents[footnote_number],
             )
-            for footnote_number, span in footnote_spans.items()
+            for footnote_number, Span in footnote_spans.items()
         ]
 
     def add_footnote_layer(

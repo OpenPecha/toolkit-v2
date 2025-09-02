@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from openpecha.pecha.annotations import Citation, Layer, Span
+from openpecha.pecha.annotations import Citation, Layer, span
 from openpecha.pecha.layer import AnnotationType
 
 
@@ -42,7 +42,7 @@ def test_layer_reset():
 
 def test_add_annotation():
     layer = Layer(annotation_type=AnnotationType.CITATION)
-    ann = Citation(span=Span(start=10, end=20))
+    ann = Citation(span=span(start=10, end=20))
 
     ann_id = layer.set_annotation(ann)
     assert ann_id in layer.annotations
@@ -51,7 +51,7 @@ def test_add_annotation():
 
 def test_get_annotation():
     layer = Layer(annotation_type=AnnotationType.CITATION)
-    ann = Citation(span=Span(start=10, end=20))
+    ann = Citation(span=span(start=10, end=20))
 
     ann_id = layer.set_annotation(ann)
     assert ann_id in layer.annotations
@@ -60,7 +60,7 @@ def test_get_annotation():
 
 def test_remove_annotation():
     layer = Layer(annotation_type=AnnotationType.CITATION)
-    ann = Citation(span=Span(start=10, end=20))
+    ann = Citation(span=span(start=10, end=20))
 
     ann_id = layer.set_annotation(ann)
 

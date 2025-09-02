@@ -7,7 +7,7 @@ from openpecha.pecha import Pecha, get_anns
 from openpecha.pecha.annotations import (
     Pagination,
     SegmentationAnnotation,
-    Span,
+    span,
     Version,
 )
 from openpecha.pecha.parsers import update_coords
@@ -36,16 +36,16 @@ class TestEditionParser(TestCase):
         anns = parser.parse_segmentation(segments)
 
         expected_anns = [
-            SegmentationAnnotation(span=Span(start=0, end=87), index=1),
-            SegmentationAnnotation(span=Span(start=88, end=207), index=2),
-            SegmentationAnnotation(span=Span(start=208, end=283), index=3),
-            SegmentationAnnotation(span=Span(start=284, end=361), index=4),
-            SegmentationAnnotation(span=Span(start=362, end=508), index=5),
-            SegmentationAnnotation(span=Span(start=509, end=844), index=6),
-            SegmentationAnnotation(span=Span(start=845, end=1129), index=7),
-            SegmentationAnnotation(span=Span(start=1130, end=1217), index=8),
-            SegmentationAnnotation(span=Span(start=1218, end=1409), index=9),
-            SegmentationAnnotation(span=Span(start=1410, end=1605), index=10),
+            SegmentationAnnotation(span=span(start=0, end=87), index=1),
+            SegmentationAnnotation(span=span(start=88, end=207), index=2),
+            SegmentationAnnotation(span=span(start=208, end=283), index=3),
+            SegmentationAnnotation(span=span(start=284, end=361), index=4),
+            SegmentationAnnotation(span=span(start=362, end=508), index=5),
+            SegmentationAnnotation(span=span(start=509, end=844), index=6),
+            SegmentationAnnotation(span=span(start=845, end=1129), index=7),
+            SegmentationAnnotation(span=span(start=1130, end=1217), index=8),
+            SegmentationAnnotation(span=span(start=1218, end=1409), index=9),
+            SegmentationAnnotation(span=span(start=1410, end=1605), index=10),
         ]
         assert anns == expected_anns
 
@@ -59,34 +59,34 @@ class TestEditionParser(TestCase):
         updated_anns = update_coords(anns, old_base, new_base)
         expected_updated_anns = [
             SegmentationAnnotation(
-                span=Span(start=0, end=87, errors=None), metadata=None, index=1
+                span=span(start=0, end=87, errors=None), metadata=None, index=1
             ),
             SegmentationAnnotation(
-                span=Span(start=88, end=208, errors=None), metadata=None, index=2
+                span=span(start=88, end=208, errors=None), metadata=None, index=2
             ),
             SegmentationAnnotation(
-                span=Span(start=209, end=284, errors=None), metadata=None, index=3
+                span=span(start=209, end=284, errors=None), metadata=None, index=3
             ),
             SegmentationAnnotation(
-                span=Span(start=285, end=363, errors=None), metadata=None, index=4
+                span=span(start=285, end=363, errors=None), metadata=None, index=4
             ),
             SegmentationAnnotation(
-                span=Span(start=364, end=511, errors=None), metadata=None, index=5
+                span=span(start=364, end=511, errors=None), metadata=None, index=5
             ),
             SegmentationAnnotation(
-                span=Span(start=512, end=843, errors=None), metadata=None, index=6
+                span=span(start=512, end=843, errors=None), metadata=None, index=6
             ),
             SegmentationAnnotation(
-                span=Span(start=843, end=1089, errors=None), metadata=None, index=7
+                span=span(start=843, end=1089, errors=None), metadata=None, index=7
             ),
             SegmentationAnnotation(
-                span=Span(start=1090, end=1221, errors=None), metadata=None, index=8
+                span=span(start=1090, end=1221, errors=None), metadata=None, index=8
             ),
             SegmentationAnnotation(
-                span=Span(start=1222, end=1411, errors=None), metadata=None, index=9
+                span=span(start=1222, end=1411, errors=None), metadata=None, index=9
             ),
             SegmentationAnnotation(
-                span=Span(start=1412, end=1626, errors=None), metadata=None, index=10
+                span=span(start=1412, end=1626, errors=None), metadata=None, index=10
             ),
         ]
 
@@ -100,37 +100,37 @@ class TestEditionParser(TestCase):
         new_base = "Hello World"
         diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            Version(span=Span(start=5, end=5), operation="insertion", text=" World")
+            Version(span=span(start=5, end=5), operation="insertion", text=" World")
         ]
 
         # Deletion
         old_base = "Hello World"
         new_base = "Hello"
         diffs = parser.parse_version(old_base, new_base)
-        assert diffs == [Version(span=Span(start=5, end=11), operation="deletion")]
+        assert diffs == [Version(span=span(start=5, end=11), operation="deletion")]
 
         # Insertion in Between
         old_base = "Hello World"
         new_base = "Hello!! World"
         diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            Version(span=Span(start=5, end=5), operation="insertion", text="!!")
+            Version(span=span(start=5, end=5), operation="insertion", text="!!")
         ]
 
         # Deletion in Between
         old_base = "Good morning, Everyone"
         new_base = "Good Everyone"
         diffs = parser.parse_version(old_base, new_base)
-        assert diffs == [Version(span=Span(start=4, end=13), operation="deletion")]
+        assert diffs == [Version(span=span(start=4, end=13), operation="deletion")]
 
         # Insertion and Deletion
         old_base = "Good morning, Ladies and Gentlemen"
         new_base = "Good Attractive Ladies and Gentlemen"
         diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            Version(span=Span(start=5, end=13), operation="deletion"),
+            Version(span=span(start=5, end=13), operation="deletion"),
             Version(
-                span=Span(start=13, end=13), operation="insertion", text="Attractive"
+                span=span(start=13, end=13), operation="insertion", text="Attractive"
             ),
         ]
 
@@ -143,91 +143,91 @@ class TestEditionParser(TestCase):
         diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
             Version(
-                span=Span(start=87, end=87, errors=None),
+                span=span(start=87, end=87, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
             Version(
-                span=Span(start=282, end=282, errors=None),
+                span=span(start=282, end=282, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
             Version(
-                span=Span(start=673, end=674, errors=None),
+                span=span(start=673, end=674, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
             Version(
-                span=Span(start=888, end=888, errors=None),
+                span=span(start=888, end=888, errors=None),
                 metadata=None,
                 operation="insertion",
                 text=" རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།",
             ),
             Version(
-                span=Span(start=1034, end=1080, errors=None),
+                span=span(start=1034, end=1080, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
             Version(
-                span=Span(start=1080, end=1080, errors=None),
+                span=span(start=1080, end=1080, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌",
             ),
             Version(
-                span=Span(start=1083, end=1083, errors=None),
+                span=span(start=1083, end=1083, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="\n",
             ),
             Version(
-                span=Span(start=1170, end=1213, errors=None),
+                span=span(start=1170, end=1213, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
             Version(
-                span=Span(start=1279, end=1279, errors=None),
+                span=span(start=1279, end=1279, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="པར་",
             ),
             Version(
-                span=Span(start=1322, end=1323, errors=None),
+                span=span(start=1322, end=1323, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
             Version(
-                span=Span(start=1323, end=1323, errors=None),
+                span=span(start=1323, end=1323, errors=None),
                 metadata=None,
                 operation="insertion",
                 text="བ",
             ),
             Version(
-                span=Span(start=1441, end=1444, errors=None),
+                span=span(start=1441, end=1444, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
             Version(
-                span=Span(start=1497, end=1500, errors=None),
+                span=span(start=1497, end=1500, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
             Version(
-                span=Span(start=1573, end=1585, errors=None),
+                span=span(start=1573, end=1585, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
             ),
             Version(
-                span=Span(start=1616, end=1617, errors=None),
+                span=span(start=1616, end=1617, errors=None),
                 metadata=None,
                 operation="deletion",
                 text="",
@@ -249,61 +249,61 @@ class TestEditionParser(TestCase):
                 "index": 1,
                 "segmentation_type": "segmentation",
                 "text": "བུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ། །",
-                "Span": {"start": 0, "end": 87},
+                "span": {"start": 0, "end": 87},
             },
             {
                 "index": 2,
                 "segmentation_type": "segmentation",
                 "text": "ྫོགས་པའི་སངས་རྒྱས་ཆོས་ལ་མངོན་ཕྱོགས་ཤིང༌། །འདི་བརྟེན་འབྱུང་བའི་དེ་ཉིད་མཐོང་བ་དེས། །ཤེས་རབ་གནས་པས་འགོག་པ་ཐོབ་པར་འགྱུར། །",
-                "Span": {"start": 88, "end": 206},
+                "span": {"start": 88, "end": 206},
             },
             {
                 "index": 3,
                 "segmentation_type": "segmentation",
                 "text": "ཇི་ལྟར་ལོང་བའི་ཚོགས་ཀུན་བདེ་བླག་ཏུ། །མིག་ལྡན་སྐྱེས་བུ་གཅིག་གིས་འདོད་པ་ཡི། །",
-                "Span": {"start": 207, "end": 282},
+                "span": {"start": 207, "end": 282},
             },
             {
                 "index": 4,
                 "segmentation_type": "segmentation",
                 "text": "ུལ་དུ་འཁྲིད་པ་དེ་བཞིན་འདིར་ཡང་བློས། །མིག་ཉམས་ཡོན་ཏན་བླངས་ཏེ་རྒྱལ་ཉིད་འགྲོ། །",
-                "Span": {"start": 283, "end": 359},
+                "span": {"start": 283, "end": 359},
             },
             {
                 "index": 5,
                 "segmentation_type": "segmentation",
                 "text": "ཇི་ལྟར་དེ་ཡིས་ཆེས་ཟབ་ཆོས་རྟོགས་པ། །ལུང་དང་གཞན་ཡང་རིགས་པས་ཡིན་པས་ན། །དེ་ལྟར་འཕགས་པ་ཀླུ་སྒྲུབ་གཞུང་ལུགས་ལས། །ཇི་ལྟར་གནས་པའི་ལུགས་བཞིན་བརྗོད་པར་བྱ། ",
-                "Span": {"start": 360, "end": 505},
+                "span": {"start": 360, "end": 505},
             },
             {
                 "index": 6,
                 "segmentation_type": "segmentation",
                 "text": "\nསོ་སོ་སྐྱེ་བོའི་དུས་ནའང་སྟོང་པ་ཉིད་ཐོས་ནས། །ནང་དུ་རབ་ཏུ་དགའ་བ་ཡང་དང་ཡང་དུ་འབྱུང༌། །རབ་ཏུ་དགའ་བ་ལས་བྱུང་མཆི་མས་མིག་བརླན་ཞིང༌། །ལུས་ཀྱི་བ་སྤུ་ལྡང་པར་འགྱུར་པ་གང་ཡིན་པ། །\nདེ་ལ་རྫོགས་པའི་སངས་རྒྱས་བློ་ཡི་ས་བོན་ཡོད། །དེ་ཉིད་ཉེ་བར་བསྟན་པའི་སྣོད་ནི་དེ་ཡིན་ཏེ། །དེ་ལ་དམ་པའི་དོན་གྱི་བདེན་པ་བསྟན་པར་བྱ། །དེ་ལ་དེ་ཡི་རྗེས་སུ་འགྲོ་བའི་ཡོན་ཏན་འབྱུང༌། །\nརྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འག",
-                "Span": {"start": 506, "end": 884},
+                "span": {"start": 506, "end": 884},
             },
             {
                 "index": 7,
                 "segmentation_type": "segmentation",
                 "text": "ུར། །སྦྱིན་པ་གཏོང་བར་འགྱུར་ཞིང་སྙིང་རྗེ་བསྟེན་པར་བྱེད། །བཟོད་པ་སྒོམ་བྱེད་དེ་ཡི་དགེ་བའང་བྱང་ཆུབ་ཏུ། །འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌། །\nརྫོགས་པའི་བྱང་ཆུབ་སེམས་དཔའ་རྣམས་ལ་གུས་པར་བྱེད། །ཟབ་ཅིང་རྒྱ་ཆེའི་ཚུལ་ལ་མཁས་པའི་སྐྱེ་བོས་ནི། །རིམ་གྱིས་རབ་ཏུ་དགའ་བའི་ས་ནི་འཐོབ་འགྱུར་བས།",
-                "Span": {"start": 885, "end": 1169},
+                "span": {"start": 885, "end": 1169},
             },
             {
                 "index": 8,
                 "segmentation_type": "segmentation",
                 "text": "།དེ་ནི་དོན་དུ་གཉེར་བས་ལམ་འདི་མཉན་པར་གྱིས། །",
-                "Span": {"start": 1170, "end": 1213},
+                "span": {"start": 1170, "end": 1213},
             },
             {
                 "index": 9,
                 "segmentation_type": "segmentation",
                 "text": "དེ་ཉིད་དེ་ལས་འབྱུང་མིན་གཞན་དག་ལས་ལྟ་ག་ལ་ཞིག །གཉིས་ཀ་ལས་ཀྱང་མ་ཡིན་རྒྱུ་མེད་པར་ནི་ག་ལ་ཡོད། །དེ་ནི་དེ་ལས་འབྱུང་ན་ཡོན་ཏན་འགའ་ཡང་ཡོད་མ་ཡིན། །སྐྱེས་པར་གྱུར་པ་སླར་ཡང་སྐྱེ་བར་རིགས་པའང་མ་ཡིན་ཉིད། །\nསྐྱེ",
-                "Span": {"start": 1214, "end": 1407},
+                "span": {"start": 1214, "end": 1407},
             },
             {
                 "index": 10,
                 "segmentation_type": "segmentation",
                 "text": "་ཟིན་སླར་ཡང་སྐྱེ་བར་ཡོངས་སུ་རྟོག་པར་འགྱུར་ན་ནི། །མྱུ་གུ་ལ་སོགས་རྣམས་ཀྱི་སྐྱེ་བ་འདིར་རྙེད་མི་འགྱུར་ཞིང༌། །ས་བོན་སྲིད་མཐར་ཐུག་པར་རབ་ཏུ་སྐྱེ་བ་ཉིད་དུ་འགྱུར། །ཇི་ལྟར་དེ་ཉིད་ཀྱིས་དེ་",
-                "Span": {"start": 1408, "end": 1585},
+                "span": {"start": 1408, "end": 1585},
             },
         ]
         assert seg_anns == expected_seg_anns
@@ -317,103 +317,103 @@ class TestEditionParser(TestCase):
                 "operation": "deletion",
                 "text": "\n",
                 "spelling_variation": "version",
-                "Span": {"start": 206, "end": 207},
+                "span": {"start": 206, "end": 207},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
                 "spelling_variation": "version",
-                "Span": {"start": 359, "end": 360},
+                "span": {"start": 359, "end": 360},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
                 "spelling_variation": "version",
-                "Span": {"start": 506, "end": 507},
+                "span": {"start": 506, "end": 507},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
                 "spelling_variation": "version",
-                "Span": {"start": 673, "end": 674},
+                "span": {"start": 673, "end": 674},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
                 "spelling_variation": "version",
-                "Span": {"start": 843, "end": 844},
+                "span": {"start": 843, "end": 844},
             },
             {
                 "operation": "insertion",
                 "text": "",
                 "spelling_variation": "version",
-                "Span": {"start": 844, "end": 844},
+                "span": {"start": 844, "end": 844},
             },
             {
                 "operation": "deletion",
                 "text": "\nརྫོགས་པའི་བྱང་ཆུབ་སེམས་དཔའ་རྣམས་ལ་གུས་པར་བྱེད",
                 "spelling_variation": "version",
-                "Span": {"start": 1034, "end": 1080},
+                "span": {"start": 1034, "end": 1080},
             },
             {
                 "operation": "insertion",
                 "text": "",
                 "spelling_variation": "version",
-                "Span": {"start": 1080, "end": 1080},
+                "span": {"start": 1080, "end": 1080},
             },
             {
                 "operation": "deletion",
                 "text": "།དེ་ནི་དོན་དུ་གཉེར་བས་ལམ་འདི་མཉན་པར་གྱིས། །\n",
                 "spelling_variation": "version",
-                "Span": {"start": 1170, "end": 1214},
+                "span": {"start": 1170, "end": 1214},
             },
             {
                 "operation": "insertion",
                 "text": "",
                 "spelling_variation": "version",
-                "Span": {"start": 1279, "end": 1279},
+                "span": {"start": 1279, "end": 1279},
             },
             {
                 "operation": "deletion",
                 "text": "ན",
                 "spelling_variation": "version",
-                "Span": {"start": 1322, "end": 1323},
+                "span": {"start": 1322, "end": 1323},
             },
             {
                 "operation": "insertion",
                 "text": "",
                 "spelling_variation": "version",
-                "Span": {"start": 1323, "end": 1323},
+                "span": {"start": 1323, "end": 1323},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
                 "spelling_variation": "version",
-                "Span": {"start": 1402, "end": 1403},
+                "span": {"start": 1402, "end": 1403},
             },
             {
                 "operation": "deletion",
                 "text": "པར་",
                 "spelling_variation": "version",
-                "Span": {"start": 1441, "end": 1444},
+                "span": {"start": 1441, "end": 1444},
             },
             {
                 "operation": "deletion",
                 "text": "མི་",
                 "spelling_variation": "version",
-                "Span": {"start": 1497, "end": 1500},
+                "span": {"start": 1497, "end": 1500},
             },
             {
                 "operation": "deletion",
                 "text": "ཉིད་ཀྱིས་དེ་",
                 "spelling_variation": "version",
-                "Span": {"start": 1573, "end": 1585},
+                "span": {"start": 1573, "end": 1585},
             },
             {
                 "operation": "deletion",
                 "text": "\n",
                 "spelling_variation": "version",
-                "Span": {"start": 1616, "end": 1617},
+                "span": {"start": 1616, "end": 1617},
             },
         ]
         assert version_anns == expected_version_anns
@@ -430,9 +430,9 @@ class TestEditionParser(TestCase):
         assert edition_base == expected_base
 
         anns = [
-            Pagination(span=Span(start=0, end=24), imgnum=1, reference="image-001.jpg"),
+            Pagination(span=span(start=0, end=24), imgnum=1, reference="image-001.jpg"),
             Pagination(
-                span=Span(start=24, end=54), imgnum=2, reference="image-002.jpg"
+                span=span(start=24, end=54), imgnum=2, reference="image-002.jpg"
             ),
         ]
 
@@ -452,7 +452,7 @@ class TestEditionParser(TestCase):
             pagination_anns["annotations"]["pagination"],
             expected_pagination_anns["annotations"]["pagination"],
         ):
-            assert pag_ann["Span"] == expected_pag_ann["Span"]
+            assert pag_ann["span"] == expected_pag_ann["span"]
             assert pag_ann["imgnum"] == expected_pag_ann["imgnum"]
             assert pag_ann["reference"] == expected_pag_ann["reference"]
 

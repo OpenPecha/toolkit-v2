@@ -270,7 +270,7 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
             ann_data[data.key().id()] = data.value().get()
         curr_ann = {**ann_data, "text": str(ann)}
         if include_span:
-            curr_ann["Span"] = {
+            curr_ann["span"] = {
                 "start": ann.offset().begin().value(),
                 "end": ann.offset().end().value(),
             }

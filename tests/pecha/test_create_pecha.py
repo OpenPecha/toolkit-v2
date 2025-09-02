@@ -1,16 +1,16 @@
 from openpecha.pecha import Pecha, get_anns, get_annotation_type
 from openpecha.utils import read_json
 from pathlib import Path
-from openpecha.pecha.annotations import BaseAnnotation, Span
+from openpecha.pecha.annotations import BaseAnnotation, span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.ids import generate_id
 
 def convert_to_base_annotation(raw_annotation):
-    span_data = raw_annotation["Span"]
-    span = Span(start=span_data["start"], end=span_data["end"])
-    annotation_data = {k: v for k, v in raw_annotation.items() if k != "Span"}
+    span_data = raw_annotation["span"]
+    annotation_span = span(start=span_data["start"], end=span_data["end"])
+    annotation_data = {k: v for k, v in raw_annotation.items() if k != "span"}
     
-    return BaseAnnotation(span=span, **annotation_data)
+    return BaseAnnotation(span=annotation_span, **annotation_data)
 
 def test_create_pecha():
     data = read_json("tests/pecha/data/ITEST001.json")
@@ -23,7 +23,7 @@ def test_create_pecha():
     base_name = list(pecha.bases.keys())[0]
     assert pecha.bases[base_name] == data["base_text"]
 
-    ann_store, ann_store_path = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
+    ann_store, _ = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
     # ann_store is a list, we need to use the first AnnotationStore
     created_annotations = get_anns(ann_store[0] if isinstance(ann_store, list) else ann_store, include_span=True)
 
@@ -31,8 +31,8 @@ def test_create_pecha():
 
     first_created = created_annotations[0]
     first_original = data["annotation"][0]
-    assert first_created["Span"]["start"] == first_original["Span"]["start"]
-    assert first_created["Span"]["end"] == first_original["Span"]["end"]
+    assert first_created["span"]["start"] == first_original["span"]["start"]
+    assert first_created["span"]["end"] == first_original["span"]["end"]
     assert first_created["index"] == first_original["index"]
     assert first_created["alignment_index"] == first_original["alignment_index"]
     
@@ -53,8 +53,8 @@ def test_add():
 
     first_created = created_annotations[0]
     first_original = data["annotation"][0]
-    assert first_created["Span"]["start"] == first_original["Span"]["start"]
-    assert first_created["Span"]["end"] == first_original["Span"]["end"]
+    assert first_created["span"]["start"] == first_original["span"]["start"]
+    assert first_created["span"]["end"] == first_original["span"]["end"]
     assert first_created["index"] == first_original["index"]
     assert first_created["alignment_index"] == first_original["alignment_index"]
 

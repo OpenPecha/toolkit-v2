@@ -24,15 +24,15 @@ class TranslationAlignmentMapping:
 
         for source_annotation in source_annotation['alignment']:
             source_index = source_annotation["index"]
-            source_start = source_annotation["Span"]["start"]
-            source_end = source_annotation["Span"]["end"]
+            source_start = source_annotation["span"]["start"]
+            source_end = source_annotation["span"]["end"]
 
             overlapping_segments = []
 
             for segment_item in target_annotation['segmentation']:
                 target_index = segment_item["index"]
-                target_start = segment_item["Span"]["start"]
-                target_end = segment_item["Span"]["end"]
+                target_start = segment_item["span"]["start"]
+                target_end = segment_item["span"]["end"]
 
                 # Check for overlap
                 if source_start <= target_end and source_end >= target_start:

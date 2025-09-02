@@ -49,4 +49,6 @@ class TestAlignedPechaSerializer(TestCase):
         expected_serialized_data = read_json(
             self.DATA_DIR / "translation_alignment_one.json"
         )
+        print("serialized_dict -> ", serialized_dict)
+        print("expected_serialized_data -> ", expected_serialized_data)
         assert serialized_dict == expected_serialized_data
