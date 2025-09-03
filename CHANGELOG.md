@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## v2.4.1 (2025-09-03)
+
+### Fix
+
+* fix: added a comment line to publish a new version of package ([`1f31076`](https://github.com/OpenPecha/toolkit-v2/commit/1f310765f531174379a7a61e8a4fb2b861b09c3c))
+
+* fix: Span to span ([`d94433f`](https://github.com/OpenPecha/toolkit-v2/commit/d94433f92598138f8a7908eb4a21de65614426d1))
+
+### Unknown
+
+* Merge pull request #425 from OpenPecha/refactor-toolkit
+
+Refactor toolkit ([`6cce58d`](https://github.com/OpenPecha/toolkit-v2/commit/6cce58dbc624a5b5192d54b414b83c0ffe3900db))
+
+* removed translation transfer and its test ([`aba362c`](https://github.com/OpenPecha/toolkit-v2/commit/aba362c41c0b489ef57387617465da98167fb895))
+
+* removed commentary transfer test&#39;s expected outputs ([`2dedaf6`](https://github.com/OpenPecha/toolkit-v2/commit/2dedaf6e5b53b7fae724ff2ea7b945423fd1ac7a))
+
+* removed commentary transfer and its test ([`1c02a0c`](https://github.com/OpenPecha/toolkit-v2/commit/1c02a0cbc3391c521169d4bf4c9a0c20fa43fe61))
+
+* Merge pull request #423 from OpenPecha/Span_change_to_span
+
+changed from Span to span in serializer ([`d4bf537`](https://github.com/OpenPecha/toolkit-v2/commit/d4bf5370681a14e4c780615ee53d64193abf4a5c))
+
+* changed from Span to span in serializer ([`e38a520`](https://github.com/OpenPecha/toolkit-v2/commit/e38a520f4365f0098b3a631c9fae6da0f4860d06))
+
+* Merge pull request #422 from OpenPecha/refactor-toolkit
+
+Refactor toolkit ([`50cd984`](https://github.com/OpenPecha/toolkit-v2/commit/50cd984de7c4b5c0e28bae79c877a1e080454f35))
+
+* removed everything related to OCR ([`1569b61`](https://github.com/OpenPecha/toolkit-v2/commit/1569b61b7da453651bf0bace2ed84fb8acf493f7))
+
+* removed everything related to Dharmanexus ([`0852a52`](https://github.com/OpenPecha/toolkit-v2/commit/0852a522718faa6102b7cb0ad29dc51d57fc7840))
+
 ## v2.4.0 (2025-08-28)
 
 ### Feature
