@@ -201,6 +201,9 @@ class JsonSerializer:
     
 
 class AlignedPechaJsonSerializer(JsonSerializer):
+    """
+    Serializer for aligned pechas.
+    """
     def __init__(self, target_pecha: Pecha, target_annotations: list[dict], source_pecha: Pecha, source_annotations: list[dict]):
         self.target_pecha = target_pecha
         self.target_annotations = target_annotations
