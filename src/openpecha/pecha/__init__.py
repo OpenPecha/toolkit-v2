@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 from stam import AnnotationStore, Offset, Selector
 
-from openpecha.exceptions import StamAddAnnotationError
+from openpecha.exceptions import StamAddAnnotationError, FileNotFoundError, MetaDataValidationError
 from openpecha.ids import (
     get_annotation_id,
     get_base_id,
@@ -30,8 +30,24 @@ class Pecha:
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
+        # Validate that the path exists
+        if not pecha_path.exists():
+            raise FileNotFoundError(f"Pecha path does not exist: {pecha_path}")
+        
+        # Validate that the path is a directory
+        if not pecha_path.is_dir():
+            raise ValueError(f"Pecha path must be a directory, not a file: {pecha_path}")
+        
+        # Extract pecha_id from path stem
         pecha_id = pecha_path.stem
-        return cls(pecha_id, pecha_path)
+        if not pecha_id:
+            raise ValueError(f"Invalid pecha path - unable to extract pecha ID from: {pecha_path}")
+        
+        try:
+            return cls(pecha_id, pecha_path)
+        except Exception as e:
+            raise ValueError(f"Failed to create Pecha from path {pecha_path}: {e}")
+
 
     @classmethod  
     def create(cls, output_path: Optional[Path] = None, pecha_id: Optional[str] = None) -> "Pecha":
