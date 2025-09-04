@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v2.4.3 (2025-09-04)
+
+### Fix
+
+* fix: annotationstore&#39;s @id of the stam json pointing to pecha_id ([`9349d89`](https://github.com/OpenPecha/toolkit-v2/commit/9349d89f9ec4a62d8c16667238370466afead6ce))
+
+### Unknown
+
+* Merge pull request #427 from OpenPecha/fix-annotation_stam_json
+
+fix: annotationstore&#39;s @id of the stam json pointing to pecha_id ([`67e7710`](https://github.com/OpenPecha/toolkit-v2/commit/67e7710a9627856b6279819bfc3ccc9b9b7c55bb))
+
 ## v2.4.2 (2025-09-04)
 
 ### Fix
