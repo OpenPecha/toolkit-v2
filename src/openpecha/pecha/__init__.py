@@ -157,7 +157,7 @@ class Pecha:
         if annotation_id is None:
             annotation_id = get_layer_id()
 
-        ann_store = AnnotationStore(id=annotation_id)
+        ann_store = AnnotationStore(id=self.id)
         ann_store_path = (
             self.layer_path / base_name / f"{layer_type.value}-{annotation_id}.json"
         )

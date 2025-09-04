@@ -63,11 +63,3 @@ def test_add():
     annotation_layer_file = pecha.layer_path / base_name / f"{ann_type.value}-{annotation_id}.json"
     if annotation_layer_file.exists():
         annotation_layer_file.unlink()
-
-    
-    
-    
-    
-    
-if __name__ == "__main__":
-    test_add()
