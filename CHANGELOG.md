@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v2.4.2 (2025-09-04)
+
+### Fix
+
+* fix: added exception to the from_path class method ([`40d7094`](https://github.com/OpenPecha/toolkit-v2/commit/40d709421325e2b65fdfc35a75de9f8dcb7fa4b4))
+
+### Unknown
+
+* Merge pull request #426 from OpenPecha/fix-from_path
+
+fix: added exception to the from_path class method ([`0be3ec8`](https://github.com/OpenPecha/toolkit-v2/commit/0be3ec820f975e1b853f42dfa8b19885eeadc36d))
+
 ## v2.4.1 (2025-09-03)
 
 ### Fix
