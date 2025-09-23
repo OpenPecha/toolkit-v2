@@ -4,7 +4,7 @@ from unittest import TestCase
 from openpecha.pecha import Pecha
 from openpecha.pecha.serializers.json import JsonSerializer
 from openpecha.pecha.serializers import SerializerLogicHandler
-from openpecha.utils import read_json
+from openpecha.utils import read_json, write_json
 
 
 class TestJsonSerializer(TestCase):
@@ -109,5 +109,31 @@ class TestSerializer(TestCase):
 
         expected_serialized_data = read_json(
             self.DATA_DIR / "diplomatic_annotations.json"
+        )
+        assert serialized_dict == expected_serialized_data
+
+
+    def test_single_pecha_with_only_alignment_anntotation(self):
+        opf_path =  Path("tests/pecha/serializers/json/data/CUiiDuHWZANZNiOc")
+        opf = Pecha.from_path(opf_path)
+        annotations = [
+            {
+                "aligned_to": "MIgcGBKFl4YQcX7L",
+                "id": "bw0kqJmW-ZOSwvtm",
+                "type": "alignment"
+            }]  
+        target = {
+            "pecha": opf,
+            "annotations": annotations
+        }
+        serialized_data = SerializerLogicHandler().serialize(target)
+
+        if hasattr(serialized_data, 'model_dump'):
+            serialized_dict = serialized_data.model_dump()
+        else:
+            serialized_dict = serialized_data
+
+        expected_serialized_data = read_json(
+            self.DATA_DIR / "only_alignment_annotation.json"
         )
         assert serialized_dict == expected_serialized_data

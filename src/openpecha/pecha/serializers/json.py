@@ -128,8 +128,6 @@ class JsonSerializer:
             for annotation in annotations:
                 if annotation['type'] == 'version':
                     version_annotation = annotation['type'] + "-" + annotation["id"]
-                elif annotation['type'] == 'alignment':
-                    continue
                 else:
                     filename = annotation['type'] + "-" + annotation["id"]
                     annotation_filenames.append(filename)
@@ -160,6 +158,15 @@ class JsonSerializer:
             base = self.get_base(pecha)
 
         annotations = self.get_annotations(pecha, annotation_paths)
+        if "alignment" in annotations.keys() and "segmentation" in annotations.keys():
+            del annotations["alignment"]
+        elif "alignment" in annotations.keys() and "segmentation" not in annotations.keys():
+            annotations["segmentation"] = []
+            for alignment in annotations["alignment"]:
+                segmentation = alignment.copy()
+                segmentation.pop("alignment_index", None)
+                annotations["segmentation"].append(segmentation)
+            del annotations["alignment"]
 
         logger.info(f"Serialization complete for Pecha '{pecha.id}'.")
         return PechaJson(base=base, annotations=annotations)
@@ -249,7 +256,6 @@ class AlignedPechaJsonSerializer(JsonSerializer):
     def serialize(self) -> AlignedPechaJson:
         source_base = JsonSerializer().get_base_from_pecha(self.source_pecha, self.source_annotations)
         target_base = JsonSerializer().get_base_from_pecha(self.target_pecha, self.target_annotations)
-        # transformed_annotation = { "target_annotations": {}, "source_annotations": {} }
         transformed_annotation = self.serialize_aligned_pechas_transformed_annotations()
         untransformed_annotation = self.serialize_aligned_pechas_untransformed_annotations()
         return AlignedPechaJson(
@@ -288,21 +294,6 @@ class AlignedPechaJsonSerializer(JsonSerializer):
             if ann_type.value == 'segmentation':
                 return ann_store
         raise ValueError("No segmentation annotation found")
-
-
-    # def get_transformed_annotation(self, pecha: Pecha, annotation_paths: list[str], annotation_id: str):
-    #     annotations = []
-    #     for annotation_path in annotation_paths:
-    #         ann_store = AnnotationStore(file=str(pecha.layer_path / annotation_path))
-    #         ann_type = self._get_ann_type(annotation_path)
-    #         ann_id = annotation_path.split("/")[1][(len(ann_type.value)+1):-5]
-    #         if ann_id == annotation_id and ann_type.value == 'segmentation':
-    #             return self.to_dict(ann_store, ann_type)
-    #         elif ann_id == annotation_id and ann_type.value == 'alignment':
-    #             src_ann_store = AnnotationStore(file=str(self.source_pecha.layer_path / annotation_path))
-    #             tgt_ann_store = self.get_segmentation_annotation_store(self.target_pecha, annotation_paths)
-    #     raise ValueError(f"Annotation with id {annotation_id} not found")
-
     
 
     def serialize_aligned_pechas_transformed_annotations(self):
