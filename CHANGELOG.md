@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## v2.4.4 (2025-09-24)
+
+### Fix
+
+* fix: updated single pecha serializer to provide alignment as segmentation when segmentation annotation is not present ([`c6c37b5`](https://github.com/OpenPecha/toolkit-v2/commit/c6c37b551b6cf36c22ba14aeb1f69e062040702d))
+
+* fix: removed unused functions from the utils ([`180fc0d`](https://github.com/OpenPecha/toolkit-v2/commit/180fc0d5ee822468e6b33ee1f21d721034f5c0ff))
+
+* fix: removed test utils ([`fbad19f`](https://github.com/OpenPecha/toolkit-v2/commit/fbad19f4064831c2e5636cc33ece69cb569310a1))
+
+### Refactor
+
+* refactor: deleted translation data in the alignment ([`fd1d5ea`](https://github.com/OpenPecha/toolkit-v2/commit/fd1d5ea56b6033d88403bf27d6e30a1c4409aed7))
+
+### Unknown
+
+* Merge pull request #429 from OpenPecha/fix-jsonserializer
+
+fix: updated single pecha serializer to provide alignment as segmenta… ([`8af7a84`](https://github.com/OpenPecha/toolkit-v2/commit/8af7a84090346a1c93de29d42716a8ed9f5cf271))
+
+* Merge pull request #428 from OpenPecha/refactor-toolkit
+
+Feat: Removed all the unused codes and legacy architecture ([`86f2f65`](https://github.com/OpenPecha/toolkit-v2/commit/86f2f650ca30d560f6cb92cd94980fd2a70fe58f))
+
+* cleared the parsers&#39;s init module ([`051a333`](https://github.com/OpenPecha/toolkit-v2/commit/051a333e93843cadd9886d6e6f0bb550415c74dd))
+
+* removed pecha_types and its test, clear pecha&#39;s init module ([`d193390`](https://github.com/OpenPecha/toolkit-v2/commit/d19339078f5c6c860bfc4d8e39f2ee50883e18c9))
+
+* removed docx parser test directory and test data, docx directory with its footnote, annotation, docxparser ([`df7af3f`](https://github.com/OpenPecha/toolkit-v2/commit/df7af3f66effe2092ae933a53f13e5e9ce38b964))
+
+* removed pedurma test and test data, removed pedurma module ([`4dd0473`](https://github.com/OpenPecha/toolkit-v2/commit/4dd04734962d9df410a5136e29b86ee7b29c28bd))
+
+* removed metadata test and test data, removed bdrc utils module ([`6eb3d67`](https://github.com/OpenPecha/toolkit-v2/commit/6eb3d6772d7f16f2652ab95974edad56101d26fe))
+
 ## v2.4.3 (2025-09-04)
 
 ### Fix

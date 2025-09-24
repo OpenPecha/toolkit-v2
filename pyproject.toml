@@ -1,6 +1,6 @@
 [project]
 name = "openpecha"
-version = "2.4.3"
+version = "2.4.4"
 authors = [
     {name = "Tashi Tsering", email = "tashitsering@esukhia.org"},
     {name = "Tenzin Tsundue", email = "tsundue@esukhia.org"}
