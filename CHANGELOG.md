@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v2.4.5 (2025-09-24)
+
+### Fix
+
+* fix: Updated AlignedPechaJson Model in the annotations ([`da7e112`](https://github.com/OpenPecha/toolkit-v2/commit/da7e112edfbec35c22b1a963235330ae5c5fb1bc))
+
+### Unknown
+
+* Merge pull request #430 from OpenPecha/fix-serializer
+
+fix: Updated AlignedPechaJson Model in the annotations ([`05a3304`](https://github.com/OpenPecha/toolkit-v2/commit/05a33040c71d72efb65b1e9947291e416b4e7c9f))
+
 ## v2.4.4 (2025-09-24)
 
 ### Fix
