@@ -262,8 +262,8 @@ class PechaJson(BaseModel):
 class AlignedPechaJson(BaseModel):
     source_base: str = Field(..., description="Source base text content")
     target_base: str = Field(..., description="Target base text content")
-    annotation_transformed: Dict[str, Dict[str, Any]] = Field(..., description="Transformed annotations")
-    annotation_untransformed: Dict[str, Dict[str, Any]] = Field(..., description="Untransformed annotations")
+    transformed_annotation: Dict[str, Dict[str, Any]] = Field(..., description="Transformed annotations")
+    untransformed_annotation: Dict[str, Dict[str, Any]] = Field(..., description="Untransformed annotations")
     
     model_config = ConfigDict(extra="forbid")
     

@@ -217,6 +217,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         self.source_pecha = source_pecha
         self.source_annotations = source_annotations
 
+
     def get_annotation(self, pecha: Pecha, annotation_paths: list[str], annotation_id: str):
         annotations = {}
         for annotation_path in annotation_paths:
@@ -227,6 +228,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
                 annotations[ann_type.value] = self.to_dict(ann_store, ann_type)
                 return annotations
         raise ValueError(f"Annotation with id {annotation_id} not found")
+
 
     def get_annotation_paths(self, pecha: Pecha, annotations: list[dict]):
         version_annotation_path = None
@@ -253,6 +255,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
 
         return version_annotation_path, annotation_paths
 
+
     def serialize(self) -> AlignedPechaJson:
         source_base = JsonSerializer().get_base_from_pecha(self.source_pecha, self.source_annotations)
         target_base = JsonSerializer().get_base_from_pecha(self.target_pecha, self.target_annotations)
@@ -261,8 +264,8 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         return AlignedPechaJson(
             source_base=source_base,
             target_base=target_base,
-            annotation_transformed=transformed_annotation,
-            annotation_untransformed=untransformed_annotation
+            transformed_annotation=transformed_annotation,
+            untransformed_annotation=untransformed_annotation
         )
     
 
@@ -322,6 +325,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
 
         return { "target_annotations": target_segmentation_annotation, "source_annotations": source_annotation }
     
+
     def _updated_source_annotation_base_on_mapped_compare_annotation_(self, source_alignment_annotation: dict, mapped_compare_annotation: dict) -> dict:
         if mapped_compare_annotation == {}:
             return source_alignment_annotation
@@ -344,6 +348,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
             if (target_annotation['type'] == 'segmentation'):
                 return target_annotation['id']
         raise ValueError("No segmentation annotation found")
+
 
     def _check_if_target_annotation_is_alignment_(self, target_annotations: list[dict]) -> bool:
         for target_annotation in target_annotations:
