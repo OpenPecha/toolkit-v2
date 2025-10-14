@@ -1,16 +1,9 @@
 from openpecha.pecha import Pecha, get_anns, get_annotation_type
-from openpecha.utils import read_json
+from openpecha.utils import read_json, convert_to_base_annotation
 from pathlib import Path
-from openpecha.pecha.annotations import BaseAnnotation, span
 from openpecha.pecha.layer import AnnotationType
 from openpecha.ids import generate_id
 
-def convert_to_base_annotation(raw_annotation):
-    span_data = raw_annotation["span"]
-    annotation_span = span(start=span_data["start"], end=span_data["end"])
-    annotation_data = {k: v for k, v in raw_annotation.items() if k != "span"}
-    
-    return BaseAnnotation(span=annotation_span, **annotation_data)
 
 def test_create_pecha():
     data = read_json("tests/pecha/data/ITEST001.json")
