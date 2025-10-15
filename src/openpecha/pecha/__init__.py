@@ -27,6 +27,7 @@ class Pecha:
         self.pecha_path = pecha_path
         self.metadata = self.load_metadata()
         self.bases = self.load_bases()
+        # self.annotations = self.load_annotations()
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
@@ -276,6 +277,18 @@ class Pecha:
         if len(annotation_stores) == 1:
             return annotation_stores[0], ann_store_files[0]
         return annotation_stores, ann_store_files
+
+    def delete_annotation(self, annotation_id: str, layer_type: AnnotationType):
+        base_name = next(iter(self.bases))
+        ann_store_files = self.layer_path / base_name / f"{layer_type.value}-{annotation_id}.json"
+        if not ann_store_files.exists():
+            raise ValueError(f"Annotation with id {annotation_id} does not exist")
+        ann_store_files.unlink()
+
+    def update_annotation(self, annotation_id: str, annotation:List[BaseAnnotation], layer_type: AnnotationType)-> "Pecha":
+        self.delete_annotation(annotation_id, layer_type)
+        self.add(annotation_id, annotation)
+        return self
 
 
 def get_anns(ann_store: AnnotationStore, include_span: bool = False):

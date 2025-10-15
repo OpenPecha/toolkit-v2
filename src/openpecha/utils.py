@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Dict, List
 
 from openpecha.exceptions import FileNotFoundError
+from openpecha.pecha.annotations import BaseAnnotation, span
 
 
 @contextmanager
@@ -53,3 +54,9 @@ def write_json(
     with output_fn.open("w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     return output_fn
+
+def convert_to_base_annotation(raw_annotation):
+    span_data = raw_annotation["span"]
+    annotation_span = span(start=span_data["start"], end=span_data["end"])
+    annotation_data = {k: v for k, v in raw_annotation.items() if k != "span"}
+    return BaseAnnotation(span=annotation_span, **annotation_data)
