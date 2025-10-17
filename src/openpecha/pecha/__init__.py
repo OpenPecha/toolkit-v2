@@ -111,7 +111,7 @@ class Pecha:
         if not self.metadata_path.exists():
             return None
 
-        with open(self.metadata_path) as f:
+        with open(self.metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
 
         return PechaMetaData(**metadata)
@@ -124,11 +124,11 @@ class Pecha:
         return bases
 
     def get_base(self, base_name) -> str:
-        return (self.base_path / f"{base_name}.txt").read_text()
+        return (self.base_path / f"{base_name}.txt").read_text(encoding="utf-8")
 
     def set_base(self, content: str, base_name=None):
         base_name = base_name if base_name else get_base_id()
-        (self.base_path / f"{base_name}.txt").write_text(content)
+        (self.base_path / f"{base_name}.txt").write_text(content, encoding="utf-8")
 
         # add base to the attribute 'bases'
         if base_name not in self.bases:

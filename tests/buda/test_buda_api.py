@@ -11,6 +11,6 @@ def test_buda_info_from_model():
     g = rdflib.Graph().parse(str(ttl_path), format="ttl")
     res = _res_from_model(g, "W12827")
     expected_path = Path(__file__).parent / "data" / "expected-W12827.json"
-    with open(expected_path) as expected_file:
+    with open(expected_path, encoding="utf-8") as expected_file:
         expected = json.load(expected_file)
         assert res == expected
