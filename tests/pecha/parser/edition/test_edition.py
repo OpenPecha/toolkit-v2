@@ -36,16 +36,16 @@ class TestEditionParser(TestCase):
         anns = parser.parse_segmentation(segments)
 
         expected_anns = [
-            SegmentationAnnotation(span=span(start=0, end=87), id=None),
-            SegmentationAnnotation(span=span(start=88, end=207), id=None),
-            SegmentationAnnotation(span=span(start=208, end=283), id=None),
-            SegmentationAnnotation(span=span(start=284, end=361), id=None),
-            SegmentationAnnotation(span=span(start=362, end=508), id=None),
-            SegmentationAnnotation(span=span(start=509, end=844), id=None),
-            SegmentationAnnotation(span=span(start=845, end=1129), id=None),
-            SegmentationAnnotation(span=span(start=1130, end=1217), id=None),
-            SegmentationAnnotation(span=span(start=1218, end=1409), id=None),
-            SegmentationAnnotation(span=span(start=1410, end=1605), id=None),
+            SegmentationAnnotation(span=span(start=0, end=87), id="1"),
+            SegmentationAnnotation(span=span(start=88, end=207), id="2"),
+            SegmentationAnnotation(span=span(start=208, end=283), id="3"),
+            SegmentationAnnotation(span=span(start=284, end=361), id="4"),
+            SegmentationAnnotation(span=span(start=362, end=508), id="5"),
+            SegmentationAnnotation(span=span(start=509, end=844), id="6"),
+            SegmentationAnnotation(span=span(start=845, end=1129), id="7"),
+            SegmentationAnnotation(span=span(start=1130, end=1217), id="8"),
+            SegmentationAnnotation(span=span(start=1218, end=1409), id="9"),
+            SegmentationAnnotation(span=span(start=1410, end=1605), id="10"),
         ]
         assert anns == expected_anns
 
@@ -59,34 +59,34 @@ class TestEditionParser(TestCase):
         updated_anns = update_coords(anns, old_base, new_base)
         expected_updated_anns = [
             SegmentationAnnotation(
-                span=span(start=0, end=87, errors=None), metadata=None, index=1
+                span=span(start=0, end=87, errors=None), id="1"
             ),
             SegmentationAnnotation(
-                span=span(start=88, end=208, errors=None), metadata=None, index=2
+                span=span(start=88, end=208, errors=None), id="2"
             ),
             SegmentationAnnotation(
-                span=span(start=209, end=284, errors=None), metadata=None, index=3
+                span=span(start=209, end=284, errors=None), id="3"
             ),
             SegmentationAnnotation(
-                span=span(start=285, end=363, errors=None), metadata=None, index=4
+                span=span(start=285, end=363, errors=None), id="4"
             ),
             SegmentationAnnotation(
-                span=span(start=364, end=511, errors=None), metadata=None, index=5
+                span=span(start=364, end=511, errors=None), id="5"
             ),
             SegmentationAnnotation(
-                span=span(start=512, end=843, errors=None), metadata=None, index=6
+                span=span(start=512, end=843, errors=None), id="6"
             ),
             SegmentationAnnotation(
-                span=span(start=843, end=1089, errors=None), metadata=None, index=7
+                span=span(start=843, end=1089, errors=None), id="7"
             ),
             SegmentationAnnotation(
-                span=span(start=1090, end=1221, errors=None), metadata=None, index=8
+                span=span(start=1090, end=1221, errors=None), id="8"
             ),
             SegmentationAnnotation(
-                span=span(start=1222, end=1411, errors=None), metadata=None, index=9
+                span=span(start=1222, end=1411, errors=None), id="9"
             ),
             SegmentationAnnotation(
-                span=span(start=1412, end=1626, errors=None), metadata=None, index=10
+                span=span(start=1412, end=1626, errors=None), id="10"
             ),
         ]
 
