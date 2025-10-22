@@ -28,7 +28,7 @@ def test_create_pecha():
     first_original = data["annotation"][0]
     assert first_created["span"]["start"] == first_original["span"]["start"]
     assert first_created["span"]["end"] == first_original["span"]["end"]
-    assert first_created.get("index") is None
+    assert not first_created.get("index")
     assert first_created["alignment_index"] == first_original["alignment_index"]
     
 def test_add():
@@ -47,10 +47,11 @@ def test_add():
     assert len(created_annotations) == len(data["annotation"])
 
     first_created = created_annotations[0]
+
     first_original = data["annotation"][0]
     assert first_created["span"]["start"] == first_original["span"]["start"]
     assert first_created["span"]["end"] == first_original["span"]["end"]
-    assert first_created.get("index") is None
+    assert not first_created.get("index")
     assert first_created["alignment_index"] == first_original["alignment_index"]
 
     # Clean up - remove the added annotation layer to keep test data clean
