@@ -47,7 +47,7 @@ def test_add():
     assert len(created_annotations) == len(data["annotation"])
 
     first_created = created_annotations[0]
-
+    print("FIRST CREATED: ", first_created)
     first_original = data["annotation"][0]
     assert first_created["span"]["start"] == first_original["span"]["start"]
     assert first_created["span"]["end"] == first_original["span"]["end"]
