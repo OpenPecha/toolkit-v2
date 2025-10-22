@@ -17,16 +17,18 @@ def test_create_pecha():
     assert pecha.bases[base_name] == data["base_text"]
 
     ann_store, _ = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
+
     # ann_store is a list, we need to use the first AnnotationStore
     created_annotations = get_anns(ann_store[0] if isinstance(ann_store, list) else ann_store, include_span=True)
 
     assert len(created_annotations) == len(data["annotation"])
 
     first_created = created_annotations[0]
+
     first_original = data["annotation"][0]
     assert first_created["span"]["start"] == first_original["span"]["start"]
     assert first_created["span"]["end"] == first_original["span"]["end"]
-    assert first_created["index"] == first_original["index"]
+    assert first_created.get("index") is None
     assert first_created["alignment_index"] == first_original["alignment_index"]
     
 def test_add():
@@ -36,7 +38,7 @@ def test_add():
 
     base_name = next(iter(pecha.bases))
     annotation_id = generate_id()
-    annotation_id = pecha.add(annotation_id=annotation_id, annotation=annotation)
+    annotation_id = pecha.add(annotation_id=annotation_id, annotation=annotation, annotation_type="alignment")
     
     ann_store, _ = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
     
@@ -48,7 +50,7 @@ def test_add():
     first_original = data["annotation"][0]
     assert first_created["span"]["start"] == first_original["span"]["start"]
     assert first_created["span"]["end"] == first_original["span"]["end"]
-    assert first_created["index"] == first_original["index"]
+    assert first_created.get("index") is None
     assert first_created["alignment_index"] == first_original["alignment_index"]
 
     # Clean up - remove the added annotation layer to keep test data clean

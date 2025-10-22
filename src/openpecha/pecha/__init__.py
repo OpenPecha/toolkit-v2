@@ -77,7 +77,7 @@ class Pecha:
         return pecha
     
     
-    def add(self, annotation_id: str, annotation: List[BaseAnnotation]) -> "Pecha":
+    def add(self, annotation_id: str, annotation: List[BaseAnnotation], annotation_type: str) -> "Pecha":
         base_name = next(iter(self.bases))
         ann_type = get_annotation_type(annotation)
         if check_annotation_exists(self.layer_path/base_name/f"{ann_type.value}-{annotation_id}.json"):
@@ -190,6 +190,12 @@ class Pecha:
         ann_group_type = layer_type.annotation_group_type
         ann_data[ann_group_type.value] = layer_type.value
 
+        if layer_type in [
+            AnnotationType.ALIGNMENT,
+            AnnotationType.SEGMENTATION,
+        ]:
+            ann_data.pop("index", None)
+
         start, end = (
             annotation.span.start,
             annotation.span.end,
@@ -219,6 +225,7 @@ class Pecha:
             raise StamAddAnnotationError(
                 f"[Error] Failed to add annotation to STAM: {e}"
             )
+        
         return ann_store
 
     def set_metadata(self, pecha_metadata: Dict):
