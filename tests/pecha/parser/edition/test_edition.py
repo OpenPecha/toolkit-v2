@@ -14,6 +14,7 @@ from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.parsers.edition import EditionParser
 from openpecha.pecha.serializers.json import JsonSerializer
 from openpecha.utils import read_json
+from openpecha.pecha.annotations import VersionVariantOperations
 
 
 class TestEditionParser(TestCase):
@@ -100,40 +101,40 @@ class TestEditionParser(TestCase):
         new_base = "Hello World"
         diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            Version(span=span(start=5, end=5), operation="insertion", text=" World")
+            Version(span=span(start=5, end=5), operation=VersionVariantOperations.INSERTION, text=" World")
         ]
 
         # Deletion
         old_base = "Hello World"
         new_base = "Hello"
         diffs = parser.parse_version(old_base, new_base)
-        assert diffs == [Version(span=span(start=5, end=11), operation="deletion")]
+        assert diffs == [Version(span=span(start=5, end=11), operation=VersionVariantOperations.DELETION)]
 
         # Insertion in Between
         old_base = "Hello World"
         new_base = "Hello!! World"
         diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            Version(span=span(start=5, end=5), operation="insertion", text="!!")
+            Version(span=span(start=5, end=5), operation=VersionVariantOperations.INSERTION, text="!!")
         ]
 
         # Deletion in Between
         old_base = "Good morning, Everyone"
         new_base = "Good Everyone"
         diffs = parser.parse_version(old_base, new_base)
-        assert diffs == [Version(span=span(start=4, end=13), operation="deletion")]
+        assert diffs == [Version(span=span(start=4, end=13), operation=VersionVariantOperations.DELETION)]
 
         # Insertion and Deletion
         old_base = "Good morning, Ladies and Gentlemen"
         new_base = "Good Attractive Ladies and Gentlemen"
         diffs = parser.parse_version(old_base, new_base)
         assert diffs == [
-            Version(span=span(start=5, end=13), operation="deletion"),
+            Version(span=span(start=5, end=13), operation=VersionVariantOperations.DELETION),
             Version(
-                span=span(start=13, end=13), operation="insertion", text="Attractive"
+                span=span(start=13, end=13), operation=VersionVariantOperations.INSERTION, text="Attractive"
             ),
         ]
-
+        
         # Test with google docs
         old_basename = list(self.pecha.bases.keys())[0]
         old_base = self.pecha.get_base(old_basename)
@@ -145,91 +146,91 @@ class TestEditionParser(TestCase):
             Version(
                 span=span(start=87, end=87, errors=None),
                 metadata=None,
-                operation="insertion",
+                operation=VersionVariantOperations.INSERTION,
                 text="\n",
             ),
             Version(
                 span=span(start=282, end=282, errors=None),
                 metadata=None,
-                operation="insertion",
+                operation=VersionVariantOperations.INSERTION,
                 text="\n",
             ),
             Version(
                 span=span(start=673, end=674, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
             Version(
                 span=span(start=888, end=888, errors=None),
                 metadata=None,
-                operation="insertion",
+                operation=VersionVariantOperations.INSERTION,
                 text=" རྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འགྱུར།",
             ),
             Version(
                 span=span(start=1034, end=1080, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
             Version(
                 span=span(start=1080, end=1080, errors=None),
                 metadata=None,
-                operation="insertion",
+                operation=VersionVariantOperations.INSERTION,
                 text="འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌",
             ),
             Version(
                 span=span(start=1083, end=1083, errors=None),
                 metadata=None,
-                operation="insertion",
+                operation=VersionVariantOperations.INSERTION,
                 text="\n",
             ),
             Version(
                 span=span(start=1170, end=1213, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
             Version(
                 span=span(start=1279, end=1279, errors=None),
                 metadata=None,
-                operation="insertion",
+                operation=VersionVariantOperations.INSERTION,
                 text="པར་",
             ),
             Version(
                 span=span(start=1322, end=1323, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
             Version(
                 span=span(start=1323, end=1323, errors=None),
                 metadata=None,
-                operation="insertion",
+                operation=VersionVariantOperations.INSERTION,
                 text="བ",
             ),
             Version(
                 span=span(start=1441, end=1444, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
             Version(
                 span=span(start=1497, end=1500, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
             Version(
                 span=span(start=1573, end=1585, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
             Version(
                 span=span(start=1616, end=1617, errors=None),
                 metadata=None,
-                operation="deletion",
+                operation=VersionVariantOperations.DELETION,
                 text="",
             ),
         ]
