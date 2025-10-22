@@ -25,6 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -U pip
+        pip install -e ".[github]"
         pip install ".[dev]"
 
     - name: Test with pytest
