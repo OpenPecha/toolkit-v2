@@ -303,7 +303,10 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
     for ann in ann_store:
         ann_data = {}
         for data in ann:
-            ann_data[data.key().id()] = data.value().get()
+            k = data.key().id()
+            if k == "index":
+                continue
+            ann_data[k] = data.value().get()
         curr_ann = {**ann_data, "text": str(ann)}
         if include_span:
             curr_ann["span"] = {
