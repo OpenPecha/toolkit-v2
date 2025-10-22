@@ -198,7 +198,6 @@ class Pecha:
         # Add Annotation Group Type
         ann_group_type = layer_type.annotation_group_type
         ann_data[ann_group_type.value] = layer_type.value
-
         start, end = (
             annotation.span.start,
             annotation.span.end,

@@ -47,6 +47,7 @@ class BaseAnnotation(BaseModel):
         res = self.model_dump()
         # Remove span from the dictionary
         res.pop("span")
+        res.pop("index")
         # Remove None values from the dictionary
         res = {k: v for k, v in res.items() if v is not None}
         return res
