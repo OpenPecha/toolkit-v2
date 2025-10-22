@@ -58,5 +58,5 @@ def write_json(
 def convert_to_base_annotation(raw_annotation):
     span_data = raw_annotation["span"]
     annotation_span = span(start=span_data["start"], end=span_data["end"])
-    annotation_data = {k: v for k, v in raw_annotation.items() if k != "span"}
+    annotation_data = {k: v for k, v in raw_annotation.items() if k != "span" and k != "index"}
     return BaseAnnotation(span=annotation_span, **annotation_data)

@@ -65,14 +65,12 @@ class Pecha:
         return cls(pecha_id, pecha_path)
     
     @classmethod
-    def create_pecha(cls, pecha_id: str, base_text: str, annotation_id: str, annotation: List[BaseAnnotation]) -> "Pecha":
+    def create_pecha(cls, pecha_id: str, base_text: str, annotation_id: str, annotation: List[BaseAnnotation], annotation_type: AnnotationType) -> "Pecha":
         pecha = cls.create(pecha_id=pecha_id)
         base_name = pecha.set_base(base_text)
-        ann_type = get_annotation_type(annotation)
-        ann_store, _ = pecha.add_layer(base_name=base_name, layer_type=ann_type, annotation_id=annotation_id)
-        
+        ann_store, _ = pecha.add_layer(base_name=base_name, layer_type=annotation_type, annotation_id=annotation_id)
         for single_annotation in annotation:
-            ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=ann_type)
+            ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=annotation_type)
             ann_store.save()
         annotations = get_anns(ann_store, include_span=True)
         for annotation in annotations:
@@ -86,9 +84,9 @@ class Pecha:
         return pecha
     
     
-    def add(self, annotation_id: str, annotation: List[BaseAnnotation], annotation_type: str) -> "Pecha":
+    def add(self, annotation_id: str, annotation: List[BaseAnnotation], annotation_type: AnnotationType) -> "Pecha":
         base_name = next(iter(self.bases))
-        ann_type = get_annotation_type(annotation)
+        ann_type = annotation_type
         if check_annotation_exists(self.layer_path/base_name/f"{ann_type.value}-{annotation_id}.json"):
             raise ValueError(f"Annotation with id {annotation_id} already exists")
         ann_store, _ = self.add_layer(base_name=base_name, layer_type=ann_type, annotation_id=annotation_id)
