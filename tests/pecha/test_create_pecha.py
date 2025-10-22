@@ -18,6 +18,8 @@ def test_create_pecha():
 
     ann_store, _ = pecha.get_layer_by_ann_type(base_name=base_name, layer_type=AnnotationType.ALIGNMENT)
 
+    print("ANNS STORE: ", ann_store)
+
     # ann_store is a list, we need to use the first AnnotationStore
     created_annotations = get_anns(ann_store[0] if isinstance(ann_store, list) else ann_store, include_span=True)
 
@@ -47,7 +49,7 @@ def test_add():
     assert len(created_annotations) == len(data["annotation"])
 
     first_created = created_annotations[0]
-    print("FIRST CREATED: ", first_created)
+    
     first_original = data["annotation"][0]
     assert first_created["span"]["start"] == first_original["span"]["start"]
     assert first_created["span"]["end"] == first_original["span"]["end"]

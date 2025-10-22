@@ -199,12 +199,6 @@ class Pecha:
         ann_group_type = layer_type.annotation_group_type
         ann_data[ann_group_type.value] = layer_type.value
 
-        if layer_type in [
-            AnnotationType.ALIGNMENT,
-            AnnotationType.SEGMENTATION,
-        ]:
-            ann_data.pop("index", None)
-
         start, end = (
             annotation.span.start,
             annotation.span.end,
