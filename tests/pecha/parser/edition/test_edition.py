@@ -259,7 +259,7 @@ class TestEditionParser(TestCase):
                 "span": {"start": 88, "end": 206},
             },
             {
-                "index": "3",
+                "id": "3",
                 "segmentation_type": "segmentation",
                 "text": "ཇི་ལྟར་ལོང་བའི་ཚོགས་ཀུན་བདེ་བླག་ཏུ། །མིག་ལྡན་སྐྱེས་བུ་གཅིག་གིས་འདོད་པ་ཡི། །",
                 "span": {"start": 207, "end": 282},
