@@ -27,7 +27,7 @@ class Pecha:
         self.pecha_path = pecha_path
         self.metadata = self.load_metadata()
         self.bases = self.load_bases()
-        # self.annotations = self.load_annotations()
+        self.annotations = []
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
@@ -74,6 +74,15 @@ class Pecha:
         for single_annotation in annotation:
             ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=ann_type)
             ann_store.save()
+        annotations = get_anns(ann_store, include_span=True)
+        for annotation in annotations:
+            pecha.annotations.append({
+                "span": {
+                    "start": annotation["span"]["start"],
+                    "end": annotation["span"]["end"],
+                },
+                "id": annotation["id"]
+            })
         return pecha
     
     

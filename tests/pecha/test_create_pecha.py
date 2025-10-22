@@ -10,7 +10,7 @@ def test_create_pecha():
     annotation = [convert_to_base_annotation(ann) for ann in data["annotation"]]
     annotation_id = generate_id()
     pecha = Pecha.create_pecha(pecha_id=data["pecha_id"], base_text=data["base_text"], annotation_id=annotation_id, annotation=annotation)
-    
+    # 
     assert pecha.id == data["pecha_id"]
 
     base_name = list(pecha.bases.keys())[0]
