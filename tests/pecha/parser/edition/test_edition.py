@@ -36,16 +36,16 @@ class TestEditionParser(TestCase):
         anns = parser.parse_segmentation(segments)
 
         expected_anns = [
-            SegmentationAnnotation(span=span(start=0, end=87), index=1),
-            SegmentationAnnotation(span=span(start=88, end=207), index=2),
-            SegmentationAnnotation(span=span(start=208, end=283), index=3),
-            SegmentationAnnotation(span=span(start=284, end=361), index=4),
-            SegmentationAnnotation(span=span(start=362, end=508), index=5),
-            SegmentationAnnotation(span=span(start=509, end=844), index=6),
-            SegmentationAnnotation(span=span(start=845, end=1129), index=7),
-            SegmentationAnnotation(span=span(start=1130, end=1217), index=8),
-            SegmentationAnnotation(span=span(start=1218, end=1409), index=9),
-            SegmentationAnnotation(span=span(start=1410, end=1605), index=10),
+            SegmentationAnnotation(span=span(start=0, end=87), id=None),
+            SegmentationAnnotation(span=span(start=88, end=207), id=None),
+            SegmentationAnnotation(span=span(start=208, end=283), id=None),
+            SegmentationAnnotation(span=span(start=284, end=361), id=None),
+            SegmentationAnnotation(span=span(start=362, end=508), id=None),
+            SegmentationAnnotation(span=span(start=509, end=844), id=None),
+            SegmentationAnnotation(span=span(start=845, end=1129), id=None),
+            SegmentationAnnotation(span=span(start=1130, end=1217), id=None),
+            SegmentationAnnotation(span=span(start=1218, end=1409), id=None),
+            SegmentationAnnotation(span=span(start=1410, end=1605), id=None),
         ]
         assert anns == expected_anns
 
@@ -244,70 +244,71 @@ class TestEditionParser(TestCase):
             ann_store=AnnotationStore(file=str(self.pecha.layer_path / seg_layer_path)),
             include_span=True,
         )
+        print("SEG_ANNS", seg_anns)
         expected_seg_anns = [
             {
-                "index": 1,
+                "id": "1",
                 "segmentation_type": "segmentation",
                 "text": "བུ་མ་འཇུག་པ་ལས་སེམས་བསྐྱེད་དྲུག་པ། ཤོ་ལོ་ཀ ༡-༦༤ མངོན་དུ་ཕྱོགས་པར་མཉམ་བཞག་སེམས་གནས་ཏེ། །",
                 "span": {"start": 0, "end": 87},
             },
             {
-                "index": 2,
+                "id": "2",
                 "segmentation_type": "segmentation",
                 "text": "ྫོགས་པའི་སངས་རྒྱས་ཆོས་ལ་མངོན་ཕྱོགས་ཤིང༌། །འདི་བརྟེན་འབྱུང་བའི་དེ་ཉིད་མཐོང་བ་དེས། །ཤེས་རབ་གནས་པས་འགོག་པ་ཐོབ་པར་འགྱུར། །",
                 "span": {"start": 88, "end": 206},
             },
             {
-                "index": 3,
+                "index": "3",
                 "segmentation_type": "segmentation",
                 "text": "ཇི་ལྟར་ལོང་བའི་ཚོགས་ཀུན་བདེ་བླག་ཏུ། །མིག་ལྡན་སྐྱེས་བུ་གཅིག་གིས་འདོད་པ་ཡི། །",
                 "span": {"start": 207, "end": 282},
             },
             {
-                "index": 4,
+                "id": "4",
                 "segmentation_type": "segmentation",
                 "text": "ུལ་དུ་འཁྲིད་པ་དེ་བཞིན་འདིར་ཡང་བློས། །མིག་ཉམས་ཡོན་ཏན་བླངས་ཏེ་རྒྱལ་ཉིད་འགྲོ། །",
                 "span": {"start": 283, "end": 359},
             },
             {
-                "index": 5,
+                "id": "5",
                 "segmentation_type": "segmentation",
                 "text": "ཇི་ལྟར་དེ་ཡིས་ཆེས་ཟབ་ཆོས་རྟོགས་པ། །ལུང་དང་གཞན་ཡང་རིགས་པས་ཡིན་པས་ན། །དེ་ལྟར་འཕགས་པ་ཀླུ་སྒྲུབ་གཞུང་ལུགས་ལས། །ཇི་ལྟར་གནས་པའི་ལུགས་བཞིན་བརྗོད་པར་བྱ། ",
                 "span": {"start": 360, "end": 505},
             },
             {
-                "index": 6,
+                "id": "6",
                 "segmentation_type": "segmentation",
                 "text": "\nསོ་སོ་སྐྱེ་བོའི་དུས་ནའང་སྟོང་པ་ཉིད་ཐོས་ནས། །ནང་དུ་རབ་ཏུ་དགའ་བ་ཡང་དང་ཡང་དུ་འབྱུང༌། །རབ་ཏུ་དགའ་བ་ལས་བྱུང་མཆི་མས་མིག་བརླན་ཞིང༌། །ལུས་ཀྱི་བ་སྤུ་ལྡང་པར་འགྱུར་པ་གང་ཡིན་པ། །\nདེ་ལ་རྫོགས་པའི་སངས་རྒྱས་བློ་ཡི་ས་བོན་ཡོད། །དེ་ཉིད་ཉེ་བར་བསྟན་པའི་སྣོད་ནི་དེ་ཡིན་ཏེ། །དེ་ལ་དམ་པའི་དོན་གྱི་བདེན་པ་བསྟན་པར་བྱ། །དེ་ལ་དེ་ཡི་རྗེས་སུ་འགྲོ་བའི་ཡོན་ཏན་འབྱུང༌། །\nརྟག་ཏུ་ཚུལ་ཁྲིམས་ཡང་དག་བླངས་ནས་གནས་པར་འག",
                 "span": {"start": 506, "end": 884},
             },
             {
-                "index": 7,
+                "id": "7",
                 "segmentation_type": "segmentation",
                 "text": "ུར། །སྦྱིན་པ་གཏོང་བར་འགྱུར་ཞིང་སྙིང་རྗེ་བསྟེན་པར་བྱེད། །བཟོད་པ་སྒོམ་བྱེད་དེ་ཡི་དགེ་བའང་བྱང་ཆུབ་ཏུ། །འགྲོ་བ་དགྲོལ་བར་བྱ་ཕྱིར་ཡོངས་སུ་བསྔོ་བྱེད་ཅིང༌། །\nརྫོགས་པའི་བྱང་ཆུབ་སེམས་དཔའ་རྣམས་ལ་གུས་པར་བྱེད། །ཟབ་ཅིང་རྒྱ་ཆེའི་ཚུལ་ལ་མཁས་པའི་སྐྱེ་བོས་ནི། །རིམ་གྱིས་རབ་ཏུ་དགའ་བའི་ས་ནི་འཐོབ་འགྱུར་བས།",
                 "span": {"start": 885, "end": 1169},
             },
             {
-                "index": 8,
+                "id": "8",
                 "segmentation_type": "segmentation",
                 "text": "།དེ་ནི་དོན་དུ་གཉེར་བས་ལམ་འདི་མཉན་པར་གྱིས། །",
                 "span": {"start": 1170, "end": 1213},
             },
             {
-                "index": 9,
+                "id": "9",
                 "segmentation_type": "segmentation",
                 "text": "དེ་ཉིད་དེ་ལས་འབྱུང་མིན་གཞན་དག་ལས་ལྟ་ག་ལ་ཞིག །གཉིས་ཀ་ལས་ཀྱང་མ་ཡིན་རྒྱུ་མེད་པར་ནི་ག་ལ་ཡོད། །དེ་ནི་དེ་ལས་འབྱུང་ན་ཡོན་ཏན་འགའ་ཡང་ཡོད་མ་ཡིན། །སྐྱེས་པར་གྱུར་པ་སླར་ཡང་སྐྱེ་བར་རིགས་པའང་མ་ཡིན་ཉིད། །\nསྐྱེ",
                 "span": {"start": 1214, "end": 1407},
             },
             {
-                "index": 10,
+                "id": "10",
                 "segmentation_type": "segmentation",
                 "text": "་ཟིན་སླར་ཡང་སྐྱེ་བར་ཡོངས་སུ་རྟོག་པར་འགྱུར་ན་ནི། །མྱུ་གུ་ལ་སོགས་རྣམས་ཀྱི་སྐྱེ་བ་འདིར་རྙེད་མི་འགྱུར་ཞིང༌། །ས་བོན་སྲིད་མཐར་ཐུག་པར་རབ་ཏུ་སྐྱེ་བ་ཉིད་དུ་འགྱུར། །ཇི་ལྟར་དེ་ཉིད་ཀྱིས་དེ་",
                 "span": {"start": 1408, "end": 1585},
             },
         ]
         assert seg_anns == expected_seg_anns
-
+        
         version_anns = get_anns(
             ann_store=AnnotationStore(file=str(self.pecha.layer_path / version_path)),
             include_span=True,

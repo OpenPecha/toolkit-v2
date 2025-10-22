@@ -40,7 +40,6 @@ class span(BaseModel):
 
 class BaseAnnotation(BaseModel):
     span: span
-    metadata: Optional[Dict] = None
 
     model_config = ConfigDict(extra="allow")
 
@@ -54,11 +53,11 @@ class BaseAnnotation(BaseModel):
 
 
 class SegmentationAnnotation(BaseAnnotation):
-    index: int
+    id: str = Field(..., description="Annotation ID")
 
 
 class AlignmentAnnotation(BaseAnnotation):
-    index: int
+    id: str = Field(..., description="Annotation ID")
     alignment_index: list[int] = Field(
         description="Index of the alignment, which can be of translation or commentary"
     )
