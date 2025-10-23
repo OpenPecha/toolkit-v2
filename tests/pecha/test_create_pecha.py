@@ -30,6 +30,16 @@ def test_create_pecha():
     assert first_created["span"]["end"] == first_original["span"]["end"]
     assert not first_created.get("index")
     assert first_created["alignment_index"] == first_original["alignment_index"]
+
+    pecha_annotation = pecha.annotations[0]
+    assert pecha_annotation["span"]["start"] == first_original["span"]["start"]
+    assert pecha_annotation["span"]["end"] == first_original["span"]["end"]
+    assert pecha_annotation.get("id", None) != None 
+    # Check that only the expected keys are present in first_created
+    expected_keys = {"span", "id"}
+    actual_keys = set(pecha_annotation.keys())
+    assert actual_keys <= expected_keys, f"Unexpected keys found: {actual_keys - expected_keys}"
+    assert expected_keys <= actual_keys, f"Missing expected keys: {expected_keys - actual_keys}"
     
 def test_add():
     data = read_json("tests/pecha/data/ITEST001_alignment.json")
