@@ -14,7 +14,6 @@ from openpecha.ids import (
 )
 from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.metadata import PechaMetaData
 from openpecha.config import PECHAS_PATH
 
 BASE_NAME = str
