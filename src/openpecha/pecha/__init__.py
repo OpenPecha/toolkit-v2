@@ -25,7 +25,6 @@ class Pecha:
     def __init__(self, pecha_id: str, pecha_path: Path) -> None:
         self.id = pecha_id
         self.pecha_path = pecha_path
-        self.metadata = self.load_metadata()
         self.bases = self.load_bases()
         self.annotations = []
 
@@ -108,20 +107,6 @@ class Pecha:
         if not layer_path.exists():
             layer_path.mkdir(parents=True, exist_ok=True)
         return layer_path
-
-    @property
-    def metadata_path(self):
-        return self.pecha_path / "metadata.json"
-        
-
-    def load_metadata(self):
-        if not self.metadata_path.exists():
-            return None
-
-        with open(self.metadata_path) as f:
-            metadata = json.load(f)
-
-        return PechaMetaData(**metadata)
 
     def load_bases(self):
         bases = {}
