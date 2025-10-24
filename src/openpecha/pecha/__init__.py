@@ -276,15 +276,6 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
 def load_layer(path: Path) -> AnnotationStore:
     return AnnotationStore(file=str(path))
 
-
-def get_annotation_type(annotation: List[BaseAnnotation]):
-    if hasattr(annotation[0], "alignment_index") and hasattr(annotation[0], "index"):
-        return AnnotationType.ALIGNMENT
-    elif hasattr(annotation[0], "index") and not hasattr(annotation[0], "alignment_index"):
-        return AnnotationType.SEGMENTATION
-    else:
-        raise ValueError("Invalid annotation type")
-
 def check_annotation_exists(annotation_path: Path):
     if annotation_path.exists():
         return True
