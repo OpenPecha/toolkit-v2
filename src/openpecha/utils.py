@@ -9,24 +9,24 @@ from openpecha.exceptions import FileNotFoundError
 from openpecha.pecha.annotations import BaseAnnotation, span
 
 
-# @contextmanager
-# def cwd(path):
-#     """
-#     A context manager which changes the working directory to the given
-#     path, and then changes it back to its previous value on exit.
-#     """
-#     prev_cwd = os.getcwd()
-#     os.chdir(path)
-#     try:
-#         yield
-#     finally:
-#         os.chdir(prev_cwd)
+@contextmanager
+def cwd(path):
+    """
+    A context manager which changes the working directory to the given
+    path, and then changes it back to its previous value on exit.
+    """
+    prev_cwd = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(prev_cwd)
 
 
-# def read_csv(file_path) -> List[List[str]]:
-#     with open(file_path, newline="", encoding="utf-8") as file:
-#         reader = csv.reader(file)
-#         rows = list(reader)
+def read_csv(file_path) -> List[List[str]]:
+    with open(file_path, newline="", encoding="utf-8") as file:
+        reader = csv.reader(file)
+        rows = list(reader)
 #     return rows
 
 
