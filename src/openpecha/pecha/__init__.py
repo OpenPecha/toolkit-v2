@@ -263,11 +263,6 @@ class Pecha:
 
         return relative_layer_path
 
-    def get_first_layer_path(self) -> str:
-        layer_path = list(self.layer_path.rglob("*.json"))[0]
-        relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()
-
-        return relative_layer_path
 
     def get_layer_by_ann_type(self, base_name: str, layer_type: AnnotationType):
         """
@@ -304,7 +299,7 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
         ann_data = {}
         for data in ann:
             k = data.key().id()
-            if k == "index":
+            if k in ["index"]:
                 continue
             ann_data[k] = data.value().get()
         curr_ann = {**ann_data, "text": str(ann)}
