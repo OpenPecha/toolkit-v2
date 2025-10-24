@@ -16,6 +16,7 @@ from openpecha.pecha.annotations import (
 from openpecha.pecha.layer import AnnotationType
 from openpecha.pecha.parsers import update_coords
 from openpecha.pecha.serializers.json import JsonSerializer
+from openpecha.ids import get_annotation_id
 
 logger = get_logger(__name__)
 
@@ -44,8 +45,8 @@ class EditionParser:
         for index, segment in enumerate(segments, start=1):
             anns.append(
                 SegmentationAnnotation(
+                    id=str(index),
                     span=span(start=char_count, end=char_count + len(segment)),
-                    index=index,
                 )
             )
             char_count += len(segment) + 1

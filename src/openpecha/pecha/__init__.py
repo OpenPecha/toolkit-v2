@@ -14,7 +14,6 @@ from openpecha.ids import (
 )
 from openpecha.pecha.annotations import BaseAnnotation
 from openpecha.pecha.layer import AnnotationType
-from openpecha.pecha.metadata import PechaMetaData
 from openpecha.config import PECHAS_PATH
 
 BASE_NAME = str
@@ -25,9 +24,8 @@ class Pecha:
     def __init__(self, pecha_id: str, pecha_path: Path) -> None:
         self.id = pecha_id
         self.pecha_path = pecha_path
-        self.metadata = self.load_metadata()
         self.bases = self.load_bases()
-        # self.annotations = self.load_annotations()
+        self.annotations = []
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
@@ -65,21 +63,28 @@ class Pecha:
         return cls(pecha_id, pecha_path)
     
     @classmethod
-    def create_pecha(cls, pecha_id: str, base_text: str, annotation_id: str, annotation: List[BaseAnnotation]) -> "Pecha":
+    def create_pecha(cls, pecha_id: str, base_text: str, annotation_id: str, annotation: List[BaseAnnotation], annotation_type: AnnotationType) -> "Pecha":
         pecha = cls.create(pecha_id=pecha_id)
         base_name = pecha.set_base(base_text)
-        ann_type = get_annotation_type(annotation)
-        ann_store, _ = pecha.add_layer(base_name=base_name, layer_type=ann_type, annotation_id=annotation_id)
-        
+        ann_store, _ = pecha.add_layer(base_name=base_name, layer_type=annotation_type, annotation_id=annotation_id)
         for single_annotation in annotation:
-            ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=ann_type)
+            ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=annotation_type)
             ann_store.save()
+        annotations = get_anns(ann_store, include_span=True)
+        for annotation in annotations:
+            pecha.annotations.append({
+                "span": {
+                    "start": annotation["span"]["start"],
+                    "end": annotation["span"]["end"],
+                },
+                "id": annotation["id"]
+            })
         return pecha
     
     
-    def add(self, annotation_id: str, annotation: List[BaseAnnotation]) -> "Pecha":
+    def add(self, annotation_id: str, annotation: List[BaseAnnotation], annotation_type: AnnotationType) -> "Pecha":
         base_name = next(iter(self.bases))
-        ann_type = get_annotation_type(annotation)
+        ann_type = annotation_type
         if check_annotation_exists(self.layer_path/base_name/f"{ann_type.value}-{annotation_id}.json"):
             raise ValueError(f"Annotation with id {annotation_id} already exists")
         ann_store, _ = self.add_layer(base_name=base_name, layer_type=ann_type, annotation_id=annotation_id)
@@ -101,20 +106,6 @@ class Pecha:
         if not layer_path.exists():
             layer_path.mkdir(parents=True, exist_ok=True)
         return layer_path
-
-    @property
-    def metadata_path(self):
-        return self.pecha_path / "metadata.json"
-        
-
-    def load_metadata(self):
-        if not self.metadata_path.exists():
-            return None
-
-        with open(self.metadata_path) as f:
-            metadata = json.load(f)
-
-        return PechaMetaData(**metadata)
 
     def load_bases(self):
         bases = {}
@@ -189,7 +180,6 @@ class Pecha:
         # Add Annotation Group Type
         ann_group_type = layer_type.annotation_group_type
         ann_data[ann_group_type.value] = layer_type.value
-
         start, end = (
             annotation.span.start,
             annotation.span.end,
@@ -219,31 +209,8 @@ class Pecha:
             raise StamAddAnnotationError(
                 f"[Error] Failed to add annotation to STAM: {e}"
             )
+        
         return ann_store
-
-    def set_metadata(self, pecha_metadata: Dict):
-        # Retrieve parser name
-        parser_name = self.metadata.parser if self.metadata else None
-        if "parser" not in pecha_metadata:
-            pecha_metadata["parser"] = parser_name
-
-        # Retrieve initial creation type name
-        initial_creation_type = (
-            self.metadata.initial_creation_type if self.metadata else None
-        )
-        if "initial_creation_type" not in pecha_metadata:
-            pecha_metadata["initial_creation_type"] = initial_creation_type
-
-        try:
-            pecha_metadata = PechaMetaData(**pecha_metadata)
-        except Exception as e:
-            raise ValueError(f"Invalid metadata: {e}")
-
-        self.metadata = pecha_metadata
-        with open(self.metadata_path, "w") as f:
-            json.dump(self.metadata.to_dict(), f, ensure_ascii=False, indent=2)
-
-        return self.metadata
 
     def get_segmentation_layer_path(self) -> str:
         """
@@ -256,11 +223,6 @@ class Pecha:
 
         return relative_layer_path
 
-    def get_first_layer_path(self) -> str:
-        layer_path = list(self.layer_path.rglob("*.json"))[0]
-        relative_layer_path = layer_path.relative_to(self.pecha_path.parent).as_posix()
-
-        return relative_layer_path
 
     def get_layer_by_ann_type(self, base_name: str, layer_type: AnnotationType):
         """
@@ -296,7 +258,10 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
     for ann in ann_store:
         ann_data = {}
         for data in ann:
-            ann_data[data.key().id()] = data.value().get()
+            k = data.key().id()
+            if k in ["index"]:
+                continue
+            ann_data[k] = data.value().get()
         curr_ann = {**ann_data, "text": str(ann)}
         if include_span:
             curr_ann["span"] = {
@@ -309,15 +274,6 @@ def get_anns(ann_store: AnnotationStore, include_span: bool = False):
 
 def load_layer(path: Path) -> AnnotationStore:
     return AnnotationStore(file=str(path))
-
-
-def get_annotation_type(annotation: List[BaseAnnotation]):
-    if hasattr(annotation[0], "alignment_index") and hasattr(annotation[0], "index"):
-        return AnnotationType.ALIGNMENT
-    elif hasattr(annotation[0], "index") and not hasattr(annotation[0], "alignment_index"):
-        return AnnotationType.SEGMENTATION
-    else:
-        raise ValueError("Invalid annotation type")
 
 def check_annotation_exists(annotation_path: Path):
     if annotation_path.exists():
