@@ -27,7 +27,7 @@ def read_csv(file_path) -> List[List[str]]:
     with open(file_path, newline="", encoding="utf-8") as file:
         reader = csv.reader(file)
         rows = list(reader)
-    return rows
+#     return rows
 
 
 def write_csv(file_path, data) -> None:
@@ -58,5 +58,5 @@ def write_json(
 def convert_to_base_annotation(raw_annotation):
     span_data = raw_annotation["span"]
     annotation_span = span(start=span_data["start"], end=span_data["end"])
-    annotation_data = {k: v for k, v in raw_annotation.items() if k != "span"}
+    annotation_data = {k: v for k, v in raw_annotation.items() if k != "span" and k != "index"}
     return BaseAnnotation(span=annotation_span, **annotation_data)
