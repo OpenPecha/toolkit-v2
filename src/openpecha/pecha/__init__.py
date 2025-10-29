@@ -25,7 +25,6 @@ class Pecha:
         self.id = pecha_id
         self.pecha_path = pecha_path
         self.bases = self.load_bases()
-        self.annotations = []
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
@@ -70,15 +69,6 @@ class Pecha:
         for single_annotation in annotation:
             ann_store = pecha.add_annotation(ann_store=ann_store, annotation=single_annotation, layer_type=annotation_type)
             ann_store.save()
-        annotations = get_anns(ann_store, include_span=True)
-        for annotation in annotations:
-            pecha.annotations.append({
-                "span": {
-                    "start": annotation["span"]["start"],
-                    "end": annotation["span"]["end"],
-                },
-                "id": annotation["id"]
-            })
         return pecha
     
     
@@ -112,6 +102,7 @@ class Pecha:
         for base_file in self.base_path.rglob("*.txt"):
             base_name = base_file.stem
             bases[base_name] = base_file.read_text(encoding="utf-8")
+        print("BASE\n", bases)
         return bases
 
     def get_base(self, base_name) -> str:

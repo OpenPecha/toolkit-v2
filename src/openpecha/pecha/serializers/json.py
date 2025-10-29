@@ -351,7 +351,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
 
 
     def _check_if_target_annotation_is_alignment_(self, target_annotations: list[dict], target_annotation_id: str) -> bool:
-        for target_annotation in target_annotations and target_annotation['id'] == target_annotation_id:
-            if (target_annotation['type'] == 'alignment'):
+        for target_annotation in target_annotations:
+            if (target_annotation['type'] == 'alignment' and target_annotation['id'] == target_annotation_id):
                 return True
         return False
