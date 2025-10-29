@@ -1,9 +1,11 @@
 import json
+from multiprocessing import reduction
 import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
 from stam import AnnotationStore, Offset, Selector
+from openpecha.pecha.annotations import span
 
 from openpecha.exceptions import StamAddAnnotationError, FileNotFoundError, MetaDataValidationError
 from openpecha.ids import (
@@ -26,6 +28,7 @@ class Pecha:
         self.pecha_path = pecha_path
         self.bases = self.load_bases()
         self.annotations = []
+
 
     @classmethod
     def from_path(cls, pecha_path: Path) -> "Pecha":
@@ -251,6 +254,20 @@ class Pecha:
         self.delete_annotation(annotation_id, layer_type)
         self.add(annotation_id, annotation)
         return self
+
+    def get_base_text(self) -> str:
+        base_dir = self.pecha_path / "base"
+        for base_file in base_dir.glob("*.txt"):
+            base_text = base_file.read_text(encoding="utf-8")
+        return base_text
+
+    def get_span_text(self, span: Optional[span] = None) -> str:
+        base_text = self.get_base_text()
+        if span is None:
+            return base_text
+        else:
+            return base_text[span.start:span.end]
+
 
 
 def get_anns(ann_store: AnnotationStore, include_span: bool = False):
