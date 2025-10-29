@@ -1,5 +1,91 @@
 # CHANGELOG
 
+## v2.5.0 (2025-10-29)
+
+### Feature
+
+* feat: added get_span_text ([`0f2b56c`](https://github.com/OpenPecha/toolkit-v2/commit/0f2b56c7415d44aeebb7d5c9f55df051d16585f6))
+
+### Refactor
+
+* refactor: deleted tests and modified files ([`8c72cf1`](https://github.com/OpenPecha/toolkit-v2/commit/8c72cf1b4f8797c1260e26079288c00570911f13))
+
+### Unknown
+
+* Merge pull request #439 from OpenPecha/feat-get_span_text
+
+feat: added get_span_text ([`73504b3`](https://github.com/OpenPecha/toolkit-v2/commit/73504b3baafad1f0ecd8e1439f6c2ae7dff13949))
+
+* Merge pull request #435 from OpenPecha/refactor-toolkit
+
+Refactor toolkit ([`968ddf7`](https://github.com/OpenPecha/toolkit-v2/commit/968ddf7063bccad3d5fd5fb3e5f30f14e0cb6b11))
+
+* removed metadata.py after testing ([`4820a14`](https://github.com/OpenPecha/toolkit-v2/commit/4820a14a2c344bd78414208e8a0946395cb8dd85))
+
+* remove import metadata.py from pecha.__init__.py and testing ([`27edc9b`](https://github.com/OpenPecha/toolkit-v2/commit/27edc9b272ba53b4df526be551daa0e2e3ac2c12))
+
+* added metadata.py file back ([`0f9aff5`](https://github.com/OpenPecha/toolkit-v2/commit/0f9aff5607f299b7e400ad16ca4d596830201b39))
+
+* removed BUDA from test file ([`e6968fd`](https://github.com/OpenPecha/toolkit-v2/commit/e6968fd1ee8ba020a5e47cf0c9f73370577ee7a1))
+
+* final restore utils method in openpecha ([`fae1d7a`](https://github.com/OpenPecha/toolkit-v2/commit/fae1d7aed4cb55f3e9fbc9f444139d1517e450fb))
+
+* restored utils method in openpecha ([`6005d8c`](https://github.com/OpenPecha/toolkit-v2/commit/6005d8cf38dc0071001f9cb472701b29d1b89d33))
+
+* removed all methods from utils.py from openpecha ([`62a2171`](https://github.com/OpenPecha/toolkit-v2/commit/62a2171b44104d3859c50f12816e714183165067))
+
+* removed BUDA folder ([`6a9b0a4`](https://github.com/OpenPecha/toolkit-v2/commit/6a9b0a4d5d4e4511a0da1fb11388ba83c3ea39ca))
+
+* remove metadata.py ([`d257bcd`](https://github.com/OpenPecha/toolkit-v2/commit/d257bcd39c7aefb147baa02a8663ed80d4e2659f))
+
+* removed get_annotation_type from Pecha ([`715405e`](https://github.com/OpenPecha/toolkit-v2/commit/715405ebaca69bf9d44aa93ee35d40000f5eee08))
+
+* removed set_metadata from Pecha class ([`c7e1718`](https://github.com/OpenPecha/toolkit-v2/commit/c7e1718c4b827f37cfeb9c53669d752ca6850290))
+
+* removed load_metadata and metadata_path from Pecha class ([`a9b66ae`](https://github.com/OpenPecha/toolkit-v2/commit/a9b66ae8eeadbc4cb064a7ca33ddd161a12cb3fd))
+
+* removed
+get_first_lyer_path ([`c67fdea`](https://github.com/OpenPecha/toolkit-v2/commit/c67fdea8bfefa94c73ce4eb085677a28de3a1ab3))
+
+* enhance test_create_pecha to validate annotation keys and span values ([`71a3c0c`](https://github.com/OpenPecha/toolkit-v2/commit/71a3c0cb2afc8eab2c4f68bcf02037912ba176fa))
+
+* exclude &#39;index&#39; key from annotation data in get_anns function ([`0d8e315`](https://github.com/OpenPecha/toolkit-v2/commit/0d8e315caf21c794ab37dcc76755d43c8608ed7a))
+
+* removed annotation layer distinguisher function ([`14d83dd`](https://github.com/OpenPecha/toolkit-v2/commit/14d83dd53341020c03a38313a59c8e8f2e6abc69))
+
+* removed index from BaseAnnotation class itself ([`1d4cb66`](https://github.com/OpenPecha/toolkit-v2/commit/1d4cb66e1de69d17d92d7e4da28ad3b9ab038689))
+
+* removed popping of index since already removed from segmentation and alignment class model ([`3700864`](https://github.com/OpenPecha/toolkit-v2/commit/370086409648dfeeed4828bef443b852a2d0d164))
+
+* added print statement to check first_created ([`7d30d8a`](https://github.com/OpenPecha/toolkit-v2/commit/7d30d8a1dee49e0ce808b929543296dcb8b0a036))
+
+* added back the pip install -e &#39;.[github]
+&#39; ([`d2214fc`](https://github.com/OpenPecha/toolkit-v2/commit/d2214fc65d1ed29e288f0ad2233a5197024e5211))
+
+* removed pip install -e &#39;.[github]&#39; causing test issue on github workflow ([`d3a530f`](https://github.com/OpenPecha/toolkit-v2/commit/d3a530ff0b910171abd66913b8c0ebe8e454b166))
+
+* check index not present in annotation ([`6a7b333`](https://github.com/OpenPecha/toolkit-v2/commit/6a7b33380bb7712b043dce9eff6811ffa874e8dd))
+
+* added id and span information in return part when creating pecha ([`1b9dfda`](https://github.com/OpenPecha/toolkit-v2/commit/1b9dfdae31f3c6f7249e85cc385389daf184daa9))
+
+* fixed test_version test case ([`5d0c6e8`](https://github.com/OpenPecha/toolkit-v2/commit/5d0c6e850e69688711147faeb906411561922193))
+
+* change operation=Enum selection rather than magic string ([`bc64778`](https://github.com/OpenPecha/toolkit-v2/commit/bc647787a054750aa440a4373da45a092580924a))
+
+* fix test_segmentation in edition parse ([`d3457b1`](https://github.com/OpenPecha/toolkit-v2/commit/d3457b12590d20c9c872613b05ae40ebb5b6664b))
+
+* fix expected test parse annotation ([`97c5ae0`](https://github.com/OpenPecha/toolkit-v2/commit/97c5ae0737b5304a52e0f464099e788fb3034ded))
+
+* test parse ([`d55f43c`](https://github.com/OpenPecha/toolkit-v2/commit/d55f43c3b121963f09da37d4ad5afe786c2670d9))
+
+* removed index if annotation type is alignment or segmentation ([`556efcf`](https://github.com/OpenPecha/toolkit-v2/commit/556efcf9770e80dd2d81e39c0d7831f02bd73de3))
+
+* Merge pull request #431 from OpenPecha/fix-update_annotation
+
+feat:added update_annotation to update an existing annotation ([`5a1a780`](https://github.com/OpenPecha/toolkit-v2/commit/5a1a78018913eae2532d063f0a63697d62ab306a))
+
+* feat:added update_annotation to update an existing annotation ([`bd38aac`](https://github.com/OpenPecha/toolkit-v2/commit/bd38aac26f18a72af018914d8ebd9b99e3477e5a))
+
 ## v2.4.5 (2025-09-24)
 
 ### Fix
