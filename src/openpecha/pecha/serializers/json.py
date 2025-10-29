@@ -306,7 +306,7 @@ class AlignedPechaJsonSerializer(JsonSerializer):
 
         target_annotation_id, source_annotation_id = self.get_aligned_to_annotation_id(self.source_annotations)
         
-        is_target_annnotation_is_alignement = self._check_if_target_annotation_is_alignment_(self.target_annotations)
+        is_target_annnotation_is_alignement = self._check_if_target_annotation_is_alignment_(self.target_annotations, target_annotation_id)
 
         target_alignment_annotation = None
         if is_target_annnotation_is_alignement:
@@ -350,8 +350,8 @@ class AlignedPechaJsonSerializer(JsonSerializer):
         raise ValueError("No segmentation annotation found")
 
 
-    def _check_if_target_annotation_is_alignment_(self, target_annotations: list[dict]) -> bool:
-        for target_annotation in target_annotations:
+    def _check_if_target_annotation_is_alignment_(self, target_annotations: list[dict], target_annotation_id: str) -> bool:
+        for target_annotation in target_annotations and target_annotation['id'] == target_annotation_id:
             if (target_annotation['type'] == 'alignment'):
                 return True
         return False
